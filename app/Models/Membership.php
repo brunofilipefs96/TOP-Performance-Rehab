@@ -8,4 +8,29 @@ use Illuminate\Database\Eloquent\Model;
 class Membership extends Model
 {
     use HasFactory;
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function packs()
+    {
+        return $this->hasMany(Pack::class);
+    }
+
+    public function insurance()
+    {
+        return $this->hasOne(Insurance::class);
+    }
+
+    public function evaluations()
+    {
+        return $this->hasMany(Evaluation::class);
+    }
+
+    public function questionnaires()
+    {
+        return $this->hasMany(Questionnaire::class);
+    }
 }

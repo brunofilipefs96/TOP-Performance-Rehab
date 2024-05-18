@@ -1,4 +1,4 @@
-name: PostgreSQL Tests
+name: Run PHPUnit Tests
 
 on:
   push:
@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch: # Permite a execução manual
 
 jobs:
   laravel-tests:
@@ -27,13 +28,6 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
-    strategy:
-      matrix:
-        php-versions: ['8.2']
-        laravel: ['11.*']
-
-    name: PostgreSQL Tests - PHP ${{ matrix.php-versions }} - Laravel ${{ matrix.laravel }}
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -41,11 +35,14 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-versions }}
+          php-version: 8.2
 
       - name: Install Composer dependencies
         run: |
           composer install --no-interaction --no-progress --no-suggest
+
+      - name: Grant execute permission to PHPUnit
+        run: chmod +x vendor/bin/phpunit
 
       - name: Run PHPUnit Tests
         env:
@@ -56,3 +53,4 @@ jobs:
           DB_USERNAME: postgres
           DB_PASSWORD: postgres
         run: vendor/bin/phpunit --testdox
+

@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('evaluations', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('membership_id')->constrained();
+            $table->string('objective');
+            $table->dateTime('date');
             $table->timestamps();
         });
     }

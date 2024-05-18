@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('membership_pack', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('pack_id')->constrained();
+            $table->foreignId('membership_id')->constrained();
             $table->timestamps();
         });
     }

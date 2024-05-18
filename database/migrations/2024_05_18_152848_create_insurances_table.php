@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('insurances', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('membership_id')->constrained();
+            $table->string('insurance_type');
+            $table->string('status');
+            $table->dateTime('start_date');
+            $table->dateTime('end_date');
             $table->timestamps();
         });
     }

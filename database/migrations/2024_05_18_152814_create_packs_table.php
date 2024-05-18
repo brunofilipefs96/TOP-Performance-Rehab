@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('packs', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->integer('trainings_number');
+            $table->boolean('has_personal_trainer');
+            $table->decimal('price');
             $table->timestamps();
         });
     }

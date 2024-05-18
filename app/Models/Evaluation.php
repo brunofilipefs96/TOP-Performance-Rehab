@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Evaluation extends Model
 {
     use HasFactory;
+
+    public function membership()
+    {
+        return $this->belongsTo(Membership::class);
+    }
 }

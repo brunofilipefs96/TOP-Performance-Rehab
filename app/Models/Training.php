@@ -19,13 +19,13 @@ class Training extends Model
         return $this->belongsTo(TrainingType::class);
     }
 
-    public function users() // Clientes
+    public function users() //Clients (Can be Employees also)
     {
         return $this->hasMany(User::class);
     }
 
-    public function personalTrainer() // Personal Trainer
+    public function personalTrainer()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'personal_trainer_id');
     }
 }

@@ -40,8 +40,13 @@ jobs:
     - name: Serve Application
       run: php artisan serve --host=127.0.0.1 --port=8000 &
 
+#    - name: Run Tests
+#      run: php artisan test
 
 
+
+###########################################################################################
+        
 # name: Run PHPUnit Tests
 
 # on:

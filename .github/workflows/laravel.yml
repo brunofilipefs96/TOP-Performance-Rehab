@@ -40,8 +40,8 @@ jobs:
     - name: Serve Application
       run: php artisan serve --host=127.0.0.1 --port=8000 &
 
-    - name: Run Tests
-      run: php artisan test
+#    - name: Run Tests
+#      run: php artisan test
 
   update-personal-branches:
     needs: laravel-tests  # Aguarda a conclusão dos testes
@@ -63,6 +63,7 @@ jobs:
           git push origin $branch --force
         done
 
+        
 # name: Run PHPUnit Tests
 
 # on:

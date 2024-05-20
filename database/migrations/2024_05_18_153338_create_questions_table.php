@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('question_type_id')->constrained();
             $table->text('question_text');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

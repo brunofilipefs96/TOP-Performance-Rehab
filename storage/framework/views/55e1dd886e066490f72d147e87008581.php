@@ -163,7 +163,7 @@
                     </main>
 
                     <footer class="py-16 text-center text-sm text-black dark:text-white/70">
-                        Laravel v<?php echo e(Illuminate\Foundation\Application::VERSION); ?> (PHP v<?php echo e(PHP_VERSION); ?>)
+                        2024 © TOP Performance & Rehab
                     </footer>
                 </div>
             </div>

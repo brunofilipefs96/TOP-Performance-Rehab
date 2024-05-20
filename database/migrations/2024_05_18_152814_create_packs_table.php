@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean('has_personal_trainer');
             $table->decimal('price');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

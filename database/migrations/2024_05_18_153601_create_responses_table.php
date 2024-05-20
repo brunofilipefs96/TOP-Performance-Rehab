@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->text('response_text');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

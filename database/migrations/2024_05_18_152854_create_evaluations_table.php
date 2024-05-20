@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('objective');
             $table->dateTime('date');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

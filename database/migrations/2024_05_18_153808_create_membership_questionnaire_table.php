@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('membership_id')->constrained();
             $table->foreignId('questionnaire_id')->constrained();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

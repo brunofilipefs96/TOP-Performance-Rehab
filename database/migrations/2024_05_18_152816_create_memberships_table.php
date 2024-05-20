@@ -17,6 +17,7 @@ return new class extends Migration
             $table->boolean('monthly_plan');
             $table->integer('total_trainings');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

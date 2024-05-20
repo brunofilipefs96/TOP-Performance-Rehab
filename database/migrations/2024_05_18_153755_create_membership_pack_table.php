@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('pack_id')->constrained();
             $table->foreignId('membership_id')->constrained();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

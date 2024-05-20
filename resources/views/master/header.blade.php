@@ -10,7 +10,7 @@
                 <a class="nav-link" href="/bicycles">Bicycles List</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/bicycles/create">Add Bicycle</a>
+                <a class="nav-link" href="/products/create">Add Product</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/people">People List</a>

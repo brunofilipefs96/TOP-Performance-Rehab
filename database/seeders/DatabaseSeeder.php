@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         //User::factory(10)->create();
+        $this->call(RoleSeeder::class);
 
         //Admin Account
         User::factory()->create([
@@ -24,9 +25,8 @@ class DatabaseSeeder extends Seeder
             'gender' => 'male',
             'nif' => '000000000',
             'cc_number' => '000000000',
-            'password' => bcrypt('admin12345'),
-        ]);
+            'password' => bcrypt('atec123'),
 
-        $this->call(RoleSeeder::class);
+        ])->roles()->sync([1]);
     }
 }

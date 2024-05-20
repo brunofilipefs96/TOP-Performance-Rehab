@@ -12,7 +12,7 @@ class Questionnaire extends Model
 
     public function memberships()
     {
-        return $this->hasMany(Membership::class);
+        return $this->belongsToMany(Membership::class);
     }
 
     public function questions()

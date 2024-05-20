@@ -17,7 +17,7 @@ class Membership extends Model
 
     public function packs()
     {
-        return $this->hasMany(Pack::class);
+        return $this->belongsToMany(Pack::class);
     }
 
     public function insurance()
@@ -32,6 +32,6 @@ class Membership extends Model
 
     public function questionnaires()
     {
-        return $this->hasMany(Questionnaire::class);
+        return $this->belongsToMany(Questionnaire::class);
     }
 }

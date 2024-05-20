@@ -24,7 +24,8 @@ return new class extends Migration
             $table->string('nif');
             $table->string('cc_number');
             $table->rememberToken();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
             $table->softDeletes();
         });
 

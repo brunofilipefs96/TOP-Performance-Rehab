@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('membership_id')->constrained();
             $table->string('objective');
             $table->dateTime('date');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
             $table->softDeletes();
         });
     }

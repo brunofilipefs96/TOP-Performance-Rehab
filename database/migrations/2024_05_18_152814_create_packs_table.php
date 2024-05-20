@@ -17,7 +17,8 @@ return new class extends Migration
             $table->integer('trainings_number');
             $table->boolean('has_personal_trainer');
             $table->decimal('price');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
             $table->softDeletes();
         });
     }

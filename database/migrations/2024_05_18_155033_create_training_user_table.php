@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('training_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->boolean('presence');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 

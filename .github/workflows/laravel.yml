@@ -43,30 +43,9 @@ jobs:
 #    - name: Run Tests
 #      run: php artisan test
 
-  update-personal-branches:
-    needs: laravel-tests
-    runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
 
-    - name: Set Git Identity
-      run: |
-        git config --global user.email "bruno.silva.t0126205@edu.atec.pt"
-        git config --global user.name "brunofilipefs96"
-
-    - name: Fetch All Branches
-      run: git fetch --all
-
-    - name: Update Personal Branches
-      run: |
-        branches=("nelson" "rodrigo" "Melquisedeque")
-        for branch in "${branches[@]}"
-        do
-          git checkout $branch && git pull origin $branch && git rebase origin/main && git push origin $branch --force
-        done
-
+###########################################################################################
         
 # name: Run PHPUnit Tests
 

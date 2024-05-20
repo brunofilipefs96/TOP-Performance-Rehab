@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('street');
             $table->string('city');
             $table->string('postal_code');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
             $table->softDeletes();
         });
     }

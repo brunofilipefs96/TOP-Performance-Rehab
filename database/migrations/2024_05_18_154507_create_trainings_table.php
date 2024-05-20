@@ -20,7 +20,8 @@ return new class extends Migration
             $table->integer('max_students');
             $table->dateTime('start_date');
             $table->dateTime('end_date');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
             $table->softDeletes();
         });
     }

@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained();
             $table->foreignId('sale_id')->constrained();
             $table->decimal('quantity');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 

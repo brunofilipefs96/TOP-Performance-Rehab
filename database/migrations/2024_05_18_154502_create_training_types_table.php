@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('training_types', function (Blueprint $table) {
             $table->id();
+            $table->string('image')->default('training_types/default.png');
             $table->string('name');
             $table->timestamps();
             $table->softDeletes();

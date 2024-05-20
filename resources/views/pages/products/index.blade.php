@@ -1,8 +1,6 @@
-@extends('master.main')
-
-@section('content')
+<x-app-layout>
 
     @component('components.product.product-list', ['products' => $products])
     @endcomponent
 
-@endsection
+</x-app-layout>

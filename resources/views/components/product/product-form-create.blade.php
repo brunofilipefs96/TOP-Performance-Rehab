@@ -10,7 +10,7 @@
                 </div>
                 <div class="form-group">
                     <label for="image">Imagem</label>
-                    <input type="text"
+                    <input type="file"
                            id="image"
                            name="image"
                            autocomplete="image"
@@ -18,7 +18,6 @@
                            class="form-control
                         @error('image') is-invalid @enderror"
                            value="{{ old('image') }}"
-                           required
                            aria-describedby="nameHelp">
                     @error('image')
                     <span class="invalid-feedback" role="alert">
@@ -48,7 +47,7 @@
 
                 <div class="form-group">
                     <label for="quantity">Quantidade</label>
-                    <input type="text"
+                    <input type="number"
                            id="quantity"
                            name="quantity"
                            autocomplete="quantity"
@@ -86,7 +85,7 @@
 
                 <div class="form-group">
                     <label for="details">Detalhes</label>
-                    <input type="number"
+                    <input type="text"
                            id="details"
                            name="details"
                            autocomplete="details"

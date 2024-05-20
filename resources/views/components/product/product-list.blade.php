@@ -32,4 +32,9 @@
         @endforeach
         </tbody>
     </table>
+
+    <div class="d-flex justify-content-center mt-4 mb-3 pages">
+        {{ $products->links() }}
+    </div>
+
 </div>

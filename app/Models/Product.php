@@ -10,6 +10,14 @@ class Product extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $fillable = [
+        'name',
+        'quantity',
+        'price',
+        'details',
+        'image',
+    ];
+
     public function sales()
     {
         return $this->belongsToMany(Sale::class);

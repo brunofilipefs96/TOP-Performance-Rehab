@@ -1,6 +1,6 @@
 <x-app-layout>
 
-    @component('components.product.product-list', ['products' => $products])
+    @component('components.products.product-list', ['products' => $products])
     @endcomponent
 
 </x-app-layout>

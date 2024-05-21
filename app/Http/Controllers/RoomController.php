@@ -16,7 +16,7 @@ class RoomController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Room::class);
-        $rooms = Room::all();
+        $rooms = Room::orderBy('id', 'desc')->paginate(10);
         return view('pages.rooms.index', ['rooms' => $rooms]);
     }
 

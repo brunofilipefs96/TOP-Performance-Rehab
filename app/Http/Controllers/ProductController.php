@@ -5,16 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $products = Product::orderBy('id', 'desc')->paginate(15);
+        $this->authorize('viewAny', Product::class);
+        $products = Product::orderBy('id', 'desc')->paginate(10);
         return view('pages.products.index', ['products' => $products]);
     }
 
@@ -23,11 +26,8 @@ class ProductController extends Controller
      */
     public function create()
     {
-        if (Gate::allows('create', Product::class)) {
-            return view('pages.products.create');
-        } else {
-            return redirect()->route('products.index')->with('error', 'You are not authorized to create a product.');
-        }
+        $this->authorize('create', Product::class);
+        return view('pages.products.create');
     }
 
     /**
@@ -35,20 +35,16 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        if (Gate::allows('create', Product::class)) {
-            $validatedData = $request->validated();
+        $validatedData = $request->validated();
 
-            if ($request->hasFile('image')) {
-                $path = $request->file('image')->store('products', 'public');
-                $validatedData['image'] = $path;
-            }
-
-            Product::create($validatedData);
-
-            return redirect()->route('products.index')->with('success', 'Product created successfully.');
-        } else {
-            return redirect()->route('products.index')->with('error', 'You are not authorized to create a product.');
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('products', 'public');
+            $validatedData['image'] = $path;
         }
+
+        Product::create($validatedData);
+
+        return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
 
 
@@ -57,6 +53,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        $this->authorize('view', $product);
         return view('pages.products.show', ['product' => $product]);
     }
 
@@ -65,11 +62,8 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        if (Gate::allows('update', $product)) {
-            return view('pages.products.edit', ['product' => $product]);
-        } else {
-            return redirect()->route('products.index')->with('error', 'You are not authorized to update this product.');
-        }
+        $this->authorize('update', $product);
+        return view('pages.products.edit', ['product' => $product]);
     }
 
     /**
@@ -77,24 +71,16 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        if (Gate::allows('update', $product)) {
-            $validatedData = $request->validated();
+        $validatedData = $request->validated();
 
-            if ($request->hasFile('image')) {
-                /*if ($product->image) {
-                    Storage::disk('public')->delete($product->image);
-                }*/
-
-                $path = $request->file('image')->store('products', 'public');
-                $validatedData['image'] = $path;
-            }
-
-            $product->update($validatedData);
-
-            return redirect()->route('products.index')->with('success', 'Product updated successfully.');
-        } else {
-            return redirect()->route('products.index')->with('error', 'You are not authorized to update this product.');
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('products', 'public');
+            $validatedData['image'] = $path;
         }
+
+        $product->update($validatedData);
+
+        return redirect()->route('products.index')->with('success', 'Product updated successfully.');
     }
 
     /**
@@ -102,16 +88,9 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        if (Gate::allows('delete', $product)) {
-            /*if ($product->image) {
-                Storage::disk('public')->delete($product->image);
-            }*/
-
-            $product->delete();
-
-            return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
-        } else {
-            return redirect()->route('products.index')->with('error', 'You are not authorized to delete this product.');
-        }
+        $this->authorize('delete', $product);
+        $product->delete();
+        return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
     }
+
 }

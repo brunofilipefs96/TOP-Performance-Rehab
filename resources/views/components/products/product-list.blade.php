@@ -1,7 +1,9 @@
 
 <div class="container mt-5">
-    <h1>Products List</h1>
-
+    <h1>Lista de Produtos</h1>
+    @can('create', App\Models\Product::class)
+    <a href="{{ url('products/create') }}"><button type="button">Adicionar Produto</button></a>
+    @endcan
     <table class="table">
         <thead>
         <tr>
@@ -24,10 +26,19 @@
                 <td>{{ $product->price }}</td>
                 <td>{{ $product->details }}</td>
                 <td>
-                    <button class="btn btn-success">Mostrar</button>
-                    <button class="btn btn-primary">Editar</button>
-                    <button class="btn btn-danger">Eliminar</button>
+                    <a href="{{ url('products/' . $product->id)  }}"><button type="button">Mostrar</button></a>
+                        @can('update', $product)
+                        <a href="{{ url('products/' . $product->id) . '/edit' }}"><button type="button">Editar</button></a>
+                        @endcan
+                        @can('delete', $product)
+                        <form action="{{url('products/' . $product->id)}}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit">Eliminar</button>
+                        </form>
+                        @endcan
                 </td>
+
             </tr>
         @endforeach
         </tbody>

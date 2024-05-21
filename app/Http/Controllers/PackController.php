@@ -5,15 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\Pack;
 use App\Http\Requests\StorePackRequest;
 use App\Http\Requests\UpdatePackRequest;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class PackController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $this->authorize('viewAny', Pack::class);
+        $packs = Pack::orderBy('id', 'desc')->paginate(10);
+        return view('pages.packs.index', ['packs' => $packs]);
     }
 
     /**
@@ -21,7 +25,8 @@ class PackController extends Controller
      */
     public function create()
     {
-        //
+        $this->authorize('create', Pack::class);
+        return view('pages.packs.create');
     }
 
     /**
@@ -29,7 +34,11 @@ class PackController extends Controller
      */
     public function store(StorePackRequest $request)
     {
-        //
+        $validatedData = $request->validated();
+
+        Pack::create($validatedData);
+
+        return redirect()->route('packs.index')->with('success', 'Pack created successfully.');
     }
 
     /**
@@ -37,7 +46,8 @@ class PackController extends Controller
      */
     public function show(Pack $pack)
     {
-        //
+        $this->authorize('view', $pack);
+        return view('pages.packs.show', ['pack' => $pack]);
     }
 
     /**
@@ -45,7 +55,8 @@ class PackController extends Controller
      */
     public function edit(Pack $pack)
     {
-        //
+        $this->authorize('update', $pack);
+        return view('pages.packs.edit', ['pack' => $pack]);
     }
 
     /**
@@ -53,7 +64,11 @@ class PackController extends Controller
      */
     public function update(UpdatePackRequest $request, Pack $pack)
     {
-        //
+        $validatedData = $request->validated();
+
+        $pack->update($validatedData);
+
+        return redirect()->route('packs.index')->with('success', 'Pack updated successfully.');
     }
 
     /**
@@ -61,6 +76,8 @@ class PackController extends Controller
      */
     public function destroy(Pack $pack)
     {
-        //
+        $this->authorize('delete', $pack);
+        $pack->delete();
+        return redirect()->route('packs.index')->with('success', 'Pack deleted successfully.');
     }
 }

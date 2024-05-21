@@ -13,7 +13,7 @@ class TrainingTypePolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -21,7 +21,7 @@ class TrainingTypePolicy
      */
     public function view(User $user, TrainingType $trainingType): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -29,7 +29,7 @@ class TrainingTypePolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -37,7 +37,7 @@ class TrainingTypePolicy
      */
     public function update(User $user, TrainingType $trainingType): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -45,7 +45,7 @@ class TrainingTypePolicy
      */
     public function delete(User $user, TrainingType $trainingType): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -53,7 +53,7 @@ class TrainingTypePolicy
      */
     public function restore(User $user, TrainingType $trainingType): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -61,6 +61,6 @@ class TrainingTypePolicy
      */
     public function forceDelete(User $user, TrainingType $trainingType): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 }

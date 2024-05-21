@@ -10,6 +10,11 @@ class TrainingType extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $fillable = [
+        'name',
+        'image',
+    ];
+
     public function trainings()
     {
         return $this->hasMany(Training::class);

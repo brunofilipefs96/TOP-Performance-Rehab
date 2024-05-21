@@ -13,7 +13,7 @@ class PackPolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -21,7 +21,7 @@ class PackPolicy
      */
     public function view(User $user, Pack $pack): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -29,7 +29,7 @@ class PackPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -37,7 +37,7 @@ class PackPolicy
      */
     public function update(User $user, Pack $pack): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -45,7 +45,7 @@ class PackPolicy
      */
     public function delete(User $user, Pack $pack): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -53,7 +53,7 @@ class PackPolicy
      */
     public function restore(User $user, Pack $pack): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -61,6 +61,6 @@ class PackPolicy
      */
     public function forceDelete(User $user, Pack $pack): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 }

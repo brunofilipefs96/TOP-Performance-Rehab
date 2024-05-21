@@ -85,16 +85,15 @@
 
                 <div class="form-group">
                     <label for="details">Detalhes</label>
-                    <input type="text"
+                    <textarea type="text"
                            id="details"
                            name="details"
                            autocomplete="details"
-                           placeholder="Insira detalhes"
                            class="form-control
                         @error('details') is-invalid @enderror"
-                           value="{{ old('details') }}"
                            required
-                           aria-describedby="nameHelp">
+                           aria-describedby="nameHelp">{{ old('details') }}
+                    </textarea>
                     @error('details')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>

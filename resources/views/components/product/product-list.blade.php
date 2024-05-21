@@ -23,11 +23,19 @@
                 <td>{{ $product->quantity }}</td>
                 <td>{{ $product->price }}</td>
                 <td>{{ $product->details }}</td>
+
                 <td>
-                    <button class="btn btn-success">Mostrar</button>
-                    <button class="btn btn-primary">Editar</button>
-                    <button class="btn btn-danger">Eliminar</button>
+                    <a href="{{ url('products/' . $product->id)  }}"><button type="button">Mostrar</button></a>
+                    @auth
+                        <a href="{{ url('products/' . $product->id) . '/edit' }}"><button type="button">Editar</button></a>
+                        <form action="{{url('products/' . $product->id)}}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit">Eliminar</button>
+                        </form>
+                @endauth
                 </td>
+
             </tr>
         @endforeach
         </tbody>

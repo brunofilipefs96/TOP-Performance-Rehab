@@ -1,6 +1,6 @@
 <x-app-layout>
 
-    @component('components.product.product-form-create')
+    @component('components.products.product-form-create')
     @endcomponent
 
 </x-app-layout>

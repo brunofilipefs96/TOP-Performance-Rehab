@@ -29,30 +29,6 @@
             <x-input-error class="mt-2" :messages="$errors->get('birth_date')" />
         </div>
 
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
-            <x-input-error class="mt-2" :messages="$errors->get('email')" />
-
-            @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-                <div>
-                    <p class="text-sm mt-2 text-gray-800 dark:text-gray-200">
-                        {{ __('Your email address is unverified.') }}
-
-                        <button form="send-verification" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
-                            {{ __('Click here to re-send the verification email.') }}
-                        </button>
-                    </p>
-
-                    @if (session('status') === 'verification-link-sent')
-                        <p class="mt-2 font-medium text-sm text-green-600 dark:text-green-400">
-                            {{ __('A new verification link has been sent to your email address.') }}
-                        </p>
-                    @endif
-                </div>
-            @endif
-        </div>
-
         <!-- Phone Number -->
         <div>
             <x-input-label for="phone_number" :value="__('Phone Number')" />
@@ -73,12 +49,12 @@
                     <x-input-label :value="__('Female')" class="ml-2" />
                 </label>
                 <label for="other" class="inline-flex items-center ml-4">
-                    <input type="radio" id="other" name="gender" value="other" {{ old('gender', $user->gender) == 'other' ? 'checked' : '' }} class="form-radio">
+                    <input type="radio" id="other" name="gender" value="other" {{ old('gender', $user->gender) != 'male' && old('gender', $user->gender) != 'female' ? 'checked' : '' }} class="form-radio">
                     <x-input-label :value="__('Other')" class="ml-2" />
                 </label>
             </div>
-            <div id="other_gender_container" class="block mt-1 w-full" style="{{ old('gender', $user->gender) == 'other' ? 'display: block;' : 'display: none;' }}">
-                <x-text-input id="other_gender" class="block mt-1 w-full" type="text" name="other_gender" :value="old('other_gender', $user->other_gender)" placeholder="{{ __('Specify') }}" />
+            <div id="other_gender_container" class="block mt-1 w-full" style="{{ old('gender', $user->gender) != 'male' && old('gender', $user->gender) != 'female' ? 'display: block;' : 'display: none;' }}">
+                <x-text-input id="other_gender" class="block mt-1 w-full" type="text" name="other_gender" :value="old('other_gender', old('gender', $user->gender) != 'male' && old('gender', $user->gender) != 'female' ? $user->gender : '')" placeholder="{{ __('Specify') }}" />
                 <x-input-error :messages="$errors->get('other_gender')" class="mt-2" />
             </div>
             <x-input-error :messages="$errors->get('gender')" class="mt-2" />
@@ -125,9 +101,11 @@
                 if (otherRadio.checked) {
                     otherGenderContainer.style.display = 'block';
                     otherGenderInput.focus();
+                    otherGenderInput.required = true;
                 } else {
                     otherGenderContainer.style.display = 'none';
                     otherGenderInput.value = '';
+                    otherGenderInput.required = false;
                 }
             };
 

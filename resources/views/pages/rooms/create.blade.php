@@ -1,6 +1,6 @@
 <x-app-layout>
 
-    @component('components.room.room-form-create')
+    @component('components.rooms.room-form-create')
     @endcomponent
 
 </x-app-layout>

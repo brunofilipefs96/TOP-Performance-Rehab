@@ -16,13 +16,13 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                     <x-nav-link :href="route('products.index')">
-                        {{ __('Products') }}
+                        {{ __('Produtos') }}
                     </x-nav-link>
                     <x-nav-link :href="route('rooms.index')">
-                        {{ __('Rooms') }}
+                        {{ __('Salas') }}
                     </x-nav-link>
                     <x-nav-link :href="route('training-types.index')">
-                        {{ __('Training Types') }}
+                        {{ __('Tipos de Treino') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -44,7 +44,7 @@
 
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                            {{ __('Perfil') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->

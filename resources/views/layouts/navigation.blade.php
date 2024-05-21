@@ -18,6 +18,9 @@
                     <x-nav-link :href="route('products.index')">
                         {{ __('Products') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('rooms.index')">
+                        {{ __('Pooms') }}
+                    </x-nav-link>
                 </div>
             </div>
 

@@ -6,7 +6,7 @@
                 @csrf
                 @method('PUT')
                 <div class="mb-2">
-                    <h1>Edit Product {{$product->id}}</h1>
+                    <h1>Editar Produto {{$product->id}}</h1>
                 </div>
 
                 <div class="form-group">
@@ -104,7 +104,7 @@
                     @enderror
                 </div>
 
-                <button type="submit" class="mt-2 mb-5 btn btn-primary">Submit</button>
+                <button type="submit" class="mt-2 mb-5 btn btn-primary">Submeter</button>
             </form>
         </div>
         <div class="col-3"></div>

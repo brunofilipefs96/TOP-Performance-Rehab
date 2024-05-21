@@ -8,30 +8,30 @@
                     <h1> Produto {{$product->id}}</h1>
                 </div>
                 <div>
-                    <label for="brand">Nome</label>
+                    <label for="name">Nome</label>
                     <input type="text" value="{{$product->name}}" disabled>
                     <small id="nameHelp" class="form-text text-muted">We'll never share your data with anyone
                         else.</small>
                 </div>
 
                 <div>
-                    <label for="model">Quantidade</label>
-                    <input class="form-control" type="text" value="{{$product->quantity}}" disabled>
+                    <label for="quantity">Quantidade</label>
+                    <input class="form-control" type="number" value="{{$product->quantity}}" disabled>
                 </div>
 
                 <div>
-                    <label for="color">Preço</label>
-                    <input class="form-control" type="text" value="{{$product->price}}" disabled>
+                    <label for="price">Preço</label>
+                    <input class="form-control" type="number" value="{{$product->price}}" disabled>
                 </div>
 
                 <div>
-                    <label for="price">Detalhes</label>
-                    <textarea class="form-control" type="number" value="{{$product->details}}" disabled></textarea>
+                    <label for="details">Detalhes</label>
+                    <textarea class="form-control" type="text" value="{{$product->details}}" disabled></textarea>
                 </div>
 
                 <div>
                     <a href="/products" type="button"
-                       >Back</a>
+                       >Voltar</a>
                 </div>
             </form>
         </div>

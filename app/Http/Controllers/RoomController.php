@@ -35,6 +35,7 @@ class RoomController extends Controller
     public function store(StoreRoomRequest $request)
     {
         $validatedData = $request->validated();
+
         Room::create($validatedData);
         return redirect()->route('rooms.index')->with('success', 'Room created successfully.');
     }

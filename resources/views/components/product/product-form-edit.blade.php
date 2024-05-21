@@ -18,7 +18,7 @@
                            placeholder="Escolha a imagem"
                            class="form-control
                         @error('image') is-invalid @enderror"
-                           value="{{ $product->iamge }}"
+                           value="{{ $product->image }}"
 
                            aria-describedby="nameHelp">
                     @error('image')

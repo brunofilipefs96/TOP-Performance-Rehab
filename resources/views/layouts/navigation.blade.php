@@ -24,6 +24,9 @@
                     <x-nav-link :href="route('training-types.index')">
                         {{ __('Training Types') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('packs-.index')">
+                        {{ __('Packs') }}
+                    </x-nav-link>
                 </div>
             </div>
 

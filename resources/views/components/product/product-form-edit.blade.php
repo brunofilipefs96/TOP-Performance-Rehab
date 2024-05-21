@@ -53,7 +53,7 @@
                            id="quantity"
                            name="quantity"
                            autocomplete="quantity"
-                           placeholder="Insira a quantidade
+                           placeholder="Insira a quantidade"
                            class="form-control
                         @error('quantity') is-invalid @enderror"
                            value="{{ $product->quantity }}"

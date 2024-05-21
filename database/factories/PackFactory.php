@@ -17,7 +17,10 @@ class PackFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->name,
+            'trainings_number' => $this->faker->numberBetween(1, 10),
+            'has_personal_trainer' => $this->faker->boolean,
+            'price' => $this->faker->randomFloat(2, 10, 1000),
         ];
     }
 }

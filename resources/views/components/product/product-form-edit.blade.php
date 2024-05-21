@@ -104,7 +104,7 @@
                     @enderror
                 </div>
 
-                <button type="submit" class="mt-2 mb-5 btn btn-primary">Submit</button>
+                <button type="submit" class="mt-2 mb-5 btn btn-primary">Submeter</button>
             </form>
         </div>
         <div class="col-3"></div>

@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ProductSeeder::class);
         $this->call(RoomSeeder::class);
         $this->call(TrainingTypeSeeder::class);
+        $this->call(PackSeeder::class);
 
         //Admin Account
         User::factory()->create([

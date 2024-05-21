@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PackController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\TrainingTypeController;
@@ -26,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/products', ProductController::class);
     Route::resource('/rooms', RoomController::class);
     Route::resource('/training-types', TrainingTypeController::class);
+    Route::resource('/packs', PackController::class);
 });
 
 require __DIR__.'/auth.php';

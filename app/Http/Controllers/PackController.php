@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Pack;
 use App\Http\Requests\StorePackRequest;
 use App\Http\Requests\UpdatePackRequest;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class PackController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
@@ -36,7 +38,7 @@ class PackController extends Controller
 
         Pack::create($validatedData);
 
-        return redirect()->route('packs.index')->with('success', 'Product created successfully.');
+        return redirect()->route('packs.index')->with('success', 'Pack created successfully.');
     }
 
     /**
@@ -54,7 +56,7 @@ class PackController extends Controller
     public function edit(Pack $pack)
     {
         $this->authorize('update', $pack);
-        return view('pages.products.edit', ['pack' => $pack]);
+        return view('pages.packs.edit', ['pack' => $pack]);
     }
 
     /**
@@ -66,7 +68,7 @@ class PackController extends Controller
 
         $pack->update($validatedData);
 
-        return redirect()->route('pack.index')->with('success', 'Product updated successfully.');
+        return redirect()->route('packs.index')->with('success', 'Pack updated successfully.');
     }
 
     /**
@@ -76,6 +78,6 @@ class PackController extends Controller
     {
         $this->authorize('delete', $pack);
         $pack->delete();
-        return redirect()->route('packs.index')->with('success', 'Product deleted successfully.');
+        return redirect()->route('packs.index')->with('success', 'Pack deleted successfully.');
     }
 }

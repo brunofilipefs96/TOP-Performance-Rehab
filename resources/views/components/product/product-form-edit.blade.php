@@ -6,7 +6,7 @@
                 @csrf
                 @method('PUT')
                 <div class="mb-2">
-                    <h1>Edit Product {{$product->id}}</h1>
+                    <h1>Editar Produto {{$product->id}}</h1>
                 </div>
 
                 <div class="form-group">
@@ -18,7 +18,7 @@
                            placeholder="Escolha a imagem"
                            class="form-control
                         @error('image') is-invalid @enderror"
-                           value="{{ $product->iamge }}"
+                           value="{{ $product->image }}"
 
                            aria-describedby="nameHelp">
                     @error('image')

@@ -51,6 +51,19 @@ class User extends Authenticatable
         ];
     }
 
+    public function firstLastName(): string
+    {
+        $names = explode(' ', $this->full_name);
+
+        if (count($names) == 1) {
+            return $names[0];
+        } else {
+            return $names[0] . ' ' . $names[count($names) - 1];
+        }
+    }
+
+
+
     public function hasRole(string $role): bool
     {
         return $this->roles()->where('name', $role)->exists();

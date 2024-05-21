@@ -17,7 +17,7 @@ class TrainingTypeController extends Controller
     {
         $this->authorize('viewAny', TrainingType::class);
         $trainingTypes = TrainingType::orderBy('id', 'desc')->paginate(10);
-        return view('pages.training_types.index', ['training_types' => $trainingTypes]);
+        return view('pages.training-types.index', ['training_types' => $trainingTypes]);
     }
 
     /**
@@ -26,7 +26,7 @@ class TrainingTypeController extends Controller
     public function create()
     {
         $this->authorize('create', TrainingType::class);
-        return view('pages.training_types.create');
+        return view('pages.training-types.create');
     }
 
     /**
@@ -43,7 +43,7 @@ class TrainingTypeController extends Controller
 
         TrainingType::create($validatedData);
 
-        return redirect()->route('training_types.index')->with('success', 'Training type created successfully.');
+        return redirect()->route('training-types.index')->with('success', 'Training type created successfully.');
     }
 
     /**
@@ -52,7 +52,7 @@ class TrainingTypeController extends Controller
     public function show(TrainingType $trainingType)
     {
         $this->authorize('view', $trainingType);
-        return view('pages.training_types.show', ['training_type' => $trainingType]);
+        return view('pages.training-types.show', ['training_type' => $trainingType]);
     }
 
     /**
@@ -61,7 +61,7 @@ class TrainingTypeController extends Controller
     public function edit(TrainingType $trainingType)
     {
         $this->authorize('update', $trainingType);
-        return view('pages.training_types.edit', ['training_type' => $trainingType]);
+        return view('pages.training-types.edit', ['training_type' => $trainingType]);
     }
 
     /**
@@ -78,7 +78,7 @@ class TrainingTypeController extends Controller
 
         $trainingType->update($validatedData);
 
-        return redirect()->route('training_types.index')->with('success', 'Training type updated successfully.');
+        return redirect()->route('training-types.index')->with('success', 'Training type updated successfully.');
     }
 
     /**
@@ -88,6 +88,6 @@ class TrainingTypeController extends Controller
     {
         $this->authorize('delete', $trainingType);
         $trainingType->delete();
-        return redirect()->route('training_types.index')->with('success', 'Training type deleted successfully.');
+        return redirect()->route('training-types.index')->with('success', 'Training type deleted successfully.');
     }
 }

@@ -10,6 +10,11 @@ class Room extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $fillable = [
+        'name',
+        'capacity',
+    ];
+
     public function services()
     {
         return $this->hasMany(Service::class);

@@ -13,7 +13,8 @@ class RoomController extends Controller
      */
     public function index()
     {
-        //
+        $rooms = Room::orderBy('id', 'desc')->paginate(15);
+        return view('pages.rooms.index', ['rooms' => $rooms]);
     }
 
     /**
@@ -21,7 +22,7 @@ class RoomController extends Controller
      */
     public function create()
     {
-        //
+        return view('pages.rooms.create');
     }
 
     /**
@@ -29,7 +30,9 @@ class RoomController extends Controller
      */
     public function store(StoreRoomRequest $request)
     {
-        //
+        $validatedData = $request->validated();
+        Room::create($validatedData);
+        return redirect()->route('rooms.index')->with('success', 'Room created successfully.');
     }
 
     /**
@@ -37,7 +40,7 @@ class RoomController extends Controller
      */
     public function show(Room $room)
     {
-        //
+        return view('pages.rooms.show', ['room' => $room]);
     }
 
     /**
@@ -45,7 +48,7 @@ class RoomController extends Controller
      */
     public function edit(Room $room)
     {
-        //
+        return view('pages.rooms.edit', ['room' => $room]);
     }
 
     /**
@@ -53,7 +56,9 @@ class RoomController extends Controller
      */
     public function update(UpdateRoomRequest $request, Room $room)
     {
-        //
+        $validatedData = $request->validated();
+        $room->update($validatedData);
+        return redirect()->route('rooms.index')->with('success', 'Room updated successfully.');
     }
 
     /**
@@ -61,6 +66,7 @@ class RoomController extends Controller
      */
     public function destroy(Room $room)
     {
-        //
+        $room->delete();
+        return redirect()->route('rooms.index')->with('success', 'Room deleted successfully.');
     }
 }

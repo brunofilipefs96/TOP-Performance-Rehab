@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call(RoleSeeder::class);
         $this->call(ProductSeeder::class);
         $this->call(TrainingTypeSeeder::class);
+        $this->call(RoomSeeder::class);
 
         //Admin Account
         User::factory()->create([

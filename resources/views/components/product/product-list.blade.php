@@ -1,6 +1,6 @@
 
 <div class="container mt-5">
-    <h1>Products List</h1>
+    <h1>Lista de Produtos</h1>
     @can('create', App\Models\Product::class)
     <a href="{{ url('products/create') }}"><button type="button">Adicionar Produto</button></a>
     @endcan

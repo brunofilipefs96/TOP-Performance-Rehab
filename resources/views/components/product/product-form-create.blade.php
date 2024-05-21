@@ -5,7 +5,7 @@
             <form method="POST" action="{{ url('products') }}" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-3">
-                    <h1>Add Product</h1>
+                    <h1>Adicionar Produto</h1>
                     <hr>
                 </div>
                 <div class="form-group">
@@ -101,8 +101,7 @@
                     @enderror
                 </div>
 
-
-                <button type="submit" class="mt-4 mb-5 btn btn-primary">Add</button>
+                <button type="submit" class="mt-4 mb-5 btn btn-primary">Adicionar</button>
             </form>
         </div>
         <div class="col-3"></div>

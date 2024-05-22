@@ -17,7 +17,7 @@
 <div class="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50">
 
     <div class="relative min-h-screen flex flex-col items-center justify-center selection:bg-[#FF2D20] selection:text-white bg-gray-300">
-        <div class="relative w-full max-w-2xl lg:max-w-4xl px-4 lg:px-6 bg-black shadow-2xl rounded-2xl mx-4 lg:mx-auto">
+        <div class="relative w-full max-w-xl lg:max-w-6xl px-4 lg:px-6 bg-black shadow-2xl rounded-2xl mx-4 lg:mx-auto">
             <header class="grid grid-cols-1 lg:grid-cols-3 items-center gap-2 py-10">
                 <div class="text-center lg:text-left">
                     <h1 class="font-bold">
@@ -57,9 +57,10 @@
             </header>
 
             <main class="mt-10 mb-20 flex flex-col-reverse lg:flex-row items-center lg:items-start">
-                <div class="lg:w-1/2 mt-10 pt-10 lg:pl-20 text-center lg:text-left">
-                    <h1 class="text-3xl lg:text-6xl font-extrabold text-white pb-5">Bem-vindo. Se já és nosso Cliente</h1>
-                    <a href="{{ route('login') }}" class="inline-block bg-lime-400 hover:bg-lime-300 text-white font-bold py-4 px-10 rounded-full" type="button">Entrar</a>
+                <div class="lg:w-1/2 mt-10 pt-20 lg:pl-20 text-center lg:text-left">
+                    <h1 class="text-3xl lg:text-6xl font-extrabold text-white pb-5">Bem-vindo!</h1>
+                    <h3 class="text-xl lg:text-3xl font-extrabold text-white pb-5">Se ainda não és nosso Cliente</h3>
+                    <a href="{{ route('register') }}" class="inline-block bg-lime-400 hover:bg-lime-300 text-white font-bold py-4 px-10 rounded-full" type="button">Começa já</a>
                 </div>
                 <div class="lg:w-1/2 mt-10 lg:mt-0 flex items-center justify-center">
                     <img src="{{ asset('images/welcome.jpg') }}" alt="Descrição da imagem" class="w-48 h-48 lg:w-96 lg:h-96 transition duration-500 ease-in-out rounded-2xl transform hover:scale-105">

@@ -18,39 +18,39 @@
         @method('patch')
 
         <div>
-            <x-input-label for="full_name" :value="__('Full Name')" />
+            <x-input-label for="full_name" :value="__('Nome Completo')" />
             <x-text-input id="full_name" name="full_name" type="text" class="mt-1 block w-full" :value="old('full_name', $user->full_name)" required autofocus autocomplete="full_name" />
             <x-input-error class="mt-2" :messages="$errors->get('full_name')" />
         </div>
 
         <div>
-            <x-input-label for="birth_date" :value="__('Birth Date')" />
+            <x-input-label for="birth_date" :value="__('Data de Nascimento')" />
             <x-text-input id="birth_date" name="birth_date" class="mt-1 block w-full" type="date" :value="old('birth_date', $user->birth_date)" required />
             <x-input-error class="mt-2" :messages="$errors->get('birth_date')" />
         </div>
 
         <!-- Phone Number -->
         <div>
-            <x-input-label for="phone_number" :value="__('Phone Number')" />
-            <x-text-input id="phone_number" name="phone_number" class="mt-1 block w-full" :value="old('phone_number', $user->phone_number)" required autocomplete="phone_number" />
+            <x-input-label for="phone_number" :value="__('Nº Telemóvel')" />
+            <x-text-input id="phone_number" name="phone_number" class="mt-1 block w-full" maxlength="9" pattern="\d{9}" :value="old('phone_number', $user->phone_number)" required autocomplete="phone_number" />
             <x-input-error class="mt-2" :messages="$errors->get('phone_number')" />
         </div>
 
         <!-- Gender -->
         <div>
-            <x-input-label for="gender" :value="__('Gender')" />
+            <x-input-label for="gender" :value="__('Género')" />
             <div class="block mt-1 w-full">
                 <label for="male" class="inline-flex items-center">
                     <input type="radio" id="male" name="gender" value="male" {{ old('gender', $user->gender) == 'male' ? 'checked' : '' }} class="form-radio">
-                    <x-input-label :value="__('Male')" class="ml-2" />
+                    <x-input-label :value="__('Masculino')" class="ml-2" />
                 </label>
                 <label for="female" class="inline-flex items-center ml-4">
                     <input type="radio" id="female" name="gender" value="female" {{ old('gender', $user->gender) == 'female' ? 'checked' : '' }} class="form-radio">
-                    <x-input-label :value="__('Female')" class="ml-2" />
+                    <x-input-label :value="__('Feminino')" class="ml-2" />
                 </label>
                 <label for="other" class="inline-flex items-center ml-4">
                     <input type="radio" id="other" name="gender" value="other" {{ old('gender', $user->gender) != 'male' && old('gender', $user->gender) != 'female' ? 'checked' : '' }} class="form-radio">
-                    <x-input-label :value="__('Other')" class="ml-2" />
+                    <x-input-label :value="__('Outro')" class="ml-2" />
                 </label>
             </div>
             <div id="other_gender_container" class="block mt-1 w-full" style="{{ old('gender', $user->gender) != 'male' && old('gender', $user->gender) != 'female' ? 'display: block;' : 'display: none;' }}">
@@ -63,14 +63,14 @@
         <!-- NIF -->
         <div>
             <x-input-label for="nif" :value="__('NIF')" />
-            <x-text-input id="nif" name="nif" type="text" class="mt-1 block w-full" :value="old('nif', $user->nif)" required autocomplete="nif" />
+            <x-text-input id="nif" name="nif" type="text" class="mt-1 block w-full" maxlength="9" pattern="\d{9}" :value="old('nif', $user->nif)" required autocomplete="nif" />
             <x-input-error class="mt-2" :messages="$errors->get('nif')" />
         </div>
 
         <!-- CC Number -->
         <div>
             <x-input-label for="cc_number" :value="__('CC Number')" />
-            <x-text-input id="cc_number" name="cc_number" type="text" class="mt-1 block w-full" :value="old('cc_number', $user->cc_number)" required autocomplete="cc_number" />
+            <x-text-input id="cc_number" name="cc_number" type="text" class="mt-1 block w-full" maxlength="10" :value="old('cc_number', $user->cc_number)" required autocomplete="cc_number" />
             <x-input-error class="mt-2" :messages="$errors->get('cc_number')" />
         </div>
 

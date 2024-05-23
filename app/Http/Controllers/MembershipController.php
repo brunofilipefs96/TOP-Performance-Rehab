@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Membership;
 use App\Http\Requests\StoreMembershipRequest;
 use App\Http\Requests\UpdateMembershipRequest;
+use App\Models\Question;
+use App\Models\Questionnaire;
+use App\Models\Response;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
@@ -70,4 +73,43 @@ class MembershipController extends Controller
     {
         //
     }
+
+    public function form(Request $request)
+    {
+        $this->authorize('form', Membership::class);
+
+        $questionnaire = Questionnaire::findOrFail(request('questionnaire'));
+
+        return view('pages.memberships.form', ['questionnaire' => $questionnaire]);
+    }
+
+
+    public function storeForm(Request $request, Membership $membership)
+    {
+        $this->authorize('form', Membership::class);
+
+        $validatedData = $request->validate([
+            'responses' => 'required|array',
+            'responses.*.question_id' => 'required|exists:questions,id',
+            'responses.*.response_text' => 'required',
+        ]);
+
+        foreach ($validatedData['responses'] as $reponse) {
+            $question = Question::findOrFail($reponse['question_id']);
+
+            if (!$membership->questionnaires->contains($question->questionnaire_id)) {
+                return redirect()->back()->with('error', 'A pergunta não pertence ao questionário associado.');
+            }
+
+            $response2 = new Response([
+                'response' => $reponse['response'],
+                'user_id' => auth()->id(),
+            ]);
+
+            $question->responses()->save($response2);
+        }
+
+        return redirect()->route('users.index')->with('success', 'Formulário enviado com sucesso.');
+    }
+
 }

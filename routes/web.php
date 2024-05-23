@@ -38,8 +38,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('/users', UserController::class)->only(['index', 'show', 'destroy']);
+
     Route::get('/users/{user}/membership/create', [MembershipController::class, 'create'])->name('users.memberships.create');
     Route::post('/users/{user}/membership', [MembershipController::class, 'store'])->name('users.memberships.store');
+
+    Route::get('/users/{user}/membership/questionnaires/{questionnaire}/form', [MembershipController::class, 'form'])->name('users.memberships.questionnaires.form');
+    Route::post('/users/{user}/membership/questionnaires/{questionnaire}', [MembershipController::class, 'storeForm'])->name('users.memberships.questionnaires.storeForm');
+
     Route::resource('/memberships', MembershipController::class)->only(['index', 'show', 'edit', 'update', 'destroy']);
 
     Route::resource('/products', ProductController::class);

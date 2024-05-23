@@ -1,91 +1,94 @@
-<div class="container mt-5 glass pt-5">
-    <div class="row">
-        <div class="col-3"></div>
-        <div class="col-6">
+<div class="container mx-auto mt-5 pt-5 glass">
+    <div class="flex justify-center mb-4">
+        <button onclick="history.back()" class="bg-gray-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-gray-700">Voltar</button>
+    </div>
+    <div class="flex justify-center">
+        <div class="w-full max-w-lg">
             <form method="POST" action="{{ url('packs/' . $pack->id) }}" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <div class="mb-2">
-                    <h1>Editar Pacote {{$pack->id}}</h1>
+                    <h1 class="text-xl font-bold text-gray-200">Editar Pacote {{$pack->id}}</h1>
                 </div>
 
-                <div class="form-group">
-                    <label for="name">Nome</label>
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-medium text-gray-200">Nome</label>
                     <input type="text"
                            id="name"
                            name="name"
                            autocomplete="name"
                            placeholder="Insira o nome"
-                           class="form-control
-                        @error('name') is-invalid @enderror"
+                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm text-gray-800 placeholder-gray-500
+                           @error('name') border-red-500 @enderror"
                            value="{{ $pack->name }}"
                            required
                            aria-describedby="nameHelp">
                     @error('name')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
-                </div>
-
-                <div class="form-group">
-                    <label for="has_personal_trainer">Personal Trainer</label>
-                    <div>
-                        <input type="radio" id="personal_trainer_yes" name="has_personal_trainer" value="1" {{ $pack->has_personal_trainer ? 'checked' : '' }}>
-                        <label for="personal_trainer_yes">Sim</label>
-                    </div>
-                    <div>
-                        <input type="radio" id="personal_trainer_no" name="has_personal_trainer" value="0" {{ !$pack->has_personal_trainer ? 'checked' : '' }}>
-                        <label for="personal_trainer_no">Não</label>
-                    </div>
-                    @error('has_personal_trainer')
-                    <span class="invalid-feedback" role="alert">
+                    <span class="text-red-500 text-sm mt-2" role="alert">
                         <strong>{{ $message }}</strong>
                     </span>
                     @enderror
                 </div>
 
-                <div class="form-group">
-                    <label for="trainings_number">Numero de Treinos</label>
+                <div class="mb-4">
+                    <label for="trainings_number" class="block text-sm font-medium text-gray-200">Número de Treinos</label>
                     <input type="number"
                            id="trainings_number"
                            name="trainings_number"
                            autocomplete="trainings_number"
                            placeholder="Insira a quantidade de treinos"
-                           class="form-control
-                        @error('trainings_number') is-invalid @enderror"
+                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm text-gray-800 placeholder-gray-500
+                           @error('trainings_number') border-red-500 @enderror"
                            value="{{ $pack->trainings_number }}"
                            required
-                           aria-describedby="nameHelp">
+                           aria-describedby="trainings_numberHelp">
                     @error('trainings_number')
-                    <span class="invalid-feedback" role="alert">
+                    <span class="text-red-500 text-sm mt-2" role="alert">
                         <strong>{{ $message }}</strong>
-                        </span>
+                    </span>
                     @enderror
                 </div>
 
-                <div class="form-group">
-                    <label for="price">Preço</label>
+                <div class="mb-4">
+                    <label for="has_personal_trainer" class="block text-sm font-medium text-gray-200">Personal Trainer</label>
+                    <div class="mt-1">
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="has_personal_trainer" value="1" {{ $pack->has_personal_trainer ? 'checked' : '' }} class="text-gray-800">
+                            <span class="ml-2 text-gray-200">Sim</span>
+                        </label>
+                        <label class="inline-flex items-center ml-6">
+                            <input type="radio" name="has_personal_trainer" value="0" {{ !$pack->has_personal_trainer ? 'checked' : '' }} class="text-gray-800">
+                            <span class="ml-2 text-gray-200">Não</span>
+                        </label>
+                    </div>
+                    @error('has_personal_trainer')
+                    <span class="text-red-500 text-sm mt-2" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label for="price" class="block text-sm font-medium text-gray-200">Preço</label>
                     <input type="number"
                            id="price"
                            name="price"
                            autocomplete="price"
                            placeholder="Insira o preço"
-                           class="form-control
-                        @error('price') is-invalid @enderror"
+                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm text-gray-800 placeholder-gray-500
+                           @error('price') border-red-500 @enderror"
                            value="{{ $pack->price }}"
                            required
-                           aria-describedby="nameHelp">
+                           aria-describedby="priceHelp">
                     @error('price')
-                    <span class="invalid-feedback" role="alert">
+                    <span class="text-red-500 text-sm mt-2" role="alert">
                         <strong>{{ $message }}</strong>
-                        </span>
+                    </span>
                     @enderror
                 </div>
 
-                <button type="submit" class="mt-2 mb-5 btn btn-primary">Submeter</button>
+                <button type="submit" class="mt-2 mb-5 w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-700">Submeter</button>
             </form>
         </div>
-        <div class="col-3"></div>
     </div>
 </div>

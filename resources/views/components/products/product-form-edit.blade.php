@@ -1,112 +1,110 @@
-<div class="container mt-5 glass pt-5">
-    <div class="row">
-        <div class="col-3"></div>
-        <div class="col-6">
+<div class="container mx-auto mt-5 pt-5 glass">
+    <div class="flex justify-center mb-4">
+        <button onclick="history.back()" class="bg-gray-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-gray-700">Voltar</button>
+    </div>
+    <div class="flex justify-center">
+        <div class="w-full max-w-lg">
             <form method="POST" action="{{ url('products/' . $product->id) }}" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <div class="mb-2">
-                    <h1>Editar Produto {{$product->id}}</h1>
+                    <h1 class="text-xl font-bold text-gray-200">Editar Produto {{$product->id}}</h1>
                 </div>
 
-                <div class="form-group">
-                    <label for="image">Imagem</label>
+                <div class="mb-4">
+                    <label for="image" class="block text-sm font-medium text-gray-200">Imagem</label>
                     <input type="file"
                            id="image"
                            name="image"
                            autocomplete="image"
                            placeholder="Escolha a imagem"
-                           class="form-control
-                        @error('image') is-invalid @enderror"
+                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm text-gray-800 placeholder-gray-500
+                           @error('image') border-red-500 @enderror"
                            value="{{ $product->image }}"
-
-                           aria-describedby="nameHelp">
+                           aria-describedby="imageHelp">
                     @error('image')
-                    <span class="invalid-feedback" role="alert">
+                    <span class="text-red-500 text-sm mt-2" role="alert">
                         <strong>{{ $message }}</strong>
-                        </span>
+                    </span>
                     @enderror
                 </div>
 
-                <div class="form-group">
-                    <label for="name">Nome</label>
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-medium text-gray-200">Nome</label>
                     <input type="text"
                            id="name"
                            name="name"
                            autocomplete="name"
                            placeholder="Insira o nome"
-                           class="form-control
-                        @error('name') is-invalid @enderror"
+                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm text-gray-800 placeholder-gray-500
+                           @error('name') border-red-500 @enderror"
                            value="{{ $product->name }}"
                            required
                            aria-describedby="nameHelp">
                     @error('name')
-                    <span class="invalid-feedback" role="alert">
+                    <span class="text-red-500 text-sm mt-2" role="alert">
                         <strong>{{ $message }}</strong>
-                        </span>
+                    </span>
                     @enderror
                 </div>
 
-                <div class="form-group">
-                    <label for="quantity">Quantidade</label>
-                    <input type="text"
+                <div class="mb-4">
+                    <label for="quantity" class="block text-sm font-medium text-gray-200">Quantidade</label>
+                    <input type="number"
                            id="quantity"
                            name="quantity"
                            autocomplete="quantity"
                            placeholder="Insira a quantidade"
-                           class="form-control
-                        @error('quantity') is-invalid @enderror"
+                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm text-gray-800 placeholder-gray-500
+                           @error('quantity') border-red-500 @enderror"
                            value="{{ $product->quantity }}"
                            required
-                           aria-describedby="nameHelp">
+                           aria-describedby="quantityHelp">
                     @error('quantity')
-                    <span class="invalid-feedback" role="alert">
+                    <span class="text-red-500 text-sm mt-2" role="alert">
                         <strong>{{ $message }}</strong>
-                        </span>
+                    </span>
                     @enderror
                 </div>
 
-                <div class="form-group">
-                    <label for="price">Preço</label>
+                <div class="mb-4">
+                    <label for="price" class="block text-sm font-medium text-gray-200">Preço</label>
                     <input type="number"
                            id="price"
                            name="price"
                            autocomplete="price"
                            placeholder="Insira o preço"
-                           class="form-control
-                        @error('price') is-invalid @enderror"
+                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm text-gray-800 placeholder-gray-500
+                           @error('price') border-red-500 @enderror"
                            value="{{ $product->price }}"
                            required
-                           aria-describedby="nameHelp">
+                           aria-describedby="priceHelp">
                     @error('price')
-                    <span class="invalid-feedback" role="alert">
+                    <span class="text-red-500 text-sm mt-2" role="alert">
                         <strong>{{ $message }}</strong>
-                        </span>
+                    </span>
                     @enderror
                 </div>
 
-                <div class="form-group">
-                    <label for="details">Detalhes</label>
-                    <textarea
-                           id="details"
-                           name="details"
-                           autocomplete="details"
-                           placeholder="Insira Detalhes"
-                           class="form-control
-                         @error('details') is-invalid @enderror"
-                            required
-                           aria-describedby="nameHelp">{{ $product->details }}
-                    </textarea>
+                <div class="mb-4">
+                    <label for="details" class="block text-sm font-medium text-gray-200">Detalhes</label>
+                    <textarea id="details"
+                              name="details"
+                              autocomplete="details"
+                              placeholder="Escreva os detalhes"
+                              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm text-gray-800 placeholder-gray-500
+                              @error('details') border-red-500 @enderror"
+                              required
+                              aria-describedby="detailsHelp">{{ $product->details }}</textarea>
                     @error('details')
-                    <span class="invalid-feedback" role="alert">
+                    <span class="text-red-500 text-sm mt-2" role="alert">
                         <strong>{{ $message }}</strong>
-                        </span>
+                    </span>
                     @enderror
                 </div>
 
-                <button type="submit" class="mt-2 mb-5 btn btn-primary">Submeter</button>
+                <button type="submit" class="mt-2 mb-5 w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-700">Submeter</button>
             </form>
         </div>
-        <div class="col-3"></div>
     </div>
 </div>

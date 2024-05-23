@@ -10,6 +10,10 @@ class Questionnaire extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $fillable = [
+        'title',
+        'description',
+    ];
     public function memberships()
     {
         return $this->belongsToMany(Membership::class);

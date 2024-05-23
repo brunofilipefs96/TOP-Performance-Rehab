@@ -35,15 +35,15 @@
             <x-input-label for="gender" :value="__('Género')" />
             <div class="block mt-1 w-full">
                 <label for="male" class="inline-flex items-center">
-                    <input type="radio" id="male" name="gender" value="male" {{ old('gender', $user->gender) == 'male' ? 'checked' : '' }} class="form-radio">
+                    <input type="radio" id="male" name="gender" value="male" {{ old('gender', $user->gender) == 'male' ? 'checked' : '' }} class="form-radio text-black dark:text-lime-400">
                     <x-input-label :value="__('Masculino')" class="ml-2" />
                 </label>
                 <label for="female" class="inline-flex items-center ml-4">
-                    <input type="radio" id="female" name="gender" value="female" {{ old('gender', $user->gender) == 'female' ? 'checked' : '' }} class="form-radio">
+                    <input type="radio" id="female" name="gender" value="female" {{ old('gender', $user->gender) == 'female' ? 'checked' : '' }} class="form-radio text-black dark:text-lime-400">
                     <x-input-label :value="__('Feminino')" class="ml-2" />
                 </label>
                 <label for="other" class="inline-flex items-center ml-4">
-                    <input type="radio" id="other" name="gender" value="other" {{ old('gender', $user->gender) != 'male' && old('gender', $user->gender) != 'female' ? 'checked' : '' }} class="form-radio">
+                    <input type="radio" id="other" name="gender" value="other" {{ old('gender', $user->gender) != 'male' && old('gender', $user->gender) != 'female' ? 'checked' : '' }} class="form-radio text-black dark:text-lime-400">
                     <x-input-label :value="__('Outro')" class="ml-2" />
                 </label>
             </div>

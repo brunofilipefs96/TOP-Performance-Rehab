@@ -14,7 +14,9 @@ class UpdateQuestionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'questionnaire_id' => 'required|exists:questionnaires,id',
+            'question_type_id' => 'required|exists:question_types,id',
+            'question_text' => 'required|string',
         ];
     }
 }

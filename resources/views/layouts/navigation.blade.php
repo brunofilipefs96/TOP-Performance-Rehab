@@ -15,21 +15,23 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
-                        {{ __('Produtos') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('rooms.index')" :active="request()->routeIs('rooms.index')">
-                        {{ __('Salas') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('training-types.index')" :active="request()->routeIs('training-types.index')">
-                        {{ __('Tipos de Treino') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('packs.index')" :active="request()->routeIs('packs.index')">
-                        {{ __('Packs') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
-                        {{ __('Users') }}
-                    </x-nav-link>
+                    @if(Auth::check() && Auth::user()->hasRole('admin'))
+                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
+                            {{ __('Users') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
+                            {{ __('Produtos') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('rooms.index')" :active="request()->routeIs('rooms.index')">
+                            {{ __('Salas') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('training-types.index')" :active="request()->routeIs('training-types.index')">
+                            {{ __('Tipos de Treino') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('packs.index')" :active="request()->routeIs('packs.index')">
+                            {{ __('Packs') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -98,6 +100,23 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            @if(Auth::check() && Auth::user()->hasRole('admin'))
+                <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
+                    {{ __('Users') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
+                    {{ __('Produtos') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('rooms.index')" :active="request()->routeIs('rooms.index')">
+                    {{ __('Salas') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('training-types.index')" :active="request()->routeIs('training-types.index')">
+                    {{ __('Tipos de Treino') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('packs.index')" :active="request()->routeIs('packs.index')">
+                    {{ __('Packs') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

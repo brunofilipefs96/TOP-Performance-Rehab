@@ -63,4 +63,10 @@ class MembershipPolicy
     {
         return $user->hasRole('admin');
     }
+
+
+    public function form(User $user): bool
+    {
+        return $user->hasRole('admin');    // Verificar se o Dono do Membership é o user que quer preencher o formulário
+    }
 }

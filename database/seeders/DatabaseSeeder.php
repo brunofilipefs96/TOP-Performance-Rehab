@@ -15,10 +15,6 @@ class DatabaseSeeder extends Seeder
     {
         //User::factory(10)->create();
         $this->call(RoleSeeder::class);
-        $this->call(ProductSeeder::class);
-        $this->call(RoomSeeder::class);
-        $this->call(TrainingTypeSeeder::class);
-        $this->call(PackSeeder::class);
 
         //Admin Account
         User::factory()->create([
@@ -64,5 +60,16 @@ class DatabaseSeeder extends Seeder
             'cc_number' => '333333333',
             'password' => bcrypt('atec123'),
         ])->roles()->sync([4]);
+
+        $this->call(ProductSeeder::class);
+        $this->call(RoomSeeder::class);
+        $this->call(TrainingTypeSeeder::class);
+        $this->call(PackSeeder::class);
+        $this->call(QuestionTypeSeeder::class);
+        $this->call(QuestionnaireSeeder::class);
+        $this->call(QuestionSeeder::class);
+        $this->call(ResponseSeeder::class);
+
+
     }
 }

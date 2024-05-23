@@ -13,7 +13,7 @@ class QuestionnairePolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -21,7 +21,7 @@ class QuestionnairePolicy
      */
     public function view(User $user, Questionnaire $questionnaire): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -29,7 +29,7 @@ class QuestionnairePolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -37,7 +37,7 @@ class QuestionnairePolicy
      */
     public function update(User $user, Questionnaire $questionnaire): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -45,7 +45,7 @@ class QuestionnairePolicy
      */
     public function delete(User $user, Questionnaire $questionnaire): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -53,7 +53,7 @@ class QuestionnairePolicy
      */
     public function restore(User $user, Questionnaire $questionnaire): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -61,6 +61,7 @@ class QuestionnairePolicy
      */
     public function forceDelete(User $user, Questionnaire $questionnaire): bool
     {
-        //
+        return $user->hasRole('admin');
     }
+
 }

@@ -5,6 +5,10 @@ use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\PackController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\QuestionnaireController;
+use App\Http\Controllers\QuestionTypeController;
+use App\Http\Controllers\ResponseController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\TrainingTypeController;
 use App\Http\Controllers\UserController;
@@ -12,7 +16,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 
 Route::get('/', function () {
-    return view('welcome');
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+    else{
+        return view('welcome');
+    }
 });
 
 /*
@@ -29,8 +38,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('/users', UserController::class)->only(['index', 'show', 'destroy']);
+
     Route::get('/users/{user}/membership/create', [MembershipController::class, 'create'])->name('users.memberships.create');
     Route::post('/users/{user}/membership', [MembershipController::class, 'store'])->name('users.memberships.store');
+
+    Route::get('/users/{user}/membership/questionnaires/{questionnaire}/form', [MembershipController::class, 'form'])->name('users.memberships.questionnaires.form');
+    Route::post('/users/{user}/membership/questionnaires/{questionnaire}', [MembershipController::class, 'storeForm'])->name('users.memberships.questionnaires.storeForm');
+
     Route::resource('/memberships', MembershipController::class)->only(['index', 'show', 'edit', 'update', 'destroy']);
 
     Route::resource('/products', ProductController::class);
@@ -38,6 +52,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('/training-types', TrainingTypeController::class);
     Route::resource('/packs', PackController::class);
     Route::resource('/insurances', InsuranceController::class);
+    Route::resource('/questionnaires', QuestionnaireController::class);
+    Route::resource('/question-types', QuestionTypeController::class);
+    Route::resource('/questions', QuestionController::class);
+    Route::resource('/responses', ResponseController::class);
 });
 
 

@@ -5,15 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\Question;
 use App\Http\Requests\StoreQuestionRequest;
 use App\Http\Requests\UpdateQuestionRequest;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class QuestionController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $this->authorize('viewAny', Question::class);
+        $questions = Question::orderBy('id', 'desc')->paginate(10);
+        return view('pages.questions.index', ['questions' => $questions]);
     }
 
     /**
@@ -21,7 +25,8 @@ class QuestionController extends Controller
      */
     public function create()
     {
-        //
+        $this->authorize('create', Question::class);
+        return view('pages.questions.create');
     }
 
     /**
@@ -29,7 +34,11 @@ class QuestionController extends Controller
      */
     public function store(StoreQuestionRequest $request)
     {
-        //
+        $validatedData = $request->validated();
+
+        Question::create($validatedData);
+
+        return redirect()->route('questions.index')->with('success', 'Question created successfully.');
     }
 
     /**
@@ -37,7 +46,8 @@ class QuestionController extends Controller
      */
     public function show(Question $question)
     {
-        //
+        $this->authorize('view', $question);
+        return view('pages.questions.show', ['question' => $question]);
     }
 
     /**
@@ -45,7 +55,8 @@ class QuestionController extends Controller
      */
     public function edit(Question $question)
     {
-        //
+        $this->authorize('update', $question);
+        return view('pages.questions.edit', ['question' => $question]);
     }
 
     /**
@@ -53,7 +64,11 @@ class QuestionController extends Controller
      */
     public function update(UpdateQuestionRequest $request, Question $question)
     {
-        //
+        $validatedData = $request->validated();
+
+        $question->update($validatedData);
+
+        return redirect()->route('questions.index')->with('success', 'Question updated successfully.');
     }
 
     /**
@@ -61,6 +76,8 @@ class QuestionController extends Controller
      */
     public function destroy(Question $question)
     {
-        //
+        $this->authorize('delete', $question);
+        $question->delete();
+        return redirect()->route('questions.index')->with('success', 'Question deleted successfully.');
     }
 }

@@ -1,13 +1,13 @@
 <x-guest-layout>
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full bg-white dark:bg-gray-600 p-8 rounded-lg shadow-md space-y-8">
+        <div class="max-w-md w-full bg-white dark:bg-gray-900 p-8 rounded-lg shadow-md space-y-8">
             <div>
                 <h2 class="mt-6 text-center text-3xl leading-9 font-extrabold text-gray-900 dark:text-white">
                     {{ __('Entrar') }}
                 </h2>
                 <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
                     {{ __('ou') }}
-                    <a href="{{ route('register') }}" class="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300">{{ __('Criar uma Conta.') }}</a>
+                    <a href="{{ route('register') }}" class="font-medium text-indigo-600 dark:text-lime-400 hover:text-indigo-500 dark:hover:text-lime-300">{{ __('Criar uma Conta.') }}</a>
                 </p>
             </div>
             <!-- Session Status -->
@@ -31,7 +31,7 @@
                 <!-- Remember Me -->
                 <div class="block mt-4">
                     <label for="remember_me" class="inline-flex items-center">
-                        <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
+                        <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-lime-600 shadow-sm focus:ring-lime-500 dark:focus:ring-lime-600 dark:focus:ring-offset-lime-800" name="remember">
                         <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Lembrar Password') }}</span>
                     </label>
                 </div>
@@ -41,7 +41,7 @@
                             {{ __('Esqueceu-se da sua Password?') }}
                         </a>
                     @endif
-                    <x-primary-button class="ms-3">
+                    <x-primary-button class="ms-3 dark:bg-lime-400 hover:dark:bg-lime-300">
                         {{ __('Entrar') }}
                     </x-primary-button>
                 </div>

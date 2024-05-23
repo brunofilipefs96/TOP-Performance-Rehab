@@ -9,7 +9,7 @@
 <?php endif; ?>
 <?php $component->withAttributes([]); ?>
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md space-y-8">
+        <div class="max-w-md w-full bg-white dark:bg-gray-900 p-8 rounded-lg shadow-md space-y-8">
             <div>
                 <h2 class="mt-6 text-center text-3xl leading-9 font-extrabold text-gray-900 dark:text-white">
                     <?php echo e(__('Entrar')); ?>
@@ -18,7 +18,7 @@
                 <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
                     <?php echo e(__('ou')); ?>
 
-                    <a href="<?php echo e(route('register')); ?>" class="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300"><?php echo e(__('Criar uma Conta.')); ?></a>
+                    <a href="<?php echo e(route('register')); ?>" class="font-medium text-indigo-600 dark:text-lime-400 hover:text-indigo-500 dark:hover:text-lime-300"><?php echo e(__('Criar uma Conta.')); ?></a>
                 </p>
             </div>
             <!-- Session Status -->
@@ -175,7 +175,7 @@
                 <!-- Remember Me -->
                 <div class="block mt-4">
                     <label for="remember_me" class="inline-flex items-center">
-                        <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
+                        <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-lime-600 shadow-sm focus:ring-lime-500 dark:focus:ring-lime-600 dark:focus:ring-offset-lime-800" name="remember">
                         <span class="ms-2 text-sm text-gray-600 dark:text-gray-400"><?php echo e(__('Lembrar Password')); ?></span>
                     </label>
                 </div>
@@ -188,14 +188,14 @@
                     <?php endif; ?>
                     <?php if (isset($component)) { $__componentOriginald411d1792bd6cc877d687758b753742c = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginald411d1792bd6cc877d687758b753742c = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.primary-button','data' => ['class' => 'ms-3']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.primary-button','data' => ['class' => 'ms-3 dark:bg-lime-400 hover:dark:bg-lime-300']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('primary-button'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['class' => 'ms-3']); ?>
+<?php $component->withAttributes(['class' => 'ms-3 dark:bg-lime-400 hover:dark:bg-lime-300']); ?>
                         <?php echo e(__('Entrar')); ?>
 
                      <?php echo $__env->renderComponent(); ?>

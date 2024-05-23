@@ -29,10 +29,8 @@ class ProfileController extends Controller
         $request->validate([
             'full_name' => ['required', 'string', 'max:255'],
             'birth_date' => ['required', 'date'],
-            'phone_number' => ['required', 'string', 'digits:9'],
+            'phone_number' => ['required', 'string', 'digits:9', 'unique:users,phone_number,' . $request->user()->id],
             'gender' => ['required', 'string', 'max:50'],
-            'nif' => ['required', 'string', 'digits:9'],
-            'cc_number' => ['required', 'string', 'max:9'],
         ]);
 
         if ($request->gender != 'male' && $request->gender != 'female') {

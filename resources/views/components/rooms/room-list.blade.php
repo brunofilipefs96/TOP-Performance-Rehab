@@ -8,7 +8,7 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
         @foreach ($rooms as $room)
-            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md text-white">
+            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none">
                 <div class="p-4">
                     <h3 class="text-xl font-semibold mb-2">{{ $room->name }}</h3>
                     <p class="text-gray-400 mb-2">Capacidade: {{ $room->capacity }}</p>

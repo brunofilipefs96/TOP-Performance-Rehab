@@ -8,10 +8,17 @@
                 <h1 class="mb-2">Tipo de treino {{$training_type->id}}</h1>
             </div>
 
-            @if($training_type->image)
+            @if($training_type->image && file_exists(public_path($training_type->image)))
+                <div class="mb-4 select-none">
+                    <label for="image" class="block">Imagem</label>
+                    <img src="{{ asset($training_type->image) }}" alt="Imagem do Tipo de Treino" class="mt-1 block w-full h-auto border border-gray-300 rounded-md shadow-sm">
+                </div>
+            @else
                 <div class="mb-4">
                     <label for="image" class="block">Imagem</label>
-                    <img src="{{ $training_type->image }}" alt="Imagem do Tipo de Treino" class="mt-1 block w-full h-auto border border-gray-300 rounded-md shadow-sm">
+                    <div class="mt-1 block w-full h-40 bg-gray-600 flex items-center justify-center text-white rounded-md shadow-sm">
+                        <span class="text-xl">Sem imagem</span>
+                    </div>
                 </div>
             @endif
 

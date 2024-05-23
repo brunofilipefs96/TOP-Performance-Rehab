@@ -8,12 +8,12 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
         @foreach ($products as $product)
-            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md text-white">
+            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none">
                 <div class="flex justify-center">
-                    @if($product->image)
-                        <img src="{{ $product->image }}" alt="{{ $product->name }}" class="w-full h-40 object-cover">
+                    @if($product->image && file_exists(public_path($product->image)))
+                        <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="w-full h-40 object-cover">
                     @else
-                        <div class="w-full h-40 bg-gray-600 flex items-center justify-center">
+                        <div class="w-full h-40 bg-gray-600 flex items-center justify-center ">
                             <span class="text-3xl">Sem imagem</span>
                         </div>
                     @endif

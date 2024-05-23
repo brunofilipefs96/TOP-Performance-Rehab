@@ -8,10 +8,10 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
         @foreach ($training_types as $training_type)
-            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md text-white">
+            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none">
                 <div class="flex justify-center">
-                    @if($training_type->image)
-                        <img src="{{ $training_type->image }}" alt="{{ $training_type->name }}" class="w-full h-40 object-cover">
+                    @if($training_type->image && file_exists(public_path($training_type->image)))
+                        <img src="{{ asset($training_type->image) }}" alt="{{ $training_type->name }}" class="w-full h-40 object-cover">
                     @else
                         <div class="w-full h-40 bg-gray-600 flex items-center justify-center">
                             <span class="text-3xl">Sem imagem</span>

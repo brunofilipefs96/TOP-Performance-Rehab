@@ -8,7 +8,7 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
         @foreach ($users as $user)
-            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md text-white">
+            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none">
                 <div class="flex justify-center">
                     @if($user->image && file_exists(public_path($user->image)))
                         <img src="{{ asset($user->image) }}" alt="{{ $user->firstLastName() }}" class="w-full h-40 object-cover">

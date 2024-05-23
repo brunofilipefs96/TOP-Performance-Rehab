@@ -9,7 +9,7 @@
             </div>
 
             <div class="mb-4">
-                <label for="user_name" class="block">Nome do Usuário</label>
+                <label for="user_name" class="block">Nome do Utilizador</label>
                 <input type="text" value="{{ $membership->user->full_name }}" disabled class="mt-1 block w-full p-2 border border-gray-300 text-gray-800 rounded-md shadow-sm">
             </div>
 
@@ -29,7 +29,7 @@
             </div>
 
             <div class="mb-4">
-                <label for="updated_at" class="block">Data de Atualização</label>
+                <label for="updated_at" class="block">Data da última Atualização</label>
                 <input type="text" value="{{ $membership->updated_at->format('d/m/Y H:i:s') }}" disabled class="mt-1 block w-full p-2 border border-gray-300 text-gray-800 rounded-md shadow-sm">
             </div>
         </div>

@@ -4,23 +4,21 @@
     </div>
     <div class="flex justify-center">
         <div class="w-full max-w-lg">
-            <form method="POST" action="{{ url('products/' . $product->id) }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('products.update', $product->id) }}" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-                <div class="mb-2">
-                    <h1 class="text-xl font-bold text-gray-200">Editar Produto {{$product->id}}</h1>
+                <div class="mb-3">
+                    <h1 class="text-xl font-bold text-gray-200">Editar Produto</h1>
+                    <hr class="border-t border-gray-300">
                 </div>
-
                 <div class="mb-4">
                     <label for="image" class="block text-sm font-medium text-gray-200">Imagem</label>
                     <input type="file"
                            id="image"
                            name="image"
-                           autocomplete="image"
-                           placeholder="Escolha a imagem"
-                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm text-gray-800 placeholder-gray-500
+                           accept="image/*"
+                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm text-gray-200 placeholder-gray-500
                            @error('image') border-red-500 @enderror"
-                           value="{{ $product->image }}"
                            aria-describedby="imageHelp">
                     @error('image')
                     <span class="text-red-500 text-sm mt-2" role="alert">
@@ -35,7 +33,7 @@
                            id="name"
                            name="name"
                            autocomplete="name"
-                           placeholder="Insira o nome"
+                           placeholder="Escreva o nome"
                            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm text-gray-800 placeholder-gray-500
                            @error('name') border-red-500 @enderror"
                            value="{{ $product->name }}"
@@ -103,7 +101,7 @@
                     @enderror
                 </div>
 
-                <button type="submit" class="mt-2 mb-5 w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-700">Submeter</button>
+                <button type="submit" class="mt-4 mb-5 w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-700">Atualizar</button>
             </form>
         </div>
     </div>

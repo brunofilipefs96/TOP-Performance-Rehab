@@ -13,7 +13,7 @@ class MembershipPolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -21,7 +21,7 @@ class MembershipPolicy
      */
     public function view(User $user, Membership $membership): bool
     {
-        //
+        return $user->id === $membership->user_id || $user->hasRole('admin');
     }
 
     /**
@@ -29,7 +29,7 @@ class MembershipPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -37,7 +37,7 @@ class MembershipPolicy
      */
     public function update(User $user, Membership $membership): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -45,7 +45,7 @@ class MembershipPolicy
      */
     public function delete(User $user, Membership $membership): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -53,7 +53,7 @@ class MembershipPolicy
      */
     public function restore(User $user, Membership $membership): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -61,6 +61,6 @@ class MembershipPolicy
      */
     public function forceDelete(User $user, Membership $membership): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 }

@@ -23,12 +23,6 @@
             <x-input-error class="mt-2" :messages="$errors->get('full_name')" />
         </div>
 
-        <div>
-            <x-input-label for="birth_date" :value="__('Data de Nascimento')" />
-            <x-text-input id="birth_date" name="birth_date" class="mt-1 block w-full" type="date" :value="old('birth_date', $user->birth_date)" required />
-            <x-input-error class="mt-2" :messages="$errors->get('birth_date')" />
-        </div>
-
         <!-- Phone Number -->
         <div>
             <x-input-label for="phone_number" :value="__('Nº Telemóvel')" />
@@ -58,20 +52,6 @@
                 <x-input-error :messages="$errors->get('other_gender')" class="mt-2" />
             </div>
             <x-input-error :messages="$errors->get('gender')" class="mt-2" />
-        </div>
-
-        <!-- NIF -->
-        <div>
-            <x-input-label for="nif" :value="__('NIF')" />
-            <x-text-input id="nif" name="nif" type="text" class="mt-1 block w-full" maxlength="9" pattern="\d{9}" :value="old('nif', $user->nif)" required autocomplete="nif" />
-            <x-input-error class="mt-2" :messages="$errors->get('nif')" />
-        </div>
-
-        <!-- CC Number -->
-        <div>
-            <x-input-label for="cc_number" :value="__('CC Number')" />
-            <x-text-input id="cc_number" name="cc_number" type="text" class="mt-1 block w-full" maxlength="10" :value="old('cc_number', $user->cc_number)" required autocomplete="cc_number" />
-            <x-input-error class="mt-2" :messages="$errors->get('cc_number')" />
         </div>
 
         <div class="flex items-center gap-4">

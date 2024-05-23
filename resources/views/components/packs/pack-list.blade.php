@@ -1,51 +1,41 @@
-<div class="container mt-5">
-    <h1>Lista de Pacotes</h1>
+<div class="container mx-auto mt-5">
+    <h1 class="text-2xl font-bold mb-5 text-white">Lista de Pacotes</h1>
     @can('create', App\Models\Pack::class)
-    <a href="{{ url('packs/create') }}"><button type="button">Adicionar Pacote</button></a>
+        <a href="{{ url('packs/create') }}" class="block mb-4">
+            <button type="button" class="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-700">Adicionar Pacote</button>
+        </a>
     @endcan
-    <table class="table">
-        <thead>
-        <tr>
-            <th>#</th>
-            <th>Nome</th>
-            <th>Numero de Treinos</th>
-            <th>Pesonal Trainer</th>
-            <th>Preço</th>
-            <th>Ações</th>
-        </tr>
-        </thead>
-        <tbody>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
         @foreach ($packs as $pack)
-            <tr>
-                <td>{{ $pack->id }}</td>
-                <td>{{ $pack->name }}</td>
-                <td>{{ $pack->trainings_number }}</td>
-                <td>
-                    <input type="radio" name="personal_trainer_{{ $pack->id }}" value="1" {{ $pack->has_personal_trainer ? 'checked' : '' }} disabled> Sim
-                    <input type="radio" name="personal_trainer_{{ $pack->id }}" value="0" {{ !$pack->has_personal_trainer ? 'checked' : '' }} disabled> Não
-                </td>
-                <td>{{ $pack->price }}</td>
-                <td>
-                    <a href="{{ url('packs/' . $pack->id)  }}"><button type="button">Mostrar</button></a>
+            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md text-white">
+                <div class="p-4">
+                    <h3 class="text-xl font-semibold mb-2">{{ $pack->name }}</h3>
+                    <p class="text-gray-400 mb-2">Número de Treinos: {{ $pack->trainings_number }}</p>
+                    <p class="text-gray-400 mb-2">
+                        Personal Trainer:
+                        <span>{{ $pack->has_personal_trainer ? 'Sim' : 'Não' }}</span>
+                    </p>
+                    <p class="text-gray-400 mb-2">{{ $pack->price }}</p>
+                    <div class="flex justify-between items-center">
+                        <a href="{{ url('packs/' . $pack->id) }}" class="bg-green-500 text-white px-2 py-1 rounded-md hover:bg-green-700">Mostrar</a>
                         @can('update', $pack)
-                        <a href="{{ url('packs/' . $pack->id) . '/edit' }}"><button type="button">Editar</button></a>
+                            <a href="{{ url('packs/' . $pack->id . '/edit') }}" class="bg-yellow-500 text-white px-2 py-1 rounded-md hover:bg-yellow-700">Editar</a>
                         @endcan
                         @can('delete', $pack)
-                        <form action="{{url('packs/' . $pack->id)}}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit">Eliminar</button>
-                        </form>
+                            <form action="{{url('packs/' . $pack->id)}}" method="POST" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-700">Eliminar</button>
+                            </form>
                         @endcan
-                </td>
-
-            </tr>
+                    </div>
+                </div>
+            </div>
         @endforeach
-        </tbody>
-    </table>
-
-    <div class="d-flex justify-content-center mt-4 mb-3 pages">
-        {{ $packs->links() }}
     </div>
 
+    <div class="flex justify-center mt-4 mb-3">
+        {{ $packs->links() }}
+    </div>
 </div>

@@ -5,6 +5,10 @@ use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\PackController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\QuestionnaireController;
+use App\Http\Controllers\QuestionTypeController;
+use App\Http\Controllers\ResponseController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\TrainingTypeController;
 use App\Http\Controllers\UserController;
@@ -38,6 +42,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('/training-types', TrainingTypeController::class);
     Route::resource('/packs', PackController::class);
     Route::resource('/insurances', InsuranceController::class);
+    Route::resource('/questionnaires', QuestionnaireController::class);
+    Route::resource('/question-types', QuestionTypeController::class);
+    Route::resource('/questions', QuestionController::class);
+    Route::resource('/responses', ResponseController::class);
 });
 
 

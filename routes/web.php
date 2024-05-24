@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EntryController;
 use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\PackController;
@@ -41,10 +42,6 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/users/{user}/membership/create', [MembershipController::class, 'create'])->name('users.memberships.create');
     Route::post('/users/{user}/membership', [MembershipController::class, 'store'])->name('users.memberships.store');
-
-    Route::get('/users/{user}/membership/questionnaires/{questionnaire}/form', [MembershipController::class, 'form'])->name('users.memberships.questionnaires.form');
-    Route::post('/users/{user}/membership/questionnaires/{questionnaire}', [MembershipController::class, 'storeForm'])->name('users.memberships.questionnaires.storeForm');
-
     Route::resource('/memberships', MembershipController::class)->only(['index', 'show', 'edit', 'update', 'destroy']);
 
     Route::resource('/products', ProductController::class);
@@ -52,10 +49,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('/training-types', TrainingTypeController::class);
     Route::resource('/packs', PackController::class);
     Route::resource('/insurances', InsuranceController::class);
-    Route::resource('/questionnaires', QuestionnaireController::class);
-    Route::resource('/question-types', QuestionTypeController::class);
-    Route::resource('/questions', QuestionController::class);
-    Route::resource('/responses', ResponseController::class);
+
+    Route::get('/entries/{survey}/fill', [EntryController::class, 'fill'])->name('entries.fill');
+    Route::post('/entries/{survey}', [EntryController::class, 'store'])->name('entries.store');
 });
 
 

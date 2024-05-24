@@ -30,8 +30,4 @@ class Membership extends Model
         return $this->hasMany(Evaluation::class);
     }
 
-    public function questionnaires()
-    {
-        return $this->belongsToMany(Questionnaire::class);
-    }
 }

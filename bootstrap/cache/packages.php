@@ -20,6 +20,13 @@
       0 => 'Laravel\\Tinker\\TinkerServiceProvider',
     ),
   ),
+  'matt-daneshvar/laravel-survey' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'MattDaneshvar\\Survey\\SurveyServiceProvider',
+    ),
+  ),
   'nesbot/carbon' => 
   array (
     'providers' => 

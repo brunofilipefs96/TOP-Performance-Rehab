@@ -65,11 +65,6 @@ class DatabaseSeeder extends Seeder
         $this->call(RoomSeeder::class);
         $this->call(TrainingTypeSeeder::class);
         $this->call(PackSeeder::class);
-        $this->call(QuestionTypeSeeder::class);
-        $this->call(QuestionnaireSeeder::class);
-        $this->call(QuestionSeeder::class);
-        $this->call(ResponseSeeder::class);
-
-
+        $this->call(SurveySeeder::class);
     }
 }

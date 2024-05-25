@@ -21,10 +21,10 @@
                             <a href="{{ url('rooms/' . $room->id . '/edit') }}" class="bg-yellow-500 text-white px-2 py-1 rounded-md hover:bg-yellow-700 dark:bg-gray-500 dark:hover:bg-gray-400">Editar</a>
                         @endcan
                         @can('delete', $room)
-                            <form id="delete-form" action="{{ url('rooms/' . $room->id) }}" method="POST" class="inline">
+                            <form id="delete-form-{{$room->id}}" action="{{ url('rooms/' . $room->id) }}" method="POST" class="inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="button" class="bg-red-600 text-white px-2 py-1 rounded-md hover:bg-red-500" id="delete-button">Eliminar</button>
+                                <button type="button" class="bg-red-600 text-white px-2 py-1 rounded-md hover:bg-red-500" id="delete-button" onclick="confirmarEliminacao({{ $room->id }})">Eliminar</button>
                             </form>
 
                             <div id="confirmation-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden">
@@ -50,16 +50,19 @@
 </div>
 
 <script>
-    document.getElementById('delete-button').addEventListener('click', function() {
+    let roomDeleted = 0;
+
+    function confirmarEliminacao(id) {
         document.getElementById('confirmation-modal').classList.remove('hidden');
-    });
+        roomDeleted = id;
+    }
 
     document.getElementById('cancel-button').addEventListener('click', function() {
         document.getElementById('confirmation-modal').classList.add('hidden');
     });
 
     document.getElementById('confirm-button').addEventListener('click', function() {
-        document.getElementById('delete-form').submit();
+        document.getElementById(`delete-form-${roomDeleted}`).submit();
     });
 </script>
 

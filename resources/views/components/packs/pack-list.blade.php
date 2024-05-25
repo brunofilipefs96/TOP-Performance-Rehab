@@ -23,19 +23,19 @@
                             <a href="{{ url('packs/' . $pack->id . '/edit') }}" class="bg-yellow-500 text-white px-2 py-1 rounded-md hover:bg-yellow-700 dark:bg-gray-500 dark:hover:bg-gray-400">Editar</a>
                         @endcan
                         @can('delete', $pack)
-                            <form id="delete-form-pack" action="{{ url('packs/' . $pack->id) }}" method="POST" class="inline">
+                            <form id="delete-form-{{$pack->id}}" action="{{ url('packs/' . $pack->id) }}" method="POST" class="inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="button" class="delete-button-pack bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-700 bg-red-600 text-white px-2 py-1 rounded-md hover:bg-red-500">Eliminar</button>
+                                <button type="button" class="bg-red-600 text-white px-2 py-1 rounded-md hover:bg-red-500" id="delete-button" onclick="confirmarEliminacao({{ $pack->id }})">Eliminar</button>
                             </form>
 
-                            <div id="confirmation-modal-pack" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden">
+                            <div id="confirmation-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden">
                                 <div class="bg-white p-6 rounded-md shadow-md w-96 dark:bg-gray-900">
                                     <h2 class="text-xl font-bold mb-4">Pretende eliminar?</h2>
-                                    <p class="mb-4">Não poderá reverter isso!</p>
+                                    <p class="mb-4 text-red-300">Não poderá reverter isso!</p>
                                     <div class="flex justify-end gap-4">
-                                        <button id="cancel-button-pack" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400">Cancelar</button>
-                                        <button id="confirm-button-pack" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Eliminar</button>
+                                        <button id="cancel-button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400">Cancelar</button>
+                                        <button id="confirm-button" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Eliminar</button>
                                     </div>
                                 </div>
                             </div>
@@ -53,20 +53,18 @@
 
 
 <script>
-    const deleteButtonPack = document.querySelector('.delete-button-pack');
-    const confirmationModalPack = document.querySelector('#confirmation-modal-pack');
-    const cancelButtonPack = document.querySelector('#cancel-button-pack');
-    const confirmButtonPack = document.querySelector('#confirm-button-pack');
+    let packDeleted = 0;
 
-    deleteButtonPack.addEventListener('click', function() {
-        confirmationModalPack.classList.remove('hidden');
+    function confirmarEliminacao(id) {
+        document.getElementById('confirmation-modal').classList.remove('hidden');
+        packDeleted = id;
+    }
+
+    document.getElementById('cancel-button').addEventListener('click', function() {
+        document.getElementById('confirmation-modal').classList.add('hidden');
     });
 
-    cancelButtonPack.addEventListener('click', function() {
-        confirmationModalPack.classList.add('hidden');
-    });
-
-    confirmButtonPack.addEventListener('click', function() {
-        document.getElementById('delete-form-pack').submit();
+    document.getElementById('confirm-button').addEventListener('click', function() {
+        document.getElementById(`delete-form-${packDeleted}`).submit();
     });
 </script>

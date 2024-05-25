@@ -5,47 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\Address;
 use App\Http\Requests\StoreAddressRequest;
 use App\Http\Requests\UpdateAddressRequest;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Redirect;
 
 class AddressController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    use AuthorizesRequests;
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreAddressRequest $request)
     {
-        //
-    }
+        $validatedData = $request->validated();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Address $address)
-    {
-        //
-    }
+        Address::create($validatedData);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Address $address)
-    {
-        //
+        return Redirect::back()->with('status', 'Address Created!');
     }
 
     /**
@@ -53,7 +29,13 @@ class AddressController extends Controller
      */
     public function update(UpdateAddressRequest $request, Address $address)
     {
-        //
+        $this->authorize('update', $address);
+
+        $validatedData = $request->validated();
+
+        $address->update($validatedData);
+
+        return Redirect::back()->with('status', 'Address Updated!');
     }
 
     /**
@@ -61,6 +43,10 @@ class AddressController extends Controller
      */
     public function destroy(Address $address)
     {
-        //
+        $this->authorize('delete', $address);
+
+        $address->delete();
+
+        return Redirect::back()->with('status', 'Address Deleted!');
     }
 }

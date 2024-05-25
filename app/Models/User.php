@@ -67,6 +67,11 @@ class User extends Authenticatable
         return $this->roles()->where('name', $role)->exists();
     }
 
+    public function hasAddress(): bool
+    {
+        return $this->address()->exists();
+    }
+
     public function address()
     {
         return $this->hasOne(Address::class);

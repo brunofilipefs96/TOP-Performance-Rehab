@@ -24,7 +24,6 @@ class EntryController extends Controller
 
     public function store(Request $request){
         $survey = Survey::find($request->survey);
-
         $answers = $request->validate($survey->rules);
 
         (new Entry)->for($survey)->by(Auth::user())->fromArray($answers)->push();

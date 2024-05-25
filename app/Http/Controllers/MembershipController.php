@@ -78,9 +78,9 @@ class MembershipController extends Controller
     {
         $this->authorize('form', Membership::class);
 
-        $questionnaire = Questionnaire::findOrFail(request('questionnaire'));
+        $entries = Entry::find($request->entry)->questions;
 
-        return view('pages.memberships.form', ['questionnaire' => $questionnaire]);
+        return view('pages.memberships.form', ['entries' => $entries]);
     }
 
 

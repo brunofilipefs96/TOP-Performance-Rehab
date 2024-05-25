@@ -13,7 +13,7 @@ class AddressPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->hasRole('admin');
     }
 
     /**
@@ -21,7 +21,7 @@ class AddressPolicy
      */
     public function view(User $user, Address $address): bool
     {
-        return $user->id === $address->user_id;
+        return ($user->id === $address->user_id || $user->hasRole('admin'));
     }
 
     /**

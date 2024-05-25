@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\InsuranceController;
@@ -52,6 +53,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/entries/{survey}/fill', [EntryController::class, 'fill'])->name('entries.fill');
     Route::post('/entries/{survey}', [EntryController::class, 'store'])->name('entries.store');
+
+    Route::post('/profile/address', [AddressController::class, 'store'])->name('address.store');
+    Route::patch('/profile/address', [AddressController::class, 'update'])->name('address.update');
+    Route::delete('/profile/address', [AddressController::class, 'destroy'])->name('address.destroy');
 });
 
 

@@ -20,22 +20,22 @@
             @endif
 
             <div class="mb-4">
-                <label for="name" class="block text-gray-800">Nome</label>
+                <label for="name" class="block text-gray-800 dark:text-white">Nome</label>
                 <input type="text" value="{{$product->name}}" disabled class="mt-1 block w-full p-2 text-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
             </div>
 
             <div class="mb-4">
-                <label for="quantity" class="block text-gray-800">Quantidade</label>
+                <label for="quantity" class="block text-gray-800 dark:text-white">Quantidade</label>
                 <input class="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white" type="number" value="{{$product->quantity}}" disabled>
             </div>
 
             <div class="mb-4">
-                <label for="price" class="block text-gray-800">Preço</label>
+                <label for="price" class="block text-gray-800 dark:text-white">Preço</label>
                 <input class="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white" type="number" value="{{$product->price}}" disabled>
             </div>
 
             <div class="mb-4">
-                <label for="details" class="block text-gray-800">Detalhes</label>
+                <label for="details" class="block text-gray-800 dark:text-white">Detalhes</label>
                 <textarea class="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white" type="text" disabled>{{$product->details}}</textarea>
             </div>
             <div class="flex justify-center mt-6">

@@ -13,7 +13,7 @@ class EntryController extends Controller
         return view('pages.entries.index', ['surveys' => Survey::all()]);
     }
     public function fill(Survey $survey){
-        if ($survey->entriesFrom(Auth::user()->id)->exists()) {
+        if ($survey->entriesFrom(Auth::user())->exists()) {
             return redirect()->route('dashboard');
         }
         else

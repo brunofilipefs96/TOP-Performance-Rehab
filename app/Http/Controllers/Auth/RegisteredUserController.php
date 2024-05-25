@@ -36,7 +36,7 @@ class RegisteredUserController extends Controller
             'phone_number' => ['required', 'string', 'digits:9', 'unique:'.User::class],
             'gender' => ['required', 'string', 'max:50'],
             'nif' => ['required', 'string', 'digits:9', 'unique:'.User::class],
-            'cc_number' => ['required', 'string', 'max:9', 'unique:'.User::class],
+            'cc_number' => ['required', 'string', 'max:10', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 

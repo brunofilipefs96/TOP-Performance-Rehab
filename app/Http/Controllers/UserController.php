@@ -16,7 +16,6 @@ class UserController extends Controller
         return view('pages.users.index', ['users' => $users]);
     }
 
-
     public function show(User $user)
     {
         $this->authorize('view', $user);

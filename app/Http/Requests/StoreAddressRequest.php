@@ -17,8 +17,7 @@ class StoreAddressRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'street' => ['required', 'string', 'max:255'],
             'city' => ['required', 'string', 'max:255'],
-            'postal_code' => ['required', 'regex:/^[0-9]{4}-[0-9]{3}$/'],
-            'user_id' => ['required', 'exists:users,id'],
+            'postal_code' => ['required', 'string', 'max:255'],
         ];
     }
 }

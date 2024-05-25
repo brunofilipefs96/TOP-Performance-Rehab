@@ -7,10 +7,6 @@ use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\PackController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\QuestionController;
-use App\Http\Controllers\QuestionnaireController;
-use App\Http\Controllers\QuestionTypeController;
-use App\Http\Controllers\ResponseController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\TrainingTypeController;
 use App\Http\Controllers\UserController;
@@ -54,9 +50,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/entries/{survey}/fill', [EntryController::class, 'fill'])->name('entries.fill');
     Route::post('/entries/{survey}', [EntryController::class, 'store'])->name('entries.store');
 
-    Route::post('/profile/address', [AddressController::class, 'store'])->name('address.store');
-    Route::patch('/profile/address', [AddressController::class, 'update'])->name('address.update');
-    Route::delete('/profile/address', [AddressController::class, 'destroy'])->name('address.destroy');
+    Route::post('/profile/addresses', [AddressController::class, 'store'])->name('addresses.store');
+    Route::put('/profile/addresses/{address}', [AddressController::class, 'update'])->name('addresses.update');
+    Route::delete('/profile/addresses/{address}', [AddressController::class, 'destroy'])->name('addresses.destroy');
 });
 
 

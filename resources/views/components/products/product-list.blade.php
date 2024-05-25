@@ -37,7 +37,7 @@
                             </form>
 
                             <div id="confirmation-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden">
-                                <div class="bg-white p-6 rounded-md shadow-md w-96 dark:bg-gray-900">
+                                <div class="bg-gray-300 p-6 rounded-md shadow-md w-96 dark:bg-gray-900">
                                     <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Pretende eliminar?</h2>
                                     <p class="mb-4 dark:text-red-300 text-red-500">Não poderá reverter isso!</p>
                                     <div class="flex justify-end gap-4">

@@ -1,28 +1,28 @@
 <section>
     <header>
-        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+        <h2 class="text-xl font-medium text-gray-900 dark:text-gray-100">
             {{ __('Moradas') }}
         </h2>
     </header>
-    @if ($user->hasAddress())
-        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            {{ __("Minhas Moradas.") }}
-        </p>
+    @if ($user->addresses && $user->addresses->count() > 0)
+        <div class="flex items-center gap-4 mt-4">
+            <button type="button" onclick="adicionarEndereco()" class="bg-green-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-700 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300">Adicionar Morada</button>
+        </div>
 
         <!-- Seleção de Morada -->
         <div>
-            <x-input-label for="address" :value="__('Selecionar Morada')" />
-            <select id="address" name="address" class="mt-1 block w-full" onchange="updateAddressFields()">
+            <x-input-label for="address" :value="__('Minhas Moradas')" class="mt-5 mb-1"/>
+            <select id="address" name="address" class="w-1/2 dark:border-gray-300 dark:border-gray-700 dark:bg-gray-400 dark:text-gray-900 focus:border-lime-500 dark:focus:border-lime-600 focus:ring-lime-500 dark:focus:ring-lime-600 rounded-md shadow-sm" onchange="updateAddressFields()">
                 @foreach($user->addresses as $address)
                     <option value="{{ $address->id }}" @if($loop->first) selected @endif>{{ $address->name }}</option>
                 @endforeach
             </select>
             <x-input-error class="mt-2" :messages="$errors->get('address')" />
         </div>
-
-        <form method="post" action="{{ route('address.update') }}" class="mt-6 space-y-6">
+        <h1 id="form-title" class="text-lg mt-10">Atualizar Morada</h1>
+        <form id="updateAddressForm" method="POST" action="{{ route('addresses.update', $user->addresses->first()->id) }}" class="mt-2 space-y-6">
             @csrf
-            @method('patch')
+            @method('put')
 
             <!-- Nome da Morada -->
             <div>
@@ -53,18 +53,14 @@
             </div>
 
             <div class="flex items-center gap-4">
-                <x-primary-button>{{ __('Guardar') }}</x-primary-button>
-
-                @if (session('status') === 'profile-updated')
-                    <p
-                        x-data="{ show: true }"
-                        x-show="show"
-                        x-transition
-                        x-init="setTimeout(() => show = false, 2000)"
-                        class="text-sm text-gray-600 dark:text-gray-400"
-                    >{{ __('Guardado.') }}</p>
-                @endif
+                <button id="submit-button" type="submit" class="mt-4 mb-5 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-700 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300">Atualizar</button>
             </div>
+        </form>
+        <form id="delete-form" method="POST" action="" class="inline">
+            @csrf
+            @method('DELETE')
+            <button type="button" class="bg-red-600 text-white px-2 py-1 rounded-md hover:bg-red-500" onclick="removerEndereco()">Eliminar</button>
+            <button type="submit" id="delete-submit-button" style="display: none;"></button>
         </form>
     @else
         <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
@@ -72,7 +68,7 @@
         </p>
 
         <h2 class="mt-10">Inserir Morada</h2>
-        <form method="post" action="{{ route('address.store') }}" class="mt-6 space-y-6">
+        <form method="post" action="{{ url('profile/addresses') }}" class="mt-6 space-y-6">
             @csrf
 
             <div>
@@ -100,7 +96,7 @@
             </div>
 
             <div class="flex items-center gap-4">
-                <button type="submit" class="mt-4 mb-5 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-700 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300">Inserir Morada</button>
+                <button type="submit" class="mt-4 mb-5 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-700 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300">Inserir</button>
             </div>
         </form>
     @endif
@@ -114,16 +110,39 @@
             e.target.value = value.slice(0, 8);
         });
 
-        function updateAddressFields() {
-            const addressId = document.getElementById('address').value;
-            const addresses = @json($user->addresses);
+        function removerEndereco() {
+            var selectedAddressId = document.getElementById('address').value;
+            document.getElementById('delete-form').action = "{{ url('profile/addresses') }}/" + selectedAddressId;
+            document.getElementById('delete-submit-button').click();
+        }
 
-            const selectedAddress = addresses.find(address => address.id == addressId);
+        function updateAddressFields() {
+            var selectedAddressId = document.getElementById('address').value;
+            var selectedAddress = {!! $user->addresses !!}.find(function(address) {
+                return address.id == selectedAddressId;
+            });
 
             document.getElementById('name').value = selectedAddress.name;
             document.getElementById('street').value = selectedAddress.street;
             document.getElementById('city').value = selectedAddress.city;
             document.getElementById('postal_code').value = selectedAddress.postal_code;
+
+            document.getElementById('updateAddressForm').action = "{{ route('addresses.update', '') }}/" + selectedAddressId;
+            document.getElementById('submit-button').textContent = 'Atualizar';
+            document.getElementById('form-title').textContent = 'Atualizar Morada';
         }
+
+        function adicionarEndereco() {
+            document.getElementById('name').value = '';
+            document.getElementById('street').value = '';
+            document.getElementById('city').value = '';
+            document.getElementById('postal_code').value = '';
+            document.getElementById('updateAddressForm').action = "{{ url('profile/addresses') }}";
+            document.getElementById('updateAddressForm').method = "POST";
+            document.getElementById('submit-button').textContent = 'Adicionar Morada';
+            document.getElementById('form-title').textContent = 'Adicionar Morada';
+        }
+
+        updateAddressFields();
     </script>
 </section>

@@ -19,7 +19,7 @@ class AddressController extends Controller
     {
         $validatedData = $request->validated();
 
-        Address::create($validatedData);
+        Address::create($validatedData + ['user_id' => auth()->id()]);
 
         return Redirect::back()->with('status', 'Address Created!');
     }

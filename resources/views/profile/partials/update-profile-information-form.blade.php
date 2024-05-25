@@ -103,5 +103,4 @@
             handleOtherGenderInput();
         });
     </script>
-
 </section>

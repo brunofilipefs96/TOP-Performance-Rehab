@@ -49,11 +49,11 @@
                 <div class="mb-4">
                     <label class="block text-sm font-medium dark:text-gray-200 text-gray-800">Personal Trainer</label>
                     <div class="flex items-center">
-                        <input type="radio" id="personal_trainer_yes" name="has_personal_trainer" value="1" class="form-radio text-blue-500 dark:text-lime-400 h-4 w-4  dark:bg-gray-600  dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50 dark:checked:bg-lime-400 focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 checked:bg-blue-500" {{ old('has_personal_trainer') == '1' ? 'checked' : '' }}>
+                        <input type="radio" id="personal_trainer_yes" name="has_personal_trainer" value="1" class="form-radio text-blue-500 dark:text-lime-400 h-4 w-4  dark:bg-gray-600  dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50 dark:checked:bg-lime-400 focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 checked:bg-blue-500" {{ old('has_personal_trainer') == '1' ? 'checked' : '' }} required>
                         <label for="personal_trainer_yes" class="ml-2 dark:text-gray-200 text-gray-800">Sim</label>
                     </div>
                     <div class="flex items-center mt-2">
-                        <input type="radio" id="personal_trainer_no" name="has_personal_trainer" value="0" class="form-radio text-blue-500 dark:text-lime-400 h-4 w-4  dark:bg-gray-600 dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50 dark:checked:bg-lime-400  focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 checked:bg-blue-500" {{ old('has_personal_trainer') == '0' ? 'checked' : '' }}>
+                        <input type="radio" id="personal_trainer_no" name="has_personal_trainer" value="0" class="form-radio text-blue-500 dark:text-lime-400 h-4 w-4  dark:bg-gray-600 dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50 dark:checked:bg-lime-400  focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 checked:bg-blue-500" {{ old('has_personal_trainer') == '0' ? 'checked' : '' }} required>
                         <label for="personal_trainer_no" class="ml-2 dark:text-gray-200 text-gray-800">Não</label>
                     </div>
                     @error('has_personal_trainer')

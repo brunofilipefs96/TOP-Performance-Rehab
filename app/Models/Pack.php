@@ -10,15 +10,17 @@ class Pack extends Model
 {
     use HasFactory, SoftDeletes;
 
-    public function memberships()
-    {
-        return $this->belongsToMany(Membership::class);
-    }
-
     protected $fillable = [
         'name',
         'price',
         'trainings_number',
         'has_personal_trainer',
     ];
+
+    public function memberships()
+    {
+        return $this->belongsToMany(Membership::class);
+    }
+
+
 }

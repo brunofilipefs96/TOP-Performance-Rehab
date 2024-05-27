@@ -14,10 +14,10 @@ class UpdatePackRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
-            'trainings_number' => 'required|integer',
-            'has_personal_trainer' => 'required|boolean',
+            'name' => ['required', 'string', 'max:255'],
+            'price' => ['required', 'numeric', 'between:0,9999.99'],
+            'trainings_number' => ['required', 'integer'],
+            'has_personal_trainer' => ['required', 'boolean'],
         ];
     }
 }

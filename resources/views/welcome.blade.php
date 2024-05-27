@@ -14,9 +14,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased dark:text-white/50 select-none">
-<div class="bg-gray-300 text-black/50 dark:text-white/50 dark:bg-gray-800">
+<div class="text-black/50 dark:text-white/50 dark:bg-gray-800">
     <div class="relative min-h-screen flex flex-col items-center justify-center selection:bg-[#FF2D20] selection:text-white">
-        <div class="relative w-full max-w-xl lg:max-w-6xl px-4 lg:px-6 shadow-2xl rounded-2xl mx-4 lg:mx-auto dark:bg-gray-900 bg-gray-100">
+        <div class="relative w-11/12 max-w-xl lg:max-w-6xl px-4 lg:px-12 shadow-2xl rounded-2xl mx-4 lg:mx-auto dark:bg-gray-900 bg-gray-100">
             <header class="grid grid-cols-1 lg:grid-cols-3 items-center gap-2 py-10">
                 <div class="text-center lg:text-left">
                     <h1 class="font-bold">

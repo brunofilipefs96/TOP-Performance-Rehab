@@ -10,6 +10,12 @@ class Membership extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $fillable = [
+        'monthly_plan',
+        'total_trainings',
+        'status',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

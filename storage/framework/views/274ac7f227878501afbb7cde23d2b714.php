@@ -28,5 +28,5 @@ foreach ($attributes->all() as $__key => $__value) {
 
 unset($__defined_vars); ?>
 
-<input <?php echo e($disabled ? 'disabled' : ''); ?> <?php echo $attributes->merge(['class' => 'dark:border-gray-300  dark:border-gray-700 dark:bg-gray-400 dark:text-gray-900 focus:border-lime-500 dark:focus:border-lime-600 focus:ring-lime-500 dark:focus:ring-lime-600 rounded-md shadow-sm']); ?>>
+<input <?php echo e($disabled ? 'disabled' : ''); ?> <?php echo $attributes->merge(['class' => 'dark:border-gray-300  dark:border-gray-700 dark:bg-gray-400 dark:text-gray-900 text-gray-800 focus:border-blue-500 dark:focus:border-lime-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm']); ?>>
 <?php /**PATH C:\Users\Bruno Silva\Documents\GitHub\TOP-Performance-Rehab\resources\views/components/text-input.blade.php ENDPATH**/ ?>

@@ -33,7 +33,7 @@
                             <form id="delete-form-{{$product->id}}" action="{{ url('products/' . $product->id) }}" method="POST" class="inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="button" class="bg-red-600 text-white px-2 py-1 rounded-md hover:bg-red-500" id="delete-button" onclick="confirmarEliminacao({{ $product->id }})">Eliminar</button>
+                                <button type="button" class="bg-red-600 text-white px-2 py-1 rounded-md hover:bg-red-500" id="delete-button" onclick="confirmDelete({{ $product->id }})">Eliminar</button>
                             </form>
 
                             <div id="confirmation-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden">
@@ -63,7 +63,7 @@
 <script>
     let productDeleted = 0;
 
-    function confirmarEliminacao(id) {
+    function confirmDelete(id) {
         document.getElementById('confirmation-modal').classList.remove('hidden');
         productDeleted = id;
     }

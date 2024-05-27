@@ -6,7 +6,7 @@
     </header>
     @if ($user->addresses && $user->addresses->count() > 0)
         <div class="flex items-center gap-4 mt-4">
-            <button type="button" onclick="adicionarEndereco()" class="bg-green-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-700 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300">Adicionar Morada</button>
+            <button type="button" onclick="adicionarEndereco()" class="bg-green-500 dark:text-white text-gray-800 py-2 px-4 rounded-md shadow-sm hover:bg-green-700 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300">Adicionar Morada</button>
         </div>
 
         <!-- Seleção de Morada -->
@@ -67,7 +67,7 @@
             {{ __("Ainda não possui nenhuma morada.") }}
         </p>
 
-        <h2 class="mt-10">Inserir Morada</h2>
+        <h2 class="mt-10 dark:text-white text-gray-800">Inserir Morada</h2>
         <form method="post" action="{{ url('profile/addresses') }}" class="mt-6 space-y-6">
             @csrf
 
@@ -96,7 +96,7 @@
             </div>
 
             <div class="flex items-center gap-4">
-                <button type="submit" class="mt-4 mb-5 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-700 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300">Inserir</button>
+                <button type="submit" class="mt-4 mb-5 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300">Inserir</button>
             </div>
         </form>
     @endif

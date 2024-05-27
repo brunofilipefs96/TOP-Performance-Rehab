@@ -60,15 +60,15 @@
                         <x-input-label for="gender" :value="__('Género')" />
                         <div class="mt-1">
                             <label for="male" class="inline-flex items-center">
-                                <input type="radio" id="male" name="gender" value="male" {{ old('gender') == 'male' ? 'checked' : '' }} class="form-radio text-lime-400 dark:text-lime-400">
+                                <input type="radio" id="male" name="gender" value="male" {{ old('gender') == 'male' ? 'checked' : '' }} class="form-radio text-blue-400 dark:text-lime-400">
                                 <span class="ml-2 dark:text-gray-100">{{ __('Masculino') }}</span>
                             </label>
                             <label for="female" class="inline-flex items-center ml-4">
-                                <input type="radio" id="female" name="gender" value="female" {{ old('gender') == 'female' ? 'checked' : '' }} class="form-radio text-lime-400 dark:text-lime-400">
+                                <input type="radio" id="female" name="gender" value="female" {{ old('gender') == 'female' ? 'checked' : '' }} class="form-radio text-blue-400 dark:text-lime-400">
                                 <span class="ml-2 dark:text-gray-100">{{ __('Feminino') }}</span>
                             </label>
                             <label for="other" class="inline-flex items-center ml-4">
-                                <input type="radio" id="other" name="gender" value="other" {{ old('gender') == 'other' ? 'checked' : '' }} class="form-radio text-lime-400 dark:text-lime-400">
+                                <input type="radio" id="other" name="gender" value="other" {{ old('gender') == 'other' ? 'checked' : '' }} class="form-radio text-blue-400 dark:text-lime-400">
                                 <span class="ml-2 dark:text-gray-100">{{ __('Outro') }}</span>
                             </label>
                         </div>
@@ -114,10 +114,10 @@
 
 
                 <div class="flex items-center justify-end mt-4">
-                    <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:ring-lime-500 focus:ring-2 focus:ring-offset-2" href="{{ route('login') }}">
+                    <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:ring-blue-500 dark:focus:ring-lime-500 focus:ring-2 focus:ring-offset-2" href="{{ route('login') }}">
                         {{ __('Já estás registado?') }}
                     </a>
-                    <x-primary-button class="ms-4 dark:bg-lime-400 hover:dark:bg-lime-200 focus:ring-lime-500 focus:ring-2 focus:ring-offset-2">
+                    <x-primary-button class="ms-4 dark:bg-lime-400 hover:dark:bg-lime-200 focus:ring-blue-500 dark:focus:ring-lime-500 focus:ring-2 focus:ring-offset-2">
                         {{ __('Registar') }}
                     </x-primary-button>
                 </div>

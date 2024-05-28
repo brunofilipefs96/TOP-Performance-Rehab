@@ -35,6 +35,6 @@ class EntryController extends Controller
 
         (new Entry)->for($survey)->by(Auth::user())->fromArray($answers)->push();
 
-        return redirect()->route('entries.show');
+        return redirect()->route('profile.edit');
     }
 }

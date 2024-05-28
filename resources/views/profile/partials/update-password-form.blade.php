@@ -5,7 +5,7 @@
         </h2>
 
         <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            {{ __('Certifique-se que a sua palavra-passe é longa e aleatória para se manter segura.') }}
+            {{ __('Certifique-se que a sua palavra-passe é longa e aleatória para manter a sua conta segura.') }}
         </p>
     </header>
 

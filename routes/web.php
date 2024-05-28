@@ -37,7 +37,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/users', UserController::class)->only(['index', 'show', 'destroy']);
 
-    Route::get('/profile/membership/create', [MembershipController::class, 'create'])->name('profile.membership.create');
+    Route::get('/users/{user}/membership/show', [MembershipController::class, 'show'])->name('users.membership.show');
     Route::post('/profile/membership', [MembershipController::class, 'store'])->name('profile.membership.store');
 
     Route::resource('/products', ProductController::class);

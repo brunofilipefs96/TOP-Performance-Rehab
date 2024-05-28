@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('membership_id')->constrained();
             $table->string('insurance_type');
-            $table->string('status');
+            $table->string('status')->default('pending');
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->timestamp('created_at')->useCurrent();

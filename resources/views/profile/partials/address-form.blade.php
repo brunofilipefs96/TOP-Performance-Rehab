@@ -159,7 +159,6 @@
                     <button id="confirm-create-address-button" type="button" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-700 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300">Criar</button>
                     <button id="cancel-create-address-button" type="button" class="bg-gray-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-gray-700 dark:bg-gray-400 dark:text-gray-900 dark:hover:bg-gray-300">Cancelar</button>
                 </div>
-
             </form>
         </div>
     </div>
@@ -186,6 +185,7 @@
             }
             e.target.value = value.slice(0, 8);
         });
+
 
 
         function createAddress() {
@@ -238,4 +238,3 @@
         updateAddressFields();
     </script>
 </section>
-

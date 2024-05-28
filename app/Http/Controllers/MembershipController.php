@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Insurance;
 use App\Models\Membership;
 use App\Http\Requests\StoreMembershipRequest;
 use App\Http\Requests\UpdateMembershipRequest;
@@ -33,6 +34,7 @@ class MembershipController extends Controller
      */
     public function store(StoreMembershipRequest $request)
     {
+
         $membership = Membership::create([
             'user_id' => auth()->id(),
             'address_id' => $request->address_id,

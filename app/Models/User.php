@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use MattDaneshvar\Survey\Models\Entry;
 
 class User extends Authenticatable
 {
@@ -97,5 +98,13 @@ class User extends Authenticatable
         return $this->hasOne(Membership::class);
     }
 
+    public function entries()
+    {
+        return $this->hasMany(Entry::class, 'participant_id');
+    }
 
+    public function membershipEntry()
+    {
+        return $this->hasOne(Entry::class, 'participant_id')->where('survey_id', 1)->exists();
+    }
 }

@@ -11,8 +11,11 @@ class Membership extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'user_id',
+        'address_id',
         'monthly_plan',
-        'total_trainings',
+        'total_trainings_supervised',
+        'total_trainings_individual',
         'status',
     ];
 
@@ -34,6 +37,11 @@ class Membership extends Model
     public function evaluations()
     {
         return $this->hasMany(Evaluation::class);
+    }
+
+    public function address()
+    {
+        return $this->belongsTo(Address::class);
     }
 
 }

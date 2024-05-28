@@ -22,4 +22,9 @@ class Address extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function membership()
+    {
+        return $this->hasOne(Membership::class);
+    }
 }

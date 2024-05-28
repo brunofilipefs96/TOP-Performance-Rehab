@@ -17,7 +17,16 @@ class StoreAddressRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'street' => ['required', 'string', 'max:255'],
             'city' => ['required', 'string', 'max:255'],
-            'postal_code' => ['required', 'string', 'max:255'],
+            'postal_code' => [
+                'required',
+                'string',
+                'max:8',
+                function ($attribute, $value, $fail) {
+                    if (!preg_match('/^\d{4}-\d{3}$/', $value)) {
+                        $fail('O campo ' . $attribute . ' deve estar no formato xxxx-xxx.');
+                    }
+                },
+            ],
         ];
     }
 }

@@ -89,7 +89,7 @@
                     <!-- CC Number -->
                     <div>
                         <x-input-label for="cc_number" :value="__('Nº Cartão de Cidadão')"/>
-                        <x-text-input id="cc_number" class="block mt-1 w-full dark:text-black text-white dark:bg-gray-300" type="text" name="cc_number" maxlength="10" :value="old('cc_number')" required autocomplete="cc_number" />
+                        <x-text-input id="cc_number" class="block mt-1 w-full dark:text-black text-white dark:bg-gray-300" type="text" name="cc_number" maxlength="9" pattern="\d{9}" :value="old('cc_number')" required autocomplete="cc_number" />
                         <x-input-error :messages="$errors->get('cc_number')" class="mt-2 text-red-500" />
                     </div>
                 </div>
@@ -108,6 +108,33 @@
                         <x-input-label for="password_confirmation" :value="__('Confirmar Password')"/>
                         <x-text-input id="password_confirmation" class="block mt-1 w-full dark:text-black text-white dark:bg-gray-300" type="password" name="password_confirmation" required autocomplete="new-password" />
                         <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2 text-red-500" />
+                    </div>
+                </div>
+
+                <!-- Address -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <x-input-label for="name" :value="__('Nome da Morada')"/>
+                        <x-text-input id="name" class="block mt-1 w-full dark:text-black text-white dark:bg-gray-300" type="text" name="name" :value="old('name')" required autocomplete="name" />
+                        <x-input-error :messages="$errors->get('name')" class="mt-2 text-red-500" />
+                    </div>
+                    <div>
+                        <x-input-label for="street" : :value="__('Morada')"/>
+                        <x-text-input id="street" class="block mt-1 w-full dark:text-black text-white dark:bg-gray-300" type="text" name="street" :value="old('street')" required autocomplete="street" />
+                        <x-input-error :messages="$errors->get('street')" class="mt-2 text-red-500" />
+                    </div>
+                </div>
+                <!-- Postal Code -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <x-input-label for="postal_code" :value="__('Código Postal')"/>
+                        <x-text-input id="postal_code" class="block mt-1 w-full dark:text-black text-white dark:bg-gray-300" type="text" name="postal_code" maxlength="8" pattern="\d{4}-\d{3}" :value="old('postal_code')" required autocomplete="postal_code" />
+                        <x-input-error :messages="$errors->get('postal_code')" class="mt-2 text-red-500" />
+                    </div>
+                    <div>
+                        <x-input-label for="city" :value="__('Localidade')"/>
+                        <x-text-input id="city" class="block mt-1 w-full dark:text-black text-white dark:bg-gray-300" type="text" name="city" :value="old('city')" required autocomplete="city" />
+                        <x-input-error :messages="$errors->get('city')" class="mt-2 text-red-500" />
                     </div>
                 </div>
 
@@ -130,6 +157,22 @@
                     const maleRadio = document.getElementById('male');
                     const femaleRadio = document.getElementById('female');
                     const otherGenderInput = document.getElementById('other_gender');
+                    const postalCodeInput = document.getElementById('postal_code');
+
+                    postalCodeInput.addEventListener('input', function () {
+                        let value = this.value.replace(/\D/g, '');
+                        const regex = /^(\d{0,4})(\d{0,3})$/;
+
+                        value = value.replace(regex, function (match, group1, group2) {
+                            if (group2) {
+                                return group1 + '-' + group2;
+                            } else {
+                                return group1;
+                            }
+                        });
+
+                        this.value = value;
+                    });
 
                     const handleOtherGenderInput = () => {
                         if (otherRadio.checked) {

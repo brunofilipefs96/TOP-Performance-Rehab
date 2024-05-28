@@ -36,9 +36,23 @@ class RegisteredUserController extends Controller
             'phone_number' => ['required', 'string', 'digits:9', 'unique:'.User::class],
             'gender' => ['required', 'string', 'max:50'],
             'nif' => ['required', 'string', 'digits:9', 'unique:'.User::class],
-            'cc_number' => ['required', 'string', 'max:10', 'unique:'.User::class],
+            'cc_number' => ['required', 'string', 'digits:9', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'name' => ['required', 'string', 'max:255'],   //Name from Address
+            'street' => ['required', 'string', 'max:255'],         //Street from Address
+            'city' => ['required', 'string', 'max:255'],           //City from Address
+            'postal_code' => [                                     //Postal Code from Address
+                'required',
+                'string',
+                'max:8',
+                function ($attribute, $value, $fail) {
+                    if (!preg_match('/^\d{4}-\d{3}$/', $value)) {
+                        $fail('O campo ' . $attribute . ' deve estar no formato xxxx-xxx.');
+                    }
+                },
+            ],
         ]);
+
 
         if ($request->gender === 'other') {
             $request->merge(['gender' => $request->other_gender]);
@@ -56,6 +70,14 @@ class RegisteredUserController extends Controller
         ]);
 
         $user->roles()->sync(4);
+
+        $user->addresses()->create([
+            'user_id' => $user->id,
+            'name' => $request->name,
+            'street' => $request->street,
+            'city' => $request->city,
+            'postal_code' => $request->postal_code,
+        ]);
 
         event(new Registered($user));
 

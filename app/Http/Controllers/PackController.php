@@ -80,4 +80,6 @@ class PackController extends Controller
         $pack->delete();
         return redirect()->route('packs.index')->with('success', 'Pack deleted successfully.');
     }
+
+
 }

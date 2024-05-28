@@ -10,6 +10,7 @@ use App\Models\Questionnaire;
 use App\Models\Response;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Redirect;
 
 class MembershipController extends Controller
 {
@@ -38,7 +39,7 @@ class MembershipController extends Controller
         $this->authorize('create', Membership::class);
         $validatedData = $request->validated();
         Membership::create($validatedData);
-        return redirect()->route('users.index')->with('success', 'Membership created successfully.');
+        return Redirect::route('profile.edit')->with('status', 'Membership-created');
     }
 
     /**

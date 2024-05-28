@@ -1,12 +1,9 @@
 import "./bootstrap";
-
 import Alpine from "alpinejs";
 
 window.Alpine = Alpine;
-
 Alpine.start();
 
-// DARK MODE TOGGLE BUTTON
 var themeToggleDarkIcon = document.getElementById("theme-toggle-dark-icon");
 var themeToggleLightIcon = document.getElementById("theme-toggle-light-icon");
 
@@ -22,17 +19,6 @@ function applyTheme(theme) {
     }
 }
 
-function initializeTheme() {
-    const savedTheme = localStorage.getItem("color-theme");
-    if (savedTheme) {
-        applyTheme(savedTheme);
-    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-        applyTheme("dark");
-    } else {
-        applyTheme("light");
-    }
-}
-
 var themeToggleBtn = document.getElementById("theme-toggle");
 
 themeToggleBtn.addEventListener("click", function () {
@@ -41,6 +27,3 @@ themeToggleBtn.addEventListener("click", function () {
     applyTheme(newTheme);
     localStorage.setItem("color-theme", newTheme);
 });
-
-// Initialize theme on page load
-initializeTheme();

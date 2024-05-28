@@ -66,6 +66,30 @@
                         </nav>
                     @endif
                 </div>
+                <script>
+                    (function() {
+                        function applyTheme(theme) {
+                            if (theme === "dark") {
+                                document.documentElement.classList.add("dark");
+                                document.getElementById("theme-toggle-dark-icon").classList.add("hidden");
+                                document.getElementById("theme-toggle-light-icon").classList.remove("hidden");
+                            } else {
+                                document.documentElement.classList.remove("dark");
+                                document.getElementById("theme-toggle-dark-icon").classList.remove("hidden");
+                                document.getElementById("theme-toggle-light-icon").classList.add("hidden");
+                            }
+                        }
+
+                        var savedTheme = localStorage.getItem("color-theme");
+                        if (savedTheme) {
+                            applyTheme(savedTheme);
+                        } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                            applyTheme("dark");
+                        } else {
+                            applyTheme("light");
+                        }
+                    })();
+                </script>
             </header>
 
             <main class="mt-10 mb-20 flex flex-col-reverse lg:flex-row items-center lg:items-start">

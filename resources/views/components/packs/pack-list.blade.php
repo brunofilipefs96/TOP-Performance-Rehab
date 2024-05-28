@@ -82,12 +82,7 @@
                                     </div>
                                 </div>
 
-                                <div id="success-modal" class="fixed top-20 right-5 flex items-center justify-center bg-opacity-75 hidden">
-                                    <div class="bg-blue-300 p-4 rounded-md shadow-md w-64 dark:bg-lime-500">
-                                        <h2 class="text-base font-bold mb-2 dark:text-white text-gray-800">Atualização bem-sucedida!</h2>
-                                        <p class="text-sm mb-2 dark:text-white text-gray-800">O pack foi atualizado com sucesso.</p>
-                                    </div>
-                                </div>
+
 
 
 
@@ -122,28 +117,5 @@
     document.getElementById('confirm-button').addEventListener('click', function() {
         document.getElementById(`delete-form-${packDeleted}`).submit();
     });
-
-
-    // Modal de atualização com sucesso
-    document.addEventListener('DOMContentLoaded', function() {
-        // Verifique se há uma mensagem de sucesso na sessão
-        @if(session('success'))
-        document.getElementById('success-modal').classList.remove('hidden');
-        @endif
-
-        // Fechar o modal
-        document.getElementById('close-button').addEventListener('click', function() {
-            document.getElementById('success-modal').classList.add('hidden');
-        });
-    });
-
-    // Seleciona o modal de sucesso
-    const successModal = document.getElementById('success-modal');
-
-    // Função para esconder o modal após 10 segundos
-    setTimeout(function() {
-        successModal.classList.add('hidden');
-    }, 5000);
-
 
 </script>

@@ -10,7 +10,7 @@
             </p>
 
             <div class="flex items-center">
-                <button type="button" class="inline-flex items-center px-4 py-2 mt-6 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150 " onclick="createMembership()">Criar Matrícula</button>
+                <button type="button" class="inline-flex items-center px-4 py-2 mt-6 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150 " onclick="createMembership()">Realizar Matrícula</button>
             </div>
         @endif
 
@@ -37,23 +37,25 @@
                     @else
                         <label class="block text-sm font-medium dark:text-gray-200 text-gray-800">Morada</label>
                         <p class="text-sm text-gray-500 dark:text-gray-400">
-                            {{ __('Necessita de inserir uma morada para se matricular.') }}
+                            {{ __('Necessita de inserir uma morada para se matrícular. Pode inserir a morada no seu perfil.') }}
                         </p>
                     @endif
 
+                    <label class="block text-sm font-medium dark:text-gray-200 text-gray-800">Formulário</label>
                     @if($user->membershipEntry())
                         <p class="text-sm text-gray-500 dark:text-gray-400">
-                            {{ __('Já preencheu o formulario pretendido.') }}
+                            {{ __('Já preencheu a Ficha de Anamnese.') }}
                         </p>
-                        <a href="{{ url($user->id.'/entries/1') }}">
-                            <button type="button" class="inline-flex items-center px-4 py-2 mt-6 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150 ">Mostrar Formulario</button>
+                        <a href="{{ url('profile/entries/1') }}">
+                            <button type="button" class="inline-flex items-center px-4 py-2 mt-6 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150 ">Verificar Respostas</button>
                         </a>
                     @else
-                        <div class="flex items-center">
-                            <a href="{{ url('entries/1/fill') }}">
-                                <button type="button" class="inline-flex items-center px-4 py-2 mt-6 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150">Preencher Formulario</button>
-                            </a>
-                        </div>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                            {{ __('Necessita de preencher a Ficha de Anamnese.') }}
+                        </p>
+                        <a href="{{ url('entries/1/fill') }}">
+                            <button type="button" class="inline-flex items-center px-4 py-2 mt-6 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150">Preencher Formulario</button>
+                        </a>
                     @endif
 
                     <!-- Monthly Plan -->

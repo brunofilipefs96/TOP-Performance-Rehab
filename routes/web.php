@@ -48,7 +48,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/entries/{survey}/fill', [EntryController::class, 'fill'])->name('entries.fill');
     Route::post('/entries/{survey}', [EntryController::class, 'store'])->name('entries.store');
-    Route::get('{user}/entries/{survey}', [EntryController::class, 'show'])->name('entries.show');
+    Route::get('profile/entries/{survey}', [EntryController::class, 'show'])->name('entries.show');
 
     Route::post('/profile/addresses', [AddressController::class, 'store'])->name('addresses.store');
     Route::put('/profile/addresses/{address}', [AddressController::class, 'update'])->name('addresses.update');

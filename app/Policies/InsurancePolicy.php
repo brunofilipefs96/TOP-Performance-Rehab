@@ -13,7 +13,7 @@ class InsurancePolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -29,7 +29,7 @@ class InsurancePolicy
      */
     public function create(User $user): bool
     {
-        //
+        return true;
     }
 
     /**

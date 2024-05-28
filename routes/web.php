@@ -53,6 +53,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/addresses', [AddressController::class, 'store'])->name('addresses.store');
     Route::put('/profile/addresses/{address}', [AddressController::class, 'update'])->name('addresses.update');
     Route::delete('/profile/addresses/{address}', [AddressController::class, 'destroy'])->name('addresses.destroy');
+
+    Route::post('/profile/insurance', [InsuranceController::class, 'store'])->name('insurance.store');
+    Route::put('/profile/insurance/{insurance}', [InsuranceController::class, 'update'])->name('insurance.update');
+    Route::delete('/profile/insurance/{insurance}', [InsuranceController::class, 'destroy'])->name('insurance.destroy');
 });
 
 

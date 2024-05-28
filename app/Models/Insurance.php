@@ -10,6 +10,14 @@ class Insurance extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $fillable = [
+        'membership_id',
+        'insurance_type',
+        'status',
+        'start_date',
+        'end_date',
+    ];
+
     public function membership()
     {
         return $this->belongsTo(Membership::class);

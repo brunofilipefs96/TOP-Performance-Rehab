@@ -5,7 +5,6 @@
         </h2>
 
         @if($user->membership)
-
             @if($user->membership->status)
                 <div class="flex items-center mt-5">
                     <span class="mr-2">Estado:</span>
@@ -89,7 +88,7 @@
                     <div class="mb-4">
                         <label class="block text-sm font-medium dark:text-gray-200 text-gray-800">Plano Mensal</label>
                         <div class="flex items-center">
-                            <input type="radio" id="monthly_plan_yes" name="monthly_plan" value="1" class="form-radio text-blue-500 dark:text-lime-400 h-4 w-4 dark:bg-gray-600 dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50 dark:checked:bg-lime-400 focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 checked:bg-blue-500" {{ old('monthly_plan') == '1' ? 'checked' : '' }} required>
+                            <input checked type="radio" id="monthly_plan_yes" name="monthly_plan" value="1" class="form-radio text-blue-500 dark:text-lime-400 h-4 w-4 dark:bg-gray-600 dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50 dark:checked:bg-lime-400 focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 checked:bg-blue-500" {{ old('monthly_plan') == '1' ? 'checked' : '' }} required>
                             <label for="monthly_plan_yes" class="ml-2 dark:text-gray-200 text-gray-800 text-sm">Sim</label>
                         </div>
                         <div class="flex items-center mt-2">

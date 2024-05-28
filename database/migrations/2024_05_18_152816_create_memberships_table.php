@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('memberships', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
+            $table->foreignId('address_id')->constrained();
             $table->boolean('monthly_plan');
-            $table->integer('total_trainings');
+            $table->integer('total_trainings_supervised')->default(0);
+            $table->integer('total_trainings_individual')->default(0);
             $table->string('status')->default('pending');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();

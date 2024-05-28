@@ -14,7 +14,6 @@ class UpdateMembershipRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
         ];
     }
 }

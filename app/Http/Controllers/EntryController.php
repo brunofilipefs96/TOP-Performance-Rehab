@@ -12,6 +12,13 @@ class EntryController extends Controller
     public function index(){
         return view('pages.entries.index', ['surveys' => Survey::all()]);
     }
+
+    public function show(Survey $survey){
+        $entry = $survey->entriesFrom(Auth::user())->first();
+
+        return view('pages.entries.show', ['entry' => $entry]);
+    }
+
     public function fill(Survey $survey){
         if ($survey->entriesFrom(Auth::user())->exists()) {
             return redirect()->route('dashboard');
@@ -27,5 +34,7 @@ class EntryController extends Controller
         $answers = $request->validate($survey->rules);
 
         (new Entry)->for($survey)->by(Auth::user())->fromArray($answers)->push();
+
+        return redirect()->route('profile.edit');
     }
 }

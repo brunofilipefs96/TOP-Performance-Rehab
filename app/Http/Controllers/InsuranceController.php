@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Insurance;
 use App\Http\Requests\StoreInsuranceRequest;
 use App\Http\Requests\UpdateInsuranceRequest;
+use http\Env\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Redirect;
 
 class InsuranceController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
@@ -15,22 +19,22 @@ class InsuranceController extends Controller
     {
         //
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(User $user)
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreInsuranceRequest $request)
     {
-        //
+        $validatedData = $request->validated();
+
+        $insurance = new Insurance($validatedData);
+
+        $insurance->membership_id = auth()->user()->membership->id;
+
+        $insurance->save();
+
+        return Redirect::back()->with('status', 'Insurance Created!');
     }
+
 
     /**
      * Display the specified resource.
@@ -45,7 +49,8 @@ class InsuranceController extends Controller
      */
     public function edit(Insurance $insurance)
     {
-        //
+        $this->authorize('update', $insurance);
+        return view('pages.insurances.edit', ['insurance' => $insurance]);
     }
 
     /**
@@ -53,7 +58,13 @@ class InsuranceController extends Controller
      */
     public function update(UpdateInsuranceRequest $request, Insurance $insurance)
     {
-        //
+        $this->authorize('update', $insurance);
+
+        $validatedData = $request->validated();
+
+        $insurance->update($validatedData);
+
+        return Redirect::back()->with('status', 'Insurance Updated!');
     }
 
     /**
@@ -61,6 +72,10 @@ class InsuranceController extends Controller
      */
     public function destroy(Insurance $insurance)
     {
-        //
+        $this->authorize('delete', $insurance);
+
+        $insurance->delete();
+
+        return Redirect::back()->with('status', 'Insurance Deleted!');
     }
 }

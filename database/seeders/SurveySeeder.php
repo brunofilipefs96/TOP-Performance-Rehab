@@ -31,6 +31,12 @@ class SurveySeeder extends Seeder
             'options' => ['Yes', 'Oui']
         ]);
 
+        $survey->questions()->create([
+            'content' => 'Would you want a new cat?',
+            'type' => 'radio',
+            'options' => ['Yes', 'Oui']
+        ]);
+
 
     }
 }

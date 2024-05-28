@@ -29,7 +29,7 @@ class MembershipPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('admin');
+        return true;
     }
 
     /**

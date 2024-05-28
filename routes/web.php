@@ -37,9 +37,8 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/users', UserController::class)->only(['index', 'show', 'destroy']);
 
-    Route::get('/users/{user}/membership/create', [MembershipController::class, 'create'])->name('users.memberships.create');
-    Route::post('/users/{user}/membership', [MembershipController::class, 'store'])->name('users.memberships.store');
-    Route::resource('/memberships', MembershipController::class)->only(['index', 'show', 'edit', 'update', 'destroy']);
+    Route::get('/users/{user}/membership/show', [MembershipController::class, 'show'])->name('users.membership.show');
+    Route::post('/profile/membership', [MembershipController::class, 'store'])->name('profile.membership.store');
 
     Route::resource('/products', ProductController::class);
     Route::resource('/rooms', RoomController::class);
@@ -49,10 +48,15 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/entries/{survey}/fill', [EntryController::class, 'fill'])->name('entries.fill');
     Route::post('/entries/{survey}', [EntryController::class, 'store'])->name('entries.store');
+    Route::get('profile/entries/{survey}', [EntryController::class, 'show'])->name('entries.show');
 
     Route::post('/profile/addresses', [AddressController::class, 'store'])->name('addresses.store');
     Route::put('/profile/addresses/{address}', [AddressController::class, 'update'])->name('addresses.update');
     Route::delete('/profile/addresses/{address}', [AddressController::class, 'destroy'])->name('addresses.destroy');
+
+    Route::post('/profile/insurance', [InsuranceController::class, 'store'])->name('insurance.store');
+    Route::put('/profile/insurance/{insurance}', [InsuranceController::class, 'update'])->name('insurance.update');
+    Route::delete('/profile/insurance/{insurance}', [InsuranceController::class, 'destroy'])->name('insurance.destroy');
 });
 
 

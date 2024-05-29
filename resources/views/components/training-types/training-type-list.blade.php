@@ -1,19 +1,25 @@
+
 <div class="container mx-auto mt-5">
     <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Tipos de Treino</h1>
     @can('create', App\Models\TrainingType::class)
-        <a href="{{ url('training-types/create') }}" class="block mb-4">
-            <button type="button" class="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500  font-semibold dark:hover:bg-lime-400 dark:hover:text-gray-800">Adicionar tipo de treino</button>
-        </a>
+        <div class="mb-10 flex justify-between items-center">
+            <a href="{{ url('training-types/create') }}">
+                <button type="button" class="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 font-semibold dark:hover:bg-lime-400 dark:hover:text-gray-800">Adicionar tipo de treino</button>
+            </a>
+            <input type="text" id="search" placeholder="Pesquisar tipos de treino..." class="w-1/3 p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-light-gray dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
+
+        </div>
+        <hr class="mb-10 border-gray-400 dark:border-gray-300">
     @endcan
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @foreach ($training_types as $training_type)
-            <div class="dark:bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none">
+            <div class="training-type-card dark:bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none" data-name="{{ $training_type->name }}">
                 <div class="flex justify-center">
                     @if($training_type->image && file_exists(public_path($training_type->image)))
                         <img src="{{ asset($training_type->image) }}" alt="{{ $training_type->name }}" class="w-full h-40 object-cover">
                     @else
-                        <div class="w-full h-40 dark:bg-gray-600 bg-gray-300 flex items-center justify-center ">
+                        <div class="w-full h-40 dark:bg-gray-600 bg-gray-300 flex items-center justify-center">
                             <span class="text-3xl">Sem imagem</span>
                         </div>
                     @endif
@@ -69,4 +75,20 @@
     document.getElementById('confirm-button').addEventListener('click', function() {
         document.getElementById(`delete-form-${trainingTypeDeleted}`).submit();
     });
+
+    function filterTrainingTypes() {
+        const searchTerm = document.getElementById('search').value.toLowerCase();
+        const trainingTypeCards = document.querySelectorAll('.training-type-card');
+        trainingTypeCards.forEach(card => {
+            const name = card.getAttribute('data-name').toLowerCase();
+            if (name.includes(searchTerm)) {
+                card.classList.remove('hidden');
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+    }
+
+    document.getElementById('search').addEventListener('input', filterTrainingTypes);
 </script>
+

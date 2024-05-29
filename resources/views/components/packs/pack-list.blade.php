@@ -1,16 +1,21 @@
 <div class="container mx-auto mt-5">
     <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Lista de Packs</h1>
     @can('create', App\Models\Pack::class)
-        <a href="{{ url('packs/create') }}" class="block mb-4 select-none">
-            <button type="button" class="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500  font-semibold dark:hover:bg-lime-400 dark:hover:text-gray-800">Adicionar Pack</button>
-        </a>
+        <div class="mb-10 flex justify-between items-center">
+            <a href="{{ url('packs/create') }}">
+                <button type="button" class="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 font-semibold dark:hover:bg-lime-400 dark:hover:text-gray-800">Adicionar Pack</button>
+            </a>
+            <input type="text" id="search" placeholder="Pesquisar packs..." class="w-1/3 p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-light-gray dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
+
+        </div>
+        <hr class="mb-10 border-gray-400 dark:border-gray-300">
     @endcan
+
     <h1 class="text-2xl mb-5 mt-10 dark:text-white text-gray-800">Pack Individual</h1>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @foreach ($packs as $pack)
             @if ($pack->has_personal_trainer == false)
-                <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none">
-
+                <div class="pack-card bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none" data-name="{{ $pack->name }}">
                     <div class="p-4 dark:bg-gray-800 bg-gray-400">
                         <h3 class="text-xl font-semibold mb-2">{{ $pack->name }}</h3>
                         <p class="text-gray-400 mb-2">Quantidade: {{ $pack->trainings_number }}</p>
@@ -37,7 +42,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                             @endcan
                         </div>
                     </div>
@@ -45,16 +49,14 @@
             @endif
         @endforeach
     </div>
+
     <hr class="mt-10 border-gray-800 dark:border-white">
-
-
 
     <h1 class="text-2xl mb-5 mt-10 dark:text-white text-gray-800">Pack com Personal Trainer</h1>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @foreach ($packs as $pack)
             @if ($pack->has_personal_trainer == true)
-                <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none">
-
+                <div class="pack-card bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none" data-name="{{ $pack->name }}">
                     <div class="p-4 dark:bg-gray-800 bg-gray-400">
                         <h3 class="text-xl font-semibold mb-2">{{ $pack->name }}</h3>
                         <p class="text-gray-400 mb-2">Quantidade: {{ $pack->trainings_number }}</p>
@@ -81,12 +83,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-
-
-
-
-
                             @endcan
                         </div>
                     </div>
@@ -95,12 +91,10 @@
         @endforeach
     </div>
 
-
     <div class="flex justify-center mt-4 mb-3">
         {{ $packs->links() }}
     </div>
 </div>
-
 
 <script>
     let packDeleted = 0;
@@ -118,4 +112,19 @@
         document.getElementById(`delete-form-${packDeleted}`).submit();
     });
 
+    function filterPacks() {
+        const searchTerm = document.getElementById('search').value.toLowerCase();
+        const packCards = document.querySelectorAll('.pack-card');
+        packCards.forEach(card => {
+            const name = card.getAttribute('data-name').toLowerCase();
+            if (name.includes(searchTerm)) {
+                card.classList.remove('hidden');
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+    }
+
+    document.getElementById('search').addEventListener('input', filterPacks);
 </script>
+

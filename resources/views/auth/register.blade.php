@@ -22,19 +22,18 @@
             <form method="POST" action="{{ route('register') }}" class="space-y-6">
                 @csrf
 
-
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <!-- Full Name -->
                     <div>
                         <x-input-label for="full_name" :value="__('Nome Completo')" />
-                        <x-text-input id="full_name" class="block mt-1 w-full text-white dark:text-black dark:bg-gray-300 " type="text" name="full_name" :value="old('full_name')" required autofocus autocomplete="full_name" />
+                        <x-text-input id="full_name" class="block mt-1 w-full text-gray-800 dark:text-black dark:bg-gray-300 " type="text" name="full_name" :value="old('full_name')" required autofocus autocomplete="full_name" />
                         <x-input-error :messages="$errors->get('full_name')" class="mt-2 text-red-500" />
                     </div>
 
                     <!-- Birth Date -->
                     <div>
                         <x-input-label for="birth_date" :value="__('Data de Nascimento')" />
-                        <x-text-input id="birth_date" class="block mt-1 w-full dark:text-black dark:bg-gray-300" type="date" name="birth_date" :value="old('birth_date')" required autocomplete="birth_date" />
+                        <x-text-input id="birth_date" class="block mt-1 w-full text-gray-800 dark:text-black dark:bg-gray-300" type="date" name="birth_date" :value="old('birth_date')" required autocomplete="birth_date" />
                         <x-input-error :messages="$errors->get('birth_date')" class="mt-2 text-red-500" />
                     </div>
 
@@ -42,14 +41,14 @@
                     <!-- Email Address -->
                     <div>
                         <x-input-label for="email" :value="__('Email')"/>
-                        <x-text-input id="email" class="block mt-1 w-full text-white dark:text-black dark:bg-gray-300" type="email" name="email" :value="old('email')" required autocomplete="username" />
+                        <x-text-input id="email" class="block mt-1 w-full text-gray-800 dark:text-black dark:bg-gray-300" type="email" name="email" :value="old('email')" required autocomplete="username" />
                         <x-input-error :messages="$errors->get('email')" class="mt-2 text-red-500" />
                     </div>
 
                     <!-- Phone Number -->
                     <div>
                         <x-input-label for="phone_number" :value="__('Nº Telemóvel')"/>
-                        <x-text-input id="phone_number" class="block mt-1 w-full text-white dark:bg-gray-300 dark:text-black" type="tel" name="phone_number" maxlength="9" pattern="\d{9}" :value="old('phone_number')" required autocomplete="tel" />
+                        <x-text-input id="phone_number" class="block mt-1 w-full text-gray-800 dark:bg-gray-300 dark:text-black" type="tel" name="phone_number" maxlength="9" pattern="\d{9}" :value="old('phone_number')" required autocomplete="tel" />
                         <x-input-error :messages="$errors->get('phone_number')" class="mt-2 text-red-500" />
                     </div>
                 </div>
@@ -82,14 +81,14 @@
                     <!-- NIF -->
                     <div>
                         <x-input-label for="nif" :value="__('NIF')"/>
-                        <x-text-input id="nif" class="block mt-1 w-full text-white dark:text-black dark:bg-gray-300" type="text" name="nif" maxlength="9" pattern="\d{9}" :value="old('nif')" required autocomplete="nif" />
+                        <x-text-input id="nif" class="block mt-1 w-full text-gray-800 dark:text-black dark:bg-gray-300" type="text" name="nif" maxlength="9" pattern="\d{9}" :value="old('nif')" required autocomplete="nif" />
                         <x-input-error :messages="$errors->get('nif')" class="mt-2 text-red-500" />
                     </div>
 
                     <!-- CC Number -->
                     <div>
                         <x-input-label for="cc_number" :value="__('Nº Cartão de Cidadão')"/>
-                        <x-text-input id="cc_number" class="block mt-1 w-full dark:text-black text-white dark:bg-gray-300" type="text" name="cc_number" maxlength="9" pattern="\d{9}" :value="old('cc_number')" required autocomplete="cc_number" />
+                        <x-text-input id="cc_number" class="block mt-1 w-full text-gray-800 dark:text-black dark:bg-gray-300" type="text" name="cc_number" maxlength="9" pattern="\d{9}" :value="old('cc_number')" required autocomplete="cc_number" />
                         <x-input-error :messages="$errors->get('cc_number')" class="mt-2 text-red-500" />
                     </div>
                 </div>
@@ -99,14 +98,14 @@
                     <!-- Password -->
                     <div>
                         <x-input-label for="password" :value="__('Password')"/>
-                        <x-text-input id="password" class="block mt-1 w-full dark:text-black text-white dark:bg-gray-300" type="password" name="password" required autocomplete="new-password" />
+                        <x-text-input id="password" class="block mt-1 w-full text-gray-800 dark:text-black dark:bg-gray-300" type="password" name="password" required autocomplete="new-password" />
                         <x-input-error :messages="$errors->get('password')" class="mt-2 text-red-500" />
                     </div>
 
                     <!-- Confirm Password -->
                     <div>
                         <x-input-label for="password_confirmation" :value="__('Confirmar Password')"/>
-                        <x-text-input id="password_confirmation" class="block mt-1 w-full dark:text-black text-white dark:bg-gray-300" type="password" name="password_confirmation" required autocomplete="new-password" />
+                        <x-text-input id="password_confirmation" class="block mt-1 w-full text-gray-800 dark:text-black dark:bg-gray-300" type="password" name="password_confirmation" required autocomplete="new-password" />
                         <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2 text-red-500" />
                     </div>
                 </div>
@@ -115,12 +114,12 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <x-input-label for="name" :value="__('Nome da Morada')"/>
-                        <x-text-input id="name" class="block mt-1 w-full dark:text-black text-white dark:bg-gray-300" type="text" name="name" :value="old('name')" required autocomplete="name" />
+                        <x-text-input id="name" class="block mt-1 w-full text-gray-800 dark:text-black dark:bg-gray-300" type="text" name="name" :value="old('name')" required autocomplete="name" />
                         <x-input-error :messages="$errors->get('name')" class="mt-2 text-red-500" />
                     </div>
                     <div>
                         <x-input-label for="street" : :value="__('Morada')"/>
-                        <x-text-input id="street" class="block mt-1 w-full dark:text-black text-white dark:bg-gray-300" type="text" name="street" :value="old('street')" required autocomplete="street" />
+                        <x-text-input id="street" class="block mt-1 w-full text-gray-800 dark:text-black dark:bg-gray-300" type="text" name="street" :value="old('street')" required autocomplete="street" />
                         <x-input-error :messages="$errors->get('street')" class="mt-2 text-red-500" />
                     </div>
                 </div>
@@ -128,12 +127,12 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <x-input-label for="postal_code" :value="__('Código Postal')"/>
-                        <x-text-input id="postal_code" class="block mt-1 w-full dark:text-black text-white dark:bg-gray-300" type="text" name="postal_code" maxlength="8" pattern="\d{4}-\d{3}" :value="old('postal_code')" required autocomplete="postal_code" />
+                        <x-text-input id="postal_code" class="block mt-1 w-full text-gray-800 dark:text-black dark:bg-gray-300" type="text" name="postal_code" maxlength="8" pattern="\d{4}-\d{3}" :value="old('postal_code')" required autocomplete="postal_code" />
                         <x-input-error :messages="$errors->get('postal_code')" class="mt-2 text-red-500" />
                     </div>
                     <div>
                         <x-input-label for="city" :value="__('Localidade')"/>
-                        <x-text-input id="city" class="block mt-1 w-full dark:text-black text-white dark:bg-gray-300" type="text" name="city" :value="old('city')" required autocomplete="city" />
+                        <x-text-input id="city" class="block mt-1 w-full text-gray-800 dark:text-black dark:bg-gray-300" type="text" name="city" :value="old('city')" required autocomplete="city" />
                         <x-input-error :messages="$errors->get('city')" class="mt-2 text-red-500" />
                     </div>
                 </div>

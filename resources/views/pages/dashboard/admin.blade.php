@@ -13,7 +13,9 @@
                                 Vista Anual
                             </button>
                         </div>
-                        <canvas id="membersChart" width="400" height="200"></canvas>
+                        <div class="chart-container" style="max-width: 900px; margin: 0 auto;">
+                            <canvas id="membersChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -60,7 +62,9 @@
                         y: {
                             beginAtZero: true
                         }
-                    }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false,
                 }
             });
 

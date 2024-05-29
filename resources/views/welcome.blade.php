@@ -76,7 +76,7 @@
                 </div>
                 <div class="relative z-10">
                     <h1 class="text-5xl font-bold mb-4 dark:text-gray-200 text-gray-800">Sessão grátis com um treinador</h1>
-                    <button class="bg-lime-500 text-black dark:bg-lime-400 dark:text-white py-2 px-4 rounded">Junte-se a nós</button>
+                    <a href="{{ route('register') }}" class="bg-lime-500 text-black dark:bg-lime-400 dark:text-white py-2 px-4 rounded">Junte-se a nós</a>
                 </div>
             </section>
 

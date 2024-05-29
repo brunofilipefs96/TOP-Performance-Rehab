@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <div class="min-h-screen flex items-center justify-center select-none">
+    <div class="min-h-screen flex items-center justify-center select-none my-10">
         <div class="max-w-4xl w-full bg-white dark:bg-gray-900 shadow-lg rounded-lg p-8">
             <div class="flex justify-left text-center">
                 <button id="theme-toggle" type="button"

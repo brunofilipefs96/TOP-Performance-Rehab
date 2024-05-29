@@ -1,5 +1,15 @@
 <div class="container mx-auto mt-5">
     <h1 class="text-2xl font-bold mb-5 text-gray-800 dark:text-gray-200">Lista de Utilizadores</h1>
+
+    <div class="w-full sm:w-1/2 mb-10 relative">
+        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="h-5 w-5 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M18 11a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+        </span>
+        <input type="text" id="search" placeholder="Pesquisar por NIF ou Nome Completo" oninput="filterUsers()" class="pl-10 mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-light-gray dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
+    </div>
+
     @can('create', App\Models\User::class)
         <a href="{{ url('users/create') }}" class="block mb-4">
             <button type="button" class="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-700 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold">Adicionar Utilizador</button>
@@ -9,7 +19,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @foreach ($users as $user)
             @if (!$user->hasRole('admin'))
-                <div class="dark:bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none">
+                <div class="dark:bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none user-card" data-name="{{ $user->firstLastName() }}" data-nif="{{ $user->nif }}">
                     <div class="flex justify-center">
                         @if($user->image && file_exists(public_path($user->image)))
                             <img src="{{ asset($user->image) }}" alt="{{ $user->firstLastName() }}" class="w-full h-40 object-cover">
@@ -72,4 +82,20 @@
     document.getElementById('confirm-button').addEventListener('click', function() {
         document.getElementById(`delete-form-${userDeleted}`).submit();
     });
+
+    function filterUsers() {
+        const searchTerm = document.getElementById('search').value.toLowerCase();
+        const userCards = document.querySelectorAll('.user-card');
+        userCards.forEach(card => {
+            const name = card.getAttribute('data-name').toLowerCase();
+            const nif = card.getAttribute('data-nif').toLowerCase();
+            if (name.includes(searchTerm) || nif.includes(searchTerm)) {
+                card.classList.remove('hidden');
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+    }
+
+    document.getElementById('search').addEventListener('input', filterUsers);
 </script>

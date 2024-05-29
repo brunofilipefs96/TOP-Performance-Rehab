@@ -1,17 +1,18 @@
 <div class="container mx-auto mt-5">
     <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Lista de Salas</h1>
     @can('create', App\Models\Room::class)
-        <div class="mb-5">
+        <div class="mb-10 flex justify-between items-center">
             <a href="{{ url('rooms/create') }}">
                 <button type="button" class="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500  font-semibold dark:hover:bg-lime-400 dark:hover:text-gray-800">Adicionar Sala</button>
             </a>
+            <input type="text" id="search" placeholder="Pesquisar salas..." class="w-1/3 p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-light-gray dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
+
         </div>
-
+        <hr class="mb-10 border-gray-400 dark:border-gray-300">
     @endcan
-
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @foreach ($rooms as $room)
-            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none">
+            <div class="room-card bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none" data-name="{{ $room->name }}">
                 <div class="p-4 dark:bg-gray-800 bg-gray-400">
                     <h3 class="text-xl font-semibold mb-2">{{ $room->name }}</h3>
                     <p class="text-gray-400 mb-5">Capacidade: {{ $room->capacity }}</p>
@@ -64,6 +65,20 @@
     document.getElementById('confirm-button').addEventListener('click', function() {
         document.getElementById(`delete-form-${roomDeleted}`).submit();
     });
-</script>
 
+    function filterRooms() {
+        const searchTerm = document.getElementById('search').value.toLowerCase();
+        const roomCards = document.querySelectorAll('.room-card');
+        roomCards.forEach(card => {
+            const name = card.getAttribute('data-name').toLowerCase();
+            if (name.includes(searchTerm)) {
+                card.classList.remove('hidden');
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+    }
+
+    document.getElementById('search').addEventListener('input', filterRooms);
+</script>
 

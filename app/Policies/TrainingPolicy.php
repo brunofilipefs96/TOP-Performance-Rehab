@@ -13,7 +13,7 @@ class TrainingPolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -21,7 +21,7 @@ class TrainingPolicy
      */
     public function view(User $user, Training $training): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -29,7 +29,7 @@ class TrainingPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->hasRole('personal_trainer') || $user->hasRole('admin');
     }
 
     /**
@@ -37,7 +37,7 @@ class TrainingPolicy
      */
     public function update(User $user, Training $training): bool
     {
-        //
+        return $user->id === $training->personal_trainer_id || $user->hasRole('admin');
     }
 
     /**
@@ -45,7 +45,7 @@ class TrainingPolicy
      */
     public function delete(User $user, Training $training): bool
     {
-        //
+        return $user->id === $training->personal_trainer_id || $user->hasRole('admin');
     }
 
     /**
@@ -53,7 +53,7 @@ class TrainingPolicy
      */
     public function restore(User $user, Training $training): bool
     {
-        //
+        return $user->id === $training->personal_trainer_id || $user->hasRole('admin');
     }
 
     /**
@@ -61,6 +61,14 @@ class TrainingPolicy
      */
     public function forceDelete(User $user, Training $training): bool
     {
-        //
+        return $user->id === $training->personal_trainer_id || $user->hasRole('admin');
+    }
+
+    public function enroll(User $user, Training $training): Response
+    {
+        if ($training->users()->count() < $training->max_students && !$training->users()->contains($user) && $training->personalTrainer->id !== $user->id) {
+            return Response::allow();
+        }
+        return Response::deny('Training is full.');
     }
 }

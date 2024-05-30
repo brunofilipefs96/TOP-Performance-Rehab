@@ -16,7 +16,7 @@ class UpdatePackRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'price' => ['required', 'numeric', 'between:0,9999.99'],
-            'trainings_number' => ['required', 'integer'],
+            'trainings_number' => ['required', 'integer', 'between:1,999'],
             'has_personal_trainer' => ['required', 'boolean'],
         ];
     }

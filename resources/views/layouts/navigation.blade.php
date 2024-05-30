@@ -31,6 +31,9 @@
                         <x-nav-link :href="route('packs.index')" :active="request()->routeIs('packs.index')">
                             {{ __('Packs') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('trainings.index')" :active="request()->routeIs('trainings.index')">
+                            {{ __('Treinos') }}
+                        </x-nav-link>
                     @endif
                 </div>
             </div>
@@ -119,6 +122,9 @@
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('packs.index')" :active="request()->routeIs('packs.index')">
                     {{ __('Packs') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('trainings.index')" :active="request()->routeIs('trainings.index')">
+                    {{ __('Treinos') }}
                 </x-responsive-nav-link>
             @endif
         </div>

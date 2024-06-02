@@ -59,8 +59,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile/insurance/{insurance}', [InsuranceController::class, 'update'])->name('insurance.update');
     Route::delete('/profile/insurance/{insurance}', [InsuranceController::class, 'destroy'])->name('insurance.destroy');
 
-    Route::resource('trainings', TrainingController::class);
     Route::post('trainings/{training}/enroll', [TrainingController::class, 'enroll'])->name('trainings.enroll');
+    Route::resource('trainings', TrainingController::class);
 });
 
 

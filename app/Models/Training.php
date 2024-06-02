@@ -32,7 +32,7 @@ class Training extends Model
 
     public function users() //Clients (Can be Employees also)
     {
-        return $this->belongsToMany(User::class)->withPivot('presence')->withTimestamps();
+        return $this->belongsToMany(User::class)->withPivot('presence');
     }
 
     public function personalTrainer()

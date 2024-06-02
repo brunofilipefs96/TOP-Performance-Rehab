@@ -15,7 +15,7 @@
             <div class="room-card bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none" data-name="{{ $room->name }}">
                 <div class="p-4 dark:bg-gray-800 bg-gray-400">
                     <h3 class="text-xl font-semibold mb-2">{{ $room->name }}</h3>
-                    <p class="text-gray-400 mb-5">Capacidade: {{ $room->capacity }}</p>
+                    <p class="dark:text-gray-400 text-gray-700 mb-5">Capacidade: {{ $room->capacity }}</p>
                     <div class="flex justify-end gap-2">
                         <a href="{{ url('rooms/' . $room->id) }}" class="bg-blue-400 dark:text-white px-2 py-1 rounded-md hover:bg-blue-300 dark:bg-gray-400 dark:hover:bg-gray-300">Mostrar</a>
                         @can('update', $room)

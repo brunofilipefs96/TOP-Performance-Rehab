@@ -11,7 +11,10 @@
     @endcan
     <div id="trainings-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @foreach ($trainings as $training)
-            <div class="training-card dark:bg-gray-800 bg-gray-400 rounded-lg overflow-hidden shadow-md text-white select-none" data-date="{{ \Carbon\Carbon::parse($training->start_date)->toDateString() }}" data-start-time="{{ \Carbon\Carbon::parse($training->start_date)->format('H:i') }}">
+            <div class="training-card relative dark:bg-gray-800 bg-gray-400 rounded-lg overflow-hidden shadow-md text-white select-none" data-date="{{ \Carbon\Carbon::parse($training->start_date)->toDateString() }}" data-start-time="{{ \Carbon\Carbon::parse($training->start_date)->format('H:i') }}">
+                @if ($training->users->contains(auth()->user()))
+                    <div class="ribbon"><span>Inscrito</span></div>
+                @endif
                 <div class="p-4 dark:bg-gray-800 bg-gray-400">
                     <h3 class="text-xl font-semibold mb-2 text-gray-100">{{ $training->name }}</h3>
                     <p class="dark:text-gray-400 text-gray-700 mb-2">Tipo: {{ $training->trainingType->name }}</p>
@@ -19,6 +22,17 @@
                     <p class="dark:text-gray-400 text-gray-700 mb-2">Data: {{ \Carbon\Carbon::parse($training->start_date)->format('d/m/Y') }}</p>
                     <p class="dark:text-gray-400 text-gray-700 mb-2">Hora de Início: {{ \Carbon\Carbon::parse($training->start_date)->format('H:i') }}</p>
                     <p class="dark:text-gray-400 text-gray-700 mb-5">Duração: {{ \Carbon\Carbon::parse($training->start_date)->diffInMinutes(\Carbon\Carbon::parse($training->end_date)) }} minutos</p>
+                    <p class="dark:text-gray-400 text-gray-700 mb-5">
+                        @php
+                            $remainingSpots = $training->max_students - $training->users->count();
+                        @endphp
+                        Inscrições: {{ $training->users->count() }}/{{ $training->max_students }}
+                        @if ($remainingSpots > 0)
+                            <span class="inline-block w-3 h-3 bg-green-500 rounded-full ml-2" title="Vagas disponíveis"></span>
+                        @else
+                            <span class="inline-block w-3 h-3 bg-red-500 rounded-full ml-2" title="Cheio"></span>
+                        @endif
+                    </p>
                     <div class="flex justify-end gap-2">
                         <a href="{{ route('trainings.show', $training->id) }}" class="bg-blue-400 dark:bg-gray-400 text-white dark:text-gray-800 px-2 py-1 rounded-md hover:bg-blue-300 dark:hover:bg-gray-300">Mostrar</a>
                         @can('update', $training)
@@ -42,6 +56,24 @@
                                 </div>
                             </div>
                         @endcan
+                        @if (auth()->check() && auth()->user()->cannot('update', $training) && auth()->user()->cannot('delete', $training) && $training->personal_trainer_id !== auth()->user()->id && !$training->users->contains(auth()->user()))
+                            @if ($remainingSpots > 0)
+                                <button type="button" class="bg-green-500 text-white px-2 py-1 rounded-md hover:bg-green-400" onclick="confirmEnroll({{ $training->id }})">Inscrever</button>
+                            @endif
+
+                            <div id="enroll-modal-{{ $training->id }}" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden">
+                                <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
+                                    <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Pretende inscrever-se?</h2>
+                                    <div class="flex justify-end gap-4">
+                                        <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400" onclick="cancelEnroll({{ $training->id }})">Cancelar</button>
+                                        <form id="enroll-form-{{ $training->id }}" action="{{ route('trainings.enroll', $training->id) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-500">Inscrever</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -55,6 +87,7 @@
 
 <script>
     let trainingDeleted = 0;
+    let trainingEnrolled = 0;
 
     function confirmDelete(id) {
         document.getElementById(`confirmation-modal-${id}`).classList.remove('hidden');
@@ -67,6 +100,15 @@
 
     function confirmDeleteSubmit(id) {
         document.getElementById(`delete-form-${id}`).submit();
+    }
+
+    function confirmEnroll(id) {
+        document.getElementById(`enroll-modal-${id}`).classList.remove('hidden');
+        trainingEnrolled = id;
+    }
+
+    function cancelEnroll(id) {
+        document.getElementById(`enroll-modal-${id}`).classList.add('hidden');
     }
 
     function filterTrainings() {

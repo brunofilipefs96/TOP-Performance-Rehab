@@ -52,18 +52,25 @@
                     </div>
                     <div class="mb-4">
                         <label for="max_students" class="block dark:text-white text-gray-800">Máximo de Alunos</label>
-                        <input type="number" name="max_students" id="max_students" value="{{ old('max_students', $training->max_students) }}" required class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
+                        <input type="number" name="max_students" id="max_students" value="{{ old('max_students', $training->max_students) }}" min="{{ $training->users->count() }}" required class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
+                        <p class="text-gray-500 text-sm">Número de alunos já inscritos: {{ $training->users->count() }}</p>
+                        <span id="max-students-error-msg" class="text-red-500 text-sm"></span>
                         @error('max_students')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="mb-4">
                         <label for="personal_trainer_id" class="block dark:text-white text-gray-800">Personal Trainer</label>
+                        @can('manage-trainers') <!-- Only show this to admin users -->
                         <select name="personal_trainer_id" id="personal_trainer_id" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
                             @foreach ($personalTrainers as $trainer)
                                 <option value="{{ $trainer->id }}" {{ $training->personal_trainer_id == $trainer->id ? 'selected' : '' }}>{{ $trainer->firstLastName() }}</option>
                             @endforeach
                         </select>
+                        @else
+                            <input type="hidden" name="personal_trainer_id" id="personal_trainer_id" value="{{ $training->personal_trainer_id }}">
+                            <input type="text" value="{{ $training->personalTrainer->firstLastName() }}" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white" readonly>
+                        @endcan
                         @error('personal_trainer_id')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
@@ -106,6 +113,14 @@
 
 <script>
     function confirmarAtualizacao() {
+        const maxStudentsInput = document.getElementById('max_students');
+        const maxStudentsErrorMsg = document.getElementById('max-students-error-msg');
+        const currentEnrolled = {{ $training->users->count() }};
+        if (parseInt(maxStudentsInput.value) < currentEnrolled) {
+            maxStudentsErrorMsg.innerText = 'O número máximo de alunos não pode ser menor do que o número de alunos já inscritos.';
+            return false;
+        }
+        maxStudentsErrorMsg.innerText = '';
         document.getElementById('confirmation-modal').classList.remove('hidden');
     }
 

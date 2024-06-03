@@ -63,8 +63,15 @@ class TrainingController extends Controller
     public function update(UpdateTrainingRequest $request, Training $training)
     {
         $validatedData = $request->validated();
+
+        $currentEnrolled = $training->users()->count();
+        if ($validatedData['max_students'] < $currentEnrolled) {
+            return redirect()->back()->withErrors(['max_students' => 'O número máximo de alunos não pode ser menor do que o número de alunos já inscritos.'])->withInput();
+        }
+
         $training->update($validatedData);
-        return redirect()->route('trainings.index')->with('success', 'Training updated successfully.');
+        return redirect()->route('trainings.index')->with('success', 'Treino atualizado com sucesso.');
+
     }
 
     public function destroy(Training $training)
@@ -77,11 +84,20 @@ class TrainingController extends Controller
     public function enroll(Request $request, Training $training)
     {
         $user = auth()->user();
+
+        if ($training->users()->where('user_id', $user->id)->exists()) {
+            return redirect()->route('trainings.show', $training)->with('error', 'Você já está inscrito neste treino.');
+        }
+
+        if ($training->personal_trainer_id == $user->id) {
+            return redirect()->route('trainings.show', $training)->with('error', 'Você não pode se inscrever no seu próprio treino.');
+        }
+
         if ($training->users()->count() < $training->max_students) {
             $training->users()->attach($user->id, ['presence' => false]);
-            return redirect()->route('trainings.show', $training)->with('success', 'Enrolled successfully.');
+            return redirect()->route('trainings.show', $training)->with('success', 'Inscrito com sucesso.');
         } else {
-            return redirect()->route('trainings.show', $training)->with('error', 'Training is full.');
+            return redirect()->route('trainings.show', $training)->with('error', 'O treino está lotado.');
         }
     }
 

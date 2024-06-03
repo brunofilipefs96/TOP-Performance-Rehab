@@ -58,16 +58,16 @@
                     </div>
                     <div class="mb-4">
                         <label for="personal_trainer_id" class="block dark:text-white text-gray-800">Personal Trainer</label>
-                        @can('manage-trainers') <!-- Only show this to admin users -->
-                        <select name="personal_trainer_id" id="personal_trainer_id" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
-                            @foreach ($personalTrainers as $trainer)
-                                <option value="{{ $trainer->id }}" {{ old('personal_trainer_id') == $trainer->id ? 'selected' : '' }}>{{ $trainer->firstLastName() }}</option>
-                            @endforeach
-                        </select>
+                        @if (Auth::user()->hasRole('admin'))
+                            <select name="personal_trainer_id" id="personal_trainer_id" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
+                                @foreach ($personalTrainers as $trainer)
+                                    <option value="{{ $trainer->id }}" {{ old('personal_trainer_id') == $trainer->id ? 'selected' : '' }}>{{ $trainer->firstLastName() }}</option>
+                                @endforeach
+                            </select>
                         @else
                             <input type="hidden" name="personal_trainer_id" id="personal_trainer_id" value="{{ auth()->user()->id }}">
                             <input type="text" value="{{ auth()->user()->firstLastName() }}" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white" readonly>
-                        @endcan
+                        @endif
                         @error('personal_trainer_id')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror

@@ -8,6 +8,7 @@ use App\Http\Requests\StoreTrainingRequest;
 use App\Http\Requests\UpdateTrainingRequest;
 use App\Models\TrainingType;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
@@ -18,8 +19,9 @@ class TrainingController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Training::class);
-        $trainings = Training::orderBy('id', 'desc')->paginate(10);
-        return view('pages.trainings.index', ['trainings' => $trainings]);
+        $trainings = Training::orderBy('id', 'desc')->paginate(12);
+        $trainingTypes = TrainingType::all();
+        return view('pages.trainings.index', ['trainings' => $trainings, 'trainingTypes' => $trainingTypes]);
     }
 
     public function create()
@@ -86,19 +88,41 @@ class TrainingController extends Controller
         $user = auth()->user();
 
         if ($training->users()->where('user_id', $user->id)->exists()) {
-            return redirect()->route('trainings.show', $training)->with('error', 'Você já está inscrito neste treino.');
+            return redirect()->route('trainings.index')->with('error', 'Já se encontra inscrito neste treino.');
         }
 
         if ($training->personal_trainer_id == $user->id) {
-            return redirect()->route('trainings.show', $training)->with('error', 'Você não pode se inscrever no seu próprio treino.');
+            return redirect()->route('trainings.index')->with('error', 'Não pode inscrever-se no seu próprio treino.');
         }
 
         if ($training->users()->count() < $training->max_students) {
-            $training->users()->attach($user->id, ['presence' => false]);
-            return redirect()->route('trainings.show', $training)->with('success', 'Inscrito com sucesso.');
+            $training->users()->attach($user->id, ['presence' => true]); // Ensure presence is true when enrolling
+            return redirect()->route('trainings.index')->with('success', 'Inscreveu-se com sucesso.');
         } else {
-            return redirect()->route('trainings.show', $training)->with('error', 'O treino está lotado.');
+            return redirect()->route('trainings.index')->with('error', 'O treino está cheio.');
         }
     }
+
+    public function cancel(Request $request, Training $training)
+    {
+        $user = auth()->user();
+
+        if (!$training->users()->where('user_id', $user->id)->exists()) {
+            return redirect()->route('trainings.index')->with('error', 'Você não está inscrito neste treino.');
+        }
+
+        $startTime = Carbon::parse($training->start_date);
+        $now = Carbon::now();
+        $differenceInHours = $startTime->diffInHours($now);
+
+        if ($differenceInHours > 12) {
+            $training->users()->detach($user->id);
+            return redirect()->route('trainings.index')->with('success', 'Inscrição cancelada com sucesso. Você não será cobrado.');
+        } else {
+            $training->users()->updateExistingPivot($user->id, ['presence' => false]);
+            return redirect()->route('trainings.index')->with('success', 'Inscrição cancelada com sucesso. A presença será marcada como ausente e você será cobrado.');
+        }
+    }
+
 
 }

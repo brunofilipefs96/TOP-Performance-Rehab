@@ -60,6 +60,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile/insurance/{insurance}', [InsuranceController::class, 'destroy'])->name('insurance.destroy');
 
     Route::post('trainings/{training}/enroll', [TrainingController::class, 'enroll'])->name('trainings.enroll');
+    Route::post('trainings/{training}/cancel', [TrainingController::class, 'cancel'])->name('trainings.cancel');
     Route::resource('trainings', TrainingController::class);
 });
 

@@ -6,6 +6,7 @@ use App\Models\TrainingType;
 use App\Http\Requests\StoreTrainingTypeRequest;
 use App\Http\Requests\UpdateTrainingTypeRequest;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Storage;
 
 class TrainingTypeController extends Controller
 {
@@ -35,13 +36,18 @@ class TrainingTypeController extends Controller
     public function store(StoreTrainingTypeRequest $request)
     {
         $validatedData = $request->validated();
+        $trainingType = new TrainingType($validatedData);
+        $trainingType->save();
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('training_types', 'public');
+            $imagePath = $request->file('image');
+            $imageName = $trainingType->id . '_' . time() . '_' . $imagePath->getClientOriginalName();
+            $path = $request->file('image')->storeAs('images/training_types/' . $trainingType->id, $imageName, 'public');
             $validatedData['image'] = $path;
+            $trainingType->image = $path;
         }
 
-        TrainingType::create($validatedData);
+        $trainingType->save();
 
         return redirect()->route('training-types.index')->with('success', 'Training type created successfully.');
     }
@@ -70,12 +76,13 @@ class TrainingTypeController extends Controller
     public function update(UpdateTrainingTypeRequest $request, TrainingType $trainingType)
     {
         $validatedData = $request->validated();
-
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('training_types', 'public');
-            $validatedData['image'] = $path;
+        $imagePath = $request->file('image');
+        $imageName = $trainingType->id . '_' . time() . '_' . $imagePath->getClientOriginalName();
+        $path = $request->file('image')->storeAs('images/training_types/' . $trainingType->id, $imageName, 'public');
+        Storage::delete('public/' . $trainingType->image);
+        $validatedData['image'] = $path;
         }
-
         $trainingType->update($validatedData);
 
         return redirect()->route('training-types.index')->with('success', 'Training type updated successfully.');
@@ -87,6 +94,7 @@ class TrainingTypeController extends Controller
     public function destroy(TrainingType $trainingType)
     {
         $this->authorize('delete', $trainingType);
+        Storage::deleteDirectory('public/images/training_types/' . $trainingType->id);
         $trainingType->delete();
         return redirect()->route('training-types.index')->with('success', 'Training type deleted successfully.');
     }

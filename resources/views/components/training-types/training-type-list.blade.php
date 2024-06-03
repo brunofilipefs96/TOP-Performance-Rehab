@@ -16,8 +16,8 @@
         @foreach ($training_types as $training_type)
             <div class="training-type-card dark:bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none" data-name="{{ $training_type->name }}">
                 <div class="flex justify-center">
-                    @if($training_type->image && file_exists(public_path($training_type->image)))
-                        <img src="{{ asset($training_type->image) }}" alt="{{ $training_type->name }}" class="w-full h-40 object-cover">
+                    @if($training_type->image && file_exists(public_path('storage/' . $training_type->image)))
+                        <img src="{{ asset('storage/'. $training_type->image) }}" alt="{{ $training_type->name }}" class="w-full h-40 object-cover">
                     @else
                         <div class="w-full h-40 dark:bg-gray-600 bg-gray-300 flex items-center justify-center">
                             <span class="text-3xl">Sem imagem</span>

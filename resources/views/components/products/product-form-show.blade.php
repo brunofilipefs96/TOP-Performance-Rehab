@@ -5,10 +5,10 @@
                 <h1 class="mb-6 dark:text-lime-400 text-gray-800 font-semibold">Produto {{$product->id}}</h1>
             </div>
 
-            @if($product->image && file_exists(public_path($product->image)))
+            @if($product->image && file_exists(public_path('storage/' . $product->image)))
                 <div class="mb-4 select-none">
                     <label for="image" class="block">Imagem</label>
-                    <img src="{{ asset($product->image) }}" alt="Imagem do Produto" class="mt-1 block w-full h-auto border border-gray-300 rounded-md shadow-sm">
+                    <img src="{{ asset('storage/' . $product->image) }}" alt="Imagem do Produto" class="mt-1 block w-full h-auto border border-gray-300 rounded-md shadow-sm">
                 </div>
             @else
                 <div class="mb-4">

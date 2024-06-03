@@ -7,6 +7,7 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -36,17 +37,20 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         $validatedData = $request->validated();
+        $product = new Product($validatedData);
+        $product->save();
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('products', 'public');
+            $imagePath = $request->file('image');
+            $imageName = $product->id . '_' . time() . '_' . $imagePath->getClientOriginalName();
+            $path = $request->file('image')->storeAs('images/products/' . $product->id, $imageName, 'public');
             $validatedData['image'] = $path;
+            $product->image = $path;
         }
-
-        Product::create($validatedData);
+        $product->save();
 
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
-
 
     /**
      * Display the specified resource.
@@ -72,12 +76,13 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, Product $product)
     {
         $validatedData = $request->validated();
-
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('products', 'public');
+            $imagePath = $request->file('image');
+            $imageName = $product->id . '_' . time() . '_' . $imagePath->getClientOriginalName();
+            $path = $request->file('image')->storeAs('images/products/' . $product->id, $imageName, 'public');
+            Storage::delete('public/' . $product->image);
             $validatedData['image'] = $path;
         }
-
         $product->update($validatedData);
 
         return redirect()->route('products.index')->with('success', 'Product updated successfully.');
@@ -89,6 +94,7 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         $this->authorize('delete', $product);
+        Storage::deleteDirectory('public/images/products/' . $product->id);
         $product->delete();
         return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
     }

@@ -10,6 +10,16 @@ class Training extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $fillable = [
+        'training_type_id',
+        'room_id',
+        'name',
+        'max_students',
+        'start_date',
+        'end_date',
+        'personal_trainer_id'
+    ];
+
     public function room()
     {
         return $this->belongsTo(Room::class);
@@ -22,7 +32,7 @@ class Training extends Model
 
     public function users() //Clients (Can be Employees also)
     {
-        return $this->hasMany(User::class);
+        return $this->belongsToMany(User::class)->withPivot('presence');
     }
 
     public function personalTrainer()

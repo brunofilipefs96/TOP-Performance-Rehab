@@ -15,7 +15,7 @@ class UpdateRoomRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'capacity' => ['required', 'integer', 'min:0'],
+            'capacity' => ['required', 'integer', 'min:0', 'max:999'],
         ];
     }
 }

@@ -15,7 +15,6 @@ class EntryController extends Controller
 
     public function show(Survey $survey){
         $entry = $survey->entriesFrom(Auth::user())->first();
-
         return view('pages.entries.show', ['entry' => $entry]);
     }
 
@@ -34,7 +33,6 @@ class EntryController extends Controller
         $answers = $request->validate($survey->rules);
 
         (new Entry)->for($survey)->by(Auth::user())->fromArray($answers)->push();
-
-        return redirect()->route('entries.show');
+        return redirect()->route('profile.edit');
     }
 }

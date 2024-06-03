@@ -39,7 +39,7 @@
             </div>
 
             <div class="mb-4">
-                <label for="phone_number" class="block dark:text-white text-gray-800">Número de Telemóvel</label>
+                <label for="phone_number" class="block dark:text-white text-gray-800">Nº Telemóvel</label>
                 <input type="text" value="{{$user->phone_number}}" disabled class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
             </div>
 
@@ -58,7 +58,7 @@
             </div>
 
             <div class="mb-10">
-                <label for="cc_number" class="block dark:text-white text-gray-800">Número do CC</label>
+                <label for="cc_number" class="block dark:text-white text-gray-800">Nº CC</label>
                 <input type="text" value="{{$user->cc_number}}" disabled class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
             </div>
             <h2 class="text-xl dark:text-white text-gray-800">Matrícula</h2>
@@ -72,8 +72,8 @@
             </div>
 
             <div class="flex justify-end gap-2">
-                @if (!$user->membership)
-                <a href="{{ route('users.memberships.create', $user) }}" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-300 dark:hover:text-gray-800">Criar Matrícula</a>
+                @if ($user->membership)
+                    <a href="{{ route('users.membership.show', ['membership' => $user->membership]) }}" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-700 dark:bg-blue-400 dark:hover:bg-blue-300 dark:hover:text-blue-800">Detalhes da Matrícula</a>
                 @endif
                 <button onclick="history.back()" class="bg-gray-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-gray-700 dark:bg-gray-400 dark:hover:bg-gray-300 dark:hover:text-gray-800">Voltar</button>
             </div>

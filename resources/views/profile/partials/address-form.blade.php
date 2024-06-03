@@ -9,7 +9,7 @@
         <!-- Seleção de Morada -->
         <div>
             <x-input-label for="address" :value="__('Minhas Moradas')" class="mt-5 mb-1"/>
-            <select id="address" name="address" class="w-1/2 dark:border-gray-300 dark:border-gray-700 dark:bg-gray-400 dark:text-gray-900 focus:border-lime-500 dark:focus:border-lime-600 focus:ring-lime-500 dark:focus:ring-lime-600 rounded-md shadow-sm" onchange="updateAddressFields()">
+            <select id="address" name="address" class="w-1/2 dark:border-gray-300 dark:border-gray-700 dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm" onchange="updateAddressFields()">
                 @foreach($user->addresses as $address)
                     <option value="{{ $address->id }}" @if($loop->first) selected @endif>{{ $address->name }}</option>
                 @endforeach
@@ -23,7 +23,7 @@
         <div class="flex items-center">
             <button id="create-address-button" type="button" class="inline-flex items-center px-4 py-2 mt-6 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150" onclick="createAddress()">Inserir Morada</button>
         </div>
-        <h1 id="form-title" class="text-lg mt-10">Atualizar Morada</h1>
+        <h1 id="form-title" class="text-lg mt-10 text-gray-800 dark:text-gray-200">Atualizar Morada</h1>
         <form id="updateAddressForm" method="POST" action="{{ route('addresses.update', $user->addresses->first()->id) }}" class="mt-2 space-y-6">
             @csrf
             @method('put')
@@ -159,7 +159,6 @@
                     <button id="confirm-create-address-button" type="button" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-700 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300">Criar</button>
                     <button id="cancel-create-address-button" type="button" class="bg-gray-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-gray-700 dark:bg-gray-400 dark:text-gray-900 dark:hover:bg-gray-300">Cancelar</button>
                 </div>
-
             </form>
         </div>
     </div>
@@ -186,6 +185,7 @@
             }
             e.target.value = value.slice(0, 8);
         });
+
 
 
         function createAddress() {
@@ -238,4 +238,3 @@
         updateAddressFields();
     </script>
 </section>
-

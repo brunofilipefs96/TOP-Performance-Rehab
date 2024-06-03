@@ -8,6 +8,7 @@ use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\PackController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\TrainingTypeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -37,7 +38,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/users', UserController::class)->only(['index', 'show', 'destroy']);
 
-    Route::get('/profile/membership/create', [MembershipController::class, 'create'])->name('profile.membership.create');
+    Route::get('/users/{user}/membership/show', [MembershipController::class, 'show'])->name('users.membership.show');
     Route::post('/profile/membership', [MembershipController::class, 'store'])->name('profile.membership.store');
 
     Route::resource('/products', ProductController::class);
@@ -53,6 +54,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/addresses', [AddressController::class, 'store'])->name('addresses.store');
     Route::put('/profile/addresses/{address}', [AddressController::class, 'update'])->name('addresses.update');
     Route::delete('/profile/addresses/{address}', [AddressController::class, 'destroy'])->name('addresses.destroy');
+
+    Route::post('/profile/insurance', [InsuranceController::class, 'store'])->name('insurance.store');
+    Route::put('/profile/insurance/{insurance}', [InsuranceController::class, 'update'])->name('insurance.update');
+    Route::delete('/profile/insurance/{insurance}', [InsuranceController::class, 'destroy'])->name('insurance.destroy');
+
+    Route::post('trainings/{training}/enroll', [TrainingController::class, 'enroll'])->name('trainings.enroll');
+    Route::resource('trainings', TrainingController::class);
 });
 
 

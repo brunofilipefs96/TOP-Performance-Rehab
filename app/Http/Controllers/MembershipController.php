@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Insurance;
 use App\Models\Membership;
 use App\Http\Requests\StoreMembershipRequest;
 use App\Http\Requests\UpdateMembershipRequest;
-use App\Models\Question;
-use App\Models\Questionnaire;
-use App\Models\Response;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Redirect;
@@ -36,10 +34,14 @@ class MembershipController extends Controller
      */
     public function store(StoreMembershipRequest $request)
     {
-        $this->authorize('create', Membership::class);
-        $validatedData = $request->validated();
-        Membership::create($validatedData);
-        return Redirect::route('profile.edit')->with('status', 'Membership-created');
+
+        $membership = Membership::create([
+            'user_id' => auth()->id(),
+            'address_id' => $request->address_id,
+            'monthly_plan' => $request->monthly_plan,
+        ]);
+
+        return redirect()->route('memberships.show', ['membership' => $membership]);
     }
 
     /**

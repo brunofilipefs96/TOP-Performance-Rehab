@@ -5,10 +5,10 @@
                 <h1 class="mb-6 dark:text-lime-400 text-gray-800 font-semibold">{{$training_type->name}}</h1>
             </div>
 
-            @if($training_type->image && file_exists(public_path($training_type->image)))
+            @if($training_type->image && file_exists(public_path('storage/' . $training_type->image)))
                 <div class="mb-4 select-none">
                     <label for="image" class="block">Imagem</label>
-                    <img src="{{ asset($training_type->image) }}" alt="Imagem do Tipo de Treino" class="mt-1 block w-full h-auto border border-gray-300 rounded-md shadow-sm">
+                    <img src="{{ asset('storage/' . $training_type->image) }}" alt="Imagem do Tipo de Treino" class="mt-1 block w-full h-auto border border-gray-300 rounded-md shadow-sm">
                 </div>
             @else
                 <div class="mb-4">

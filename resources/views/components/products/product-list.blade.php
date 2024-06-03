@@ -13,8 +13,8 @@
         @foreach ($products as $product)
             <div class="dark:bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none">
                 <div class="flex justify-center">
-                    @if($product->image && file_exists(public_path($product->image)))
-                        <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="w-full h-40 object-cover">
+                    @if($product->image && file_exists(public_path('storage/' . $product->image)))
+                        <img src="{{ asset('storage/'. $product->image) }}" alt="{{ $product->name }}" class="w-full h-40 object-cover">
                     @else
                         <div class="w-full h-40 dark:bg-gray-600 bg-gray-300 flex items-center justify-center ">
                             <span class="text-3xl">Sem imagem</span>

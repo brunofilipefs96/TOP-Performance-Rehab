@@ -43,7 +43,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="quantity" class="block text-sm font-medium text-gray-200">Quantidade</label>
+                    <label for="quantity" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Quantidade</label>
                     <input type="number"
                            id="quantity"
                            name="quantity"
@@ -62,7 +62,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="price" class="block text-sm font-medium text-gray-200">Preço</label>
+                    <label for="price" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Preço</label>
                     <input type="number"
                            id="price"
                            name="price"
@@ -81,7 +81,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="details" class="block text-sm font-medium text-gray-200">Detalhes</label>
+                    <label for="details" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Detalhes</label>
                     <textarea id="details"
                               name="details"
                               autocomplete="details"

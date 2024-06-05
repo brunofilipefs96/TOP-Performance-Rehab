@@ -19,9 +19,9 @@
         <div class="relative w-11/12 max-w-xl lg:max-w-6xl px-4 lg:px-12 shadow-2xl rounded-2xl mx-4 lg:mx-auto dark:bg-gray-900 bg-gray-100">
             <header class="grid grid-cols-1 lg:grid-cols-3 items-center gap-2 py-10">
                 <div class="text-center lg:text-left">
-                    <h1 class="font-bold">
-                        <span class="text-black dark:text-white font-semibold">ATEC</span>
-                        <span class="text-lime-500 dark:text-lime-500 font-semibold">24</span>
+                    <h1 class="font-bold text-2xl">
+                        <span class="text-black dark:text-white">Ginásio</span>
+                        <span class="text-lime-500 dark:text-lime-500">TOP</span>
                     </h1>
                 </div>
                 <div class="col-span-2 flex justify-center lg:justify-end">
@@ -86,14 +86,14 @@
                 </script>
             </header>
 
-            <main class="mt-10 mb-20 flex flex-col items-center justify-center">
+            <main class="mt-10 mb-10 flex flex-col items-center justify-center">
                 <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-                    {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
+                    {{ __('Obrigado por inscrever-se! Antes de começar, você poderia verificar seu endereço de e-mail clicando no link que acabamos de enviar para você? Se você não recebeu o e-mail, teremos prazer em lhe enviar outro.') }}
                 </div>
 
                 @if (session('status') == 'verification-link-sent')
                     <div class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
-                        {{ __('A new verification link has been sent to the email address you provided during registration.') }}
+                        {{ __('Um novo link de verificação foi enviado para o endereço de e-mail que você forneceu durante o registro.') }}
                     </div>
                 @endif
 
@@ -103,7 +103,7 @@
 
                         <div>
                             <x-primary-button>
-                                {{ __('Resend Verification Email') }}
+                                {{ __('Reenviar email de verificação') }}
                             </x-primary-button>
                         </div>
                     </form>
@@ -118,7 +118,7 @@
                 </div>
             </main>
 
-            <footer class="py-16 text-center text-sm text-black dark:text-white/70">
+            <footer class="py-10 text-center text-sm text-black dark:text-white/70">
                 2024 © TOP Performance & Rehab
             </footer>
         </div>

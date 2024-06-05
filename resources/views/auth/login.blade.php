@@ -1,9 +1,14 @@
 <x-guest-layout>
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full bg-white dark:bg-gray-900 p-8 rounded-lg shadow-md space-y-8">
-            <div class="flex justify-left text-center">
+
+            <div class="flex justify-between items-center">
+                <h1 class="font-bold text-2xl">
+                    <span class="text-black dark:text-white">Ginásio</span>
+                    <span class="text-blue-500 dark:text-lime-500">TOP</span>
+                </h1>
                 <button id="theme-toggle" type="button"
-                        class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm">
+                        class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
                     <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                          xmlns="http://www.w3.org/2000/svg">
                         <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>

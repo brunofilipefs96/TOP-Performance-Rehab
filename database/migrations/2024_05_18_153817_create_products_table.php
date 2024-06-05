@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('image')->default('products/default.png');
             $table->string('name');
             $table->integer('quantity');
-            $table->decimal('price');
+            $table->decimal('price', 8, 2);
             $table->string('details');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();

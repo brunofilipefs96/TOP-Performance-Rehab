@@ -12,6 +12,16 @@
 
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <style>
+        #map {
+            height: 400px; /* Adjust height as needed */
+            width: 100%;
+        }
+    </style>
 </head>
 <body class="font-sans antialiased dark:text-white/50 select-none">
 <div class="text-black/50 dark:text-white/50 dark:bg-gray-800">
@@ -21,7 +31,7 @@
             <div class="text-center lg:text-left pl-2 pt-2">
                 <h1 class="font-bold">
                     <span class="text-black dark:text-white font-semibold text-2xl">Ginásio</span>
-                    <span class="text-lime-500 dark:text-lime-500 font-semibold text-2xl">TOP</span>
+                    <span class="text-blue-500 dark:text-lime-500 font-semibold text-2xl">TOP</span>
                 </h1>
             </div>
             <div class="flex items-center space-x-4">
@@ -70,13 +80,14 @@
 
         <main class="mt-10 mb-20">
             <!-- Welcome Section -->
-            <section class="text-center py-20 bg-gray-100 dark:bg-gray-900 relative h-96">
+            <section class="text-center py-20 bg-gray-100 dark:bg-gray-800 relative h-96 rounded-2xl shadow-2xl">
                 <div class="absolute inset-y-0 right-0 transform">
                     <img src="{{ asset('images/welcome.png') }}" alt="Imagem de boas-vindas" class="object-cover h-full w-full">
                 </div>
                 <div class="relative z-10">
                     <h1 class="text-5xl font-bold mb-4 dark:text-gray-200 text-gray-800">Sessão grátis com um treinador</h1>
-                    <a href="{{ route('register') }}" class="bg-lime-500 text-black dark:bg-lime-400 dark:text-white py-2 px-4 rounded">Junte-se a nós</a>
+                    <br>
+                    <a href="{{ route('register') }}" class="bg-blue-500 text-white dark:bg-lime-400 dark:text-white py-2 px-4 rounded hover:bg-blue-400 dark:hover:bg-lime-300">Junte-se a nós</a>
                 </div>
             </section>
 
@@ -84,19 +95,19 @@
             <section class="py-20 text-center">
                 <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Razões para se juntar</h2>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                    <div class="p-6 bg-gray-100 dark:bg-gray-800 rounded">
+                    <div class="p-6 bg-gray-100 dark:bg-gray-800 rounded-2xl shadow-2xl">
                         <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">5000 sq.ft.</h3>
                         <p class="text-gray-700 dark:text-gray-300">Área para exercícios</p>
                     </div>
-                    <div class="p-6 bg-gray-100 dark:bg-gray-800 rounded">
+                    <div class="p-6 bg-gray-100 dark:bg-gray-800 rounded-2xl shadow-2xl">
                         <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Mais de 40+</h3>
                         <p class="text-gray-700 dark:text-gray-300">programas de treino em grupo</p>
                     </div>
-                    <div class="p-6 bg-gray-100 dark:bg-gray-800 rounded">
+                    <div class="p-6 bg-gray-100 dark:bg-gray-800 rounded-2xl shadow-2xl">
                         <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Zona Fitness</h3>
                         <p class="text-gray-700 dark:text-gray-300">Ciclismo indoor e zona de fitness</p>
                     </div>
-                    <div class="p-6 bg-gray-100 dark:bg-gray-800 rounded">
+                    <div class="p-6 bg-gray-100 dark:bg-gray-800 rounded-2xl shadow-2xl">
                         <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Treino Personalizado</h3>
                         <p class="text-gray-700 dark:text-gray-300">para todos os membros</p>
                     </div>
@@ -107,30 +118,44 @@
             <section class="py-20 text-center dark:bg-gray-900">
                 <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Associação ao ginásio</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded">
+                    <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-2xl shadow-2xl">
                         <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Plano 1</h3>
                         <p class="mb-4 text-gray-700 dark:text-gray-300">Descrição do plano básico</p>
-                        <button class="bg-lime-500 text-black dark:bg-lime-400 dark:text-white py-2 px-4 rounded">Junte-se a nós</button>
+                        <button class="bg-blue-500 text-white dark:bg-lime-400 dark:text-white py-2 px-4 rounded hover:bg-blue-400 dark:hover:bg-lime-300">Junte-se a nós</button>
                     </div>
-                    <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded">
+                    <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-2xl shadow-2xl">
                         <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Plano 2</h3>
                         <p class="mb-4 text-gray-700 dark:text-gray-300">Descrição do plano padrão</p>
-                        <button class="bg-lime-500 text-black dark:bg-lime-400 dark:text-white py-2 px-4 rounded">Junte-se a nós</button>
+                        <button class="bg-blue-500 text-white dark:bg-lime-400 dark:text-white py-2 px-4 rounded hover:bg-blue-400 dark:hover:bg-lime-300">Junte-se a nós</button>
                     </div>
-                    <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded">
+                    <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-2xl shadow-2xl">
                         <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Plano 3</h3>
                         <p class="mb-4 text-gray-700 dark:text-gray-300">Descrição do plano premium</p>
-                        <button class="bg-lime-500 text-black dark:bg-lime-400 dark:text-white py-2 px-4 rounded">Junte-se a nós</button>
+                        <button class="bg-blue-500 text-white dark:bg-lime-400 dark:text-white py-2 px-4 rounded hover:bg-blue-400 dark:hover:bg-lime-300">Junte-se a nós</button>
                     </div>
                 </div>
             </section>
 
             <!-- About Us Section -->
-            <section class="py-20 text-center bg-gray-100 dark:bg-gray-800">
+            <section class="py-20 text-center bg-gray-100 dark:bg-gray-800 rounded-2xl shadow-2xl">
                 <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Sobre nós</h2>
                 <p class="mb-8 text-gray-700 dark:text-gray-300">Descrição sobre o ginásio, suas instalações e missão.</p>
                 <img src="path/to/image.jpg" alt="Imagem do ginásio" class="mx-auto">
             </section>
+
+            <!-- Map Section -->
+            <section class="py-20 text-center">
+                <h2 class="text-3xl font-bold mb-10 text-gray-900 dark:text-white">Contactos</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-gray-100 p-5 rounded-2xl shadow-2xl dark:bg-gray-800">
+                    <div class="space-y-4 text-left mt-20">
+                        <p class="text-gray-900 dark:text-white">Telefone: 123-456-789</p>
+                        <p class="text-gray-900 dark:text-white">Email: contacto@ginasiotop.com</p>
+                        <p class="text-gray-900 dark:text-white">Endereço: Rua do Ginásio, 123, Famalicão, Portugal</p>
+                    </div>
+                    <div id="map" style="height: 300px;"></div>
+                </div>
+            </section>
+
 
         </main>
 
@@ -140,6 +165,8 @@
     </div>
 </div>
 
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
     (function() {
         function applyTheme(theme) {
@@ -163,6 +190,17 @@
             applyTheme("light");
         }
     })();
+
+    // Initialize Leaflet map
+    var map = L.map('map').setView([41.409073, -8.511614], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+    }).addTo(map);
+
+    L.marker([41.409073, -8.511614]).addTo(map)
+        .bindPopup('Famalicão, Portugal')
+        .openPopup();
 </script>
 </body>
 </html>

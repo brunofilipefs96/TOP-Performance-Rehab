@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Membership;
 use App\Models\Room;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -62,11 +63,14 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('atec123'),
         ])->roles()->sync([4]);
 
+        $this->call(AddressSeeder::class);
         $this->call(ProductSeeder::class);
         $this->call(RoomSeeder::class);
+        $this->call(MembershipSeeder::class);
         $this->call(ServiceSeeder::class);
         $this->call(TrainingTypeSeeder::class);
         $this->call(PackSeeder::class);
         $this->call(SurveySeeder::class);
+
     }
 }

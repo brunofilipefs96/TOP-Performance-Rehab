@@ -18,8 +18,11 @@ class MembershipPolicy
 
     /**
      * Determine whether the user can view the model.
+     * @param User $user
+     * @param $membership
+     * @return bool
      */
-    public function view(User $user, Membership $membership): bool
+    public function view(User $user, $membership): bool
     {
         return $user->id === $membership->user_id || $user->hasRole('admin');
     }

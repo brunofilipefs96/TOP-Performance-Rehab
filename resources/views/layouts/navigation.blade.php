@@ -36,7 +36,10 @@
                                 {{ __('Treinos') }}
                             </x-nav-link>
                             <x-nav-link :href="route('services.index')" :active="request()->routeIs('services.index')">
-                                {{ __('Servicos') }}
+                                {{ __('Serviços') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('memberships.index')" :active="request()->routeIs('memberships.index')">
+                                {{ __('Matrículas') }}
                             </x-nav-link>
                         @elseif(Auth::user()->hasRole('personal_trainer') || Auth::user()->hasRole('employee'))
                             <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
@@ -63,6 +66,10 @@
                             </x-nav-link>
                             <x-nav-link :href="route('trainings.index')" :active="request()->routeIs('trainings.index')">
                                 {{ __('Treinos') }}
+                            </x-nav-link>
+                        @elseif(Auth::user()->hasRole('employee'))
+                            <x-nav-link :href="route('services.index')" :active="request()->routeIs('services.index')">
+                                {{ __('Serviços') }}
                             </x-nav-link>
                         @endif
                     @endif
@@ -158,7 +165,10 @@
                     <x-responsive-nav-link :href="route('trainings.index')" :active="request()->routeIs('trainings.index')">
                         {{ __('Treinos') }}
                     </x-responsive-nav-link>
-                @elseif(Auth::user()->hasRole('personal_trainer') || Auth::user()->hasRole('funcionario'))
+                    <x-responsive-nav-link :href="route('services.index')" :active="request()->routeIs('services.index')">
+                        {{ __('Serviços') }}
+                    </x-responsive-nav-link>
+                @elseif(Auth::user()->hasRole('personal_trainer'))
                     <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
                         {{ __('Produtos') }}
                     </x-responsive-nav-link>
@@ -174,7 +184,7 @@
                     <x-responsive-nav-link :href="route('trainings.index')" :active="request()->routeIs('trainings.index')">
                         {{ __('Treinos') }}
                     </x-responsive-nav-link>
-                @elseif(Auth::user()->hasRole('cliente'))
+                @elseif(Auth::user()->hasRole('client'))
                     <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
                         {{ __('Produtos') }}
                     </x-responsive-nav-link>
@@ -183,6 +193,10 @@
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('trainings.index')" :active="request()->routeIs('trainings.index')">
                         {{ __('Treinos') }}
+                    </x-responsive-nav-link>
+                @elseif(Auth::user()->hasRole('employee'))
+                    <x-responsive-nav-link :href="route('services.index')" :active="request()->routeIs('services.index')">
+                        {{ __('Serviços') }}
                     </x-responsive-nav-link>
                 @endif
             @endif

@@ -35,6 +35,9 @@
                             <x-nav-link :href="route('trainings.index')" :active="request()->routeIs('trainings.index')">
                                 {{ __('Treinos') }}
                             </x-nav-link>
+                            <x-nav-link :href="route('services.index')" :active="request()->routeIs('services.index')">
+                                {{ __('Servicos') }}
+                            </x-nav-link>
                         @elseif(Auth::user()->hasRole('personal_trainer') || Auth::user()->hasRole('employee'))
                             <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
                                 {{ __('Produtos') }}

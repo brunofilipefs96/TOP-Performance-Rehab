@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('employee_id')->constrained('users');
             $table->foreignId('client_id')->constrained('users');
-            $table->foreignId('room_id')->constrained();
+            $table->foreignId('room_id')->default(1)->constrained();
             $table->string('name');
-            $table->boolean('approval');
+            $table->string('approval')->default('pending');
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->timestamp('created_at')->useCurrent();

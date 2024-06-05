@@ -1,18 +1,25 @@
+<!-- In your list-trainings.blade.php -->
+
 <div class="container mx-auto mt-5">
     <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Lista de Treinos</h1>
-    @can('create', App\Models\Training::class)
-        <div class="mb-10 flex justify-between items-center">
+    <div class="mb-10 flex justify-between items-center">
+        @can('create', App\Models\Training::class)
             <a href="{{ route('trainings.create') }}">
                 <button type="button" class="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 font-semibold dark:hover:bg-lime-400 dark:hover:text-gray-800">Adicionar Treino</button>
             </a>
-            <input type="date" id="search-date" class="w-1/3 p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-light-gray dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50" value="{{ \Carbon\Carbon::now()->toDateString() }}">
-        </div>
-        <hr class="mb-10 border-gray-400 dark:border-gray-300">
-    @endcan
+        @endcan
+        <input type="date" id="search-date" class="w-1/3 p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-light-gray dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50" value="{{ \Carbon\Carbon::now()->toDateString() }}">
+    </div>
+    <hr class="mb-10 border-gray-400 dark:border-gray-300">
+
     <div id="trainings-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @foreach ($trainings as $training)
-            <div class="training-card relative dark:bg-gray-800 bg-gray-400 rounded-lg overflow-hidden shadow-md text-white select-none" data-date="{{ \Carbon\Carbon::parse($training->start_date)->toDateString() }}" data-start-time="{{ \Carbon\Carbon::parse($training->start_date)->format('H:i') }}">
-                @if ($training->users->contains(auth()->user()))
+            @php
+                $userPresence = $training->users()->where('user_id', auth()->id())->exists();
+                $userPresenceFalse = $training->users()->where('user_id', auth()->id())->wherePivot('presence', false)->exists();
+            @endphp
+            <div class="training-card relative dark:bg-gray-800 bg-gray-400 rounded-lg overflow-hidden shadow-md text-white select-none" data-id="{{ $training->id }}" data-date="{{ \Carbon\Carbon::parse($training->start_date)->toDateString() }}" data-start-time="{{ \Carbon\Carbon::parse($training->start_date)->format('H:i') }}">
+                @if ($userPresence && !$userPresenceFalse)
                     <div class="ribbon"><span>Inscrito</span></div>
                 @endif
                 <div class="p-4 dark:bg-gray-800 bg-gray-400">
@@ -24,17 +31,20 @@
                     <p class="dark:text-gray-400 text-gray-700 mb-5">Duração: {{ \Carbon\Carbon::parse($training->start_date)->diffInMinutes(\Carbon\Carbon::parse($training->end_date)) }} minutos</p>
                     <p class="dark:text-gray-400 text-gray-700 mb-5">
                         @php
-                            $remainingSpots = $training->max_students - $training->users->count();
+                            $remainingSpots = $training->max_students - $training->users()->wherePivot('presence', true)->count();
                         @endphp
-                        Inscrições: {{ $training->users->count() }}/{{ $training->max_students }}
+                        Inscrições: {{ $training->users()->wherePivot('presence', true)->count() }}/{{ $training->max_students }}
                         @if ($remainingSpots > 0)
                             <span class="inline-block w-3 h-3 bg-green-500 rounded-full ml-2" title="Vagas disponíveis"></span>
                         @else
                             <span class="inline-block w-3 h-3 bg-red-500 rounded-full ml-2" title="Cheio"></span>
                         @endif
                     </p>
+                    @if ($userPresence && $userPresenceFalse)
+                        <p class="text-red-500 mb-5">Cancelou a inscrição com menos de 12 horas de antecedência. Não pode voltar a inscrever-se.</p>
+                    @endif
                     <div class="flex justify-end gap-2">
-                        <a href="{{ route('trainings.show', $training->id) }}" class="bg-blue-400 dark:bg-gray-400 text-white dark:text-gray-800 px-2 py-1 rounded-md hover:bg-blue-300 dark:hover:bg-gray-300">Mostrar</a>
+                        <a href="{{ route('trainings.show', $training->id) }}" class="bg-blue-400 dark:bg-gray-400 text-white dark:text-gray-800 px-2 py-1 rounded-md hover:bg-blue-300 dark:hover:bg-gray-300">Detalhes</a>
                         @can('update', $training)
                             <a href="{{ route('trainings.edit', $training->id) }}" class="bg-blue-500 dark:bg-gray-500 text-white dark:text-gray-800 px-2 py-1 rounded-md hover:bg-blue-400 dark:hover:bg-gray-400">Editar</a>
                         @endcan
@@ -45,7 +55,7 @@
                                 <button type="button" class="bg-red-600 text-white px-2 py-1 rounded-md hover:bg-red-500" onclick="confirmDelete({{ $training->id }})">Eliminar</button>
                             </form>
 
-                            <div id="confirmation-modal-{{ $training->id }}" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden">
+                            <div id="confirmation-modal-{{ $training->id }}" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
                                 <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
                                     <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Pretende eliminar?</h2>
                                     <p class="mb-4 text-red-500 dark:text-red-300">Não poderá reverter isso!</p>
@@ -56,12 +66,30 @@
                                 </div>
                             </div>
                         @endcan
-                        @if (auth()->check() && auth()->user()->cannot('update', $training) && auth()->user()->cannot('delete', $training) && $training->personal_trainer_id !== auth()->user()->id && !$training->users->contains(auth()->user()))
-                            @if ($remainingSpots > 0)
-                                <button type="button" class="bg-green-500 text-white px-2 py-1 rounded-md hover:bg-green-400" onclick="confirmEnroll({{ $training->id }})">Inscrever</button>
+                        @if (auth()->check() && auth()->user()->cannot('update', $training) && auth()->user()->cannot('delete', $training) && $training->personal_trainer_id !== auth()->user()->id)
+                            @if ($userPresence && !$userPresenceFalse)
+                                <button type="button" class="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-400" onclick="confirmCancel({{ $training->id }})">Cancelar Inscrição</button>
+                            @elseif(!$userPresenceFalse)
+                                @if ($remainingSpots > 0)
+                                    <button type="button" class="bg-green-500 text-white px-2 py-1 rounded-md hover:bg-green-400" onclick="confirmEnroll({{ $training->id }})">Inscrever</button>
+                                @endif
                             @endif
 
-                            <div id="enroll-modal-{{ $training->id }}" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden">
+                            <div id="cancel-modal-{{ $training->id }}" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
+                                <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
+                                    <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Pretende cancelar a inscrição?</h2>
+                                    <p class="mb-4 text-red-500 dark:text-red-300" id="cancel-message-{{ $training->id }}"></p>
+                                    <div class="flex justify-end gap-4">
+                                        <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400" onclick="cancelCancel({{ $training->id }})">Cancelar</button>
+                                        <form id="cancel-form-{{ $training->id }}" action="{{ route('trainings.cancel', $training->id) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Confirmar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="enroll-modal-{{ $training->id }}" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
                                 <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
                                     <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Pretende inscrever-se?</h2>
                                     <div class="flex justify-end gap-4">
@@ -88,6 +116,7 @@
 <script>
     let trainingDeleted = 0;
     let trainingEnrolled = 0;
+    let trainingCanceled = 0;
 
     function confirmDelete(id) {
         document.getElementById(`confirmation-modal-${id}`).classList.remove('hidden');
@@ -109,6 +138,28 @@
 
     function cancelEnroll(id) {
         document.getElementById(`enroll-modal-${id}`).classList.add('hidden');
+    }
+
+    function confirmCancel(id) {
+        const card = document.querySelector(`.training-card[data-id="${id}"]`);
+        const startDate = card.getAttribute('data-date');
+        const startTime = card.getAttribute('data-start-time');
+        const startDateTime = new Date(`${startDate}T${startTime}:00`);
+        const now = new Date();
+        const differenceInHours = (startDateTime - now) / 36e5;
+
+        let cancelMessage = 'Atenção! Não será reembolsado e não poderá voltar a inscrever-se neste treino, pois faltam menos de 12 horas até este treino se realizar.';
+        if (differenceInHours > 12) {
+            cancelMessage = 'Atenção! Não será reembolsado e não poderá voltar a inscrever-se neste treino, pois faltam menos de 12 horas até este treino se realizar.';
+        }
+
+        document.getElementById(`cancel-message-${id}`).innerText = cancelMessage;
+        document.getElementById(`cancel-modal-${id}`).classList.remove('hidden');
+        trainingCanceled = id;
+    }
+
+    function cancelCancel(id) {
+        document.getElementById(`cancel-modal-${id}`).classList.add('hidden');
     }
 
     function filterTrainings() {

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('training_id')->constrained()->onDelete('cascade');;
             $table->foreignId('user_id')->constrained()->onDelete('cascade');;
-            $table->boolean('presence');
+            $table->boolean('presence')->default(true);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
         });

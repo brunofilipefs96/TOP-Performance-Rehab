@@ -28,6 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'nif',
         'cc_number',
         'password',
+        'image'
     ];
 
     /**

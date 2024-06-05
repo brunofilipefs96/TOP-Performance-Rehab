@@ -5,24 +5,19 @@
                 <h1 class="mb-2 dark:text-lime-400 font-semibold text-gray-800">Utilizador {{$user->id}}</h1>
             </div>
 
-            @php
-                $imagePath = public_path($user->image);
-            @endphp
-
-            @if(file_exists($imagePath) && @getimagesize($imagePath))
-                <div class="mb-4 select-none">
+            @if($user->image && file_exists(public_path('storage/' . $user->image)))
+                <div class="mb-4 select-none ">
                     <label for="image" class="block">Imagem</label>
-                    <img src="{{ asset($user->image) }}" alt="Imagem do Utilizador" class="mt-1 block w-full h-auto border border-gray-300 rounded-md shadow-sm">
+                    <img src="{{ asset('storage/' . $user->image) }}" alt="Imagem do Produto" class="mt-1 block w-full h-auto border border-gray-300 rounded-md shadow-sm">
                 </div>
             @else
-                <div class="mb-4 select-none dark:text-white text-gray-800">
-                    <label for="image" class="block">Imagem</label>
-                    <div class="mt-1 block w-full h-40  bg-gray-100 dark:bg-gray-600 flex items-center justify-center text-white rounded-md shadow-sm">
-                        <span class="text-xl text-gray-800 dark:text-white">Sem imagem</span>
+                <div class="mb-4">
+                    <label for="image" class="block text-gray-800 dark:text-white">Imagem</label>
+                    <div class="mt-1 block w-full h-40 bg-gray-100 dark:bg-gray-600 flex items-center justify-center text-white rounded-md shadow-sm">
+                        <span class="text-xl dark:text-white text-gray-800">Sem imagem</span>
                     </div>
                 </div>
             @endif
-
             <div class="mb-4">
                 <label for="full_name" class="block dark:text-white text-gray-800">Nome Completo</label>
                 <input type="text" value="{{$user->full_name}}" disabled class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">

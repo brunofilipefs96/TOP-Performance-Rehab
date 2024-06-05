@@ -19,7 +19,7 @@
             <h2 class="text-4xl font-bold text-gray-800 text-center mb-1 p-2 dark:text-white">Crie a sua conta</h2>
             <h2 class="text-xl text-gray-600 dark:text-lime-300 text-center mb-6">Preencha os seus dados</h2>
             <hr>
-            <form method="POST" action="{{ route('register') }}" class="space-y-6">
+            <form method="POST" action="{{ route('register') }}" class="space-y-6" enctype="multipart/form-data">
                 @csrf
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -136,7 +136,22 @@
                         <x-input-error :messages="$errors->get('city')" class="mt-2 text-red-500" />
                     </div>
                 </div>
-
+                <div class="mb-4">
+                    <label for="image" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Imagem</label>
+                    <input type="file"
+                           id="image"
+                           name="image"
+                           accept="image/*"
+                           class="mt-1 block w-full p-2 bg-gray-100 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 dark:text-gray-200 placeholder-gray-500
+                           @error('image') border-red-500 @enderror dark:bg-gray-600"
+                           value="{{ old('image') }}"
+                           aria-describedby="imageHelp">
+                    @error('image')
+                    <span class="text-red-500 text-sm mt-2" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
 
 
                 <div class="flex items-center justify-end mt-4">

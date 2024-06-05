@@ -17,7 +17,7 @@ class TrainingTypeController extends Controller
     public function index()
     {
         $this->authorize('viewAny', TrainingType::class);
-        $trainingTypes = TrainingType::orderBy('id', 'desc')->paginate(10);
+        $trainingTypes = TrainingType::orderBy('id', 'desc')->paginate(12);
         return view('pages.training-types.index', ['training_types' => $trainingTypes]);
     }
 

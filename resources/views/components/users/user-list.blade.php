@@ -21,8 +21,8 @@
             @if (!$user->hasRole('admin'))
                 <div class="dark:bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none user-card" data-name="{{ $user->firstLastName() }}" data-nif="{{ $user->nif }}">
                     <div class="flex justify-center">
-                        @if($user->image && file_exists(public_path($user->image)))
-                            <img src="{{ asset($user->image) }}" alt="{{ $user->firstLastName() }}" class="w-full h-40 object-cover">
+                        @if($user->image && file_exists(public_path('storage/' . $user->image)))
+                            <img src="{{ asset('storage/' . $user->image) }}" alt="{{ $user->firstLastName() }}" class="w-full h-40 object-cover">
                         @else
                             <div class="w-full h-40 bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
                                 <span class="text-3xl">Sem imagem</span>

@@ -79,6 +79,14 @@ class RegisteredUserController extends Controller
             'postal_code' => $request->postal_code,
         ]);
 
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image');
+            $imageName = $user->id . '_' . time() . '_' . $imagePath->getClientOriginalName();
+            $path = $request->file('image')->storeAs('images/users/' . $user->id, $imageName, 'public');
+            $user->image = $path;
+        }
+        $user->save();
+
         event(new Registered($user));
 
         Auth::login($user);

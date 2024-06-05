@@ -10,8 +10,21 @@
             <form method="POST" id="update-form" action="{{ route('products.update', $product->id) }}" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
+                @if($product->image && file_exists(public_path('storage/' . $product->image)))
+                    <div class="mb-4 select-none">
+                        <label for="image" class="block">Imagem atual</label>
+                        <img src="{{ asset('storage/' . $product->image) }}" alt="Imagem do Produto" class="mt-1 block w-full h-auto border border-gray-300 rounded-md shadow-sm">
+                    </div>
+                @else
+                    <div class="mb-4">
+                        <label for="image" class="block text-gray-800 dark:text-white">Imagem atual</label>
+                        <div class="mt-1 block w-full h-40 bg-gray-100 dark:bg-gray-600 flex items-center justify-center text-white rounded-md shadow-sm">
+                            <span class="text-xl dark:text-white text-gray-800">Sem imagem</span>
+                        </div>
+                    </div>
+                @endif
                 <div class="mb-4">
-                    <label for="image" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Imagem</label>
+                    <label for="image" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Escolha uma imagem</label>
                     <input type="file"
                            id="image"
                            name="image"

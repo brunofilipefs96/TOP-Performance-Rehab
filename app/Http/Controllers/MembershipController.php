@@ -18,7 +18,9 @@ class MembershipController extends Controller
      */
     public function index()
     {
-        //
+        $this->authorize('viewAny', Membership::class);
+        $memberships = Membership::orderBy('id', 'desc')->paginate(12);
+        return view('pages.memberships.index', ['memberships' => $memberships]);
     }
 
     /**
@@ -49,7 +51,7 @@ class MembershipController extends Controller
      */
     public function show(Membership $membership)
     {
-        $this->authorize('view', Membership::class);
+        $this->authorize('view', $membership);
         return view('pages.memberships.show', ['membership' => $membership]);
     }
 
@@ -74,7 +76,9 @@ class MembershipController extends Controller
      */
     public function destroy(Membership $membership)
     {
-        //
+        $this->authorize('delete', $membership);
+        $membership->delete();
+        return redirect()->route('memberships.index')->with('success', 'Product deleted successfully.');
     }
 
     public function form(Request $request)

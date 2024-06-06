@@ -4,13 +4,18 @@
         <div class="mb-10 flex justify-between items-center">
             <input type="text" id="search" placeholder="Pesquisar matrículas..."
                    class="w-1/3 p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-light-gray dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
+            <div class="flex gap-2 ml-4">
+                <button id="filter-active" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-400">Active</button>
+                <button id="filter-pending" class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-400">Pending</button>
+                <button id="filter-inactive" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-400">Inactive</button>
+            </div>
         </div>
     @endcan
     <hr class="mt-10 mb-10 border-gray-800 dark:border-white">
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @foreach ($memberships as $membership)
             <div class="membership-card bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none"
-                 data-name="{{ $membership->user->name }}">
+                 data-name="{{ $membership->user->full_name }}" data-nif="{{ $membership->user->nif }}" data-status="{{ $membership->status }}">
                 <div class="p-4 dark:bg-gray-800 bg-gray-400">
                     <h3 class="text-xl font-semibold mb-2">{{ $membership->user->full_name }}
                         Nº {{ $membership->id }}</h3>
@@ -92,7 +97,9 @@
         const membershipCards = document.querySelectorAll('.membership-card');
         membershipCards.forEach(card => {
             const name = card.getAttribute('data-name').toLowerCase();
-            if (name.includes(searchTerm)) {
+            const nif = card.getAttribute('data-nif').toLowerCase();
+            const status = card.getAttribute('data-status').toLowerCase();
+            if ((name.includes(searchTerm) || nif.includes(searchTerm)) && (selectedStatus === 'all' || status === selectedStatus)) {
                 card.classList.remove('hidden');
             } else {
                 card.classList.add('hidden');
@@ -100,6 +107,22 @@
         });
     }
 
-    document.getElementById('search').addEventListener('input', filterPacks);
-</script>
+    let selectedStatus = 'all';
 
+    document.getElementById('search').addEventListener('input', filterPacks);
+
+    document.getElementById('filter-active').addEventListener('click', function () {
+        selectedStatus = 'active';
+        filterPacks();
+    });
+
+    document.getElementById('filter-pending').addEventListener('click', function () {
+        selectedStatus = 'pending';
+        filterPacks();
+    });
+
+    document.getElementById('filter-inactive').addEventListener('click', function () {
+        selectedStatus = 'inactive';
+        filterPacks();
+    });
+</script>

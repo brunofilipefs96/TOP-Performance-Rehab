@@ -4,10 +4,13 @@
         <div class="mb-10 flex justify-between items-center">
             <input type="text" id="search" placeholder="Pesquisar matrículas..."
                    class="w-1/3 p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-light-gray dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
-            <div class="flex gap-2 ml-4">
-                <button id="filter-active" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-400">Active</button>
-                <button id="filter-pending" class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-400">Pending</button>
-                <button id="filter-inactive" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-400">Inactive</button>
+            <div class="ml-4">
+                <select id="filter" class="bg-white text-black px-4 py-2 rounded-md border border-gray-300 dark:bg-gray-600 dark:text-white">
+                    <option value="all">Todos</option>
+                    <option value="active">Ativos</option>
+                    <option value="pending">Pendentes</option>
+                    <option value="inactive">Inativos</option>
+                </select>
             </div>
         </div>
     @endcan
@@ -21,16 +24,16 @@
                         Nº {{ $membership->id }}</h3>
                     <p class="dark:text-gray-400 text-gray-700 mb-2">Nif: {{ $membership->user->nif }}</p>
                     <div class="flex items-center mb-2">
-                        <p class="dark:text-gray-400 text-gray-700 mr-2 align-middle">Status: {{ ucfirst($membership->status) }} </p>
-                        <span class="mt-1 align-middle">
-                            @if($membership->status == 'active')
-                                <span class="h-3 w-3 bg-green-500 rounded-full inline-block"></span>
-                            @elseif($membership->status == 'pending')
-                                <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
-                            @elseif($membership->status == 'inactive')
-                                <span class="h-3 w-3 bg-red-500 rounded-full inline-block"></span>
-                            @endif
-                        </span>
+                        @if($membership->status == 'active')
+                            <p class="dark:text-gray-400 text-gray-700 mr-2 align-middle">Estado: Ativo</p>
+                            <span class="h-3 w-3 bg-green-500 rounded-full inline-block"></span>
+                        @elseif($membership->status == 'pending')
+                            <p class="dark:text-gray-400 text-gray-700 mr-2 align-middle">Estado: Pendente</p>
+                            <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
+                        @elseif($membership->status == 'inactive')
+                            <p class="dark:text-gray-400 text-gray-700 mr-2 align-middle">Estado: Inativo</p>
+                            <span class="h-3 w-3 bg-red-500 rounded-full inline-block"></span>
+                        @endif
                     </div>
                     <div class="flex justify-end items-center mt-4 gap-2">
                         <a href="{{ url('memberships/' . $membership->id) }}"
@@ -111,18 +114,8 @@
 
     document.getElementById('search').addEventListener('input', filterPacks);
 
-    document.getElementById('filter-active').addEventListener('click', function () {
-        selectedStatus = 'active';
-        filterPacks();
-    });
-
-    document.getElementById('filter-pending').addEventListener('click', function () {
-        selectedStatus = 'pending';
-        filterPacks();
-    });
-
-    document.getElementById('filter-inactive').addEventListener('click', function () {
-        selectedStatus = 'inactive';
+    document.getElementById('filter').addEventListener('change', function () {
+        selectedStatus = this.value;
         filterPacks();
     });
 </script>

@@ -5,23 +5,30 @@
         <div class="py-10">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <div class="mt-4">
-                        <h3 class="text-xl font-medium mb-3">Seu Calendário de Treinamentos Semanal</h3>
-                        <div class="flex justify-between mb-6">
-                            <form method="POST" action="{{ route('dashboard.changeWeek') }}">
+                    <div class="mt-4 mb-10">
+                        <h3 class="text-2xl font-medium mb-3 text-center">Calendário Semanal</h3>
+                        <div class="flex justify-center items-center">
+                            <form method="POST" action="{{ route('dashboard.changeWeek') }}" class="mr-2">
                                 @csrf
                                 <input type="hidden" name="direction" value="previous">
-                                <button type="submit" class="mr-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                    Semana Anterior
+                                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-900 font-bold py-2 px-4 rounded">
+                                    <<
                                 </button>
                             </form>
-                            <form method="POST" action="{{ route('dashboard.changeWeek') }}">
+                            <!-- Display current week range -->
+                            <div class="mx-4 text-lg font-semibold">
+                                {{ \Carbon\Carbon::parse($startOfWeek)->format('d M') }} - {{ \Carbon\Carbon::parse($startOfWeek)->addDays(6)->format('d M') }}
+                            </div>
+                            <form method="POST" action="{{ route('dashboard.changeWeek') }}" class="ml-2">
                                 @csrf
                                 <input type="hidden" name="direction" value="next">
-                                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                    Próxima Semana
+                                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-900 font-bold py-2 px-4 rounded">
+                                    >>
                                 </button>
                             </form>
+                        </div>
+                        <div class="flex justify-center mb-6 items-center">
+                            <h3 class="text-lg font-medium mb-3 text-center">{{ date('Y') }}</h3>
                         </div>
                         <div class="flex justify-center">
                             <div class="max-w-4xl w-full">

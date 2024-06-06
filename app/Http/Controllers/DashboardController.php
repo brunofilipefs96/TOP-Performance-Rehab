@@ -13,12 +13,13 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         if (!Auth::check()) {
-            abort(403, 'Permissão negada.');
+            abort(403, 'Unauthorized access.');
         }
 
-        $roles = Auth::user()->roles()->pluck('name')->toArray();
+        $user = Auth::user();
+        $roles = $user->roles()->pluck('name')->toArray();
 
-        // New members - Monthly and Annually
+        // General data for the dashboard
         $newMembersMonthly = User::whereMonth('created_at', Carbon::now()->month)->count();
         $newMembersAnnually = User::whereYear('created_at', Carbon::now()->year)->count();
 
@@ -40,6 +41,14 @@ class DashboardController extends Controller
             $annualData->push(User::whereMonth('created_at', $date->month)->whereYear('created_at', $date->year)->count());
         }
 
+        // Date manipulation for week navigation
+        if (!$request->session()->has('currentWeek')) {
+            $request->session()->put('currentWeek', Carbon::now()->format('Y-m-d'));
+        }
+        $currentWeek = Carbon::parse($request->session()->get('currentWeek'));
+        $startOfWeek = $currentWeek->copy()->startOfWeek();
+        $endOfWeek = $currentWeek->copy()->endOfWeek();
+
         if (in_array('admin', $roles)) {
             return view('pages.dashboard.admin', [
                 'newMembersMonthly' => $newMembersMonthly,
@@ -50,13 +59,41 @@ class DashboardController extends Controller
                 'annualData' => $annualData,
             ]);
         } elseif (in_array('client', $roles)) {
-            return view('pages.dashboard.client');
+            $trainings = $user->trainings()
+                ->whereBetween('start_date', [$startOfWeek, $endOfWeek])
+                ->get();
+
+            return view('pages.dashboard.client', [
+                'trainings' => $trainings,
+                'startOfWeek' => $startOfWeek,
+                'endOfWeek' => $endOfWeek,
+                'currentWeek' => $currentWeek->format('Y-m-d')
+            ]);
         } elseif (in_array('personal_trainer', $roles)) {
             return view('pages.dashboard.personal-trainer');
         } elseif (in_array('employee', $roles)) {
             return view('pages.dashboard.employee');
         } else {
-            abort(403, 'Permissão negada.');
+            abort(403, 'Unauthorized access.');
         }
+    }
+
+    public function changeWeek(Request $request)
+    {
+        if (!Auth::check()) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $currentWeek = Carbon::parse($request->session()->get('currentWeek'));
+
+        if ($request->input('direction') === 'previous') {
+            $newWeek = $currentWeek->subWeek();
+        } else {
+            $newWeek = $currentWeek->addWeek();
+        }
+
+        $request->session()->put('currentWeek', $newWeek->format('Y-m-d'));
+
+        return redirect()->route('dashboard');
     }
 }

@@ -81,7 +81,9 @@
             @endif
 
             <div class="flex justify-center mt-6">
-                <button onclick="history.back()" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-300 dark:hover:text-gray-800">Voltar</button>
+                <a href="{{ route('trainings.index') }}" class="inline-block bg-gray-500 mt-4 mb-5 py-2 px-4 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                    Voltar
+                </a>
             </div>
         </div>
     </div>

@@ -43,7 +43,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="quantity" class="block text-sm font-medium text-gray-200">Quantidade</label>
+                    <label for="quantity" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Quantidade</label>
                     <input type="number"
                            id="quantity"
                            name="quantity"
@@ -62,7 +62,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="price" class="block text-sm font-medium text-gray-200">Preço</label>
+                    <label for="price" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Preço</label>
                     <input type="number"
                            id="price"
                            name="price"
@@ -81,7 +81,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="details" class="block text-sm font-medium text-gray-200">Detalhes</label>
+                    <label for="details" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Detalhes</label>
                     <textarea id="details"
                               name="details"
                               autocomplete="details"
@@ -98,7 +98,9 @@
                 </div>
                 <div class="flex justify-end gap-2">
                     <button type="submit" class="mt-4 mb-5 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300">Adicionar</button>
-                    <button onclick="history.back()" class="mt-4 mb-5 bg-gray-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-gray-400">Cancelar</button>
+                    <a href="{{ route('products.index') }}" class="inline-block bg-gray-500 mt-4 mb-5 py-2 px-4 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                        Cancelar
+                    </a>
                 </div>
             </form>
         </div>

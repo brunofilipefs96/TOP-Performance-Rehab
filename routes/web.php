@@ -49,6 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/packs', PackController::class);
     Route::resource('/insurances', InsuranceController::class);
     Route::resource('/services', ServiceController::class);
+    Route::resource('/memberships', MembershipController::class);
 
     Route::get('/entries/{survey}/fill', [EntryController::class, 'fill'])->name('entries.fill');
     Route::post('/entries/{survey}', [EntryController::class, 'store'])->name('entries.store');
@@ -65,6 +66,8 @@ Route::middleware('auth')->group(function () {
     Route::post('trainings/{training}/enroll', [TrainingController::class, 'enroll'])->name('trainings.enroll');
     Route::post('trainings/{training}/cancel', [TrainingController::class, 'cancel'])->name('trainings.cancel');
     Route::resource('trainings', TrainingController::class);
+
+    Route::post('/dashboard/change-week', [DashboardController::class, 'changeWeek'])->name('dashboard.changeWeek');
 });
 
 

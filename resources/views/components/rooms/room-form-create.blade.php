@@ -45,7 +45,9 @@
 
                 <div class="flex justify-end gap-2">
                     <button type="submit" class="mt-4 mb-5 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300">Adicionar</button>
-                    <button onclick="history.back()" class="mt-4 mb-5 bg-gray-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-gray-400">Cancelar</button>
+                    <a href="{{ route('rooms.index') }}" class="inline-block bg-gray-500 mt-4 mb-5 py-2 px-4 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                        Cancelar
+                    </a>
                 </div>
             </form>
         </div>

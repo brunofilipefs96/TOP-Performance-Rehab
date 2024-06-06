@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateMembershipRequest;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Redirect;
+use MattDaneshvar\Survey\Models\Entry;
 
 class MembershipController extends Controller
 {
@@ -68,7 +69,9 @@ class MembershipController extends Controller
      */
     public function update(UpdateMembershipRequest $request, Membership $membership)
     {
-        //
+        $this->authorize('update', $membership);
+        $membership->update($request->validated());
+        return redirect()->route('memberships.show', ['membership' => $membership]);
     }
 
     /**
@@ -90,33 +93,11 @@ class MembershipController extends Controller
         return view('pages.memberships.form', ['entries' => $entries]);
     }
 
-
-    public function storeForm(Request $request, Membership $membership)
+    public function updateStatus(Request $request, Membership $membership, $status)
     {
-        $this->authorize('form', Membership::class);
+        $membership->status = $status;
+        $membership->save();
 
-        $validatedData = $request->validate([
-            'responses' => 'required|array',
-            'responses.*.question_id' => 'required|exists:questions,id',
-            'responses.*.response_text' => 'required',
-        ]);
-
-        foreach ($validatedData['responses'] as $reponse) {
-            $question = Question::findOrFail($reponse['question_id']);
-
-            if (!$membership->questionnaires->contains($question->questionnaire_id)) {
-                return redirect()->back()->with('error', 'A pergunta não pertence ao questionário associado.');
-            }
-
-            $response2 = new Response([
-                'response' => $reponse['response'],
-                'user_id' => auth()->id(),
-            ]);
-
-            $question->responses()->save($response2);
-        }
-
-        return redirect()->route('users.index')->with('success', 'Formulário enviado com sucesso.');
+        return redirect()->route('memberships.index', ['membership' => $membership])->with('success', 'Status atualizado com sucesso!');
     }
-
 }

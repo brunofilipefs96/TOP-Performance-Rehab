@@ -14,9 +14,6 @@ class UpdateMembershipRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => ['required', 'integer'],
-            'address_id' => ['required', 'integer'],
-            'monthly_plan' => ['required', 'boolean'],
             'total_trainings_supervised' => ['required', 'integer'],
             'total_trainings_individual' => ['required', 'integer'],
             'status' => ['required', 'string'],

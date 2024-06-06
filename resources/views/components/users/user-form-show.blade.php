@@ -70,7 +70,9 @@
                 @if ($user->membership)
                     <a href="{{ route('users.membership.show', ['membership' => $user->membership]) }}" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-700 dark:bg-blue-400 dark:hover:bg-blue-300 dark:hover:text-blue-800">Detalhes da Matrícula</a>
                 @endif
-                <button onclick="history.back()" class="bg-gray-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-gray-700 dark:bg-gray-400 dark:hover:bg-gray-300 dark:hover:text-gray-800">Voltar</button>
+                    <a href="{{ route('users.index') }}" class="inline-block bg-gray-500 mt-4 mb-5 py-2 px-4 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                        Voltar
+                    </a>
             </div>
 
         </div>

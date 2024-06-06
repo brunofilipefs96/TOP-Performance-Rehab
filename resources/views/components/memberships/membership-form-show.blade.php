@@ -94,9 +94,9 @@
                 </div>
             </div>
             <div class="flex justify-center mb-4">
-                <button onclick="history.back()"
-                        class="bg-gray-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-gray-700">Voltar
-                </button>
+                <a href="{{ route('memberships.index') }}" class="inline-block bg-gray-500 mt-4 mb-5 py-2 px-4 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                    Voltar
+                </a>
             </div>
         </div>
     </div>

@@ -65,46 +65,26 @@
         </div>
 
         <script>
-            // Modal de atualização com sucesso
             document.addEventListener('DOMContentLoaded', function() {
-                // Verifique se há uma mensagem de sucesso na sessão
-                @if(session('success'))
-                document.getElementById('success-modal').classList.remove('hidden');
-                // Esconder o modal após 5 segundos
-                setTimeout(hideSuccessModal, 5000);
-                @endif
-            });
+                var successInfo = @json(session('success', false));
+                if (successInfo) {
+                    const successModal = document.getElementById('success-modal');
+                    successModal.classList.remove('hidden');
+                    setTimeout(function() {
+                        successModal.classList.add('fade-out');
+                    }, 1500);
 
-            // Seleciona o modal de sucesso
-            const successModal = document.getElementById('success-modal');
-
-            // Função para esconder o modal
-            function hideSuccessModal() {
-                successModal.classList.add('hidden');
-            }
-
-            // Função para recarregar a página
-            function reloadPage() {
-                location.reload();
-            }
-
-            // Observa mudanças na classe do modal de sucesso
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (mutation.attributeName === 'class') {
-                        const currentClassState = mutation.target.classList.contains('hidden');
-                        if (currentClassState) {
-                            reloadPage();
-                        }
-                    }
-                });
-            });
-
-            // Configurar o observador para observar mudanças na classe do modal de sucesso
-            observer.observe(successModal, {
-                attributes: true // Configurar para observar mudanças em atributos
+                    setTimeout(function() {
+                        successModal.classList.add('hidden');
+                    }, 2500);
+                }
             });
         </script>
+
+
+
+
+
 
     </body>
     <footer class="py-16 text-center text-sm text-black dark:text-white/70 dark:bg-gray-900">

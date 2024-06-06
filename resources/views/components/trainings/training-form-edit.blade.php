@@ -93,7 +93,9 @@
                     </div>
                     <div class="flex justify-end gap-2">
                         <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-300 dark:hover:text-gray-800" onclick="confirmarAtualizacao()">Atualizar Treino</button>
-                        <button type="button" onclick="history.back()" class="bg-gray-500 py-2 px-4 rounded-md shadow-sm hover:bg-gray-400 dark:bg-gray-500 dark:hover:bg-gray-400">Cancelar</button>
+                        <a href="{{ route('trainings.index') }}" class="inline-block bg-gray-500 mt-4 mb-5 py-2 px-4 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                            Cancelar
+                        </a>
                     </div>
                 </form>
                 <div id="confirmation-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden">

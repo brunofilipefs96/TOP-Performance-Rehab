@@ -59,3 +59,14 @@
     border-bottom: 3px solid transparent;
     border-top: 3px solid #c0392b;
 }
+
+#success-modal {
+    transition: opacity 1s ease-out;
+    opacity: 1;
+}
+
+.fade-out {
+    opacity: 0 !important;
+    pointer-events: none;
+}
+

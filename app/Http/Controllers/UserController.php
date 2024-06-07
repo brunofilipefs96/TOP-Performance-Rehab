@@ -13,7 +13,7 @@ class UserController extends Controller
     public function index()
     {
         $this->authorize('viewAny', User::class);
-        $users = User::orderBy('id', 'desc')->paginate(12);
+        $users = User::with('roles')->orderBy('id', 'desc')->paginate(12);
         return view('pages.users.index', ['users' => $users]);
     }
 

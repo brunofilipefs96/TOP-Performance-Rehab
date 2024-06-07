@@ -1,25 +1,28 @@
 <div class="container mx-auto mt-5">
     <h1 class="text-2xl font-bold mb-5 text-gray-800 dark:text-gray-200">Lista de Utilizadores</h1>
-
-    <div class="w-full sm:w-1/2 mb-10 relative">
-        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg class="h-5 w-5 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M18 11a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-        </span>
-        <input type="text" id="search" placeholder="Pesquisar por NIF ou Nome Completo" oninput="filterUsers()" class="pl-10 mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-light-gray dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
-    </div>
-
-    @can('create', App\Models\User::class)
-        <a href="{{ url('users/create') }}" class="block mb-4">
-            <button type="button" class="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-700 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold">Adicionar Utilizador</button>
-        </a>
+    @can('viewAny', App\Models\User::class)
+        <div class="mb-10 flex justify-between items-center">
+            <input type="text" id="search" placeholder="Pesquisar usuários..."
+                   class="w-1/3 p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-light-gray dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
+            <div class="ml-4">
+                <select id="role-filter" class="bg-white text-black px-4 py-2 rounded-md border border-gray-300 dark:bg-gray-600 dark:text-white">
+                    <option value="all">Todos</option>
+                    <option value="employee">Funcionário</option>
+                    <option value="admin">Administrador</option>
+                    <option value="client">Cliente</option>
+                    <option value="personal_trainer">Personal Trainer</option>
+                </select>
+            </div>
+        </div>
     @endcan
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @foreach ($users as $user)
             @if (!$user->hasRole('admin'))
-                <div class="dark:bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none user-card" data-name="{{ $user->firstLastName() }}" data-nif="{{ $user->nif }}">
+                @php
+                    $userRole = $user->roles->pluck('name')->first();
+                @endphp
+                <div class="dark:bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none user-card" data-name="{{ $user->firstLastName() }}" data-role="{{ $userRole }}" data-nif="{{ $user->nif }}">
                     <div class="flex justify-center">
                         @if($user->image && file_exists(public_path('storage/' . $user->image)))
                             <img src="{{ asset('storage/' . $user->image) }}" alt="{{ $user->firstLastName() }}" class="w-full h-40 object-cover">
@@ -32,6 +35,7 @@
                     <div class="p-4 bg-gray-500 dark:bg-gray-800">
                         <h3 class="text-xl font-semibold mb-2">{{ $user->firstLastName() }}</h3>
                         <p class="text-gray-400 mb-2">NIF: {{ $user->nif }}</p>
+                        <p class="text-gray-400 mb-2">Role: {{ $userRole }}</p>
                         <div class="flex justify-end items-center mt-4 gap-2">
                             <a href="{{ url('users/' . $user->id) }}" class="bg-blue-500 hover:bg-blue-400 text-white px-2 py-1 rounded-md dark:bg-gray-400 dark:hover:bg-gray-300">Mostrar</a>
                             @can('update', $user)
@@ -41,7 +45,7 @@
                                 <form id="delete-form-{{$user->id}}" action="{{ url('users/' . $user->id) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="button" class="bg-red-600 rounded-md  text-white px-2 py-1 -md hover:bg-red-500" id="delete-button" onclick="confirmarEliminacao({{ $user->id }})">Eliminar</button>
+                                    <button type="button" class="bg-red-600 rounded-md text-white px-2 py-1 hover:bg-red-500" id="delete-button" onclick="confirmarEliminacao({{ $user->id }})">Eliminar</button>
                                 </form>
 
                                 <div id="confirmation-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden">
@@ -75,11 +79,11 @@
         userDeleted = id;
     }
 
-    document.getElementById('cancel-button').addEventListener('click', function() {
+    document.getElementById('cancel-button').addEventListener('click', function () {
         document.getElementById('confirmation-modal').classList.add('hidden');
     });
 
-    document.getElementById('confirm-button').addEventListener('click', function() {
+    document.getElementById('confirm-button').addEventListener('click', function () {
         document.getElementById(`delete-form-${userDeleted}`).submit();
     });
 
@@ -88,8 +92,8 @@
         const userCards = document.querySelectorAll('.user-card');
         userCards.forEach(card => {
             const name = card.getAttribute('data-name').toLowerCase();
-            const nif = card.getAttribute('data-nif').toLowerCase();
-            if (name.includes(searchTerm) || nif.includes(searchTerm)) {
+            const role = card.getAttribute('data-role').toLowerCase();
+            if ((name.includes(searchTerm)) && (selectedRole === 'all' || role === selectedRole)) {
                 card.classList.remove('hidden');
             } else {
                 card.classList.add('hidden');
@@ -97,5 +101,12 @@
         });
     }
 
+    let selectedRole = 'all';
+
     document.getElementById('search').addEventListener('input', filterUsers);
+
+    document.getElementById('role-filter').addEventListener('change', function () {
+        selectedRole = this.value;
+        filterUsers();
+    });
 </script>

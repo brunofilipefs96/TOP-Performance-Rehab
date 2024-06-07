@@ -20,42 +20,6 @@
                                class="mt-1 block w-full p-2 border border-gray-300 text-gray-800 rounded-md shadow-sm">
                     </div>
 
-                    <div class="mb-4">
-                        <label for="cc_number" class="block">Número Contribuinte</label>
-                        <input type="text" value="{{ $insurance->membership->user->cc_number }}" disabled
-                               class="mt-1 block w-full p-2 border border-gray-300 text-gray-800 rounded-md shadow-sm">
-                    </div>
-
-                    <div>
-                        <h1 class="mb-2 text-xl">Morada</h1>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="address_name" class="block">Nome</label>
-                        <input type="text" value="{{ $insurance->membership->address->name }}" disabled
-                               class="mt-1 block w-full p-2 border border-gray-300 text-gray-800 rounded-md shadow-sm">
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="address_street" class="block">Nome da Rua</label>
-                        <input type="text" value="{{ $insurance->membership->address->street }}" disabled
-                               class="mt-1 block w-full p-2 border border-gray-300 text-gray-800 rounded-md shadow-sm">
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="address_city" class="block">Cidade</label>
-                        <input type="text" value="{{ $insurance->membership->address->city }}" disabled
-                               class="mt-1 block w-full p-2 border border-gray-300 text-gray-800 rounded-md shadow-sm">
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="address_postal_code" class="block">Código-Postal</label>
-                        <input type="text" id="address_postal_code"
-                               value="{{ $insurance->membership->address->postal_code }}"
-                               disabled
-                               class="mt-1 block w-full p-2 border border-gray-300 text-gray-800 rounded-md shadow-sm">
-                    </div>
-
                     <div>
                         <h1 class="mb-2 text-xl">Dados do Seguro</h1>
                     </div>

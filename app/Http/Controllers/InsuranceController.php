@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Insurance;
 use App\Http\Requests\StoreInsuranceRequest;
 use App\Http\Requests\UpdateInsuranceRequest;
-use http\Env\Request;
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Redirect;
 
@@ -17,7 +17,9 @@ class InsuranceController extends Controller
      */
     public function index()
     {
-        //
+        $this->authorize('viewAny', Insurance::class);
+        $insurances = Insurance::orderBy('id', 'desc')->paginate(12);
+        return view('pages.insurances.index', ['insurances' => $insurances]);
     }
     /**
      * Store a newly created resource in storage.
@@ -41,7 +43,8 @@ class InsuranceController extends Controller
      */
     public function show(Insurance $insurance)
     {
-        //
+        $this->authorize('view', $insurance);
+        return view('pages.insurances.show', ['insurance' => $insurance]);
     }
 
     /**
@@ -59,12 +62,8 @@ class InsuranceController extends Controller
     public function update(UpdateInsuranceRequest $request, Insurance $insurance)
     {
         $this->authorize('update', $insurance);
-
-        $validatedData = $request->validated();
-
-        $insurance->update($validatedData);
-
-        return Redirect::back()->with('status', 'Insurance Updated!');
+        $insurance->update($request->validated());
+        return redirect()->route('insurances.show', ['insurance' => $insurance]);
     }
 
     /**
@@ -77,5 +76,18 @@ class InsuranceController extends Controller
         $insurance->delete();
 
         return Redirect::back()->with('status', 'Insurance Deleted!');
+    }
+
+    public function updateStatus(Request $request, Insurance $insurance, $status)
+    {
+        if (!in_array($status, ['active', 'inactive'])) {
+            return redirect()->back()->withErrors('Status inválido.');
+        }
+
+        // Atualiza o status do seguro
+        $insurance->status = $status;
+        $insurance->save();
+
+        return redirect()->route('insurances.index')->with('success', 'Estado atualizado com sucesso!');
     }
 }

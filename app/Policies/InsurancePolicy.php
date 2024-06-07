@@ -21,7 +21,7 @@ class InsurancePolicy
      */
     public function view(User $user, Insurance $insurance): bool
     {
-        //
+        return $user->id === $insurance->user_id || $user->hasRole('admin');
     }
 
     /**
@@ -37,7 +37,7 @@ class InsurancePolicy
      */
     public function update(User $user, Insurance $insurance): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -45,7 +45,7 @@ class InsurancePolicy
      */
     public function delete(User $user, Insurance $insurance): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -53,7 +53,7 @@ class InsurancePolicy
      */
     public function restore(User $user, Insurance $insurance): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -61,6 +61,6 @@ class InsurancePolicy
      */
     public function forceDelete(User $user, Insurance $insurance): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 }

@@ -17,7 +17,10 @@ class InsuranceFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'membership_id' =>rand(1,10),
+            'insurance_type' => $this->faker->name,
+            'start_date' => $this->faker->date(),
+            'end_date' => $this->faker->date(),
         ];
     }
 }

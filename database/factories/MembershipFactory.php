@@ -19,9 +19,11 @@ class MembershipFactory extends Factory
         return [
             'user_id' =>rand(1,3),
             'address_id' => rand(1,3),
+            'status_id' => rand(1,6),
             'monthly_plan' => $this->faker->boolean,
             'total_trainings_supervised' => $this->faker->numberBetween(1, 10),
             'total_trainings_individual' => $this->faker->numberBetween(1, 10),
+            'description' => $this->faker->sentence,
             'created_at' => now(),
             'updated_at' => now(),
         ];

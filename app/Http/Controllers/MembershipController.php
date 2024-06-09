@@ -92,12 +92,4 @@ class MembershipController extends Controller
 
         return view('pages.memberships.form', ['entries' => $entries]);
     }
-
-    public function updateStatus(Request $request, Membership $membership, $status)
-    {
-        $membership->status = $status;
-        $membership->save();
-
-        return redirect()->route('memberships.index', ['membership' => $membership])->with('success', 'Status atualizado com sucesso!');
-    }
 }

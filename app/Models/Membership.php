@@ -44,4 +44,9 @@ class Membership extends Model
         return $this->belongsTo(Address::class);
     }
 
+    public function status()
+    {
+        return $this->belongsTo(Status::class);
+    }
+
 }

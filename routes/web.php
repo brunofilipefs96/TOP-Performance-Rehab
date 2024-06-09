@@ -47,9 +47,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('/rooms', RoomController::class);
     Route::resource('/training-types', TrainingTypeController::class);
     Route::resource('/packs', PackController::class);
-    Route::resource('/insurances', InsuranceController::class)->only('index', 'show', 'destroy');;
+    Route::resource('/insurances', InsuranceController::class)->only('index', 'create', 'show', 'destroy');;
     Route::resource('/services', ServiceController::class);
-    Route::resource('/memberships', MembershipController::class)->only('index', 'show', 'destroy');
+    Route::resource('/memberships', MembershipController::class)->only('index', 'create', 'show', 'destroy');
     Route::patch('/memberships/{membership}/status/{status}', [MembershipController::class, 'updateStatus'])->name('memberships.updateStatus');
     Route::patch('/insurances/{insurance}/status/{status}', [InsuranceController::class, 'updateStatus'])->name('insurances.updateStatus');
 

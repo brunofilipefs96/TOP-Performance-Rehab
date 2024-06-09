@@ -21,6 +21,16 @@ class InsuranceController extends Controller
         $insurances = Insurance::orderBy('id', 'desc')->paginate(12);
         return view('pages.insurances.index', ['insurances' => $insurances]);
     }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create(Request $request)
+    {
+        $this->authorize('create', Insurance::class);
+        return view('pages.insurances.create');
+    }
+
     /**
      * Store a newly created resource in storage.
      */

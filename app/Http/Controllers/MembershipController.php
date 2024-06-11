@@ -50,7 +50,7 @@ class MembershipController extends Controller
             'monthly_plan' => $request->monthly_plan,
         ]);
 
-        return redirect()->route('memberships.show', ['membership' => $membership])->with('status', 'Membership Created!');
+        return redirect()->route('memberships.show', ['membership' => $membership])->with('success', 'Membership Created!');
     }
 
     /**
@@ -89,7 +89,7 @@ class MembershipController extends Controller
 
         $membership->save();
 
-        return redirect()->route('memberships.show', ['membership' => $membership])->with('status', 'Membership Updated!');
+        return redirect()->route('memberships.show', ['membership' => $membership])->with('success', 'Membership Updated!');
     }
 
     /**
@@ -99,7 +99,7 @@ class MembershipController extends Controller
     {
         $this->authorize('delete', $membership);
         $membership->delete();
-        return redirect()->route('memberships.index')->with('status', 'Membership Deleted!');
+        return redirect()->route('memberships.index')->with('success', 'Membership Deleted!');
     }
 
     public function form(Request $request)

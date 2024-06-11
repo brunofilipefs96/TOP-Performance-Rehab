@@ -44,7 +44,7 @@ class InsuranceController extends Controller
             'end_date' => $request->end_date ?? now()->addYear(),
         ]);
 
-        return view('pages.insurances.show', ['insurance' => $insurance] )->with('status', 'Insurance Created!');
+        return view('pages.insurances.show', ['insurance' => $insurance] )->with('success', 'Insurance Created!');
     }
 
 
@@ -84,7 +84,7 @@ class InsuranceController extends Controller
 
         $insurance->save();
 
-        return redirect()->route('insurances.show', ['insurance' => $insurance])->with('status', 'Insurance Updated!');
+        return redirect()->route('insurances.show', ['insurance' => $insurance])->with('success', 'Insurance Updated!');
     }
 
     /**
@@ -96,6 +96,6 @@ class InsuranceController extends Controller
 
         $insurance->delete();
 
-        return Redirect::back()->with('status', 'Insurance Deleted!');
+        return Redirect::back()->with('success', 'Insurance Deleted!');
     }
 }

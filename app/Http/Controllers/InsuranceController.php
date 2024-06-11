@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Insurance;
 use App\Http\Requests\StoreInsuranceRequest;
 use App\Http\Requests\UpdateInsuranceRequest;
+use App\Models\Status;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Redirect;
@@ -36,15 +37,14 @@ class InsuranceController extends Controller
      */
     public function store(StoreInsuranceRequest $request)
     {
-        $validatedData = $request->validated();
+        $insurance = Insurance::create([
+            'membership_id' => auth()->user()->membership->id,
+            'insurance_type' => $request->insurance_type,
+            'start_date' => $request->start_date ?? now(),
+            'end_date' => $request->end_date ?? now()->addYear(),
+        ]);
 
-        $insurance = new Insurance($validatedData);
-
-        $insurance->membership_id = auth()->user()->membership->id;
-
-        $insurance->save();
-
-        return Redirect::back()->with('status', 'Insurance Created!');
+        return view('pages.insurances.show', ['insurance' => $insurance] )->with('status', 'Insurance Created!');
     }
 
 
@@ -72,8 +72,19 @@ class InsuranceController extends Controller
     public function update(UpdateInsuranceRequest $request, Insurance $insurance)
     {
         $this->authorize('update', $insurance);
-        $insurance->update($request->validated());
-        return redirect()->route('insurances.show', ['insurance' => $insurance]);
+
+        $status = Status::where('name', $request->input('status_name'))->firstOrFail();
+
+        $insurance->status_id = $status->id;
+
+        if($insurance->status->name == 'active') {
+            $insurance->start_date = now();
+            $insurance->end_date = now()->addYear();
+        }
+
+        $insurance->save();
+
+        return redirect()->route('insurances.show', ['insurance' => $insurance])->with('status', 'Insurance Updated!');
     }
 
     /**
@@ -86,18 +97,5 @@ class InsuranceController extends Controller
         $insurance->delete();
 
         return Redirect::back()->with('status', 'Insurance Deleted!');
-    }
-
-    public function updateStatus(Request $request, Insurance $insurance, $status)
-    {
-        if (!in_array($status, ['active', 'inactive'])) {
-            return redirect()->back()->withErrors('Status inválido.');
-        }
-
-        // Atualiza o status do seguro
-        $insurance->status = $status;
-        $insurance->save();
-
-        return redirect()->route('insurances.index')->with('success', 'Estado atualizado com sucesso!');
     }
 }

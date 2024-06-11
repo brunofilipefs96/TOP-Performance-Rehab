@@ -12,8 +12,8 @@ class Insurance extends Model
 
     protected $fillable = [
         'membership_id',
+        'status_id',
         'insurance_type',
-        'status',
         'start_date',
         'end_date',
     ];
@@ -21,5 +21,10 @@ class Insurance extends Model
     public function membership()
     {
         return $this->belongsTo(Membership::class);
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class);
     }
 }

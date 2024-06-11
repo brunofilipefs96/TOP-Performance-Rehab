@@ -48,40 +48,77 @@
                                class="mt-1 block w-full p-2 border border-gray-300 text-gray-800 rounded-md shadow-sm">
                     </div>
 
-                    <div class="flex justify-end mb-2">
-                        @if($insurance->status == 'pending')
-                            <div class="flex justify-center">
-                                <form
-                                    action="{{ route('insurances.updateStatus', ['insurance' => $insurance->id, 'status' => 'active']) }}"
-                                    method="POST">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit"
-                                            class="inline-block bg-green-500 mt-4 mr-1 py-2 px-6 rounded-md shadow-sm hover:bg-green-700 text-white">
-                                        Ativar
-                                    </button>
-                                </form>
-                                <form
-                                    action="{{ route('insurances.updateStatus', ['insurance' => $insurance->id, 'status' => 'inactive']) }}"
-                                    method="POST">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit"
-                                            class="inline-block bg-red-500 mt-4 py-2 px-5 rounded-md shadow-sm hover:bg-red-700 text-white">
-                                        Rejeitar
-                                    </button>
-                                    <a href="{{ route('insurances.index') }}"
-                                       class="inline-block bg-gray-500 py-2 px-6 rounded-md shadow-sm hover:bg-gray-700 text-white">
-                                        Voltar
-                                    </a>
-                                </form>
-                            </div>
-                        @else
-                            <a href="{{ route('insurances.index') }}"
-                               class="inline-block bg-gray-500 py-2 px-6 rounded-md shadow-sm hover:bg-gray-700 text-white">
-                                Voltar
-                            </a>
+                    <div class="flex items-center mb-2">
+                        @if($insurance->status->name == 'active')
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Ativo</p>
+                            <span class="h-3 w-3 bg-green-500 rounded-full inline-block"></span>
+                        @elseif($insurance->status->name == 'pending')
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Pendente</p>
+                            <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
+                        @elseif($insurance->status->name == 'rejected')
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Rejeitado</p>
+                            <span class="h-3 w-3 bg-red-500 rounded-full inline-block"></span>
+                        @elseif($insurance->status->name == 'frozen')
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Congelado</p>
+                            <span class="h-3 w-3 bg-blue-500 rounded-full inline-block"></span>
                         @endif
+                    </div>
+
+                    <div class="flex justify-end mb-2">
+                        @can('update', $insurance)
+                            @if($insurance->status->name == 'pending' || $insurance->status->name == 'frozen')
+                                <div class="flex justify-center">
+                                    <form
+                                        action="{{ route('insurances.update', ['insurance' => $insurance->id]) }}"
+                                        method="POST">
+                                        @csrf
+                                        @method('PATCH')
+                                        <input type="hidden" name="status_name" value="active">
+                                        <button type="submit"
+                                                class="inline-block bg-green-500 mt-4 mr-1 py-2 px-6 rounded-md shadow-sm hover:bg-green-700 text-white">
+                                            Ativar
+                                        </button>
+                                    </form>
+                                    <form
+                                        action="{{ route('insurances.update', ['insurance' => $insurance->id]) }}"
+                                        method="POST">
+                                        @csrf
+                                        @method('PATCH')
+                                        <input type="hidden" name="status_name" value="rejected">
+                                        <button type="submit"
+                                                class="inline-block bg-red-500 mt-4 py-2 px-5 rounded-md shadow-sm hover:bg-red-700 text-white">
+                                            Rejeitar
+                                        </button>
+                                    </form>
+                                </div>
+                            @endif
+                            @if($insurance->status->name == 'active' || $insurance->status->name == 'pending')
+                                <form
+                                    action="{{ route('insurances.update', ['insurance' => $insurance->id]) }}"
+                                    method="POST">
+                                    @csrf
+                                    @method('PATCH')
+                                    <input type="hidden" name="status_name" value="frozen">
+                                    <button type="submit"
+                                            class="inline-block bg-blue-500 ml-1 mt-4 py-2 px-6 rounded-md shadow-sm hover:bg-blue-700 text-white">
+                                        Congelar
+                                    </button>
+                                </form>
+                            @endif
+                        @endcan
+                        <div class="flex justify-end">
+                            @if(Auth::user()->hasRole('admin'))
+                                <a href="{{ route('insurances.index') }}"
+                                   class="inline-block bg-gray-500 ml-1 mt-4 py-2 px-6 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                                    Voltar
+                                </a>
+                            @else
+                                <a href="{{ route('profile.edit') }}"
+                                   class="inline-block bg-gray-500 ml-1 mt-4 py-2 px-6 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                                    Voltar
+                                </a>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>

@@ -49,24 +49,26 @@
                     </div>
 
                     <div class="flex items-center mb-2">
-                        @if($insurance->status->name == 'active')
-                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Ativo</p>
-                            <span class="h-3 w-3 bg-green-500 rounded-full inline-block"></span>
-                        @elseif($insurance->status->name == 'pending')
-                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Pendente</p>
-                            <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
-                        @elseif($insurance->status->name == 'rejected')
-                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Rejeitado</p>
-                            <span class="h-3 w-3 bg-red-500 rounded-full inline-block"></span>
-                        @elseif($insurance->status->name == 'frozen')
-                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Congelado</p>
-                            <span class="h-3 w-3 bg-blue-500 rounded-full inline-block"></span>
+                        @if($insurance->status)
+                            @if($insurance->status->name == 'active')
+                                <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Ativo</p>
+                                <span class="h-3 w-3 bg-green-500 rounded-full inline-block"></span>
+                            @elseif($insurance->status->name == 'pending')
+                                <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Pendente</p>
+                                <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
+                            @elseif($insurance->status->name == 'rejected')
+                                <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Rejeitado</p>
+                                <span class="h-3 w-3 bg-red-500 rounded-full inline-block"></span>
+                            @elseif($insurance->status->name == 'frozen')
+                                <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Congelado</p>
+                                <span class="h-3 w-3 bg-blue-500 rounded-full inline-block"></span>
+                            @endif
                         @endif
                     </div>
 
                     <div class="flex justify-end mb-2">
                         @can('update', $insurance)
-                            @if($insurance->status->name == 'pending' || $insurance->status->name == 'frozen')
+                            @if($insurance->status && ($insurance->status->name == 'pending' || $insurance->status->name == 'frozen'))
                                 <div class="flex justify-center">
                                     <form
                                         action="{{ route('insurances.update', ['insurance' => $insurance->id]) }}"
@@ -92,7 +94,7 @@
                                     </form>
                                 </div>
                             @endif
-                            @if($insurance->status->name == 'active' || $insurance->status->name == 'pending')
+                            @if($insurance->status && ($insurance->status->name == 'active' || $insurance->status->name == 'pending'))
                                 <form
                                     action="{{ route('insurances.update', ['insurance' => $insurance->id]) }}"
                                     method="POST">

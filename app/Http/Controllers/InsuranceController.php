@@ -39,6 +39,7 @@ class InsuranceController extends Controller
     {
         $insurance = Insurance::create([
             'membership_id' => auth()->user()->membership->id,
+            'status_id' => Status::where('name', 'pending')->firstOrFail()->id,
             'insurance_type' => $request->insurance_type,
             'start_date' => $request->start_date ?? now(),
             'end_date' => $request->end_date ?? now()->addYear(),

@@ -45,6 +45,10 @@ class AddressController extends Controller
     {
         $this->authorize('delete', $address);
 
+        if ($address->user->membership->exists()) {
+            return Redirect::back()->with('status', 'A morada está associado a um Matrícula!');
+        }
+
         $address->delete();
 
         return Redirect::back()->with('status', 'Address Deleted!');

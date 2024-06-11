@@ -15,4 +15,9 @@ class Status extends Model
     {
         return $this->hasOne(Membership::class);
     }
+
+    public function insurance()
+    {
+        return $this->hasOne(Insurance::class);
+    }
 }

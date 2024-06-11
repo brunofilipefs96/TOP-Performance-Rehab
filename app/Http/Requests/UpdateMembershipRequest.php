@@ -14,9 +14,7 @@ class UpdateMembershipRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'total_trainings_supervised' => ['required', 'integer'],
-            'total_trainings_individual' => ['required', 'integer'],
-            'status' => ['required', 'string'],
+            //
         ];
     }
 }

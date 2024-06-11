@@ -16,10 +16,8 @@ class StatusSeeder extends Seeder
         $statuses = [
             ['name' => 'pending'],
             ['name' => 'active'],
-            ['name' => 'inactive'],
-            ['name' => 'suspended'],
-            ['name' => 'cancelled'],
-            ['name' => 'no_exists'],
+            ['name' => 'rejected'],
+            ['name' => 'frozen'],
         ];
 
         DB::table('statuses')->insert($statuses);

@@ -41,6 +41,9 @@
                             <x-nav-link :href="route('memberships.index')" :active="request()->routeIs('memberships.index')">
                                 {{ __('Matrículas') }}
                             </x-nav-link>
+                            <x-nav-link :href="route('insurances.index')" :active="request()->routeIs('insurances.index')">
+                                {{ __('Seguros') }}
+                            </x-nav-link>
                         @elseif(Auth::user()->hasRole('personal_trainer') || Auth::user()->hasRole('employee'))
                             <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
                                 {{ __('Produtos') }}
@@ -167,6 +170,12 @@
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('services.index')" :active="request()->routeIs('services.index')">
                         {{ __('Serviços') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('memberships.index')" :active="request()->routeIs('memberships.index')">
+                        {{ __('Matrículas') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('insurances.index')" :active="request()->routeIs('insurances.index')">
+                        {{ __('Seguros') }}
                     </x-responsive-nav-link>
                 @elseif(Auth::user()->hasRole('personal_trainer'))
                     <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">

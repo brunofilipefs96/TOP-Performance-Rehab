@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Insurance;
+use App\Models\Status;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class InsurancePolicy
+class StatusPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -19,9 +19,9 @@ class InsurancePolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Insurance $insurance): bool
+    public function view(User $user, Status $status): bool
     {
-        return $user->id === $insurance->user_id || $user->hasRole('admin');
+        return $user->id === $status->membership->user_id || $user->hasRole('admin');
     }
 
     /**
@@ -29,13 +29,13 @@ class InsurancePolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->hasRole('admin');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Insurance $insurance): bool
+    public function update(User $user, Status $status): bool
     {
         return $user->hasRole('admin');
     }
@@ -43,7 +43,7 @@ class InsurancePolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Insurance $insurance): bool
+    public function delete(User $user, Status $status): bool
     {
         return $user->hasRole('admin');
     }
@@ -51,7 +51,7 @@ class InsurancePolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Insurance $insurance): bool
+    public function restore(User $user, Status $status): bool
     {
         return $user->hasRole('admin');
     }
@@ -59,7 +59,7 @@ class InsurancePolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Insurance $insurance): bool
+    public function forceDelete(User $user, Status $status): bool
     {
         return $user->hasRole('admin');
     }

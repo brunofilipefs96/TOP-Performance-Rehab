@@ -8,7 +8,8 @@
         "php": "^8.2",
         "laravel/framework": "^11.0",
         "laravel/tinker": "^2.9",
-        "matt-daneshvar/laravel-survey": "^0.4.0"
+        "matt-daneshvar/laravel-survey": "^0.4.0",
+      "ext-http": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

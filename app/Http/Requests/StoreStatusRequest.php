@@ -4,8 +4,16 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreMembershipRequest extends FormRequest
+class StoreStatusRequest extends FormRequest
 {
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return false;
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -14,9 +22,7 @@ class StoreMembershipRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'total_trainings_supervised' => ['required', 'integer'],
-            'total_trainings_individual' => ['required', 'integer'],
-            'status' => ['required', 'string'],
+            'name' => 'required|string|max:255',
         ];
     }
 }

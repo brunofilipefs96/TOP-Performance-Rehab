@@ -79,10 +79,8 @@
         <form id="delete-form" action="" method="POST" class="inline">
             @csrf
             @method('DELETE')
-            <button             type="button" class="inline-flex items-center px-4 py-2 mt-6 bg-red-500 hover:bg-red-400 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150" id="delete-button" onclick="confirmDelete()">Eliminar</button>
+            <button type="button" class="inline-flex items-center px-4 py-2 mt-6 bg-red-500 hover:bg-red-400 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150" id="delete-button" onclick="confirmDelete()">Eliminar</button>
         </form>
-
-
     @else
         <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
             {{ __("Ainda não possui nenhuma morada.") }}
@@ -105,7 +103,7 @@
     </div>
 
     <!-- Criar Morada Modal -->
-    <div id="create-address-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden">
+    <div id="create-address-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 @if ($errors->any()) block @else hidden @endif">
         <div class="bg-gray-300 p-6 rounded-md shadow-md w-96 dark:bg-gray-900">
             <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Inserir Morada</h2>
             <form id="createAddressForm" method="POST" action="{{ route('addresses.store') }}" class="mt-2 space-y-6">
@@ -114,7 +112,7 @@
                 <!-- Nome da Morada -->
                 <div class="mb-4">
                     <label class="block text-sm font-medium dark:text-gray-200 text-gray-800">Nome da Morada</label>
-                    <x-text-input id="create_name" name="name" type="text" class="mt-1 block w-full" required autofocus autocomplete="name" maxlength="50" />
+                    <x-text-input id="create_name" name="name" type="text" class="mt-1 block w-full" value="{{ old('name') }}" required autofocus autocomplete="name" maxlength="50" />
                     @error('name')
                     <span class="text-red-500 text-sm mt-2" role="alert">
                             <strong>{{ $message }}</strong>
@@ -125,7 +123,7 @@
                 <!-- Rua -->
                 <div class="mb-4">
                     <label class="block text-sm font-medium dark:text-gray-200 text-gray-800">Rua</label>
-                    <x-text-input id="create_street" name="street" type="text" class="mt-1 block w-full" required autocomplete="street" maxlength="100" />
+                    <x-text-input id="create_street" name="street" type="text" class="mt-1 block w-full" value="{{ old('street') }}" required autocomplete="street" maxlength="100" />
                     @error('street')
                     <span class="text-red-500 text-sm mt-2" role="alert">
                             <strong>{{ $message }}</strong>
@@ -136,7 +134,7 @@
                 <!-- Cidade -->
                 <div class="mb-4">
                     <label class="block text-sm font-medium dark:text-gray-200 text-gray-800">Cidade</label>
-                    <x-text-input id="create_city" name="city" type="text" class="mt-1 block w-full" required autocomplete="city" maxlength="50" />
+                    <x-text-input id="create_city" name="city" type="text" class="mt-1 block w-full" value="{{ old('city') }}" required autocomplete="city" maxlength="50" />
                     @error('city')
                     <span class="text-red-500 text-sm mt-2" role="alert">
                             <strong>{{ $message }}</strong>
@@ -147,7 +145,7 @@
                 <!-- Código Postal -->
                 <div class="mb-4">
                     <label class="block text-sm font-medium dark:text-gray-200 text-gray-800">Código Postal</label>
-                    <x-text-input id="create_postal_code" name="postal_code" type="text" class="mt-1 block w-full" pattern="\d{4}-\d{3}" required autocomplete="postal_code" maxlength="8" />
+                    <x-text-input id="create_postal_code" name="postal_code" type="text" class="mt-1 block w-full" pattern="\d{4}-\d{3}" value="{{ old('postal_code') }}" required autocomplete="postal_code" maxlength="8" />
                     @error('postal_code')
                     <span class="text-red-500 text-sm mt-2" role="alert">
                             <strong>{{ $message }}</strong>
@@ -162,79 +160,81 @@
             </form>
         </div>
     </div>
+</section>
 
+<script>
+    let addressDeleted = 0;
 
-    <script>
-        let addressDeleted = 0;
-
-        if (document.getElementById('address') !== null) {
-            document.getElementById('postal_code').addEventListener('input', function (e) {
-                let value = e.target.value.replace(/\D/g, '');
-                if (value.length > 4) {
-                    value = value.slice(0, 4) + '-' + value.slice(4, 7);
-                }
-                e.target.value = value.slice(0, 8);
-            });
-            document.getElementById('create-address-button').innerHTML = 'Inserir Nova Morada';
-        }
-
-        document.getElementById('create_postal_code').addEventListener('input', function (e) {
+    if (document.getElementById('address') !== null) {
+        document.getElementById('postal_code').addEventListener('input', function (e) {
             let value = e.target.value.replace(/\D/g, '');
             if (value.length > 4) {
                 value = value.slice(0, 4) + '-' + value.slice(4, 7);
+            } else {
+                document.getElementById('create-address-modal').classList.remove('hidden');
             }
             e.target.value = value.slice(0, 8);
         });
+        document.getElementById('create-address-button').innerHTML = 'Inserir Nova Morada';
+    }
 
-
-
-        function createAddress() {
-            document.getElementById('create-address-modal').classList.remove('hidden');
+    document.getElementById('create_postal_code').addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 4) {
+            value = value.slice(0, 4) + '-' + value.slice(4, 7);
         }
+        e.target.value = value.slice(0, 8);
+    });
 
-        function confirmDelete() {
-            document.getElementById('confirmation-modal').classList.remove('hidden');
-            addressDeleted = document.getElementById('address').value;
+    function createAddress() {
+        document.getElementById('create-address-modal').classList.remove('hidden');
+    }
+
+    function confirmDelete() {
+        document.getElementById('confirmation-modal').classList.remove('hidden');
+        addressDeleted = document.getElementById('address').value;
+    }
+
+    document.getElementById('cancel-button').addEventListener('click', function() {
+        document.getElementById('confirmation-modal').classList.add('hidden');
+    });
+
+    document.getElementById('confirm-button').addEventListener('click', function() {
+        document.getElementById('delete-form').action = "{{ url('profile/addresses') }}/" + addressDeleted;
+        document.getElementById('delete-form').submit();
+    });
+
+    document.getElementById('cancel-create-address-button').addEventListener('click', function() {
+        document.getElementById('create-address-modal').classList.add('hidden');
+    });
+
+    document.getElementById('confirm-create-address-button').addEventListener('click', function() {
+        document.getElementById('createAddressForm').submit();
+    });
+
+    function updateAddressFields() {
+        if (!document.getElementById('address')) {
+            return;
+        } else {
+            var selectedAddressId = document.getElementById('address').value;
+            var addresses = {!! json_encode($user->addresses) !!};
+            var selectedAddress = addresses.find(function(address) {
+                return address.id == selectedAddressId;
+            });
+
+            document.getElementById('name').value = selectedAddress.name;
+            document.getElementById('street').value = selectedAddress.street;
+            document.getElementById('city').value = selectedAddress.city;
+            document.getElementById('postal_code').value = selectedAddress.postal_code;
+
+            document.getElementById('updateAddressForm').action = "{{ route('addresses.update', '') }}/" + selectedAddressId;
+
         }
+    }
 
-        document.getElementById
-        ('cancel-button').addEventListener('click', function() {
-            document.getElementById('confirmation-modal').classList.add('hidden');
-        });
+    @if ($errors->any())
+    document.getElementById('create-address-modal').classList.remove('hidden');
+    @endif
 
-        document.getElementById('confirm-button').addEventListener('click', function() {
-            document.getElementById('delete-form').action = "{{ url('profile/addresses') }}/" + addressDeleted;
-            document.getElementById('delete-form').submit();
-        });
-
-        document.getElementById('cancel-create-address-button').addEventListener('click', function() {
-            document.getElementById('create-address-modal').classList.add('hidden');
-        });
-
-        document.getElementById('confirm-create-address-button').addEventListener('click', function() {
-            document.getElementById('createAddressForm').submit();
-        });
-
-        function updateAddressFields() {
-            if (!document.getElementById('address')) {
-                return;
-            } else {
-                var selectedAddressId = document.getElementById('address').value;
-                var addresses = {!! json_encode($user->addresses) !!};
-                var selectedAddress = addresses.find(function(address) {
-                    return address.id == selectedAddressId;
-                });
-
-                document.getElementById('name').value = selectedAddress.name;
-                document.getElementById('street').value = selectedAddress.street;
-                document.getElementById('city').value = selectedAddress.city;
-                document.getElementById('postal_code').value = selectedAddress.postal_code;
-
-                document.getElementById('updateAddressForm').action = "{{ route('addresses.update', '') }}/" + selectedAddressId;
-
-            }
-        }
-
-        updateAddressFields();
-    </script>
-</section>
+    updateAddressFields();
+</script>

@@ -1,8 +1,8 @@
 <div class="container mx-auto mt-5">
-    <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Lista de Matrículas</h1>
-    @can('create', App\Models\Membership::class)
+    <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Lista de Seguros</h1>
+    @can('create', App\Models\Insurance::class)
         <div class="mb-10 flex justify-between items-center">
-            <input type="text" id="search" placeholder="Pesquisar matrículas..."
+            <input type="text" id="search" placeholder="Pesquisar seguros..."
                    class="w-1/3 p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-light-gray dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
             <div class="ml-4">
                 <select id="filter" class="bg-white text-black px-4 py-2 rounded-md border border-gray-300 dark:bg-gray-600 dark:text-white">
@@ -16,36 +16,36 @@
     @endcan
     <hr class="mt-10 mb-10 border-gray-800 dark:border-white">
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        @foreach ($memberships as $membership)
-            <div class="membership-card bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none"
-                 data-name="{{ $membership->user->full_name }}" data-nif="{{ $membership->user->nif }}" data-status="{{ $membership->status }}">
+        @foreach ($insurances as $insurance)
+            <div class="insurance-card bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none"
+                 data-name="{{ $insurance->membership->user->full_name }}" data-nif="{{ $insurance->membership->user->nif }}" data-status="{{ $insurance->status }}">
                 <div class="p-4 dark:bg-gray-800 bg-gray-400">
-                    <h3 class="text-xl font-semibold mb-2">{{ $membership->user->full_name }}
-                        Nº {{ $membership->id }}</h3>
-                    <p class="dark:text-gray-400 text-gray-700 mb-2">Nif: {{ $membership->user->nif }}</p>
+                    <h3 class="text-xl font-semibold mb-2">{{ $insurance->membership->user->full_name }}
+                        Nº {{ $insurance->membership->id }}</h3>
+                    <p class="dark:text-gray-400 text-gray-700 mb-2">Nif: {{ $insurance->membership->user->nif }}</p>
                     <div class="flex items-center mb-2">
-                        @if($membership->status == 'active')
+                        @if($insurance->status == 'active')
                             <p class="dark:text-gray-400 text-gray-700 mr-2 align-middle">Estado: Ativo</p>
                             <span class="h-3 w-3 bg-green-500 rounded-full inline-block"></span>
-                        @elseif($membership->status == 'pending')
+                        @elseif($insurance->status == 'pending')
                             <p class="dark:text-gray-400 text-gray-700 mr-2 align-middle">Estado: Pendente</p>
                             <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
-                        @elseif($membership->status == 'inactive')
+                        @elseif($insurance->status == 'inactive')
                             <p class="dark:text-gray-400 text-gray-700 mr-2 align-middle">Estado: Inativo</p>
                             <span class="h-3 w-3 bg-red-500 rounded-full inline-block"></span>
                         @endif
                     </div>
                     <div class="flex justify-end items-center mt-4 gap-2">
-                        <a href="{{ url('memberships/' . $membership->id) }}"
+                        <a href="{{ url('insurances/' . $insurance->id) }}"
                            class="bg-blue-400 dark:text-white px-2 py-1 rounded-md hover:bg-blue-300 dark:bg-gray-400 dark:hover:bg-gray-300">Mostrar</a>
-                        @can('delete', $membership)
-                            <form id="delete-form-{{$membership->id}}"
-                                  action="{{ url('memberships/' . $membership->id) }}" method="POST" class="inline">
+                        @can('delete', $insurance)
+                            <form id="delete-form-{{$insurance->id}}"
+                                  action="{{ url('insurances/' . $insurance->id) }}" method="POST" class="inline">
                                 @csrf
                                 @method('DELETE')
                                 <button type="button"
                                         class="bg-red-600 text-white px-2 py-1 rounded-md hover:bg-red-500"
-                                        id="delete-button" onclick="confirmarEliminacao({{ $membership->id }})">Eliminar
+                                        id="delete-button" onclick="confirmarEliminacao({{ $insurance->id }})">Eliminar
                                 </button>
                             </form>
 
@@ -75,16 +75,16 @@
     </div>
 
     <div class="flex justify-center mt-4 mb-3">
-        {{ $memberships->links() }}
+        {{ $insurances->links() }}
     </div>
 </div>
 
 <script>
-    let membershipDeleted = 0;
+    let insuranceDeleted = 0;
 
     function confirmarEliminacao(id) {
         document.getElementById('confirmation-modal').classList.remove('hidden');
-        membershipDeleted = id;
+        insuranceDeleted = id;
     }
 
     document.getElementById('cancel-button').addEventListener('click', function () {
@@ -92,17 +92,23 @@
     });
 
     document.getElementById('confirm-button').addEventListener('click', function () {
-        document.getElementById(`delete-form-${membershipDeleted}`).submit();
+        document.getElementById(`delete-form-${insuranceDeleted}`).submit();
     });
 
     function filterPacks() {
         const searchTerm = document.getElementById('search').value.toLowerCase();
-        const membershipCards = document.querySelectorAll('.membership-card');
-        membershipCards.forEach(card => {
+        const selectedStatus = document.getElementById('filter').value;
+        const insuranceCards = document.querySelectorAll('.insurance-card');
+
+        insuranceCards.forEach(card => {
             const name = card.getAttribute('data-name').toLowerCase();
             const nif = card.getAttribute('data-nif').toLowerCase();
             const status = card.getAttribute('data-status').toLowerCase();
-            if ((name.includes(searchTerm) || nif.includes(searchTerm)) && (selectedStatus === 'all' || status === selectedStatus)) {
+
+            const matchesSearchTerm = name.includes(searchTerm) || nif.includes(searchTerm);
+            const matchesStatus = selectedStatus === 'all' || status === selectedStatus;
+
+            if (matchesSearchTerm && matchesStatus) {
                 card.classList.remove('hidden');
             } else {
                 card.classList.add('hidden');
@@ -110,12 +116,6 @@
         });
     }
 
-    let selectedStatus = 'all';
-
     document.getElementById('search').addEventListener('input', filterPacks);
-
-    document.getElementById('filter').addEventListener('change', function () {
-        selectedStatus = this.value;
-        filterPacks();
-    });
+    document.getElementById('filter').addEventListener('change', filterPacks);
 </script>

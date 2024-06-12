@@ -44,6 +44,9 @@
                             <x-nav-link :href="route('insurances.index')" :active="request()->routeIs('insurances.index')">
                                 {{ __('Seguros') }}
                             </x-nav-link>
+                            <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')">
+                                {{ __('Cart') }}
+                            </x-nav-link>
                         @elseif(Auth::user()->hasRole('personal_trainer') || Auth::user()->hasRole('employee'))
                             <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
                                 {{ __('Produtos') }}
@@ -70,10 +73,14 @@
                             <x-nav-link :href="route('trainings.index')" :active="request()->routeIs('trainings.index')">
                                 {{ __('Treinos') }}
                             </x-nav-link>
+                            <x-nav-link :href="route('cart.add')" :active="request()->routeIs('cart.add')">
+                                {{ __('Cart') }}
+                            </x-nav-link>
                         @elseif(Auth::user()->hasRole('employee'))
                             <x-nav-link :href="route('services.index')" :active="request()->routeIs('services.index')">
                                 {{ __('Serviços') }}
                             </x-nav-link>
+
                         @endif
                     @endif
                 </div>

@@ -73,21 +73,74 @@
                         @enderror
                     </div>
                     <div class="mb-4">
-                        <label for="start_date" class="block dark:text-white text-gray-800">Início</label>
-                        <input type="datetime-local" name="start_date" id="start_date" value="{{ old('start_date') }}" required class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
-                        <p class="text-gray-500 text-sm">A duração mínima é de 20 minutos e a duração máxima é de 2 horas.</p>
+                        <label for="start_date" class="block dark:text-white text-gray-800">Data</label>
+                        <input type="date" name="start_date" id="start_date" value="{{ old('start_date') }}" required class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
                         @error('start_date')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="mb-4">
-                        <label for="end_date" class="block dark:text-white text-gray-800">Término</label>
-                        <input type="datetime-local" name="end_date" id="end_date" value="{{ old('end_date') }}" required class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
-                        @error('end_date')
+                        <label for="start_time" class="block dark:text-white text-gray-800">Hora de Início</label>
+                        <input type="time" name="start_time" id="start_time" value="{{ old('start_time') }}" required class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
+                        @error('start_time')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
-                        <span id="time-error-msg" class="text-red-500 text-sm"></span>
                     </div>
+                    <div class="mb-4">
+                        <label for="duration" class="block dark:text-white text-gray-800">Duração</label>
+                        <select name="duration" id="duration" required class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
+                            <option value="30">30 minutos</option>
+                            <option value="45">45 minutos</option>
+                            <option value="60">60 minutos</option>
+                            <option value="75">75 minutos</option>
+                            <option value="90">90 minutos</option>
+                        </select>
+                        @error('duration')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- Adicionando campos de repetição -->
+                    <div class="mb-4">
+                        <label for="repeat" class="block dark:text-white text-gray-800">Repetir Treino</label>
+                        <input type="checkbox" name="repeat" id="repeat" class="mt-1">
+                    </div>
+                    <div id="repeat-options" style="display: none;">
+                        <div class="mb-4">
+                            <label class="block dark:text-white text-gray-800">Dias da Semana</label>
+                            <div class="flex flex-wrap gap-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="days_of_week[]" value="0" class="mr-2"> Dom
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="days_of_week[]" value="1" class="mr-2"> Seg
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="days_of_week[]" value="2" class="mr-2"> Ter
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="days_of_week[]" value="3" class="mr-2"> Qua
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="days_of_week[]" value="4" class="mr-2"> Qui
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="days_of_week[]" value="5" class="mr-2"> Sex
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="days_of_week[]" value="6" class="mr-2"> Sáb
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="repeat_until" class="block dark:text-white text-gray-800">Repetir até</label>
+                            <input type="date" name="repeat_until" id="repeat_until" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
+                            @error('repeat_until')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
                     <div class="flex justify-end gap-2">
                         <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-300 dark:hover:text-gray-800">Criar Treino</button>
                         <a href="{{ route('trainings.index') }}" class="inline-block bg-gray-500 mt-4 mb-5 py-2 px-4 rounded-md shadow-sm hover:bg-gray-700 text-white">
@@ -98,39 +151,18 @@
             @endif
         </div>
     </div>
-
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const startTimeInput = document.getElementById('start_date');
-        const endTimeInput = document.getElementById('end_date');
-        const form = document.getElementById('trainingForm');
-        const errorMsg = document.getElementById('time-error-msg');
+        const repeatCheckbox = document.getElementById('repeat');
+        const repeatOptions = document.getElementById('repeat-options');
 
-        form.addEventListener('submit', function (event) {
-            const startTime = new Date(startTimeInput.value);
-            const endTime = new Date(endTimeInput.value);
-            const now = new Date();
-
-            if (startTime < now) {
-                event.preventDefault();
-                errorMsg.innerText = 'A hora de início deve ser superior à hora atual.';
-                return false;
-            } else if (startTime >= endTime) {
-                event.preventDefault();
-                errorMsg.innerText = 'A hora de término deve ser superior à hora de início.';
-                return false;
-            } else if ((endTime - startTime) / (1000 * 60) < 20) {
-                event.preventDefault();
-                errorMsg.innerText = 'A duração do treino deve ser de pelo menos 20 minutos.';
-                return false;
-            } else if ((endTime - startTime) / (1000 * 60) > 120) {
-                event.preventDefault();
-                errorMsg.innerText = 'A duração do treino não pode exceder 2 horas.';
-                return false;
+        repeatCheckbox.addEventListener('change', function () {
+            if (this.checked) {
+                repeatOptions.style.display = 'block';
             } else {
-                errorMsg.innerText = '';
+                repeatOptions.style.display = 'none';
             }
         });
     });

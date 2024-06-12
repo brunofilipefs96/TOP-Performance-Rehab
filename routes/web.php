@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/users', UserController::class)->only(['index', 'show', 'destroy']);
 
+
     Route::resource('/products', ProductController::class);
     Route::resource('/rooms', RoomController::class);
     Route::resource('/training-types', TrainingTypeController::class);
@@ -65,6 +66,15 @@ Route::middleware('auth')->group(function () {
     Route::resource('trainings', TrainingController::class);
 
     Route::post('/dashboard/change-week', [DashboardController::class, 'changeWeek'])->name('dashboard.changeWeek');
+
+    Route::post('/cart/add', [ProductController::class, 'addToCart'])->name('cart.add');
+    Route::get('/cart', [ProductController::class, 'cart'])->name('cart.index');
+    Route::delete('cart/remove/{id}', [ProductController::class, 'removeFromCart'])->name('cart.remove');
+
+    Route::patch('cart/increase/{id}', [ProductController::class, 'increaseQuantity'])->name('cart.increase');
+    Route::patch('cart/decrease/{id}', [ProductController::class, 'decreaseQuantity'])->name('cart.decrease');
+
+
 });
 
 

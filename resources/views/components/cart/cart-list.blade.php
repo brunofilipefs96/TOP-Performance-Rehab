@@ -11,7 +11,7 @@
         </div>
     @endif
     @if (session('warning'))
-        <div class="dark:bg-lime-300 bg-blue-400 text-white p-4 rounded mb-4">
+        <div class="dark:bg-gray-800 bg-gray-300 dark:text-white text-gray-800 p-4 rounded mb-4">
             {{ session('warning') }}
         </div>
     @endif
@@ -43,13 +43,13 @@
                         <form action="{{ route('cart.decrease', $id) }}" method="POST" class="inline">
                             @csrf
                             @method('PATCH')
-                            <button type="submit" class="mr-3 bg-red-300 text-black px-2 py-1 rounded-md"> - </button>
+                            <button type="submit" class="mr-3 bg-gray-400 text-black px-2 py-1 rounded-md"> - </button>
                         </form>
                         <span class="mx-2">{{ $details['quantity'] }}</span>
                         <form action="{{ route('cart.increase', $id) }}" method="POST" class="inline">
                             @csrf
                             @method('PATCH')
-                            <button type="submit" class="ml-3 bg-blue-300 dark:bg-lime-300 text-black px-2 py-1 rounded-md">+</button>
+                            <button type="submit" class="ml-3 bg-gray-400 text-black px-2 py-1 rounded-md">+</button>
                         </form>
                     </td>
                     <td class="p-4 text-center">${{ $details['price'] }}</td>
@@ -59,7 +59,7 @@
                         <form action="{{ route('cart.remove', $id) }}" method="POST" class="inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded-md hover:bg-red-500">Remove</button>
+                            <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-500">Remove</button>
                         </form>
                     </td>
                 </tr>
@@ -68,7 +68,7 @@
             </tbody>
         </table>
         <div class="mt-4 flex justify-end">
-            <a href="{{ route('products.index') }}" class="dark:bg-lime-400 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Continue Shopping</a>
+            <a href="{{ route('products.index') }}" class="dark:bg-gray-500 bg-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-600">Continue Shopping</a>
             <a href="#" class="bg-green-600 text-white px-4 py-2 ml-4 rounded-md hover:bg-green-700">Checkout</a>
         </div>
     @else

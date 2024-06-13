@@ -165,5 +165,25 @@ class TrainingController extends Controller
         }
     }
 
+    public function multiDelete(Request $request)
+    {
+        $user = auth()->user();
+        $trainingIds = $request->input('trainings', []);
+
+        if (!empty($trainingIds)) {
+            $trainings = Training::whereIn('id', $trainingIds)->get();
+
+            foreach ($trainings as $training) {
+                if ($user->hasRole('admin') || $training->personal_trainer_id == $user->id) {
+                    $training->delete();
+                } else {
+                    return redirect()->route('trainings.index')->with('error', 'Você não tem permissão para remover um ou mais treinos dos treinos selecionados.');
+                }
+            }
+        }
+
+        return redirect()->route('trainings.index')->with('success', 'Treinos removidos com sucesso!');
+    }
+
 
 }

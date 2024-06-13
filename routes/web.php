@@ -63,6 +63,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('trainings/{training}/enroll', [TrainingController::class, 'enroll'])->name('trainings.enroll');
     Route::post('trainings/{training}/cancel', [TrainingController::class, 'cancel'])->name('trainings.cancel');
+    Route::delete('/trainings/multi-delete', [TrainingController::class, 'multiDelete'])->name('trainings.multi-delete');
     Route::resource('trainings', TrainingController::class);
 
     Route::post('/dashboard/change-week', [DashboardController::class, 'changeWeek'])->name('dashboard.changeWeek');

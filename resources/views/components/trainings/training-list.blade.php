@@ -1,5 +1,3 @@
-<!-- In your list-trainings.blade.php -->
-
 <div class="container mx-auto mt-5">
     <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Lista de Treinos</h1>
     @can('create', App\Models\Training::class)
@@ -11,7 +9,8 @@
                     Adicionar Treino
                 </button>
             </a>
-            <button type="button" onclick="openMultiDeleteModal()" class="bg-red-600 text-white flex items-center px-2 py-2 rounded-md hover:bg-red-500 dark:bg-red-500  dark:hover:text-gray-800 font-semibold ">
+            <button type="button" onclick="openMultiDeleteModal()"
+                    class="bg-red-600 text-white flex items-center px-2 py-2 rounded-md hover:bg-red-500 dark:bg-red-500  dark:hover:text-gray-800 font-semibold ">
                 <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
                 Remover Vários Treinos
             </button>
@@ -25,8 +24,11 @@
                 $userPresence = $training->users()->where('user_id', auth()->id())->exists();
                 $userPresenceFalse = $training->users()->where('user_id', auth()->id())->wherePivot('presence', false)->exists();
             @endphp
-            <div class="training-card relative dark:bg-gray-800 bg-gray-400 rounded-lg overflow-hidden shadow-md text-white select-none" data-id="{{ $training->id }}" data-date="{{ $training->start_date }}" data-start-time="{{ $training->start_time }}">
-            <a href="{{ route('trainings.show', $training->id) }}" class="block p-4 dark:bg-gray-800 bg-gray-400">
+            <div
+                class="training-card relative dark:bg-gray-800 bg-gray-400 rounded-lg overflow-hidden shadow-md text-white select-none"
+                data-id="{{ $training->id }}" data-date="{{ $training->start_date }}"
+                data-start-time="{{ $training->start_time }}">
+                <a href="{{ route('trainings.show', $training->id) }}" class="block p-4 dark:bg-gray-800 bg-gray-400">
                     @if ($userPresence && !$userPresenceFalse)
                         <div class="ribbon"><span>Inscrito</span></div>
                     @endif
@@ -109,7 +111,6 @@
                                 Eliminar
                             </button>
                         </form>
-
                         <div id="confirmation-modal-{{ $training->id }}"
                              class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
                             <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
@@ -128,6 +129,55 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div id="cancel-modal-{{ $training->id }}"
+                             class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
+                            <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
+                                <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Pretende cancelar a
+                                    inscrição?</h2>
+                                <p class="mb-4 text-red-500 dark:text-red-300"
+                                   id="cancel-message-{{ $training->id }}"></p>
+                                <div class="flex justify-end gap-4">
+                                    <button type="button"
+                                            class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400"
+                                            onclick="cancelCancel({{ $training->id }})">Cancelar
+                                    </button>
+                                    <form id="cancel-form-{{ $training->id }}"
+                                          action="{{ route('trainings.cancel', $training->id) }}" method="POST"
+                                          class="inline">
+                                        @csrf
+                                        <button type="button"
+                                                class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500"
+                                                onclick="confirmCancelSubmit({{ $training->id }})">
+                                            Confirmar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="enroll-modal-{{ $training->id }}"
+                             class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
+                            <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
+                                <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Pretende
+                                    inscrever-se?</h2>
+                                <div class="flex justify-end gap-4">
+                                    <button type="button"
+                                            class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400"
+                                            onclick="cancelEnroll({{ $training->id }})">Cancelar
+                                    </button>
+                                    <form id="enroll-form-{{ $training->id }}"
+                                          action="{{ route('trainings.enroll', $training->id) }}" method="POST"
+                                          class="inline">
+                                        @csrf
+                                        <button type="submit"
+                                                class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-500">
+                                            Inscrever
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     @endcan
                 </div>
 
@@ -140,47 +190,6 @@
     </div>
 </div>
 
-<div id="cancel-modal-{{ $training->id }}"
-     class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
-    <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
-        <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Pretende cancelar a inscrição?</h2>
-        <p class="mb-4 text-red-500 dark:text-red-300" id="cancel-message-{{ $training->id }}"></p>
-        <div class="flex justify-end gap-4">
-            <button type="button"
-                    class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400"
-                    onclick="cancelCancel({{ $training->id }})">Cancelar
-            </button>
-            <form id="cancel-form-{{ $training->id }}"
-                  action="{{ route('trainings.cancel', $training->id) }}" method="POST" class="inline">
-                @csrf
-                <button type="button" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500" onclick="confirmCancelSubmit({{ $training->id }})">
-                    Confirmar
-                </button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div id="enroll-modal-{{ $training->id }}"
-     class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
-    <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
-        <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Pretende inscrever-se?</h2>
-        <div class="flex justify-end gap-4">
-            <button type="button"
-                    class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400"
-                    onclick="cancelEnroll({{ $training->id }})">Cancelar
-            </button>
-            <form id="enroll-form-{{ $training->id }}"
-                  action="{{ route('trainings.enroll', $training->id) }}" method="POST" class="inline">
-                @csrf
-                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-500">
-                    Inscrever
-                </button>
-            </form>
-        </div>
-    </div>
-</div>
-
 <div id="multi-delete-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
     <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
         <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Selecione os Treinos para Remover</h2>
@@ -188,22 +197,28 @@
             @csrf
             @method('DELETE')
             <div class="max-h-64 overflow-y-auto">
+                <div class="flex items-center mb-2">
+                    <input type="checkbox" id="select-all" class="mr-2 ml-2">
+                    <label for="select-all" class="text-gray-800 dark:text-white">Selecionar Todos</label>
+                </div>
                 @foreach ($trainings as $training)
-                    <div class="flex items-center mb-2">
-                        <input type="checkbox" name="trainings[]" value="{{ $training->id }}" class="mr-2">
+                    <div class="flex items-center mb-2 text-gray-800 dark:text-white">
+                        <input type="checkbox" name="trainings[]" value="{{ $training->id }}" class="mr-2 ml-2 training-checkbox">
                         <span>{{ $training->trainingType->name }} - {{ $training->start_date }}</span>
                     </div>
                 @endforeach
             </div>
             <div class="flex justify-end gap-4 mt-4">
-                <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400" onclick="closeMultiDeleteModal()">Cancelar</button>
-                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Remover Selecionados</button>
+                <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400"
+                        onclick="closeMultiDeleteModal()">Cancelar
+                </button>
+                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Remover
+                    Selecionados
+                </button>
             </div>
         </form>
     </div>
 </div>
-
-
 
 <script>
     let trainingDeleted = 0;
@@ -258,6 +273,19 @@
         document.getElementById(`cancel-modal-${id}`).classList.add('hidden');
     }
 
+    document.getElementById('select-all').addEventListener('change', function(e) {
+        const checkboxes = document.querySelectorAll('.training-checkbox');
+        checkboxes.forEach(checkbox => checkbox.checked = e.target.checked);
+    });
+
+    document.querySelectorAll('.training-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function(e) {
+            if (!e.target.checked) {
+                document.getElementById('select-all').checked = false;
+            }
+        });
+    });
+
     function openMultiDeleteModal() {
         document.getElementById('multi-delete-modal').classList.remove('hidden');
     }
@@ -265,5 +293,4 @@
     function closeMultiDeleteModal() {
         document.getElementById('multi-delete-modal').classList.add('hidden');
     }
-
 </script>

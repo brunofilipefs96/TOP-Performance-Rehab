@@ -4,120 +4,86 @@
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
-                <div class="shrink-0 flex items-center pr-10">
+                <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 md:-my-px md:ms-10 md:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="pr-10 flex items-center justify-center text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                        <i class="fa-solid fa-chart-line text-2xl"></i>
+                <div class="hidden gap-4 md:-my-px md:ms-10 md:flex">
+                    <x-nav-link :href="route('dashboard')" :activeRoutes="['dashboard']" class="group px-5 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                        <i class="fa-solid fa-chart-line text-2xl transition-transform group-hover:-translate-y-2 group-hover:scale-75"></i>
+                        <span class="absolute bottom-1 transform translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all">Dashboard</span>
                     </x-nav-link>
 
-                    @if(Auth::check())
-                        @if(Auth::user()->hasRole('admin'))
-                            <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')" class="pr-10 flex items-center justify-center text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                                <i class="fa-solid fa-users text-2xl"></i>
-                            </x-nav-link>
+                    <x-nav-link :href="route('users.index')" :activeRoutes="['users.index']" class="group px-5 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                        <i class="fa-solid fa-users text-2xl transition-transform group-hover:-translate-y-2 group-hover:scale-75"></i>
+                        <span class="absolute bottom-1 transform translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all">Utilizadores</span>
+                    </x-nav-link>
 
-                            <!-- Dropdown for Products and Packs -->
-                            <div class="relative mt-5 pr-10" x-data="{ dropdownOpen: false }" @mouseover="dropdownOpen = true" @mouseout="dropdownOpen = false">
-                                <button class="flex items-center justify-center space-x-2 focus:outline-none text-gray-500 dark:text-gray-400 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                                    <i class="fa-solid fa-basket-shopping text-2xl"></i>
-                                </button>
-                                <div x-show="dropdownOpen" class="absolute mt-2.5 w-48 rounded-md shadow-lg bg-white dark:bg-gray-700">
-                                    <x-dropdown-link :href="route('products.index')" :active="request()->routeIs('products.index')" class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                                        {{ __('Produtos') }}
-                                    </x-dropdown-link>
-                                    <x-dropdown-link :href="route('packs.index')" :active="request()->routeIs('packs.index')" class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                                        {{ __('Packs') }}
-                                    </x-dropdown-link>
-                                </div>
-                            </div>
-
-                            <!-- Dropdown for Rooms and Trainings -->
-                            <div class="relative mt-5 pr-10" x-data="{ dropdownOpen: false }" @mouseover="dropdownOpen = true" @mouseout="dropdownOpen = false">
-                                <button class="flex items-center justify-center space-x-2 focus:outline-none text-gray-500 dark:text-gray-400 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                                    <i class="fa-solid fa-dumbbell text-2xl"></i>
-                                </button>
-                                <div x-show="dropdownOpen" class="absolute mt-2.5 w-48 rounded-md shadow-lg bg-white dark:bg-gray-700">
-                                    <x-dropdown-link :href="route('rooms.index')" :active="request()->routeIs('rooms.index')" class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                                        {{ __('Salas') }}
-                                    </x-dropdown-link>
-                                    <x-dropdown-link :href="route('training-types.index')" :active="request()->routeIs('training-types.index')" class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                                        {{ __('Tipos de Treino') }}
-                                    </x-dropdown-link>
-                                    <x-dropdown-link :href="route('trainings.index')" :active="request()->routeIs('trainings.index')" class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                                        {{ __('Treinos') }}
-                                    </x-dropdown-link>
-                                </div>
-                            </div>
-
-                            <!-- Dropdown for Services, Memberships, and Insurances -->
-                            <div class="relative mt-5 pr-10" x-data="{ dropdownOpen: false }" @mouseover="dropdownOpen = true" @mouseout="dropdownOpen = false">
-                                <button class="flex items-center justify-center space-x-2 focus:outline-none text-gray-500 dark:text-gray-400 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                                    <i class="fa-solid fa-address-card text-2xl"></i>
-                                </button>
-                                <div x-show="dropdownOpen" class="absolute mt-2.5 w-48 rounded-md shadow-lg bg-white dark:bg-gray-700">
-                                    <x-dropdown-link :href="route('services.index')" :active="request()->routeIs('services.index')" class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                                        {{ __('Serviços') }}
-                                    </x-dropdown-link>
-                                    <x-dropdown-link :href="route('memberships.index')" :active="request()->routeIs('memberships.index')" class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                                        {{ __('Matrículas') }}
-                                    </x-dropdown-link>
-                                    <x-dropdown-link :href="route('insurances.index')" :active="request()->routeIs('insurances.index')" class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                                        {{ __('Seguros') }}
-                                    </x-dropdown-link>
-                                </div>
-                            </div>
-
-                            <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')" class="flex items-center justify-center text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                                <i class="fa-solid fa-cart-shopping text-2xl"></i>
-                            </x-nav-link>
-                        @elseif(Auth::user()->hasRole('personal_trainer') || Auth::user()->hasRole('employee'))
-                            <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')" class="flex items-center justify-center text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
+                    <!-- Dropdown for Products and Packs -->
+                    <div class="group px-5 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative" x-data="{ dropdownOpen: false }" @mouseover="dropdownOpen = true" @mouseout="dropdownOpen = false">
+                        <x-nav-link :href="route('products.index')" :activeRoutes="['products.index', 'packs.index']" class="flex items-center justify-center space-x-2 focus:outline-none">
+                            <i class="fa-solid fa-basket-shopping text-2xl transition-transform group-hover:-translate-y-1"></i>
+                        </x-nav-link>
+                        <div x-show="dropdownOpen" class="absolute mt-32 ml-32 w-48 rounded-md shadow-lg bg-white dark:bg-gray-700 z-50">
+                            <x-dropdown-link :href="route('products.index')" :active="request()->routeIs('products.index')" class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
                                 {{ __('Produtos') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('rooms.index')" :active="request()->routeIs('rooms.index')" class="flex items-center justify-center text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
+                            </x-dropdown-link>
+                            <x-dropdown-link :href="route('packs.index')" :active="request()->routeIs('packs.index')" class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
+                                {{ __('Packs') }}
+                            </x-dropdown-link>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown for Rooms and Trainings -->
+                    <div class="group px-5 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative" x-data="{ dropdownOpen: false }" @mouseover="dropdownOpen = true" @mouseout="dropdownOpen = false">
+                        <x-nav-link :href="route('rooms.index')" :activeRoutes="['rooms.index', 'training-types.index', 'trainings.index']" class="flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-dumbbell text-2xl transition-transform group-hover:-translate-y-1"></i>
+                        </x-nav-link>
+                        <div x-show="dropdownOpen" class="absolute mt-40 ml-32 w-48 rounded-md shadow-lg bg-white dark:bg-gray-700 z-50">
+                            <x-dropdown-link :href="route('rooms.index')" :active="request()->routeIs('rooms.index')" class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
                                 {{ __('Salas') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('training-types.index')" :active="request()->routeIs('training-types.index')" class="flex items-center justify-center text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
+                            </x-dropdown-link>
+                            <x-dropdown-link :href="route('training-types.index')" :active="request()->routeIs('training-types.index')" class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
                                 {{ __('Tipos de Treino') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('packs.index')" :active="request()->routeIs('packs.index')" class="flex items-center justify-center text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                                {{ __('Packs') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('trainings.index')" :active="request()->routeIs('trainings.index')" class="flex items-center justify-center text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
+                            </x-dropdown-link>
+                            <x-dropdown-link :href="route('trainings.index')" :active="request()->routeIs('trainings.index')" class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
                                 {{ __('Treinos') }}
-                            </x-nav-link>
-                        @elseif(Auth::user()->hasRole('client'))
-                            <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')" class="flex items-center justify-center text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                                {{ __('Produtos') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('packs.index')" :active="request()->routeIs('packs.index')" class="flex items-center justify-center text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                                {{ __('Packs') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('trainings.index')" :active="request()->routeIs('trainings.index')" class="flex items-center justify-center text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                                {{ __('Treinos') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('cart.add')" :active="request()->routeIs('cart.add')" class="flex items-center justify-center text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                                {{ __('Cart') }}
-                            </x-nav-link>
-                        @elseif(Auth::user()->hasRole('employee'))
-                            <x-nav-link :href="route('services.index')" :active="request()->routeIs('services.index')" class="flex items-center justify-center text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
+                            </x-dropdown-link>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown for Services, Memberships, and Insurances -->
+                    <div class="group px-5 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative" x-data="{ dropdownOpen: false }" @mouseover="dropdownOpen = true" @mouseout="dropdownOpen = false">
+                        <x-nav-link :href="route('services.index')" :activeRoutes="['services.index', 'memberships.index', 'insurances.index']" class="flex items-center justify-center focus:outline-none">
+                            <i class="fa-solid fa-address-card text-2xl transition-transform group-hover:-translate-y-1"></i>
+                        </x-nav-link>
+                        <div x-show="dropdownOpen" class="absolute mt-40 ml-32 w-48 rounded-md shadow-lg bg-white dark:bg-gray-700 z-50">
+                            <x-dropdown-link :href="route('services.index')" :active="request()->routeIs('services.index')" class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
                                 {{ __('Serviços') }}
-                            </x-nav-link>
-                        @endif
-                    @endif
+                            </x-dropdown-link>
+                            <x-dropdown-link :href="route('memberships.index')" :active="request()->routeIs('memberships.index')" class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
+                                {{ __('Matrículas') }}
+                            </x-dropdown-link>
+                            <x-dropdown-link :href="route('insurances.index')" :active="request()->routeIs('insurances.index')" class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
+                                {{ __('Seguros') }}
+                            </x-dropdown-link>
+                        </div>
+                    </div>
+
+                    <x-nav-link :href="route('cart.index')" :activeRoutes="['cart.index']" class="group flex px-5 items-center justify-center text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                        <i class="fa-solid fa-cart-shopping text-2xl transition-transform group-hover:-translate-y-2 group-hover:scale-75"></i>
+                        <span class="absolute bottom-1 transform translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all">Carrinho</span>
+                    </x-nav-link>
                 </div>
             </div>
 
             <!-- Theme Toggle Button -->
             <div class="flex items-center md:ms-6">
                 <button id="theme-toggle" type="button"
-                        class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
+                        class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 mr-3 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
                     <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                          xmlns="http://www.w3.org/2000/svg">
                         <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
@@ -272,6 +238,4 @@
             </div>
         </div>
     </div>
-
 </nav>
-

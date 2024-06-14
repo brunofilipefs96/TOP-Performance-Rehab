@@ -5,7 +5,7 @@
         </h2>
 
         @if($user->membership)
-            @if($user->membership->status)
+            @if($user->membership->status != null)
                 <div class="flex items-center mt-5">
                     <span class="mr-2">Estado:</span>
                     @if($user->membership->status->name == 'pending')
@@ -14,15 +14,18 @@
                     @elseif($user->membership->status->name == 'active')
                         <span class="inline-block w-3 h-3 bg-green-500 rounded-full" title="Ativa"></span>
                         <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Ativa</span>
-                    @elseif($user->membership->status->name == 'denied')
-                        <span class="inline-block w-3 h-3 bg-red-500 rounded-full" title="Recusada"></span>
-                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Recusada</span>
+                    @elseif($user->membership->status->name == 'rejected')
+                        <span class="inline-block w-3 h-3 bg-red-500 rounded-full" title="Rejeitada"></span>
+                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Rejeitada</span>
+                    @elseif($user->membership->status->name == 'frozen')
+                        <span class="inline-block w-3 h-3 bg-blue-500 rounded-full" title="Congelada"></span>
+                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Congelada</span>
                     @endif
                 </div>
             @endif
 
             <div class="flex items-center">
-                <a href="{{ url('users/'.$user->id.'/membership/show') }}">
+                <a href="{{ url('memberships/'.$user->membership->id) }}">
                     <button type="button" class="inline-flex items-center px-4 py-2 mt-6 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150">
                         Ver Detalhes
                     </button>

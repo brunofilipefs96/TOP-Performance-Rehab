@@ -20,7 +20,7 @@ class EntryController extends Controller
 
     public function fill(Survey $survey){
         if ($survey->entriesFrom(Auth::user())->exists()) {
-            return redirect()->route('dashboard');
+            return redirect()->route('memberships.create');
         }
         else
         {
@@ -33,6 +33,6 @@ class EntryController extends Controller
         $answers = $request->validate($survey->rules);
 
         (new Entry)->for($survey)->by(Auth::user())->fromArray($answers)->push();
-        return redirect()->route('profile.edit');
+        return redirect()->route('memberships.create');
     }
 }

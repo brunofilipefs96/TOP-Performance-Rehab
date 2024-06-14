@@ -29,6 +29,10 @@ class InsurancePolicy
      */
     public function create(User $user): bool
     {
+        if ($user->membership->insurance !== null) {
+            return !$user->membership->insurance->exists();
+        }
+
         return true;
     }
 

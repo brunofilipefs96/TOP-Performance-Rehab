@@ -6,14 +6,17 @@ use App\Models\Insurance;
 use App\Models\Membership;
 use App\Http\Requests\StoreMembershipRequest;
 use App\Http\Requests\UpdateMembershipRequest;
+use App\Models\Status;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Redirect;
 use MattDaneshvar\Survey\Models\Entry;
+use MattDaneshvar\Survey\Models\Survey;
 
 class MembershipController extends Controller
 {
     use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
@@ -30,21 +33,24 @@ class MembershipController extends Controller
     public function create(Request $request)
     {
         $this->authorize('create', Membership::class);
-        return view ('pages.memberships.create');
+
+        $addresses = auth()->user()->addresses;
+
+        return view('pages.memberships.create', ['addresses' => $addresses]);
     }
+
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreMembershipRequest $request)
     {
-
         $membership = Membership::create([
             'user_id' => auth()->id(),
             'address_id' => $request->address_id,
             'monthly_plan' => $request->monthly_plan,
         ]);
 
-        return redirect()->route('memberships.show', ['membership' => $membership]);
+        return redirect()->route('memberships.show', ['membership' => $membership])->with('success', 'Membership Created!');
     }
 
     /**
@@ -53,6 +59,7 @@ class MembershipController extends Controller
     public function show(Membership $membership)
     {
         $this->authorize('view', $membership);
+
         return view('pages.memberships.show', ['membership' => $membership]);
     }
 
@@ -70,8 +77,19 @@ class MembershipController extends Controller
     public function update(UpdateMembershipRequest $request, Membership $membership)
     {
         $this->authorize('update', $membership);
-        $membership->update($request->validated());
-        return redirect()->route('memberships.show', ['membership' => $membership]);
+
+        $status = Status::where('name', $request->input('status_name'))->firstOrFail();
+
+        $membership->status_id = $status->id;
+
+        if($membership->status->name == 'active') {
+            $membership->start_date = now();
+            $membership->end_date = now()->addMonth();
+        }
+
+        $membership->save();
+
+        return redirect()->route('memberships.show', ['membership' => $membership])->with('success', 'Membership Updated!');
     }
 
     /**
@@ -81,7 +99,7 @@ class MembershipController extends Controller
     {
         $this->authorize('delete', $membership);
         $membership->delete();
-        return redirect()->route('memberships.index')->with('success', 'Product deleted successfully.');
+        return redirect()->route('memberships.index')->with('success', 'Membership Deleted!');
     }
 
     public function form(Request $request)
@@ -92,4 +110,5 @@ class MembershipController extends Controller
 
         return view('pages.memberships.form', ['entries' => $entries]);
     }
+
 }

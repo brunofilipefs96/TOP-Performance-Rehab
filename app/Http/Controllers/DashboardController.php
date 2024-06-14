@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -15,7 +16,6 @@ class DashboardController extends Controller
         if (!Auth::check()) {
             abort(403, 'Unauthorized access.');
         }
-
         $user = Auth::user();
         $roles = $user->roles()->pluck('name')->toArray();
 
@@ -59,11 +59,14 @@ class DashboardController extends Controller
                 'annualData' => $annualData,
             ]);
         } elseif (in_array('client', $roles)) {
+            $products = Product::orderBy('created_at', 'desc')->paginate(6);
             $trainings = $user->trainings()
                 ->whereBetween('start_date', [$startOfWeek, $endOfWeek])
                 ->get();
 
             return view('pages.dashboard.client', [
+                'user'  => $user,
+                'products' => $products,
                 'trainings' => $trainings,
                 'startOfWeek' => $startOfWeek,
                 'endOfWeek' => $endOfWeek,

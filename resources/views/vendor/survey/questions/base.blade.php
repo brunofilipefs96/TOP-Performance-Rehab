@@ -6,6 +6,7 @@
     @endif
 </div>
 
+
 <div class="text-success">
     {{ $report ?? '' }}
 </div>

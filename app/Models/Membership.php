@@ -13,10 +13,11 @@ class Membership extends Model
     protected $fillable = [
         'user_id',
         'address_id',
+        'status_id',
         'monthly_plan',
         'total_trainings_supervised',
         'total_trainings_individual',
-        'status',
+        'description'
     ];
 
     public function user()
@@ -48,5 +49,4 @@ class Membership extends Model
     {
         return $this->belongsTo(Status::class);
     }
-
 }

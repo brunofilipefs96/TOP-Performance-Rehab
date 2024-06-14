@@ -32,6 +32,10 @@ class MembershipPolicy
      */
     public function create(User $user): bool
     {
+        if ($user->membership !== null) {
+            return !$user->membership->exists();
+        }
+
         return true;
     }
 
@@ -70,6 +74,6 @@ class MembershipPolicy
 
     public function form(User $user): bool
     {
-        return $user->hasRole('admin');    // Verificar se o Dono do Membership é o user que quer preencher o formulário
+        return $user->hasRole('admin');
     }
 }

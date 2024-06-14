@@ -40,25 +40,18 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/users', UserController::class)->only(['index', 'show', 'destroy']);
 
-    Route::get('/users/{user}/membership/show', [MembershipController::class, 'show'])->name('users.membership.show');
-    Route::post('/profile/membership', [MembershipController::class, 'store'])->name('profile.membership.store');
 
     Route::resource('/products', ProductController::class);
     Route::resource('/rooms', RoomController::class);
     Route::resource('/training-types', TrainingTypeController::class);
     Route::resource('/packs', PackController::class);
-    Route::resource('/insurances', InsuranceController::class)->only('index', 'create', 'show', 'destroy');;
+    Route::resource('/insurances', InsuranceController::class);
     Route::resource('/services', ServiceController::class);
-    Route::resource('/memberships', MembershipController::class)->only('index', 'create', 'show', 'destroy');
-    Route::patch('/memberships/{membership}/status/{status}', [MembershipController::class, 'updateStatus'])->name('memberships.updateStatus');
-    Route::patch('/insurances/{insurance}/status/{status}', [InsuranceController::class, 'updateStatus'])->name('insurances.updateStatus');
-
-
-
+    Route::resource('/memberships', MembershipController::class);
 
     Route::get('/entries/{survey}/fill', [EntryController::class, 'fill'])->name('entries.fill');
     Route::post('/entries/{survey}', [EntryController::class, 'store'])->name('entries.store');
-    Route::get('profile/entries/{survey}', [EntryController::class, 'show'])->name('entries.show');
+    Route::get('/entries/{survey}', [EntryController::class, 'show'])->name('entries.show');
 
     Route::post('/profile/addresses', [AddressController::class, 'store'])->name('addresses.store');
     Route::put('/profile/addresses/{address}', [AddressController::class, 'update'])->name('addresses.update');
@@ -70,9 +63,19 @@ Route::middleware('auth')->group(function () {
 
     Route::post('trainings/{training}/enroll', [TrainingController::class, 'enroll'])->name('trainings.enroll');
     Route::post('trainings/{training}/cancel', [TrainingController::class, 'cancel'])->name('trainings.cancel');
+    Route::delete('/trainings/multi-delete', [TrainingController::class, 'multiDelete'])->name('trainings.multi-delete');
     Route::resource('trainings', TrainingController::class);
 
     Route::post('/dashboard/change-week', [DashboardController::class, 'changeWeek'])->name('dashboard.changeWeek');
+
+    Route::post('/cart/add', [ProductController::class, 'addToCart'])->name('cart.add');
+    Route::get('/cart', [ProductController::class, 'cart'])->name('cart.index');
+    Route::delete('cart/remove/{id}', [ProductController::class, 'removeFromCart'])->name('cart.remove');
+
+    Route::patch('cart/increase/{id}', [ProductController::class, 'increaseQuantity'])->name('cart.increase');
+    Route::patch('cart/decrease/{id}', [ProductController::class, 'decreaseQuantity'])->name('cart.decrease');
+
+
 });
 
 

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('phone_number');
             $table->string('gender');
             $table->string('nif');
-            $table->string('cc_number');
+            $table->string('cc_number')->nullable();
             $table->rememberToken();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();

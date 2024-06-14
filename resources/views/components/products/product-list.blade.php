@@ -14,8 +14,8 @@
                 <input type="text" id="search" placeholder="Pesquisar produtos..." class="w-full p-2 pl-10 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-light-gray dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
             </div>
         </div>
-        <hr class="mb-10 border-gray-400 dark:border-gray-300">
     @endcan
+    <hr class="mb-10 border-gray-400 dark:border-gray-300">
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @foreach ($products as $product)

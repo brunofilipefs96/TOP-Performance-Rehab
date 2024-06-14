@@ -16,12 +16,32 @@ class TrainingController extends Controller
 {
     use AuthorizesRequests;
 
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('viewAny', Training::class);
-        $trainings = Training::orderBy('id', 'desc')->paginate(12);
-        $trainingTypes = TrainingType::all();
-        return view('pages.trainings.index', ['trainings' => $trainings, 'trainingTypes' => $trainingTypes]);
+
+        $currentWeek = Carbon::now()->startOfWeek();
+        $selectedWeek = $request->get('week') ? Carbon::parse($request->get('week'))->startOfWeek() : $currentWeek;
+
+        if (!(auth()->user()->hasRole('admin') || auth()->user()->hasRole('personal_trainer')) && $selectedWeek->lt($currentWeek)) {
+            $selectedWeek = $currentWeek;
+        }
+
+        $trainings = Training::whereBetween('start_date', [$selectedWeek, $selectedWeek->copy()->endOfWeek()])
+            ->orderBy('start_date', 'asc')
+            ->get()
+            ->groupBy(function ($training) {
+                return Carbon::parse($training->start_date)->format('l');
+            });
+
+        $daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+        return view('pages.trainings.index', [
+            'trainings' => $trainings,
+            'currentWeek' => $currentWeek,
+            'selectedWeek' => $selectedWeek,
+            'daysOfWeek' => $daysOfWeek
+        ]);
     }
 
     public function create()

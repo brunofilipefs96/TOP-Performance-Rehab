@@ -75,6 +75,11 @@
     pointer-events: none;
 }
 
+.required::after {
+    content: '*';
+    color: red;
+}
+
 .dropdown-link:hover,
 .dropdown-link:focus,
 .dropdown-link[aria-current="page"] {

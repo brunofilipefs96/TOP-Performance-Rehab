@@ -56,6 +56,11 @@
             prevButton.style.display = (index === 0) ? 'none' : 'inline-block';
             nextButton.style.display = (index === sections.length - 1) ? 'none' : 'inline-block';
             submitButton.style.display = (index === sections.length - 1) ? 'inline-block' : 'none';
+
+            // Custom handling for section 10
+            if (index === 9) {
+                handleSection10();
+            }
         }
 
         function clearErrors(section) {
@@ -258,6 +263,23 @@
             });
         }
 
+        function handleSection10() {
+            const section = sections[9]; // Assuming Section 10 is at index 9
+            const radioButtons = section.querySelectorAll('input[type="radio"]');
+
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', function () {
+                    if (radio.value === 'Não') {
+                        nextButton.style.display = 'none';
+                        submitButton.style.display = 'inline-block';
+                    } else if (radio.value === 'Sim') {
+                        nextButton.style.display = 'inline-block';
+                        submitButton.style.display = 'none';
+                    }
+                });
+            });
+        }
+
         nextButton.addEventListener('click', function () {
             const validation = validateSection(currentSectionIndex);
             if (!validation.allAnswered) {
@@ -304,53 +326,13 @@
             } else if (currentSectionIndex === 6) { // Se estamos na seção 7
                 handleSection8();
                 currentSectionIndex = 7; // Avançar para a seção 8
+            } else if (currentSectionIndex === 9) { // Se estamos na seção 10
+                handleSection10();
+                return; // Stop further action, handleSection10 will control the flow
             } else {
                 currentSectionIndex++;
             }
 
-            showSection(currentSectionIndex);
-        });
-
-        // Custom function for Section 10
-        function handleSection10() {
-            const section = sections[9]; // Assuming Section 10 is at index 9
-            const radioButtons = section.querySelectorAll('input[type="radio"]');
-            const textBox = section.querySelector('input[type="text"], textarea'); // Adjust selector as needed
-
-            radioButtons.forEach(radio => {
-                radio.addEventListener('change', function () {
-                    if (radio.value === 'Não') {
-                        nextButton.style.display = 'none';
-                        submitButton.style.display = 'inline-block';
-                    } else if (radio.value === 'Sim') {
-                        nextButton.style.display = 'inline-block';
-                        submitButton.style.display = 'none';
-                        textBox.addEventListener('input', function () {
-                            if (textBox.value.trim() !== '') {
-                                nextButton.style.display = 'inline-block';
-                                submitButton.style.display = 'none';
-                            } else {
-                                nextButton.style.display = 'none';
-                            }
-                        });
-                    }
-                });
-            });
-        }
-
-        nextButton.addEventListener('click', function () {
-            const validation = validateSection(currentSectionIndex);
-            if (!validation.allAnswered) {
-                return;
-            }
-
-            // Custom handling for Section 10 based on user choice
-            if (currentSectionIndex === 9) {
-                handleSection10();
-                return; // Stop further action, handleSection10 will control the flow
-            }
-
-            currentSectionIndex++;
             showSection(currentSectionIndex);
         });
 
@@ -366,3 +348,4 @@
         showSection(currentSectionIndex);
     });
 </script>
+

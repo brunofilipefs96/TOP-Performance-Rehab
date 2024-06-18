@@ -47,6 +47,7 @@
         const prevButton = document.getElementById('prev-button');
         const nextButton = document.getElementById('next-button');
         const submitButton = document.getElementById('submit-button');
+        const sectionHistory = []; // Array to store section history
 
         function showSection(index) {
             sections.forEach((section, idx) => {
@@ -110,6 +111,16 @@
                     if (selectedAnswer.value !== 'Não') {
                         allNo = false;
                     }
+                }
+            }
+
+            // Custom validation for section 10
+            if (sectionIndex === 9) {
+                const selectedRadio = section.querySelector('input[type="radio"]:checked');
+                const textBox = section.querySelector('input[type="text"]');
+                if (selectedRadio && selectedRadio.value === 'Sim' && textBox.value.trim() === '') {
+                    allAnswered = false;
+                    showError(textBox.name, 'Esta pergunta é obrigatória.');
                 }
             }
 
@@ -266,17 +277,31 @@
         function handleSection10() {
             const section = sections[9]; // Assuming Section 10 is at index 9
             const radioButtons = section.querySelectorAll('input[type="radio"]');
+            const textBox = section.querySelector('input[type="text"]');
 
             radioButtons.forEach(radio => {
                 radio.addEventListener('change', function () {
                     if (radio.value === 'Não') {
                         nextButton.style.display = 'none';
                         submitButton.style.display = 'inline-block';
+                        textBox.required = false; // Remove the requirement
+                        textBox.value = ''; // Clear the text box
                     } else if (radio.value === 'Sim') {
                         nextButton.style.display = 'inline-block';
                         submitButton.style.display = 'none';
+                        textBox.required = true; // Make the text box required
                     }
                 });
+            });
+
+            textBox.addEventListener('input', function () {
+                if (textBox.value.trim() !== '') {
+                    nextButton.style.display = 'inline-block';
+                    submitButton.style.display = 'none';
+                } else {
+                    nextButton.style.display = 'none';
+                    submitButton.style.display = 'inline-block';
+                }
             });
         }
 
@@ -285,6 +310,8 @@
             if (!validation.allAnswered) {
                 return;
             }
+
+            sectionHistory.push(currentSectionIndex); // Add current section to history
 
             if (currentSectionIndex === 0) { // Se estamos na seção 1
                 if (validation.allNo) {
@@ -328,7 +355,7 @@
                 currentSectionIndex = 7; // Avançar para a seção 8
             } else if (currentSectionIndex === 9) { // Se estamos na seção 10
                 handleSection10();
-                return; // Stop further action, handleSection10 will control the flow
+                currentSectionIndex = 10; // Avançar para a seção 11
             } else {
                 currentSectionIndex++;
             }
@@ -337,7 +364,9 @@
         });
 
         prevButton.addEventListener('click', function () {
-            if (currentSectionIndex === 2) { // Se estamos na seção 3
+            if (sectionHistory.length > 0) {
+                currentSectionIndex = sectionHistory.pop(); // Retrieve last visited section
+            } else if (currentSectionIndex === 2) { // Se estamos na seção 3
                 currentSectionIndex = 0; // Voltar para a seção 1
             } else {
                 currentSectionIndex--;
@@ -348,4 +377,3 @@
         showSection(currentSectionIndex);
     });
 </script>
-

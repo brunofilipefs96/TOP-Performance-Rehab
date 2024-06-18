@@ -80,6 +80,31 @@
                 </div>
             @endif
 
+            @php
+                $userPresence = $training->users()->where('user_id', auth()->id())->exists();
+                $userPresenceFalse = $training->users()->where('user_id', auth()->id())->wherePivot('presence', false)->exists();
+                $currentDateTime = \Carbon\Carbon::now()->setTimezone('Europe/Lisbon');
+                $remainingSpots = $training->max_students - $training->users()->wherePivot('presence', true)->count();
+            @endphp
+
+            @if (!$userPresence && !$userPresenceFalse && $currentDateTime->lt($training->start_date) && $remainingSpots > 0)
+                <div class="mb-4">
+                    <button type="button" onclick="confirmEnroll({{ $training->id }})"
+                            class="dark:bg-lime-400 bg-blue-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-green-400">
+                        <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
+                        Inscrever-me
+                    </button>
+                </div>
+            @elseif ($userPresence && !$userPresenceFalse)
+                <div class="mb-4">
+                    <button type="button" onclick="confirmCancel({{ $training->id }})"
+                            class="bg-red-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-400">
+                        <i class="fa-solid fa-x w-4 h-4 mr-2"></i>
+                        Cancelar Inscrição
+                    </button>
+                </div>
+            @endif
+
             <div class="flex justify-center mt-6">
                 <a href="{{ route('trainings.index') }}" class="inline-block bg-gray-500 mt-4 mb-5 py-2 px-4 rounded-md shadow-sm hover:bg-gray-700 text-white">
                     Voltar
@@ -88,3 +113,38 @@
         </div>
     </div>
 </div>
+
+<div id="confirmation-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
+    <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
+        <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800" id="confirmation-title">Pretende eliminar?</h2>
+        <p class="mb-4 text-red-500 dark:text-red-300" id="confirmation-message">Não poderá reverter isso!</p>
+        <div class="flex justify-end gap-4">
+            <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400" onclick="cancelAction()">Cancelar</button>
+            <form id="confirmation-form" method="POST" class="inline">
+                @csrf
+                <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500">Confirmar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openModal(title, message, actionUrl) {
+        document.getElementById('confirmation-title').innerText = title;
+        document.getElementById('confirmation-message').innerText = message;
+        document.getElementById('confirmation-form').action = actionUrl;
+        document.getElementById('confirmation-modal').classList.remove('hidden');
+    }
+
+    function cancelAction() {
+        document.getElementById('confirmation-modal').classList.add('hidden');
+    }
+
+    function confirmEnroll(id) {
+        openModal('Pretende inscrever-se?', '', `/trainings/${id}/enroll`);
+    }
+
+    function confirmCancel(id) {
+        openModal('Pretende cancelar a inscrição?', '', `/trainings/${id}/cancel`);
+    }
+</script>

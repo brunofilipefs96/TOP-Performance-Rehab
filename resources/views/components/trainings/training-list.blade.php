@@ -51,6 +51,7 @@
                             @php
                                 $userPresence = $training->users()->where('user_id', auth()->id())->exists();
                                 $userPresenceFalse = $training->users()->where('user_id', auth()->id())->wherePivot('presence', false)->exists();
+                                $currentDateTime = \Carbon\Carbon::now()->setTimezone('Europe/Lisbon');
                             @endphp
                             <div class="training-card relative dark:bg-gray-800 bg-gray-400 rounded-lg overflow-hidden shadow-md text-white select-none"
                                  data-id="{{ $training->id }}" data-date="{{ $training->start_date }}"
@@ -77,17 +78,25 @@
                                         <span>{{ \Carbon\Carbon::parse($training->start_date)->diffInMinutes(\Carbon\Carbon::parse($training->end_date)) }} min.</span>
                                     </div>
                                     <div class="dark:text-gray-400 text-gray-700 mb-5 flex items-center">
-                                        <i class="fa-solid fa-square-check w-4 h-4 mr-2"></i>
                                         @php
                                             $remainingSpots = $training->max_students - $training->users()->wherePivot('presence', true)->count();
                                         @endphp
-                                        Inscrições: {{ $training->users()->wherePivot('presence', true)->count() }}
-                                        /{{ $training->max_students }}
-                                        @if ($remainingSpots > 0)
-                                            <span class="inline-block w-3 h-3 bg-green-500 rounded-full ml-2"
-                                                  title="Vagas disponíveis"></span>
+                                        @if($currentDateTime->lt($training->start_date))
+                                            <i class="fa-solid fa-square-check w-4 h-4 mr-2"></i>
+                                            Inscrições: {{ $training->users()->wherePivot('presence', true)->count() }}/{{ $training->max_students }}
+
+                                            @if ($remainingSpots > 0)
+                                                <span class="inline-block w-3 h-3 bg-green-500 rounded-full ml-2"
+                                                      title="Vagas disponíveis"></span>
+                                            @else
+                                                <span class="inline-block w-3 h-3 bg-red-500 rounded-full ml-2" title="Cheio"></span>
+                                            @endif
+                                        @elseif ($currentDateTime->gt($training->end_date))
+                                            <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
+                                            Treino Finalizado
                                         @else
-                                            <span class="inline-block w-3 h-3 bg-red-500 rounded-full ml-2" title="Cheio"></span>
+                                            <i class="fa-solid fa-stopwatch w-4 h-4 mr-2"></i>
+                                            Treino a Decorrer
                                         @endif
                                     </div>
                                     @if ($userPresence && $userPresenceFalse)
@@ -105,7 +114,7 @@
                                                 Cancelar Inscrição
                                             </button>
                                         @elseif(!$userPresenceFalse)
-                                            @if ($remainingSpots > 0)
+                                            @if ($remainingSpots > 0 && $currentDateTime->lt($training->start_date))
                                                 <button type="button"
                                                         class="dark:bg-lime-400 bg-blue-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-green-400"
                                                         onclick="confirmEnroll({{ $training->id }})">
@@ -134,71 +143,6 @@
                                                 Eliminar
                                             </button>
                                         </form>
-                                        <div id="confirmation-modal-{{ $training->id }}"
-                                             class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
-                                            <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
-                                                <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Pretende
-                                                    eliminar?</h2>
-                                                <p class="mb-4 text-red-500 dark:text-red-300">Não poderá reverter isso!</p>
-                                                <div class="flex justify-end gap-4">
-                                                    <button type="button"
-                                                            class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400"
-                                                            onclick="cancelDelete({{ $training->id }})">Cancelar
-                                                    </button>
-                                                    <button type="button"
-                                                            class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500"
-                                                            onclick="confirmDeleteSubmit({{ $training->id }})">Eliminar
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div id="cancel-modal-{{ $training->id }}"
-                                             class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
-                                            <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
-                                                <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Pretende cancelar a
-                                                    inscrição?</h2>
-                                                <p class="mb-4 text-red-500 dark:text-red-300"
-                                                   id="cancel-message-{{ $training->id }}"></p>
-                                                <div class="flex justify-end gap-4">
-                                                    <button type="button"
-                                                            class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400"
-                                                            onclick="cancelCancel({{ $training->id }})">Cancelar
-                                                    </button>
-                                                    <form id="cancel-form-{{ $training->id }}"
-                                                          action="{{ route('trainings.cancel', $training->id) }}" method="POST"
-                                                          class="inline">
-                                                        @csrf
-                                                        <button type="button"
-                                                                class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500"
-                                                                onclick="confirmCancelSubmit({{ $training->id }})">
-                                                            Confirmar
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div id="enroll-modal-{{ $training->id }}"
-                                             class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
-                                            <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
-                                                <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Pretende
-                                                    inscrever-se?</h2>
-                                                <div class="flex justify-end gap-4">
-                                                    <button type="button"
-                                                            class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400"
-                                                            onclick="cancelEnroll({{ $training->id }})">Cancelar
-                                                    </button>
-                                                    <form id="enroll-form-{{ $training->id }}"
-                                                          action="{{ route('trainings.enroll', $training->id) }}" method="POST"
-                                                          class="inline">
-                                                        @csrf
-                                                        <button type="submit"
-                                                                class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-500">
-                                                            Inscrever
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
                                     @endcan
                                 </div>
                             </div>
@@ -212,119 +156,45 @@
     </div>
 </div>
 
+<div id="confirmation-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
+    <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
+        <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800" id="confirmation-title">Pretende eliminar?</h2>
+        <p class="mb-4 text-red-500 dark:text-red-300" id="confirmation-message">Não poderá reverter isso!</p>
+        <div class="flex justify-end gap-4">
+            <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400" onclick="cancelAction()">Cancelar</button>
+            <form id="confirmation-form" method="POST" class="inline">
+                @csrf
+                <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500">Confirmar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
     let trainingDeleted = 0;
     let trainingEnrolled = 0;
     let trainingCanceled = 0;
 
+    function openModal(title, message, actionUrl) {
+        document.getElementById('confirmation-title').innerText = title;
+        document.getElementById('confirmation-message').innerText = message;
+        document.getElementById('confirmation-form').action = actionUrl;
+        document.getElementById('confirmation-modal').classList.remove('hidden');
+    }
+
+    function cancelAction() {
+        document.getElementById('confirmation-modal').classList.add('hidden');
+    }
+
     function confirmDelete(id) {
-        const modal = document.getElementById(`confirmation-modal-${id}`);
-        if (modal) {
-            modal.classList.remove('hidden');
-            trainingDeleted = id;
-        }
-    }
-
-    function cancelDelete(id) {
-        const modal = document.getElementById(`confirmation-modal-${id}`);
-        if (modal) {
-            modal.classList.add('hidden');
-        }
-    }
-
-    function confirmDeleteSubmit(id) {
-        const form = document.getElementById(`delete-form-${id}`);
-        if (form) {
-            form.submit();
-        }
+        openModal('Pretende eliminar?', 'Não poderá reverter isso!', `/trainings/${id}`);
     }
 
     function confirmEnroll(id) {
-        const modal = document.getElementById(`enroll-modal-${id}`);
-        if (modal) {
-            modal.classList.remove('hidden');
-            trainingEnrolled = id;
-        }
-    }
-
-    function cancelEnroll(id) {
-        const modal = document.getElementById(`enroll-modal-${id}`);
-        if (modal) {
-            modal.classList.add('hidden');
-        }
+        openModal('Pretende inscrever-se?', '', `/trainings/${id}/enroll`);
     }
 
     function confirmCancel(id) {
-        const card = document.querySelector(`.training-card[data-id="${id}"]`);
-        if (card) {
-            const startDate = card.getAttribute('data-date');
-            const startTime = card.getAttribute('data-start-time');
-            const startDateTime = new Date(`${startDate}T${startTime}:00`);
-            const now = new Date();
-            const differenceInHours = (startDateTime - now) / 36e5;
-
-            let cancelMessage = 'Atenção! Não será reembolsado e não poderá voltar a inscrever-se neste treino, pois faltam menos de 12 horas até este treino se realizar.';
-            if (differenceInHours > 12) {
-                cancelMessage = 'Atenção! Não será reembolsado e não poderá voltar a inscrever-se neste treino, pois faltam menos de 12 horas até este treino se realizar.';
-            }
-
-            const messageElement = document.getElementById(`cancel-message-${id}`);
-            if (messageElement) {
-                messageElement.innerText = cancelMessage;
-            }
-            const modal = document.getElementById(`cancel-modal-${id}`);
-            if (modal) {
-                modal.classList.remove('hidden');
-                trainingCanceled = id;
-            }
-        }
-    }
-
-    function confirmCancelSubmit(id) {
-        const form = document.getElementById(`cancel-form-${id}`);
-        if (form) {
-            form.submit();
-        }
-    }
-
-    function cancelCancel(id) {
-        const modal = document.getElementById(`cancel-modal-${id}`);
-        if (modal) {
-            modal.classList.add('hidden');
-        }
-    }
-
-    const selectAllCheckbox = document.getElementById('select-all');
-    if (selectAllCheckbox) {
-        selectAllCheckbox.addEventListener('change', function (e) {
-            const checkboxes = document.querySelectorAll('.training-checkbox');
-            checkboxes.forEach(checkbox => checkbox.checked = e.target.checked);
-        });
-    }
-
-    const trainingCheckboxes = document.querySelectorAll('.training-checkbox');
-    trainingCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function (e) {
-            if (!e.target.checked) {
-                const selectAllCheckbox = document.getElementById('select-all');
-                if (selectAllCheckbox) {
-                    selectAllCheckbox.checked = false;
-                }
-            }
-        });
-    });
-
-    function openMultiDeleteModal() {
-        const modal = document.getElementById('multi-delete-modal');
-        if (modal) {
-            modal.classList.remove('hidden');
-        }
-    }
-
-    function closeMultiDeleteModal() {
-        const modal = document.getElementById('multi-delete-modal');
-        if (modal) {
-            modal.classList.add('hidden');
-        }
+        openModal('Pretende cancelar a inscrição?', '', `/trainings/${id}/cancel`);
     }
 </script>

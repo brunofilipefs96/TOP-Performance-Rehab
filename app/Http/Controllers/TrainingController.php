@@ -173,7 +173,7 @@ class TrainingController extends Controller
         }
 
         $startTime = Carbon::parse($training->start_date);
-        $now = Carbon::now();
+        $now = Carbon::now()->setTimeZone('Europe/Lisbon');
         $differenceInHours = $startTime->diffInHours($now);
 
         if ($differenceInHours > 12) {

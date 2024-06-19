@@ -10,8 +10,38 @@ class Evaluation extends Model
 {
     use HasFactory, SoftDeletes;
 
-    public function membership()
+    protected $fillable = [
+        'membership_id',
+        'weight',
+        'height',
+        'waist',
+        'hip',
+        'chest',
+        'arm',
+        'forearm',
+        'thigh',
+        'calf',
+        'abdominal_fat',
+        'visceral_fat',
+        'muscle_mass',
+        'fat_mass',
+        'hydration',
+        'bone_mass',
+        'bmr',
+        'metabolic_age',
+        'physical_evaluation',
+        'fat_percentage',
+        'imc',
+        'ideal_weight',
+        'ideal_fat_percentage',
+        'ideal_muscle_mass',
+        'observations',
+        'date',
+    ];
+
+    public function memberships()
     {
-        return $this->belongsTo(Membership::class);
+        return $this->belongsToMany(Membership::class);
     }
+
 }

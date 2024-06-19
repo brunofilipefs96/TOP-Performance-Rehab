@@ -4,7 +4,7 @@
             <form method="POST" action="{{ url('packs') }}" enctype="multipart/form-data">
                 @csrf
                 <div class="flex justify-center mb-5">
-                    <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Adicionar Pacote</h1>
+                    <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Adicionar Pack</h1>
                     <hr class="border-t border-gray-300">
                 </div>
 
@@ -21,6 +21,25 @@
                            required
                            aria-describedby="nameHelp">
                     @error('name')
+                    <span class="text-red-500 text-sm mt-2" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label for="duration" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Duração (dias)</label>
+                    <input type="number"
+                           id="duration"
+                           name="duration"
+                           autocomplete="duration"
+                           placeholder="Insira a duração em dias"
+                           class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500
+                           @error('duration') border-red-500 @enderror dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50"
+                           value="{{ old('duration') }}"
+                           required
+                           aria-describedby="durationHelp">
+                    @error('duration')
                     <span class="text-red-500 text-sm mt-2" role="alert">
                         <strong>{{ $message }}</strong>
                     </span>

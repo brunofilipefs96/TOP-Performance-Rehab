@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('packs', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->integer('duration');
             $table->integer('trainings_number');
             $table->boolean('has_personal_trainer');
-            $table->decimal('price');
+            $table->decimal('price', 8, 2);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
             $table->softDeletes();

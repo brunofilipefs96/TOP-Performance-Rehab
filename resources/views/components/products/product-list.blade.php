@@ -19,13 +19,13 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @foreach ($products as $product)
-            <div class="product-card dark:bg-gray-800 bg-gray-500 rounded-lg overflow-hidden shadow-md text-white select-none" data-name="{{ $product->name }}">
+            <div class="product-card dark:bg-gray-800 bg-gray-500 rounded-lg overflow-hidden shadow-md text-white select-none transform transition-transform duration-300 hover:scale-105" data-name="{{ $product->name }}">
                 <a href="{{ url('products/' . $product->id) }}">
                     <div class="flex justify-center">
                         @if($product->image && file_exists(public_path('storage/' . $product->image)))
                             <img src="{{ asset('storage/'. $product->image) }}" alt="{{ $product->name }}" class="w-full h-40 object-cover">
                         @else
-                            <div class="w-full h-40 dark:bg-gray-600 bg-gray-300 flex items-center justify-center ">
+                            <div class="w-full h-40 dark:bg-gray-600 bg-gray-300 flex items-center justify-center">
                                 <span class="text-3xl">Sem imagem</span>
                             </div>
                         @endif

@@ -35,18 +35,24 @@ class Membership extends Model
         return $this->hasOne(Insurance::class);
     }
 
-    public function evaluations()
-    {
-        return $this->hasMany(Evaluation::class);
-    }
-
     public function address()
     {
         return $this->belongsTo(Address::class);
+    }
+
+    public function evaluations()
+    {
+        return $this->belongsToMany(Evaluation::class);
     }
 
     public function status()
     {
         return $this->belongsTo(Status::class);
     }
+
+    public function trainingTypes()
+    {
+        return $this->belongsToMany(TrainingType::class);
+    }
+
 }

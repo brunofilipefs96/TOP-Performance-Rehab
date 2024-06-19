@@ -19,4 +19,9 @@ class TrainingType extends Model
     {
         return $this->hasMany(Training::class);
     }
+
+    public function memberships()
+    {
+        return $this->belongsToMany(Membership::class);
+    }
 }

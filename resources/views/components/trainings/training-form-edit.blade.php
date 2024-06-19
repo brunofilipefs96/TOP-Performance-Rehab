@@ -1,20 +1,25 @@
 <div class="container mx-auto mt-10 pt-5 glass">
     <div class="flex justify-center">
-        <div class="w-full max-w-lg dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm bg-gray-300">
-            <div>
-                <h1 class="mb-2 dark:text-lime-400 font-semibold text-gray-800">Editar Treino</h1>
+        <div class="w-full max-w-lg dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm bg-gray-300 relative">
+            <div class="absolute top-4 left-4">
+                <a href="{{ route('trainings.index') }}" class="inline-block bg-gray-500 py-1 px-2 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+            </div>
+            <div class="text-center">
+                <h1 class="mb-8 mt-4 dark:text-lime-400 text-gray-800 font-semibold">Editar Treino</h1>
             </div>
             @if ($trainingTypes->isEmpty() || $rooms->isEmpty() || $personalTrainers->isEmpty())
                 <div class="mb-4 dark:text-white text-gray-800">
                     <p class="mb-2">Para editar um treino, você precisa adicionar pelo menos um tipo de treino, uma sala e um personal trainer.</p>
                     @if ($trainingTypes->isEmpty())
-                        <a href="{{ route('training_types.create') }}" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-300 dark:hover:text-gray-800">Adicionar Tipo de Treino</a>
+                        <a href="{{ route('training_types.create') }}" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-300 dark:hover:text-gray-800 text-sm">Adicionar Tipo de Treino</a>
                     @endif
                     @if ($rooms->isEmpty())
-                        <a href="{{ route('rooms.create') }}" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-300 dark:hover:text-gray-800">Adicionar Sala</a>
+                        <a href="{{ route('rooms.create') }}" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-300 dark:hover:text-gray-800 text-sm">Adicionar Sala</a>
                     @endif
                     @if ($personalTrainers->isEmpty())
-                        <p class="bg-red-500 text-white py-2 px-4 rounded-md shadow-sm">Nenhum personal trainer disponível. Por favor, adicione um personal trainer.</p>
+                        <p class="bg-red-500 text-white py-2 px-4 rounded-md shadow-sm text-sm">Nenhum personal trainer disponível. Por favor, adicione um personal trainer.</p>
                     @endif
                 </div>
             @else
@@ -91,11 +96,8 @@
                         @enderror
                         <span id="time-error-msg" class="text-red-500 text-sm"></span>
                     </div>
-                    <div class="flex justify-end gap-2">
-                        <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-300 dark:hover:text-gray-800" onclick="confirmarAtualizacao()">Atualizar Treino</button>
-                        <a href="{{ route('trainings.index') }}" class="inline-block bg-gray-500 mt-4 mb-5 py-2 px-4 rounded-md shadow-sm hover:bg-gray-700 text-white">
-                            Cancelar
-                        </a>
+                    <div class="flex justify-end gap-2 mt-10">
+                        <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-300 dark:hover:text-gray-800 text-sm" onclick="confirmarAtualizacao()">Atualizar Treino</button>
                     </div>
                 </form>
                 <div id="confirmation-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden">

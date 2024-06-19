@@ -1,8 +1,13 @@
 <div class="container mx-auto mt-10 pt-5 glass">
     <div class="flex justify-center">
-        <div class="w-full max-w-lg bg-gray-300 dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm">
-            <div>
-                <h1 class="mb-6 dark:text-lime-400 text-gray-800 font-semibold">{{ $training->name }}</h1>
+        <div class="w-full max-w-lg bg-gray-300 dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm relative">
+            <div class="absolute top-4 left-4">
+                <a href="{{ route('trainings.index') }}" class="inline-block bg-gray-500 py-1 px-2 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+            </div>
+            <div class="text-center">
+                <h1 class="mb-8 mt-4 dark:text-lime-400 text-gray-800 font-semibold">{{ $training->name }}</h1>
             </div>
 
             <div class="mb-4">
@@ -39,6 +44,20 @@
                 <label for="duration" class="block text-gray-800 dark:text-white">Duração</label>
                 <input type="text" name="duration" id="duration" value="{{ \Carbon\Carbon::parse($training->start_date)->diffInMinutes(\Carbon\Carbon::parse($training->end_date)) }} minutos" disabled class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
             </div>
+
+            @php
+                $userPresence = $training->users()->where('user_id', auth()->id())->exists();
+                $userPresenceFalse = $training->users()->where('user_id', auth()->id())->wherePivot('presence', false)->exists();
+                $currentDateTime = \Carbon\Carbon::now()->setTimezone('Europe/Lisbon');
+                $remainingSpots = $training->max_students - $training->users()->wherePivot('presence', true)->count();
+            @endphp
+
+            @if ($userPresence && $userPresenceFalse)
+                <p class="text-red-500 mb-5">
+                    <i class="fa-solid fa-ban mr-1"></i>
+                    Cancelou a inscrição com menos de 12 horas de antecedência. Não pode voltar a inscrever-se e o treino não será reembolsado.
+                </p>
+            @endif
 
             @if (auth()->user()->hasRole('admin') || auth()->user()->id === $training->personal_trainer_id)
                 <div class="mb-4">
@@ -80,36 +99,40 @@
                 </div>
             @endif
 
-            @php
-                $userPresence = $training->users()->where('user_id', auth()->id())->exists();
-                $userPresenceFalse = $training->users()->where('user_id', auth()->id())->wherePivot('presence', false)->exists();
-                $currentDateTime = \Carbon\Carbon::now()->setTimezone('Europe/Lisbon');
-                $remainingSpots = $training->max_students - $training->users()->wherePivot('presence', true)->count();
-            @endphp
-
-            @if (!$userPresence && !$userPresenceFalse && $currentDateTime->lt($training->start_date) && $remainingSpots > 0)
-                <div class="mb-4">
-                    <button type="button" onclick="confirmEnroll({{ $training->id }})"
-                            class="dark:bg-lime-400 bg-blue-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-green-400">
-                        <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
-                        Inscrever-me
-                    </button>
-                </div>
-            @elseif ($userPresence && !$userPresenceFalse)
-                <div class="mb-4">
-                    <button type="button" onclick="confirmCancel({{ $training->id }})"
-                            class="bg-red-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-400">
-                        <i class="fa-solid fa-x w-4 h-4 mr-2"></i>
-                        Cancelar Inscrição
-                    </button>
+            @if (auth()->user()->hasRole('client'))
+                <div class="flex justify-end items-center mb-4 mt-10">
+                    @if (!$userPresence && !$userPresenceFalse && $currentDateTime->lt($training->start_date) && $remainingSpots > 0)
+                        <button type="button" onclick="confirmEnroll({{ $training->id }})"
+                                class="dark:bg-lime-400 bg-blue-500 text-white flex items-center px-4 py-2 rounded-md hover:bg-green-400">
+                            <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
+                            Inscrever-me
+                        </button>
+                    @elseif ($userPresence && !$userPresenceFalse)
+                        <button type="button" onclick="confirmCancel({{ $training->id }})"
+                                class="bg-red-500 text-white flex items-center px-4 py-2 rounded-md hover:bg-red-400">
+                            <i class="fa-solid fa-x w-4 h-4 mr-2"></i>
+                            Cancelar Inscrição
+                        </button>
+                    @endif
                 </div>
             @endif
 
-            <div class="flex justify-center mt-6">
-                <a href="{{ route('trainings.index') }}" class="inline-block bg-gray-500 mt-4 mb-5 py-2 px-4 rounded-md shadow-sm hover:bg-gray-700 text-white">
-                    Voltar
-                </a>
-            </div>
+            @if(auth()->user()->hasRole('admin') || auth()->user()->id === $training->personal_trainer_id)
+                <div class="flex justify-end items-center mb-4 mt-10">
+                    <a href="{{ url('trainings/' . $training->id . '/edit') }}" class="bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400 mr-2">
+                        <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
+                        Editar
+                    </a>
+                    <form id="delete-form-{{$training->id}}" action="{{ url('trainings/' . $training->id) }}" method="POST" class="inline mr-2">
+                        @csrf
+                        @method('DELETE')
+                        <button type="button" class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500" id="delete-button" onclick="confirmDelete({{ $training->id }})">
+                            <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
+                            Eliminar
+                        </button>
+                    </form>
+                </div>
+            @endif
         </div>
     </div>
 </div>
@@ -146,5 +169,9 @@
 
     function confirmCancel(id) {
         openModal('Pretende cancelar a inscrição?', '', `/trainings/${id}/cancel`);
+    }
+
+    function confirmDelete(id) {
+        openModal('Pretende eliminar?', 'Não poderá reverter isso!', `/trainings/${id}`);
     }
 </script>

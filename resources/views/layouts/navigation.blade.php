@@ -35,8 +35,7 @@
                                 class="group px-5 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative"
                                 x-data="{ dropdownOpen: false }" @mouseover="dropdownOpen = true"
                                 @mouseout="dropdownOpen = false">
-                                <x-nav-link :href="route('products.index')"
-                                            :activeRoutes="['products.index', 'packs.index']"
+                                <x-nav-link :activeRoutes="['products.index', 'packs.index']"
                                             class="flex items-center justify-center space-x-2 focus:outline-none">
                                     <i class="fa-solid fa-basket-shopping text-xl transition-transform group-hover:-translate-y-1"></i>
                                 </x-nav-link>
@@ -60,8 +59,7 @@
                                 class="group px-5 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative"
                                 x-data="{ dropdownOpen: false }" @mouseover="dropdownOpen = true"
                                 @mouseout="dropdownOpen = false">
-                                <x-nav-link :href="route('rooms.index')"
-                                            :activeRoutes="['rooms.index', 'training-types.index', 'trainings.index']"
+                                <x-nav-link :activeRoutes="['rooms.index', 'training-types.index', 'trainings.index']"
                                             class="flex items-center justify-center space-x-2">
                                     <i class="fa-solid fa-dumbbell text-xl transition-transform group-hover:-translate-y-1"></i>
                                 </x-nav-link>
@@ -112,8 +110,7 @@
                                 class="group px-5 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative"
                                 x-data="{ dropdownOpen: false }" @mouseover="dropdownOpen = true"
                                 @mouseout="dropdownOpen = false">
-                                <x-nav-link :href="route('services.index')"
-                                            :activeRoutes="['services.index', 'memberships.index', 'insurances.index']"
+                                <x-nav-link :activeRoutes="['services.index', 'memberships.index', 'insurances.index']"
                                             class="flex items-center justify-center focus:outline-none">
                                     <i class="fa-solid fa-address-card text-xl transition-transform group-hover:-translate-y-1"></i>
                                 </x-nav-link>

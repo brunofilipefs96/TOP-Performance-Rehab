@@ -127,14 +127,16 @@ class TrainingController extends Controller
     {
         $validatedData = $request->validated();
 
-        $currentEnrolled = $training->users()->count();
-        if ($validatedData['max_students'] < $currentEnrolled) {
-            return redirect()->back()->withErrors(['max_students' => 'O número máximo de alunos não pode ser menor do que o número de alunos já inscritos.'])->withInput();
-        }
+        $startDate = Carbon::createFromFormat('Y-m-d H:i', $validatedData['start_date'] . ' ' . $validatedData['start_time']);
+        $duration = (int) $validatedData['duration'];
+        $endDate = $startDate->copy()->addMinutes($duration);
+
+        $validatedData['start_date'] = $startDate->toDateTimeString();
+        $validatedData['end_date'] = $endDate->toDateTimeString();
 
         $training->update($validatedData);
-        return redirect()->route('trainings.index')->with('success', 'Treino atualizado com sucesso.');
 
+        return redirect()->route('trainings.index')->with('success', 'Treino atualizado com sucesso.');
     }
 
     public function destroy(Training $training)
@@ -187,8 +189,11 @@ class TrainingController extends Controller
 
     public function multiDelete(Request $request)
     {
-        $user = auth()->user();
         $trainingIds = $request->input('trainings', []);
+
+        $this->authorize('multiDelete', [Training::class, $trainingIds]);
+
+        $user = auth()->user();
 
         if (!empty($trainingIds)) {
             $trainings = Training::whereIn('id', $trainingIds)->get();
@@ -204,6 +209,8 @@ class TrainingController extends Controller
 
         return redirect()->route('trainings.index')->with('success', 'Treinos removidos com sucesso!');
     }
+
+
 
 
 }

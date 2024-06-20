@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Room;
+use App\Models\Training;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -39,7 +41,10 @@ class StoreTrainingRequest extends FormRequest
 
             $duration = (int) $this->duration;
             $endDate = $startDate->copy()->addMinutes($duration);
-            $now = Carbon::now();
+            $now = Carbon::now('Europe/Lisbon');
+
+            $this->validatePersonalTrainerAvailability($validator, $startDate, $endDate);
+            $this->validateRoomCapacity($validator, $startDate, $endDate);
 
             if (Carbon::today()->eq(Carbon::parse($this->start_date))) {
                 if ($startDate->lt($now)) {
@@ -93,5 +98,54 @@ class StoreTrainingRequest extends FormRequest
                 $validator->errors()->add('duration', 'A duração do treino não pode exceder 2 horas.');
             }
         });
+    }
+
+    protected function validateRoomCapacity($validator, $startDate, $endDate)
+    {
+        $roomId = $this->room_id;
+        $maxStudents = $this->max_students;
+
+        $conflictingTrainings = Training::where('room_id', $roomId)
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('start_date', [$startDate, $endDate])
+                    ->orWhereBetween('end_date', [$startDate, $endDate])
+                    ->orWhere(function ($query) use ($startDate, $endDate) {
+                        $query->where('start_date', '<', $startDate)
+                            ->where('end_date', '>', $endDate);
+                    });
+            })
+            ->get();
+
+        $room = Room::find($roomId);
+        $occupiedCapacity = $conflictingTrainings->sum('max_students');
+        $availableCapacity = $room->capacity - $occupiedCapacity;
+
+        if ($maxStudents > $availableCapacity) {
+            if ($availableCapacity <= 0) {
+                $validator->errors()->add('max_students', 'A capacidade desta sala para o horário selecionado está lotada.');
+            } else {
+                $validator->errors()->add('max_students', "A capacidade máxima atual da sala para este horário é {$availableCapacity}. Tente agendar noutro horário ou então com menos alunos.");
+            }
+        }
+    }
+
+    protected function validatePersonalTrainerAvailability($validator, $startDate, $endDate)
+    {
+        $personalTrainerId = $this->personal_trainer_id;
+
+        $conflictingTrainings = Training::where('personal_trainer_id', $personalTrainerId)
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('start_date', [$startDate, $endDate])
+                    ->orWhereBetween('end_date', [$startDate, $endDate])
+                    ->orWhere(function ($query) use ($startDate, $endDate) {
+                        $query->where('start_date', '<', $startDate)
+                            ->where('end_date', '>', $endDate);
+                    });
+            })
+            ->get();
+
+        if ($conflictingTrainings->isNotEmpty()) {
+            $validator->errors()->add('personal_trainer_id', 'O Personal Trainer selecionado já possui um treino marcado no horário selecionado.');
+        }
     }
 }

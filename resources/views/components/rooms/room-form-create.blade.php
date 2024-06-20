@@ -1,11 +1,16 @@
 <div class="container mx-auto mt-10 pt-5 glass">
     <div class="flex justify-center">
-        <div class="w-full max-w-lg dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm bg-gray-300">
+        <div class="w-full max-w-lg dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm bg-gray-300 relative">
+            <div class="absolute top-4 left-4">
+                <a href="{{ route('rooms.index') }}" class="inline-block bg-gray-500 py-1 px-2 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+            </div>
+            <div class="text-center mb-10">
+                <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Adicionar Sala</h1>
+            </div>
             <form method="POST" action="{{ url('rooms') }}" enctype="multipart/form-data">
                 @csrf
-                <div class="mb-3 flex justify-center">
-                    <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Adicionar Sala</h1>
-                </div>
                 <div class="mb-4">
                     <label for="name" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Nome</label>
                     <input type="text"
@@ -35,7 +40,7 @@
                            @error('capacity') border-red-500 @enderror dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50"
                            value="{{ old('capacity') }}"
                            required
-                           aria-describedby="nameHelp">
+                           aria-describedby="capacityHelp">
                     @error('capacity')
                     <span class="text-red-500 text-sm mt-2" role="alert">
                         <strong>{{ $message }}</strong>
@@ -43,11 +48,8 @@
                     @enderror
                 </div>
 
-                <div class="flex justify-end gap-2">
-                    <button type="submit" class="mt-4 mb-5 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300">Adicionar</button>
-                    <a href="{{ route('rooms.index') }}" class="inline-block bg-gray-500 mt-4 mb-5 py-2 px-4 rounded-md shadow-sm hover:bg-gray-700 text-white">
-                        Cancelar
-                    </a>
+                <div class="flex justify-end gap-2 mt-10">
+                    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300 text-sm">Adicionar</button>
                 </div>
             </form>
         </div>

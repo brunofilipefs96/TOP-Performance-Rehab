@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('membership_pack', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pack_id')->constrained()->onDelete('cascade');;
-            $table->foreignId('membership_id')->constrained()->onDelete('cascade');;
+            $table->foreignId('pack_id')->constrained();
+            $table->foreignId('membership_id')->constrained();
+            $table->integer('quantity');
+            $table->integer('quantity_remaining');
+            $table->date('expiry_date');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
             $table->softDeletes();

@@ -29,7 +29,7 @@
                         </p>
                         <p class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-md">
                             <i class="fa-regular fa-calendar-check w-4 h-4 mr-2"></i>
-                            <span>{{ $pack->trainings_number }}  Treinos</span>
+                            <span>{{ $pack->trainings_number }} Treinos</span>
                         </p>
                         <p class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-md">
                             <i class="fa-solid fa-coins w-4 h-4 mr-2"></i>
@@ -54,6 +54,18 @@
                             </form>
                         @endcan
                     </div>
+                    @if(!Auth::user()->hasRole('admin'))
+                    <div class="flex justify-end items-center p-4 mt-auto space-x-2" onclick="event.stopPropagation();">
+                        <form action="{{ route('packs.addToCart') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="pack_id" value="{{ $pack->id }}">
+                            <button type="submit" class="bg-blue-500 dark:bg-lime-500 text-white flex items-center px-2 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400 text-sm">
+                                <i class="fa-solid fa-cart-plus w-4 h-4 mr-2"></i>
+                                Adicionar
+                            </button>
+                        </form>
+                    </div>
+                    @endif
                 </div>
             @endif
         @endforeach

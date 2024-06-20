@@ -18,14 +18,15 @@
 
     @php
         $cart = session()->get('cart', []);
+        $packCart = session()->get('packCart', []);
     @endphp
 
-    @if(count($cart) > 0)
+    @if(count($cart) > 0 || count($packCart) > 0)
         <div class="overflow-x-auto p-4">
             <table class="min-w-full bg-gray-300 dark:bg-gray-800 rounded-2xl shadow-md text-gray-900 dark:text-gray-200">
                 <thead>
                 <tr>
-                    <th class="p-4">Produto</th>
+                    <th class="p-4">Artigo</th>
                     <th class="p-4">Quantidade</th>
                     <th class="p-4">Preço</th>
                     <th class="p-4">Total</th>
@@ -36,9 +37,13 @@
                 @foreach($cart as $id => $details)
                     <tr>
                         <td class="p-4 text-center">
-                            <a href="{{ route('products.show', $id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
-                                {{ $details['name'] }}
-                            </a>
+                            @if(isset($details['name']))
+                                <a href="{{ route('products.show', $id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
+                                    {{ $details['name'] }}
+                                </a>
+                            @else
+                                <span>Produto não encontrado</span>
+                            @endif
                         </td>
                         <td class="p-4 text-center flex items-center justify-center">
                             <form action="{{ route('cart.decrease', $id) }}" method="POST" class="inline">
@@ -46,18 +51,44 @@
                                 @method('PATCH')
                                 <button type="submit" class="mr-1 bg-gray-400 text-black px-2 py-1 rounded-md text-xs">-</button>
                             </form>
-                            <span class="mx-2">{{ $details['quantity'] }}</span>
+                            <span class="mx-2">{{ $details['quantity'] ?? 'N/A' }}</span>
                             <form action="{{ route('cart.increase', $id) }}" method="POST" class="inline">
                                 @csrf
                                 @method('PATCH')
                                 <button type="submit" class="ml-1 bg-gray-400 text-black px-2 py-1 rounded-md text-xs">+</button>
                             </form>
                         </td>
-                        <td class="p-4 text-center">{{ $details['price'] }} €</td>
-                        <td class="p-4 text-center">{{ $details['price'] * $details['quantity'] }} €</td>
+                        <td class="p-4 text-center">{{ $details['price'] ?? 'N/A' }} €</td>
+                        <td class="p-4 text-center">{{ isset($details['price'], $details['quantity']) ? $details['price'] * $details['quantity'] : 'N/A' }} €</td>
                         <td class="p-4 text-center">
-
                             <form action="{{ route('cart.remove', $id) }}" method="POST" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-700">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
+                @foreach($packCart as $id => $details)
+                    <tr>
+                        <td class="p-4 text-center">
+                            @if(isset($details['name']))
+                                <a href="{{ route('packs.show', $id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
+                                    {{ $details['name'] }}
+                                </a>
+                            @else
+                                <span>Pack não encontrado</span>
+                            @endif
+                        </td>
+                        <td class="p-4 text-center flex items-center justify-center">
+                            <span class="mx-2">{{ $details['quantity'] ?? 'N/A' }}</span>
+                        </td>
+                        <td class="p-4 text-center">{{ $details['price'] ?? 'N/A' }} €</td>
+                        <td class="p-4 text-center">{{ isset($details['price'], $details['quantity']) ? $details['price'] * $details['quantity'] : 'N/A' }} €</td>
+                        <td class="p-4 text-center">
+                            <form action="{{ route('packCart.remove', $id) }}" method="POST" class="inline">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-700">

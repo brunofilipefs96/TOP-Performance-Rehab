@@ -47,7 +47,6 @@ class MembershipController extends Controller
         $membership = Membership::create([
             'user_id' => auth()->id(),
             'address_id' => $request->address_id,
-            'monthly_plan' => $request->monthly_plan,
         ]);
 
         return redirect()->route('memberships.show', ['membership' => $membership])->with('success', 'Membership Created!');

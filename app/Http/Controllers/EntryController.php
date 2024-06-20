@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use MattDaneshvar\Survey\Models\Entry;
 use MattDaneshvar\Survey\Models\Survey;
 
@@ -13,9 +14,13 @@ class EntryController extends Controller
         return view('pages.entries.index', ['surveys' => Survey::all()]);
     }
 
-    public function show(Survey $survey){
-        $entry = $survey->entriesFrom(Auth::user())->first();
-        return view('pages.entries.show', ['entry' => $entry]);
+    public function show(Entry $entry){
+
+        $survey = Survey::find(1);
+
+
+        return view('pages.entries.show', ['entry' => $entry, 'survey' => $survey]);
+
     }
 
     public function fill(Survey $survey){

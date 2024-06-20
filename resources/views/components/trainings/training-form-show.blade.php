@@ -50,6 +50,8 @@
                 $userPresenceFalse = $training->users()->where('user_id', auth()->id())->wherePivot('presence', false)->exists();
                 $currentDateTime = \Carbon\Carbon::now()->setTimezone('Europe/Lisbon');
                 $remainingSpots = $training->max_students - $training->users()->wherePivot('presence', true)->count();
+                $trainingStartDateTime = \Carbon\Carbon::parse($training->start_date);
+                $trainingEndDateTime = \Carbon\Carbon::parse($training->end_date);
             @endphp
 
             @if ($userPresence && $userPresenceFalse)
@@ -65,7 +67,7 @@
                     @if ($training->users->isEmpty())
                         <p class="text-gray-800 dark:text-white">Ainda não existem alunos inscritos neste treino.</p>
                     @else
-                        @if ($training->start_date < \Carbon\Carbon::now())
+                        @if ($currentDateTime->gt($trainingStartDateTime))
                             <table class="min-w-full bg-white dark:bg-gray-800">
                                 <thead>
                                 <tr>
@@ -101,7 +103,7 @@
 
             @if (auth()->user()->hasRole('client'))
                 <div class="flex justify-end items-center mb-4 mt-10">
-                    @if (!$userPresence && !$userPresenceFalse && $currentDateTime->lt($training->start_date) && $remainingSpots > 0)
+                    @if (!$userPresence && !$userPresenceFalse && $currentDateTime->lt($trainingStartDateTime) && $remainingSpots > 0)
                         <button type="button" onclick="confirmEnroll({{ $training->id }})"
                                 class="dark:bg-lime-400 bg-blue-500 text-white flex items-center px-4 py-2 rounded-md hover:bg-green-400">
                             <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
@@ -118,20 +120,22 @@
             @endif
 
             @if(auth()->user()->hasRole('admin') || auth()->user()->id === $training->personal_trainer_id)
-                <div class="flex justify-end items-center mb-4 mt-10">
-                    <a href="{{ url('trainings/' . $training->id . '/edit') }}" class="bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400 mr-2">
-                        <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
-                        Editar
-                    </a>
-                    <form id="delete-form-{{$training->id}}" action="{{ url('trainings/' . $training->id) }}" method="POST" class="inline mr-2">
-                        @csrf
-                        @method('DELETE')
-                        <button type="button" class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500" id="delete-button" onclick="confirmDelete({{ $training->id }})">
-                            <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
-                            Eliminar
-                        </button>
-                    </form>
-                </div>
+                @if($currentDateTime->lt($trainingStartDateTime))
+                    <div class="flex justify-end items-center mb-4 mt-10">
+                        <a href="{{ url('trainings/' . $training->id . '/edit') }}" class="bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400 mr-2">
+                            <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
+                            Editar
+                        </a>
+                        <form id="delete-form-{{$training->id}}" action="{{ url('trainings/' . $training->id) }}" method="POST" class="inline mr-2">
+                            @csrf
+                            @method('DELETE')
+                            <button type="button" class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500" id="delete-button" onclick="confirmDelete({{ $training->id }})">
+                                <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
+                                Eliminar
+                            </button>
+                        </form>
+                    </div>
+                @endif
             @endif
         </div>
     </div>

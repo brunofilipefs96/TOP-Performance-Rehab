@@ -4,13 +4,13 @@
     @can('create', App\Models\Training::class)
         <div class="mb-10 flex justify-between items-center">
             <a href="{{ route('trainings.create') }}">
-                <button type="button" class="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm">
-                    <i class="fa-solid fa-plus w-4 h-4 mr-2"></i>
+                <button type="button" class="bg-blue-500 text-white px-2 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-xs sm:text-sm">
+                    <i class="fa-solid fa-plus w-4 h-4 mr-1 sm:mr-2"></i>
                     Adicionar Treino
                 </button>
             </a>
-            <button type="button" onclick="openMultiDeleteModal()" class="bg-red-600 text-white flex items-center px-2 py-2 rounded-md hover:bg-red-500 dark:bg-red-500 dark:hover:text-gray-800 font-semibold text-sm">
-                <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
+            <button type="button" onclick="openMultiDeleteModal()" class="bg-red-600 text-white flex items-center px-2 py-2 rounded-md hover:bg-red-500 dark:bg-red-500 dark:hover:text-gray-800 font-semibold text-xs sm:text-sm">
+                <i class="fa-solid fa-trash-can w-4 h-4 mr-1 sm:mr-2"></i>
                 Remover Vários Treinos
             </button>
         </div>
@@ -20,14 +20,14 @@
 
     <div class="flex justify-between items-center mb-5">
         @if ($selectedWeek->gt($currentWeek) || auth()->user()->hasRole('admin') || auth()->user()->hasRole('personal_trainer'))
-            <a href="#" onclick="navigateToWeek('{{ $selectedWeek->copy()->subWeek()->format('Y-m-d') }}')" class="bg-gray-300 text-gray-800 px-3 py-2 rounded-md hover:bg-gray-400 flex items-center">
+            <a href="#" onclick="navigateToWeek('{{ $selectedWeek->copy()->subWeek()->format('Y-m-d') }}')" class="bg-gray-300 text-gray-800 px-2 py-2 rounded-md hover:bg-gray-400 flex items-center text-xs sm:text-sm">
                 <i class="fa-solid fa-backward"></i>
             </a>
         @endif
-        <span class="text-lg font-bold dark:text-white text-gray-800 text-center truncate flex-grow flex justify-center items-center">
+        <span class="text-lg font-bold dark:text-white text-gray-800 text-center truncate flex-grow flex justify-center items-center text-xs sm:text-sm">
             <i class="fa-solid fa-calendar-day mr-2"></i>{{ $selectedWeek->startOfWeek()->format('d/m/Y') }} - {{ $selectedWeek->endOfWeek()->format('d/m/Y') }}
         </span>
-        <a href="#" onclick="navigateToWeek('{{ $selectedWeek->copy()->addWeek()->format('Y-m-d') }}')" class="bg-gray-300 text-gray-800 px-3 py-2 rounded-md hover:bg-gray-400 flex items-center">
+        <a href="#" onclick="navigateToWeek('{{ $selectedWeek->copy()->addWeek()->format('Y-m-d') }}')" class="bg-gray-300 text-gray-800 px-2 py-2 rounded-md hover:bg-gray-400 flex items-center text-xs sm:text-sm">
             <i class="fa-solid fa-forward"></i>
         </a>
     </div>
@@ -50,6 +50,8 @@
                                 $userPresence = $training->users()->where('user_id', auth()->id())->exists();
                                 $userPresenceFalse = $training->users()->where('user_id', auth()->id())->wherePivot('presence', false)->exists();
                                 $currentDateTime = \Carbon\Carbon::now()->setTimezone('Europe/Lisbon');
+                                $trainingStartDateTime = \Carbon\Carbon::parse($training->start_date);
+                                $trainingEndDateTime = \Carbon\Carbon::parse($training->end_date);
                             @endphp
                             <div class="training-card relative dark:bg-gray-800 bg-gray-400 rounded-lg overflow-hidden shadow-md text-white select-none transform transition-transform duration-300 hover:scale-105"
                                  data-id="{{ $training->id }}" data-date="{{ $training->start_date }}" data-start-time="{{ $training->start_time }}">
@@ -78,7 +80,7 @@
                                         @php
                                             $remainingSpots = $training->max_students - $training->users()->wherePivot('presence', true)->count();
                                         @endphp
-                                        @if($currentDateTime->lt($training->start_date))
+                                        @if($currentDateTime->lt($trainingStartDateTime))
                                             <i class="fa-solid fa-square-check w-4 h-4 mr-2"></i>
                                             Inscrições: {{ $training->users()->wherePivot('presence', true)->count() }}/{{ $training->max_students }}
 
@@ -87,7 +89,7 @@
                                             @else
                                                 <span class="inline-block w-3 h-3 bg-red-500 rounded-full ml-2" title="Cheio"></span>
                                             @endif
-                                        @elseif ($currentDateTime->gt($training->end_date))
+                                        @elseif ($currentDateTime->gt($trainingEndDateTime))
                                             <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
                                             Treino Finalizado
                                         @else
@@ -110,7 +112,7 @@
                                                 Cancelar Inscrição
                                             </button>
                                         @elseif(!$userPresenceFalse)
-                                            @if ($remainingSpots > 0 && $currentDateTime->lt($training->start_date))
+                                            @if ($remainingSpots > 0 && $currentDateTime->lt($trainingStartDateTime))
                                                 <button type="button" class="dark:bg-lime-400 bg-blue-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-green-400 text-sm" onclick="confirmEnroll({{ $training->id }})">
                                                     <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
                                                     Inscrever-me
@@ -119,20 +121,24 @@
                                         @endif
                                     @endif
                                     @can('update', $training)
-                                        <a href="{{ route('trainings.edit', $training->id) }}" class="bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400 text-sm">
-                                            <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
-                                            Editar
-                                        </a>
+                                        @if($currentDateTime->lt($trainingStartDateTime))
+                                            <a href="{{ route('trainings.edit', $training->id) }}" class="bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400 text-sm">
+                                                <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
+                                                Editar
+                                            </a>
+                                        @endif
                                     @endcan
                                     @can('delete', $training)
-                                        <form id="delete-form-{{ $training->id }}" action="{{ route('trainings.destroy', $training->id) }}" method="POST" class="inline text-sm">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500" onclick="confirmDelete({{ $training->id }})">
-                                                <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
-                                                Eliminar
-                                            </button>
-                                        </form>
+                                        @if($currentDateTime->lt($trainingStartDateTime))
+                                            <form id="delete-form-{{ $training->id }}" action="{{ route('trainings.destroy', $training->id) }}" method="POST" class="inline text-sm">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500" onclick="confirmDelete({{ $training->id }})">
+                                                    <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
+                                                    Eliminar
+                                                </button>
+                                            </form>
+                                        @endif
                                     @endcan
                                 </div>
                             </div>
@@ -161,10 +167,6 @@
 </div>
 
 <script>
-    let trainingDeleted = 0;
-    let trainingEnrolled = 0;
-    let trainingCanceled = 0;
-
     function openModal(title, message, actionUrl) {
         document.getElementById('confirmation-title').innerText = title;
         document.getElementById('confirmation-message').innerText = message;

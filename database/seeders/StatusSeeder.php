@@ -18,6 +18,12 @@ class StatusSeeder extends Seeder
             ['name' => 'active'],
             ['name' => 'rejected'],
             ['name' => 'frozen'],
+            ['name' => 'pending_payment'],
+            ['name' => 'paid'],
+            ['name' => 'canceled'],
+            ['name' => 'delivered'],
+            ['name' => 'returned'],
+            ['name' => 'refunded'],
         ];
 
         DB::table('statuses')->insert($statuses);

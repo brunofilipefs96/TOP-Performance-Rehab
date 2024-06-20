@@ -19,4 +19,9 @@ class Sale extends Model
     {
         return $this->belongsToMany(Product::class);
     }
+
+    public function packs()
+    {
+        return $this->belongsToMany(Pack::class);
+    }
 }

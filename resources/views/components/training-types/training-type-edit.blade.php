@@ -1,11 +1,13 @@
 <div class="container mx-auto mt-10 pt-5 glass">
     <div class="flex justify-center">
-        <div class="w-full max-w-lg dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm bg-gray-300">
-            <div class="flex justify-center mb-5">
-                <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Editar Tipo de Treino</h1>
+        <div class="w-full max-w-lg dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm bg-gray-300 relative">
+            <div class="absolute top-4 left-4">
+                <a href="{{ route('training-types.index') }}" class="inline-block bg-gray-500 py-1 px-2 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
             </div>
-            <div>
-                <h1 class="mb-6 dark:text-lime-200 font-semibold text-gray-800">{{$training_type->name}}</h1>
+            <div class="text-center mb-10">
+                <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Editar Tipo de Treino</h1>
             </div>
             <form method="POST" id="update-form" action="{{ url('training-types/' . $training_type->id) }}" enctype="multipart/form-data">
                 @csrf
@@ -17,7 +19,7 @@
                     </div>
                 @else
                     <div class="mb-4">
-                        <label for="image" class="block block text-gray-800 dark:text-white">Imagem atual</label>
+                        <label for="image" class="block text-gray-800 dark:text-white">Imagem atual</label>
                         <div class="mt-1 block w-full h-40 bg-gray-100 dark:bg-gray-600 flex items-center justify-center text-white rounded-md shadow-sm">
                             <span class="text-xl dark:text-white text-gray-800">Sem imagem</span>
                         </div>
@@ -49,7 +51,7 @@
                            name="name"
                            autocomplete="name"
                            placeholder="Insira o nome"
-                           class="mt-1 block w-full p-2 border-gray-100 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500
+                           class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500
                            @error('name') border-red-500 @enderror dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50"
                            value="{{ $training_type->name }}"
                            required
@@ -61,11 +63,8 @@
                     @enderror
                 </div>
 
-                <div class="flex justify-end gap-2">
-                    <button type="button" class="mt-4 mb-5 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:hover:bg-lime-300 dark:text-gray-900" onclick="confirmarAtualizacao()">Atualizar</button>
-                    <a href="{{ route('training-types.index') }}" class="inline-block bg-gray-500 mt-4 mb-5 py-2 px-4 rounded-md shadow-sm hover:bg-gray-700 text-white">
-                        Cancelar
-                    </a>
+                <div class="flex justify-end gap-2 mt-10">
+                    <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:hover:bg-lime-300 dark:text-gray-900 text-sm" onclick="confirmarAtualizacao()">Atualizar</button>
                 </div>
             </form>
             <div id="confirmation-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden">

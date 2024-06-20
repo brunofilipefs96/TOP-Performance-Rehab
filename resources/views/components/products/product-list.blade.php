@@ -3,7 +3,7 @@
     @can('create', App\Models\Product::class)
         <div class="mb-10 flex justify-between items-center">
             <a href="{{ url('products/create') }}">
-                <button type="button" class="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center">
+                <button type="button" class="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm">
                     <i class="fa-solid fa-plus w-4 h-4 mr-2"></i>
                     Adicionar Produto
                 </button>
@@ -19,58 +19,47 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @foreach ($products as $product)
-            <div class="product-card dark:bg-gray-800 bg-gray-500 rounded-lg overflow-hidden shadow-md text-white select-none" data-name="{{ $product->name }}">
-                <a href="{{ url('products/' . $product->id) }}">
+            <div class="product-card dark:bg-gray-800 bg-gray-500 rounded-lg overflow-hidden shadow-md text-white select-none transform transition-transform duration-300 hover:scale-105 flex flex-col justify-between" data-name="{{ $product->name }}">
+                <a href="{{ url('products/' . $product->id) }}" class="flex-grow">
                     <div class="flex justify-center">
                         @if($product->image && file_exists(public_path('storage/' . $product->image)))
-                            <img src="{{ asset('storage/'. $product->image) }}" alt="{{ $product->name }}" class="w-full h-40 object-cover">
+                            <img src="{{ asset('storage/'. $product->image) }}" alt="{{ $product->name }}" class="w-full h-32 object-cover">
                         @else
-                            <div class="w-full h-40 dark:bg-gray-600 bg-gray-300 flex items-center justify-center ">
-                                <span class="text-3xl">Sem imagem</span>
+                            <div class="w-full h-32 dark:bg-gray-600 bg-gray-300 flex items-center justify-center">
+                                <span class="text-2xl">Sem imagem</span>
                             </div>
                         @endif
                     </div>
-                    <div class="p-4 dark:bg-gray-800 bg-gray-500">
-                        <h3 class="text-xl font-semibold mb-2">{{ $product->name }}</h3>
-                        <div class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-lg">
-                            <i class="fa-solid fa-coins w-5 h-5 mr-2"></i>
+                    <div class="p-4 dark:bg-gray-800 bg-gray-500 flex-grow">
+                        <h3 class="text-lg font-semibold mb-2">{{ $product->name }}</h3>
+                        <div class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-md">
+                            <i class="fa-solid fa-coins w-4 h-4 mr-2"></i>
                             <span>{{ $product->price }} €</span>
                         </div>
                         @can('update', $product)
                             @if($product->quantity <= 5)
-                                <div class="text-red-400 mb-2 flex items-center text-lg">
-                                    <i class="fa-solid fa-box-open w-5 h-5 mr-2 text-red-400"></i>
+                                <div class="text-red-400 mb-2 flex items-center text-md">
+                                    <i class="fa-solid fa-box-open w-4 h-4 mr-2 text-red-400"></i>
                                     <span>{{ $product->quantity }} Unidades</span>
                                 </div>
                             @else
-                                <div class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-lg">
-                                    <i class="fa-solid fa-box-open w-5 h-5 mr-2"></i>
+                                <div class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-md">
+                                    <i class="fa-solid fa-box-open w-4 h-4 mr-2"></i>
                                     <span>{{ $product->quantity }} Unidades</span>
                                 </div>
                             @endif
                         @endcan
                     </div>
                 </a>
-                <div class="flex flex-wrap justify-end items-center gap-2 p-4">
-                    <form id="add-cart-form-{{$product->id}}" action="{{ url('cart/add') }}" method="POST" class="inline">
-                        @csrf
-                        @method('POST')
-                        <input type="hidden" name="product_id" value="{{ $product->id }}">
-                        <button type="submit" class="dark:bg-lime-400 bg-blue-500 px-3 py-1 rounded-md" id="add-cart-button">
-                            <i class="fa-solid fa-cart-plus w-5 h-5 inline-block fill-current text-white"></i>
-                            @if(!Auth::user()->hasRole('admin'))
-                                Adicionar ao Carrinho
-                            @endif
-                        </button>
-                    </form>
+                <div class="flex justify-end items-center p-4 mt-auto space-x-2">
                     @can('update', $product)
-                        <a href="{{ url('products/' . $product->id . '/edit') }}" class="bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400">
+                        <a href="{{ url('products/' . $product->id . '/edit') }}" class="bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400 text-sm">
                             <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
                             Editar
                         </a>
                     @endcan
                     @can('delete', $product)
-                        <form id="delete-form-{{$product->id}}" action="{{ url('products/' . $product->id) }}" method="POST" class="inline">
+                        <form id="delete-form-{{$product->id}}" action="{{ url('products/' . $product->id) }}" method="POST" class="inline text-sm">
                             @csrf
                             @method('DELETE')
                             <button type="button" class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500" id="delete-button" onclick="confirmDelete({{ $product->id }})">
@@ -78,18 +67,18 @@
                                 Eliminar
                             </button>
                         </form>
-
-                        <div id="confirmation-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden">
-                            <div class="bg-gray-300 p-6 rounded-md shadow-md w-96 dark:bg-gray-900">
-                                <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Pretende eliminar?</h2>
-                                <p class="mb-4 dark:text-red-300 text-red-500">Não poderá reverter isso!</p>
-                                <div class="flex justify-end gap-4">
-                                    <button id="cancel-button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400">Cancelar</button>
-                                    <button id="confirm-button" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Eliminar</button>
-                                </div>
-                            </div>
-                        </div>
                     @endcan
+                    @if(!Auth::user()->hasRole('admin'))
+                        <form id="add-cart-form-{{$product->id}}" action="{{ url('cart/add') }}" method="POST" class="inline text-sm">
+                            @csrf
+                            @method('POST')
+                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+                            <button type="submit" class="dark:bg-lime-500 bg-blue-500 px-3 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400 flex items-center">
+                                <i class="fa-solid fa-cart-plus w-4 h-4 inline-block fill-current text-white mr-2"></i>
+                                Adicionar
+                            </button>
+                        </form>
+                    @endif
                 </div>
             </div>
         @endforeach

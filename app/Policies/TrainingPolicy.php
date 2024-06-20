@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Training;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Auth\Access\Response;
 
 class TrainingPolicy
@@ -66,9 +67,17 @@ class TrainingPolicy
 
     public function enroll(User $user, Training $training): Response
     {
-        if ($training->users()->count() < $training->max_students && !$training->users()->contains($user) && $training->personalTrainer->id !== $user->id) {
+        $currentDateTime = Carbon::now()->setTimezone('Europe/Lisbon');
+        $trainingDateTime = Carbon::parse($training->start_date);
+
+        if ($training->users()->count() < $training->max_students &&
+            !$training->users()->contains($user) &&
+            $training->personalTrainer->id !== $user->id &&
+            $currentDateTime->lt($trainingDateTime)) {
             return Response::allow();
         }
-        return Response::deny('Training is full.');
+
+        return Response::deny('Você não pode se inscrever neste treino.');
     }
+
 }

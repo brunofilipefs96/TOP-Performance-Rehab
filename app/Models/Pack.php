@@ -12,14 +12,20 @@ class Pack extends Model
 
     protected $fillable = [
         'name',
-        'price',
+        'duration',
         'trainings_number',
         'has_personal_trainer',
+        'price',
     ];
 
     public function memberships()
     {
         return $this->belongsToMany(Membership::class);
+    }
+
+    public function sales()
+    {
+        return $this->belongsToMany(Sale::class);
     }
 
 

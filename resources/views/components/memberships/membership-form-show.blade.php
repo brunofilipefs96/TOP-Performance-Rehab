@@ -76,27 +76,6 @@
                         @endforeach
                     </div>
 
-                    <div class="mb-4">
-                        <label for="monthly_plan" class="text-gray-900 dark:text-gray-200">Plano Mensal</label>
-                        <div class="mt-1 flex items-center">
-                            <input type="radio" id="monthly_plan_yes" name="monthly_plan" value="yes"
-                                   class="focus:ring-indigo-500 h-4 w-4 text-blue-500 dark:text-lime-400 border-white dark:border-gray-500"
-                                   {{ $membership->monthly_plan ? 'checked' : '' }} disabled>
-                            <label for="monthly_plan_yes" class="ml-2 block text-gray-900 dark:text-gray-200">
-                                Sim
-                            </label>
-                        </div>
-
-                        <div class="mt-1 flex items-center">
-                            <input type="radio" id="monthly_plan_no" name="monthly_plan" value="no"
-                                   class="focus:ring-indigo-500 h-4 w-4 text-blue-500 dark:text-lime-400 border-white dark:border-gray-500"
-                                   {{ !$membership->monthly_plan ? 'checked' : '' }} disabled>
-                            <label for="monthly_plan_no" class="ml-2 block text-gray-900 dark:text-gray-200">
-                                Não
-                            </label>
-                        </div>
-                    </div>
-
                     <div class="flex items-center mb-2">
                         @if($membership->status->name == 'active')
                             <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Ativo</p>

@@ -57,27 +57,6 @@
             <form method="POST" action="{{ route('memberships.store') }}" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="address_id" id="address_id">
-                <div class="mb-4">
-                    <label class="block text-sm font-medium dark:text-gray-200 text-gray-800">Plano Mensal</label>
-                    <div class="flex items-center">
-                        <input type="radio" id="monthly_plan_yes" name="monthly_plan" value="1"
-                               class="form-radio text-blue-500 dark:text-lime-400 h-4 w-4 dark:bg-gray-600 dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50 dark:checked:bg-lime-400 focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 checked:bg-blue-500"
-                               {{ old('monthly_plan') == '1' ? 'checked' : '' }} required>
-                        <label for="monthly_plan_yes" class="ml-2 dark:text-gray-200 text-gray-800">Sim</label>
-                    </div>
-                    <div class="flex items-center mt-2">
-                        <input type="radio" id="monthly_plan_no" name="monthly_plan" value="0"
-                               class="form-radio text-blue-500 dark:text-lime-400 h-4 w-4 dark:bg-gray-600 dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50 dark:checked:bg-lime-400 focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 checked:bg-blue-500"
-                               {{ old('monthly_plan') == '0' ? 'checked' : '' }} required>
-                        <label for="monthly_plan_no" class="ml-2 dark:text-gray-200 text-gray-800">Não</label>
-                    </div>
-                    @error('monthly_plan')
-                    <span class="text-red-500 text-sm mt-2" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-
                 <div class="flex items-center mt-6">
                     <a href="{{ url('entries/1/fill') }}">
                         <button type="button" class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150">

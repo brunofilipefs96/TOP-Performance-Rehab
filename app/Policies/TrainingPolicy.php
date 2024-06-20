@@ -29,7 +29,7 @@ class TrainingPolicy
             return Response::allow();
         }
 
-        if ($user->hasRole('admin') || $user->id === $training->personal_trainer_id || $training->users()->contains($user)) {
+        if ($user->hasRole('admin') || $user->id === $training->personal_trainer_id || $training->users->contains($user)) {
             return Response::allow();
         }
 

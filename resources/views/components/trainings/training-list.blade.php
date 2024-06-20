@@ -51,7 +51,7 @@
                                 $userPresenceFalse = $training->users()->where('user_id', auth()->id())->wherePivot('presence', false)->exists();
                                 $currentDateTime = \Carbon\Carbon::now()->setTimezone('Europe/Lisbon');
                                 $trainingStartDateTime = \Carbon\Carbon::parse($training->start_date);
-                                $trainingEndDateTime = \Carbon\Carbon::parse($training->end_date);
+                                $isTrainingStarted = $currentDateTime->gte($trainingStartDateTime);
                             @endphp
                             <div class="training-card relative dark:bg-gray-800 bg-gray-400 rounded-lg overflow-hidden shadow-md text-white select-none transform transition-transform duration-300 hover:scale-105"
                                  data-id="{{ $training->id }}" data-date="{{ $training->start_date }}" data-start-time="{{ $training->start_time }}">
@@ -89,12 +89,9 @@
                                             @else
                                                 <span class="inline-block w-3 h-3 bg-red-500 rounded-full ml-2" title="Cheio"></span>
                                             @endif
-                                        @elseif ($currentDateTime->gt($trainingEndDateTime))
+                                        @elseif ($isTrainingStarted)
                                             <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
-                                            Treino Finalizado
-                                        @else
-                                            <i class="fa-solid fa-stopwatch w-4 h-4 mr-2"></i>
-                                            Treino a Decorrer
+                                            Treino a Decorrer/Finalizado
                                         @endif
                                     </div>
                                     @if ($userPresence && $userPresenceFalse)
@@ -105,6 +102,26 @@
                                     @endif
                                 </a>
                                 <div class="flex flex-wrap justify-end items-center gap-2 p-4">
+                                    @can('update', $training)
+                                        @if(!$isTrainingStarted)
+                                            <a href="{{ route('trainings.edit', $training->id) }}" class="bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400 text-sm">
+                                                <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
+                                                Editar
+                                            </a>
+                                        @endif
+                                    @endcan
+                                    @can('delete', $training)
+                                        @if(!$isTrainingStarted)
+                                            <form id="delete-form-{{ $training->id }}" action="{{ route('trainings.destroy', $training->id) }}" method="POST" class="inline text-sm">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500" onclick="confirmDelete({{ $training->id }})">
+                                                    <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
+                                                    Eliminar
+                                                </button>
+                                            </form>
+                                        @endif
+                                    @endcan
                                     @if (auth()->check() && auth()->user()->cannot('update', $training) && auth()->user()->cannot('delete', $training) && $training->personal_trainer_id !== auth()->user()->id)
                                         @if ($userPresence && !$userPresenceFalse)
                                             <button type="button" class="bg-red-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-400 text-sm" onclick="confirmCancel({{ $training->id }})">
@@ -120,26 +137,6 @@
                                             @endif
                                         @endif
                                     @endif
-                                    @can('update', $training)
-                                        @if($currentDateTime->lt($trainingStartDateTime))
-                                            <a href="{{ route('trainings.edit', $training->id) }}" class="bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400 text-sm">
-                                                <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
-                                                Editar
-                                            </a>
-                                        @endif
-                                    @endcan
-                                    @can('delete', $training)
-                                        @if($currentDateTime->lt($trainingStartDateTime))
-                                            <form id="delete-form-{{ $training->id }}" action="{{ route('trainings.destroy', $training->id) }}" method="POST" class="inline text-sm">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500" onclick="confirmDelete({{ $training->id }})">
-                                                    <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
-                                                    Eliminar
-                                                </button>
-                                            </form>
-                                        @endif
-                                    @endcan
                                 </div>
                             </div>
                         @endforeach
@@ -160,6 +157,7 @@
             <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400" onclick="cancelAction()">Cancelar</button>
             <form id="confirmation-form" method="POST" class="inline">
                 @csrf
+                @method('DELETE')
                 <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500">Confirmar</button>
             </form>
         </div>

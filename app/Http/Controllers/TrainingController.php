@@ -189,8 +189,11 @@ class TrainingController extends Controller
 
     public function multiDelete(Request $request)
     {
-        $user = auth()->user();
         $trainingIds = $request->input('trainings', []);
+
+        $this->authorize('multiDelete', [Training::class, $trainingIds]);
+
+        $user = auth()->user();
 
         if (!empty($trainingIds)) {
             $trainings = Training::whereIn('id', $trainingIds)->get();
@@ -206,6 +209,8 @@ class TrainingController extends Controller
 
         return redirect()->route('trainings.index')->with('success', 'Treinos removidos com sucesso!');
     }
+
+
 
 
 }

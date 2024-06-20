@@ -13,6 +13,7 @@ use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\TrainingTypeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PackCartController;
 use App\Http\Controllers\ProductController;
 
 Route::get('/', function () {
@@ -74,6 +75,11 @@ Route::middleware('auth')->group(function () {
 
     Route::patch('cart/increase/{id}', [ProductController::class, 'increaseQuantity'])->name('cart.increase');
     Route::patch('cart/decrease/{id}', [ProductController::class, 'decreaseQuantity'])->name('cart.decrease');
+
+    Route::post('packs/add-to-cart', [PackController::class, 'addToCart'])->name('packs.addToCart');
+
+    Route::delete('packCart/remove/{id}', [PackCartController::class, 'removeFromCart'])->name('packCart.remove');
+
 
 
 });

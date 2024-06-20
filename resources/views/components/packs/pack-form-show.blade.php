@@ -39,12 +39,14 @@
                 <input class="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white" type="number" value="{{ $pack->price }}" disabled>
             </div>
 
-            @can('update', $pack)
+            @if(Auth::user()->hasRole('admin'))
                 <div class="flex justify-end items-center mb-4 mt-10">
-                    <a href="{{ url('packs/' . $pack->id . '/edit') }}" class="bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400 mr-2">
-                        <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
-                        Editar
-                    </a>
+                    @can('update', $pack)
+                        <a href="{{ url('packs/' . $pack->id . '/edit') }}" class="bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400 mr-2">
+                            <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
+                            Editar
+                        </a>
+                    @endcan
                     @can('delete', $pack)
                         <form id="delete-form-{{$pack->id}}" action="{{ url('packs/' . $pack->id) }}" method="POST" class="inline mr-2">
                             @csrf
@@ -56,7 +58,18 @@
                         </form>
                     @endcan
                 </div>
-            @endcan
+            @else
+                <div class="flex justify-end items-center mb-4 mt-10">
+                    <form action="{{ route('packs.addToCart') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="pack_id" value="{{ $pack->id }}">
+                        <button type="submit" class="bg-blue-500 dark:bg-lime-500 text-white flex items-center px-2 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400 text-sm">
+                            <i class="fa-solid fa-cart-plus w-4 h-4 mr-2"></i>
+                            Adicionar
+                        </button>
+                    </form>
+                </div>
+            @endif
 
         </div>
     </div>

@@ -39,8 +39,8 @@
                 $formattedDate = \Carbon\Carbon::parse($day)->format('d/m/Y');
                 $dayOfWeek = ucwords($formattedDay) . ' - ' . $formattedDate;
             @endphp
-            <div class="border border-gray-200 dark:border-gray-700 rounded-lg">
-                <div class="bg-gray-100 dark:bg-gray-800 p-4 text-gray-700 dark:text-gray-200 font-semibold">
+            <div class="border border-gray-200 bg-gray-200 dark:bg-gray-700 dark:border-gray-700 rounded-lg">
+                <div class="bg-gray-300 dark:bg-gray-800 p-4 text-gray-700 dark:text-gray-200 font-semibold">
                     {{ $dayOfWeek }}
                 </div>
                 <div class="p-4 space-y-4">
@@ -53,30 +53,30 @@
                                 $trainingStartDateTime = \Carbon\Carbon::parse($training->start_date);
                                 $isTrainingStarted = $currentDateTime->gte($trainingStartDateTime);
                             @endphp
-                            <div class="training-card relative dark:bg-gray-800 bg-gray-400 rounded-lg overflow-hidden shadow-md text-white select-none transform transition-transform duration-300 hover:scale-105"
+                            <div class="training-card relative dark:bg-gray-800 bg-gray-300 rounded-lg overflow-hidden shadow-md text-white select-none transform transition-transform duration-300 hover:scale-105"
                                  data-id="{{ $training->id }}" data-date="{{ $training->start_date }}" data-start-time="{{ $training->start_time }}">
-                                <a href="{{ route('trainings.show', $training->id) }}" class="block p-4 dark:bg-gray-800 bg-gray-400">
+                                <a href="{{ route('trainings.show', $training->id) }}" class="block p-4 dark:bg-gray-800 bg-gray-300">
                                     @if ($userPresence && !$userPresenceFalse)
                                         <div class="ribbon"><span>Inscrito</span></div>
                                     @endif
-                                    <h3 class="text-lg font-semibold mb-2 text-gray-100">{{ $training->trainingType->name }}</h3>
-                                    <div class="dark:text-gray-400 text-gray-200 mb-2 flex items-center text-sm">
+                                    <h3 class="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-100">{{ $training->trainingType->name }}</h3>
+                                    <div class="dark:text-gray-400 text-gray-600 mb-2 flex items-center text-sm">
                                         <i class="fa-solid fa-user w-4 h-4 mr-2"></i>
                                         <span>{{ $training->personalTrainer->firstLastName() }}</span>
                                     </div>
-                                    <div class="dark:text-gray-400 text-gray-200 mb-2 flex items-center text-sm">
+                                    <div class="dark:text-gray-400 text-gray-600 mb-2 flex items-center text-sm">
                                         <i class="fa-solid fa-location-dot w-4 h-4 mr-2"></i>
                                         <span>{{ $training->room->name }}</span>
                                     </div>
-                                    <div class="dark:text-gray-400 text-gray-200 mb-2 flex items-center text-sm">
+                                    <div class="dark:text-gray-400 text-gray-600 mb-2 flex items-center text-sm">
                                         <i class="fa-solid fa-clock w-4 h-4 mr-2"></i>
                                         <span>{{ \Carbon\Carbon::parse($training->start_date)->format('H:i') }}</span>
                                     </div>
-                                    <div class="dark:text-gray-400 text-gray-200 mb-2 flex items-center text-sm">
+                                    <div class="dark:text-gray-400 text-gray-600 mb-2 flex items-center text-sm">
                                         <i class="fa-solid fa-hourglass-half w-4 h-4 mr-2"></i>
                                         <span>{{ \Carbon\Carbon::parse($training->start_date)->diffInMinutes(\Carbon\Carbon::parse($training->end_date)) }} min.</span>
                                     </div>
-                                    <div class="dark:text-gray-400 text-gray-200 mb-5 flex items-center text-sm">
+                                    <div class="dark:text-gray-400 text-gray-600 mb-5 flex items-center text-sm">
                                         @php
                                             $remainingSpots = $training->max_students - $training->users()->wherePivot('presence', true)->count();
                                         @endphp

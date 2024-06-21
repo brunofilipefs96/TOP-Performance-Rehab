@@ -35,6 +35,7 @@
                 <button type="button" id="prev-button" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:hover:bg-lime-300 dark:text-gray-900">Anterior</button>
                 <button type="button" id="next-button" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:hover:bg-lime-300 dark:text-gray-900">Próximo</button>
                 <button type="submit" id="submit-button" style="display: none;" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:hover:bg-lime-300 dark:text-gray-900">Enviar Formulário</button>
+                <button type="button" id="exit-button" style="display: none;" class="bg-red-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-red-400 dark:bg-red-400 dark:hover:bg-red-300 dark:text-gray-900">Sair</button>
             </div>
         @endif
     @endif
@@ -46,8 +47,8 @@
         const prevButton = document.getElementById('prev-button');
         const nextButton = document.getElementById('next-button');
         const submitButton = document.getElementById('submit-button');
+        const exitButton = document.getElementById('exit-button'); // Novo botão de saída
         const sectionHistory = [];
-
 
         function showSection(index) {
             sections.forEach((section, idx) => {
@@ -163,14 +164,23 @@
             }
 
             if (sectionIndex === 7) { // Custom validation for section 8
-                const selectedRadio = section.querySelector('input[type="radio"]:checked');
-                const textBox = section.querySelector('input[type="text"]');
-                if (selectedRadio && selectedRadio.value === 'Sim' && textBox.value.trim() === '') {
+                const selectedRadio1 = section.querySelectorAll('input[type="radio"]:checked')[0];
+                const textBox2 = section.querySelectorAll('input[type="text"]')[0];
+                const selectedRadio3 = section.querySelectorAll('input[type="radio"]:checked')[1];
+                const textBox4 = section.querySelectorAll('input[type="text"]')[1];
+
+                alert(selectedRadio1);
+                alert(textBox2);
+
+                if (selectedRadio1 && selectedRadio1.value === 'Sim' && textBox2.value.trim() === '') {
                     allAnswered = false;
-                    showError(textBox.name, 'Esta pergunta é obrigatória.');
+                    showError(textBox2.name, 'Esta pergunta é obrigatória.');
+                }
+                if (selectedRadio3 && selectedRadio3.value === 'Sim' && textBox4.value.trim() === '') {
+                    allAnswered = false;
+                    showError(textBox4.name, 'Esta pergunta é obrigatória.');
                 }
 
-                // Usar error-message existente na seção 8
                 const errorMessage = section.querySelector('.error-message');
                 if (!allAnswered && errorMessage) {
                     errorMessage.style.display = 'block';
@@ -187,12 +197,19 @@
                 question.addEventListener('change', function () {
                     if (question.value === 'Não') {
                         nextButton.style.display = 'none';
-                        submitButton.style.display = 'inline-block';
+                        submitButton.style.display = 'none'; // Oculta o botão de enviar
+                        exitButton.style.display = 'inline-block'; // Mostra o botão de saída
                     } else if (question.value === 'Sim') {
                         nextButton.style.display = 'inline-block';
                         submitButton.style.display = 'none';
+                        exitButton.style.display = 'none'; // Oculta o botão de saída
                     }
                 });
+            });
+
+            // Adiciona a funcionalidade de redirecionamento ao botão "Sair"
+            exitButton.addEventListener('click', function () {
+                window.location.href = '{{ route('memberships.create') }}';
             });
         }
 
@@ -312,18 +329,30 @@
 
         function handleSection8() {
             const section = sections[7]; // Assuming the eighth section is at index 7
-            const radioButtons = section.querySelectorAll('input[type="radio"]');
-            const textBoxes = section.querySelectorAll('input[type="text"]');
+            const radioButton1 = section.querySelectorAll('input[type="radio"]')[0];
+            const textBox1 = section.querySelectorAll('input[type="text"]')[0];
+            const radioButton2 = section.querySelectorAll('input[type="radio"]')[1];
+            const textBox2 = section.querySelectorAll('input[type="text"]')[1];
 
-            radioButtons.forEach(radio => {
-                radio.addEventListener('change', function () {
-                    if (radio.value === 'Sim') {
-                        textBoxes.required = true;
-                    } else {
-                        textBoxes.required = false;
-                        textBoxes.value = '';
-                    }
-                });
+            alert(radioButton1);
+            alert(textBox1);
+
+            radioButton1.addEventListener('change', function () {
+                if (radioButton1.value === 'Sim') {
+                    textBox1.required = true;
+                } else {
+                    textBox1.required = false;
+                    textBox1.value = '';
+                }
+            });
+
+            radioButton2.addEventListener('change', function () {
+                if (radioButton2.value === 'Sim') {
+                    textBox2.required = true;
+                } else {
+                    textBox2.required = false;
+                    textBox2.value = '';
+                }
             });
         }
 
@@ -364,7 +393,7 @@
                     handleSection2();
                 }
             } else if (currentSectionIndex === 1) {
-                return;
+                currentSectionIndex = 2; // Avançar para a seção 3
             } else {
                 currentSectionIndex++;
             }

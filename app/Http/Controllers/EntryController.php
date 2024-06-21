@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,8 @@ class EntryController extends Controller
 
     public function show(Entry $entry){
 
-        return view('pages.entries.show', ['entry' => $entry,]);
+        $user = User::find($entry->participant_id);
+        return view('pages.entries.show', ['entry' => $entry, 'user' => $user]);
     }
 
     public function fill(Survey $survey){

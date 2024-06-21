@@ -68,7 +68,7 @@
                 $remainingSpots = $training->max_students - $training->users()->wherePivot('presence', true)->count();
                 $trainingStartDateTime = Carbon::parse($training->start_date);
                 $trainingEndDateTime = Carbon::parse($training->end_date);
-                $userHasMembership = auth()->user()->membership;
+                $userHasActiveMembership = auth()->user()->membership && auth()->user()->membership->status->name === 'active';
                 $presenceMarked = $training->users->every(fn($user) => !is_null($user->pivot->presence));
             @endphp
 
@@ -172,7 +172,7 @@
             @if (auth()->user()->hasRole('client'))
                 <div class="flex justify-end gap-2 mt-10">
                     @if ($currentDateTime->lt($trainingStartDateTime))
-                        @if ($userHasMembership)
+                        @if ($userHasActiveMembership)
                             @if (!$userPresence && !$userPresenceFalse && $remainingSpots > 0)
                                 <button type="button" onclick="confirmEnroll({{ $training->id }})"
                                         class="dark:bg-lime-400 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-400 text-sm">

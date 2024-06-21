@@ -105,7 +105,7 @@ class TrainingPolicy
         $currentDateTime = Carbon::now();
         $trainingDateTime = Carbon::parse($training->start_date);
 
-        if (!$user->membership) {
+        if (!$user->membership || $user->membership->status->name !== 'active') {
             return Response::deny('Necessita de uma matrícula ativa para se inscrever em qualquer treino.');
         }
 
@@ -131,6 +131,7 @@ class TrainingPolicy
 
         return Response::deny('Não tem permissão para cancelar a inscrição neste treino.');
     }
+
 
 
     public function markPresence(User $user, Training $training): Response

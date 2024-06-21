@@ -58,7 +58,7 @@
                                 $currentDateTime = Carbon::now();
                                 $trainingStartDateTime = Carbon::parse($training->start_date);
                                 $isTrainingStarted = $currentDateTime->gte($trainingStartDateTime);
-                                $userHasMembership = auth()->user()->membership;
+                                $hasActiveMembership = auth()->user()->membership && auth()->user()->membership->status->name === 'active';
                                 $totalInscritos = $training->users()->count();
                                 $remainingSpots = $training->max_students - $totalInscritos;
                                 $hasMarkedAllPresences = $training->users()->wherePivotNotNull('presence')->count() == $totalInscritos;
@@ -149,7 +149,7 @@
                                                 Cancelar Inscrição
                                             </button>
                                         @elseif(!$userPresenceFalse && !$isTrainingStarted)
-                                            @if ($remainingSpots > 0 && $currentDateTime->lt($trainingStartDateTime) && $userHasMembership)
+                                            @if ($remainingSpots > 0 && $currentDateTime->lt($trainingStartDateTime) && $hasActiveMembership)
                                                 <button type="button"
                                                         class="dark:bg-lime-400 bg-blue-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-green-400 text-sm"
                                                         onclick="confirmEnroll({{ $training->id }})">

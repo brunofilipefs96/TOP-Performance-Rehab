@@ -40,7 +40,7 @@ class TrainingController extends Controller
         }
 
         $showMembershipModal = false;
-        if (auth()->user()->hasRole('client') && !auth()->user()->membership && !session()->has('membership_modal_shown')) {
+        if (auth()->user()->hasRole('client') && (!auth()->user()->membership || auth()->user()->membership->status->name !== 'active') && !session()->has('membership_modal_shown')) {
             session(['membership_modal_shown' => true]);
             $showMembershipModal = true;
         }
@@ -161,7 +161,7 @@ class TrainingController extends Controller
         $this->authorize('enroll', $training);
         $user = auth()->user();
 
-        if (!$user->membership) {
+        if (!$user->membership || $user->membership->status->name !== 'active') {
             return redirect()->route('trainings.index')->with('error', 'Você precisa de uma matrícula ativa para se inscrever neste treino.');
         }
 
@@ -210,8 +210,6 @@ class TrainingController extends Controller
             return redirect()->route('trainings.index')->with('error', 'Não é possível cancelar a inscrição após o início do treino.');
         }
     }
-
-
 
 
 

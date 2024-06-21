@@ -16,11 +16,7 @@ class EntryController extends Controller
 
     public function show(Entry $entry){
 
-        $survey = Survey::find(1);
-
-
-        return view('pages.entries.show', ['entry' => $entry, 'survey' => $survey]);
-
+        return view('pages.entries.show', ['entry' => $entry,]);
     }
 
     public function fill(Survey $survey){

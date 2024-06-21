@@ -22,14 +22,10 @@ class TrainingPolicy
      */
     public function view(User $user, Training $training): Response
     {
-        $currentDateTime = Carbon::now()->setTimezone('Europe/Lisbon');
+        $currentWeekStart = Carbon::now()->startOfWeek(Carbon::MONDAY);
         $trainingStartDateTime = Carbon::parse($training->start_date);
 
-        if ($currentDateTime->lt($trainingStartDateTime)) {
-            return Response::allow();
-        }
-
-        if ($user->hasRole('admin') || $user->id === $training->personal_trainer_id || $training->users->contains($user)) {
+        if ($trainingStartDateTime->gte($currentWeekStart) || $user->hasRole('admin') || $user->id === $training->personal_trainer_id || $training->users->contains($user)) {
             return Response::allow();
         }
 
@@ -49,11 +45,7 @@ class TrainingPolicy
      */
     public function update(User $user, Training $training): Response
     {
-        $currentDateTime = Carbon::now()->setTimezone('Europe/Lisbon');
-        $trainingStartDateTime = Carbon::parse($training->start_date);
-
-        if (($user->id === $training->personal_trainer_id || $user->hasRole('admin')) &&
-            $currentDateTime->lt($trainingStartDateTime)) {
+        if ($this->canModifyTraining($user, $training)) {
             return Response::allow();
         }
 
@@ -65,11 +57,7 @@ class TrainingPolicy
      */
     public function delete(User $user, Training $training): Response
     {
-        $currentDateTime = Carbon::now()->setTimezone('Europe/Lisbon');
-        $trainingStartDateTime = Carbon::parse($training->start_date);
-
-        if (($user->id === $training->personal_trainer_id || $user->hasRole('admin')) &&
-            $currentDateTime->lt($trainingStartDateTime)) {
+        if ($this->canModifyTraining($user, $training)) {
             return Response::allow();
         }
 
@@ -97,13 +85,11 @@ class TrainingPolicy
      */
     public function multiDelete(User $user, array $trainingIds): Response
     {
-        $currentDateTime = Carbon::now()->setTimezone('Europe/Lisbon');
+        $currentDateTime = Carbon::now();
         $trainings = Training::whereIn('id', $trainingIds)->get();
 
         foreach ($trainings as $training) {
-            $trainingStartDateTime = Carbon::parse($training->start_date);
-
-            if (!($user->hasRole('admin') || ($user->id === $training->personal_trainer_id && $currentDateTime->lt($trainingStartDateTime)))) {
+            if (!$this->canModifyTraining($user, $training, $currentDateTime)) {
                 return Response::deny('Você não tem permissão para remover um ou mais treinos selecionados.');
             }
         }
@@ -116,16 +102,58 @@ class TrainingPolicy
      */
     public function enroll(User $user, Training $training): Response
     {
-        $currentDateTime = Carbon::now()->setTimezone('Europe/Lisbon');
+        $currentDateTime = Carbon::now();
         $trainingDateTime = Carbon::parse($training->start_date);
 
-        if ($training->users()->count() < $training->max_students &&
-            !$training->users()->contains($user) &&
-            $training->personalTrainer->id !== $user->id &&
+        if (!$user->membership) {
+            return Response::deny('Necessita de uma matrícula ativa para se inscrever em qualquer treino.');
+        }
+
+        if ($training->users()->where('user_id', $user->id)->doesntExist() &&
+            $training->users()->count() < $training->max_students &&
+            $training->personal_trainer_id !== $user->id &&
             $currentDateTime->lt($trainingDateTime)) {
             return Response::allow();
         }
 
         return Response::deny('Não pode inscrever-se neste treino');
+    }
+
+    public function cancel(User $user, Training $training): Response
+    {
+        $isUserEnrolled = $training->users()->where('user_id', $user->id)->exists();
+        $currentDateTime = Carbon::now();
+        $trainingStartDateTime = Carbon::parse($training->start_date);
+
+        if ($isUserEnrolled && $currentDateTime->lt($trainingStartDateTime)) {
+            return Response::allow();
+        }
+
+        return Response::deny('Não tem permissão para cancelar a inscrição neste treino.');
+    }
+
+
+    public function markPresence(User $user, Training $training): Response
+    {
+        $currentDateTime = Carbon::now();
+        $trainingStartDateTime = Carbon::parse($training->start_date);
+
+        if (($user->hasRole('admin') || $user->id === $training->personal_trainer_id) && $currentDateTime->gte($trainingStartDateTime)) {
+            return Response::allow();
+        }
+
+        return Response::deny('Não tem permissão para marcar presenças para este treino.');
+    }
+
+    /**
+     * Helper function to determine if the user can modify a training.
+     */
+    private function canModifyTraining(User $user, Training $training, $currentDateTime = null): bool
+    {
+        $currentDateTime = $currentDateTime ?: Carbon::now();
+        $trainingStartDateTime = Carbon::parse($training->start_date);
+
+        return ($user->id === $training->personal_trainer_id || $user->hasRole('admin')) &&
+            $currentDateTime->lte($trainingStartDateTime);
     }
 }

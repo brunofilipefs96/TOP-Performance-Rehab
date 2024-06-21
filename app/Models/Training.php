@@ -30,7 +30,7 @@ class Training extends Model
         return $this->belongsTo(TrainingType::class);
     }
 
-    public function users() //Clients (Can be Employees also)
+    public function users()
     {
         return $this->belongsToMany(User::class)->withPivot('presence');
     }

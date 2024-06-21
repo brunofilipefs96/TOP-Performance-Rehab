@@ -43,6 +43,17 @@ class DatabaseSeeder extends Seeder
         ])->roles()->sync([2]);
 
         User::factory()->create([
+            'full_name' => 'Personal Trainer 2',
+            'birth_date' => '1990-01-01',
+            'email' => 'pt2@pt.pt',
+            'phone_number' => '444444444',
+            'gender' => 'male',
+            'nif' => '444444444',
+            'cc_number' => '444444444',
+            'password' => bcrypt('atec123'),
+        ])->roles()->sync([2]);
+
+        User::factory()->create([
             'full_name' => 'Funcionario',
             'birth_date' => '1990-01-01',
             'email' => 'func@func.pt',
@@ -61,6 +72,17 @@ class DatabaseSeeder extends Seeder
             'gender' => 'female',
             'nif' => '333333333',
             'cc_number' => '333333333',
+            'password' => bcrypt('atec123'),
+        ])->roles()->sync([4]);
+
+        User::factory()->create([
+            'full_name' => 'Cliente 2',
+            'birth_date' => '1990-01-01',
+            'email' => 'cliente2@cliente.pt',
+            'phone_number' => '555555555',
+            'gender' => 'male',
+            'nif' => '555555555',
+            'cc_number' => '555555555',
             'password' => bcrypt('atec123'),
         ])->roles()->sync([4]);
 

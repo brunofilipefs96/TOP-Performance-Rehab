@@ -64,6 +64,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('trainings/{training}/enroll', [TrainingController::class, 'enroll'])->name('trainings.enroll');
     Route::post('trainings/{training}/cancel', [TrainingController::class, 'cancel'])->name('trainings.cancel');
+    Route::post('/trainings/{training}/mark-presence', [TrainingController::class, 'markPresence'])->name('trainings.markPresence');
     Route::delete('/trainings/multiDelete', [TrainingController::class, 'multiDelete'])->name('trainings.multiDelete');
     Route::resource('trainings', TrainingController::class);
 

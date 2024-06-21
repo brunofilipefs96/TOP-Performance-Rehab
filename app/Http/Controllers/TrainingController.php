@@ -31,16 +31,26 @@ class TrainingController extends Controller
             ->orderBy('start_date', 'asc')
             ->get()
             ->groupBy(function ($training) {
-                return Carbon::parse($training->start_date)->format('l');
+                return Carbon::parse($training->start_date)->format('Y-m-d');
             });
 
-        $daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        $daysOfWeek = [];
+        for ($date = $selectedWeek->copy(); $date->lte($selectedWeek->copy()->endOfWeek()); $date->addDay()) {
+            $daysOfWeek[] = $date->format('Y-m-d');
+        }
+
+        $showMembershipModal = false;
+        if (auth()->user()->hasRole('client') && !auth()->user()->membership && !session()->has('membership_modal_shown')) {
+            session(['membership_modal_shown' => true]);
+            $showMembershipModal = true;
+        }
 
         return view('pages.trainings.index', [
             'trainings' => $trainings,
             'currentWeek' => $currentWeek,
             'selectedWeek' => $selectedWeek,
-            'daysOfWeek' => $daysOfWeek
+            'daysOfWeek' => $daysOfWeek,
+            'showMembershipModal' => $showMembershipModal,
         ]);
     }
 
@@ -148,7 +158,12 @@ class TrainingController extends Controller
 
     public function enroll(Request $request, Training $training)
     {
+        $this->authorize('enroll', $training);
         $user = auth()->user();
+
+        if (!$user->membership) {
+            return redirect()->route('trainings.index')->with('error', 'Você precisa de uma matrícula ativa para se inscrever neste treino.');
+        }
 
         if ($training->users()->where('user_id', $user->id)->exists()) {
             return redirect()->route('trainings.index')->with('error', 'Já se encontra inscrito neste treino.');
@@ -158,8 +173,18 @@ class TrainingController extends Controller
             return redirect()->route('trainings.index')->with('error', 'Não pode inscrever-se no seu próprio treino.');
         }
 
+        $overlappingTrainings = Training::where('start_date', '<', $training->end_date)
+            ->where('end_date', '>', $training->start_date)
+            ->whereHas('users', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })->exists();
+
+        if ($overlappingTrainings) {
+            return redirect()->route('trainings.index')->with('error', 'Já está inscrito em outro treino nesse horário.');
+        }
+
         if ($training->users()->count() < $training->max_students) {
-            $training->users()->attach($user->id, ['presence' => true]); // Ensure presence is true when enrolling
+            $training->users()->attach($user->id);
             return redirect()->route('trainings.index')->with('success', 'Inscreveu-se com sucesso.');
         } else {
             return redirect()->route('trainings.index')->with('error', 'O treino está cheio.');
@@ -168,23 +193,46 @@ class TrainingController extends Controller
 
     public function cancel(Request $request, Training $training)
     {
+        $this->authorize('cancel', $training);
+
         $user = auth()->user();
-
-        if (!$training->users()->where('user_id', $user->id)->exists()) {
-            return redirect()->route('trainings.index')->with('error', 'Você não está inscrito neste treino.');
-        }
-
         $startTime = Carbon::parse($training->start_date);
-        $now = Carbon::now()->setTimeZone('Europe/Lisbon');
-        $differenceInHours = $startTime->diffInHours($now);
+        $now = Carbon::now();
+        $differenceInHours = $now->diffInHours($startTime, false);
 
         if ($differenceInHours > 12) {
             $training->users()->detach($user->id);
             return redirect()->route('trainings.index')->with('success', 'Inscrição cancelada com sucesso. Você não será cobrado.');
-        } else {
+        } elseif ($differenceInHours <= 12 && $differenceInHours > 0) {
             $training->users()->updateExistingPivot($user->id, ['presence' => false]);
             return redirect()->route('trainings.index')->with('success', 'Inscrição cancelada com sucesso. A presença será marcada como ausente e você será cobrado.');
+        } else {
+            return redirect()->route('trainings.index')->with('error', 'Não é possível cancelar a inscrição após o início do treino.');
         }
+    }
+
+
+
+
+
+    public function markPresence(Request $request, Training $training)
+    {
+        $this->authorize('markPresence', $training);
+
+        $presenceData = $request->input('presence', []);
+        $allUsers = $training->users()->pluck('user_id')->toArray();
+
+        if (array_diff($allUsers, array_keys($presenceData))) {
+            return redirect()->route('trainings.show', $training->id)
+                ->with('error', 'Todas as presenças devem ser marcadas antes de enviar.');
+        }
+
+        foreach ($presenceData as $userId => $presence) {
+            $training->users()->updateExistingPivot($userId, ['presence' => $presence]);
+        }
+
+        return redirect()->route('trainings.show', $training->id)
+            ->with('success', 'Presenças marcadas com sucesso.');
     }
 
     public function multiDelete(Request $request)
@@ -209,8 +257,4 @@ class TrainingController extends Controller
 
         return redirect()->route('trainings.index')->with('success', 'Treinos removidos com sucesso!');
     }
-
-
-
-
 }

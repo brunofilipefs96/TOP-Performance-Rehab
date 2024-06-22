@@ -69,7 +69,7 @@
                         </form>
                     @endcan
                     @if(!Auth::user()->hasRole('admin'))
-                        <form id="add-cart-form-{{$product->id}}" action="{{ url('cart/add') }}" method="POST" class="inline text-sm">
+                        <form id="add-cart-form-{{$product->id}}" action="{{ route('cart.addProduct') }}" method="POST" class="inline text-sm">
                             @csrf
                             @method('POST')
                             <input type="hidden" name="product_id" value="{{ $product->id }}">

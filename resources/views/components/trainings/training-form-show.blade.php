@@ -104,7 +104,11 @@
                                         <tbody>
                                         @foreach ($training->users as $user)
                                             <tr>
-                                                <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">{{ $user->firstLastName() }}</td>
+                                                <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">
+                                                    <a href="{{ url('users/' . $user->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
+                                                        {{ $user->firstLastName() }}
+                                                    </a>
+                                                </td>
                                                 <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700">
                                                     <div class="flex items-center">
                                                         <input type="radio" name="presence[{{ $user->id }}]" value="1"
@@ -143,7 +147,11 @@
                                     <tbody>
                                     @foreach ($training->users as $user)
                                         <tr>
-                                            <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">{{ $user->firstLastName() }}</td>
+                                            <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">
+                                                <a href="{{ url('users/' . $user->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
+                                                    {{ $user->firstLastName() }}
+                                                </a>
+                                            </td>
                                             <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700">
                                                 <div class="flex items-center">
                                                     @if($user->pivot->presence)
@@ -161,7 +169,11 @@
                         @else
                             <ul class="list-disc list-inside dark:text-white">
                                 @foreach ($training->users as $user)
-                                    <li>{{ $user->firstLastName() }}</li>
+                                    <li>
+                                        <a href="{{ url('users/' . $user->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
+                                            {{ $user->firstLastName() }}
+                                        </a>
+                                    </li>
                                 @endforeach
                             </ul>
                         @endif

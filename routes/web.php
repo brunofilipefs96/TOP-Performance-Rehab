@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\InsuranceController;
@@ -13,7 +14,6 @@ use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\TrainingTypeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PackCartController;
 use App\Http\Controllers\ProductController;
 
 Route::get('/', function () {
@@ -70,18 +70,16 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/dashboard/change-week', [DashboardController::class, 'changeWeek'])->name('dashboard.changeWeek');
 
-    Route::post('/cart/add', [ProductController::class, 'addToCart'])->name('cart.add');
-    Route::get('/cart', [ProductController::class, 'cart'])->name('cart.index');
-    Route::delete('cart/remove/{id}', [ProductController::class, 'removeFromCart'])->name('cart.remove');
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add-product', [CartController::class, 'addProductToCart'])->name('cart.addProduct');
+    Route::post('/cart/add-pack', [CartController::class, 'addPackToCart'])->name('cart.addPack');
+    Route::delete('/cart/remove-product/{id}', [CartController::class, 'removeProductFromCart'])->name('cart.removeProduct');
+    Route::delete('/cart/remove-pack/{id}', [CartController::class, 'removePackFromCart'])->name('cart.removePack');
+    Route::patch('/cart/increase-product/{id}', [CartController::class, 'increaseProductQuantity'])->name('cart.increaseProduct');
+    Route::patch('/cart/decrease-product/{id}', [CartController::class, 'decreaseProductQuantity'])->name('cart.decreaseProduct');
 
-    Route::patch('cart/increase/{id}', [ProductController::class, 'increaseQuantity'])->name('cart.increase');
-    Route::patch('cart/decrease/{id}', [ProductController::class, 'decreaseQuantity'])->name('cart.decrease');
-
-    Route::post('packs/add-to-cart', [PackController::class, 'addToCart'])->name('packs.addToCart');
-
-    Route::delete('packCart/remove/{id}', [PackCartController::class, 'removeFromCart'])->name('packCart.remove');
-
-
+    Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
+    Route::post('/checkout', [CartController::class, 'processCheckout'])->name('cart.processCheckout');
 
 });
 

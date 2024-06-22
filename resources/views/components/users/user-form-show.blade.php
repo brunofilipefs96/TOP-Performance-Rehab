@@ -2,7 +2,7 @@
     <div class="flex justify-center">
         <div class="w-full max-w-lg bg-gray-300 dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm relative">
             <div class="absolute top-4 left-4">
-                <a href="{{ route('users.index') }}" class="inline-block bg-gray-500 py-1 px-2 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                <a href="{{ URL::previous() }}" class="inline-block bg-gray-500 py-1 px-2 rounded-md shadow-sm hover:bg-gray-700 text-white">
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
             </div>

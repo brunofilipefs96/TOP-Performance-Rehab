@@ -81,34 +81,4 @@ class PackController extends Controller
         $pack->delete();
         return redirect()->route('packs.index')->with('success', 'Pack deleted successfully.');
     }
-
-    public function addToCart(Request $request)
-    {
-        $packId = $request->input('pack_id');
-        $pack = Pack::find($packId);
-
-        if (!$pack) {
-            return redirect()->route('packs.index')->with('error', 'Pack not found!');
-        }
-
-        // Add pack to cart
-        $packCart = session()->get('packCart', []);
-
-        // Check if pack is already in cart
-        if (isset($packCart[$packId])) {
-            $packCart[$packId]['quantity']++;
-        } else {
-            $packCart[$packId] = [
-                'name' => $pack->name,
-                'price' => $pack->price,
-                'quantity' => 1
-            ];
-        }
-
-        // Save the cart back to the session
-        session()->put('packCart', $packCart);
-
-        return redirect()->route('packs.index')->with('success', 'Pack added to cart successfully!');
-    }
-
 }

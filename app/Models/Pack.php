@@ -20,12 +20,16 @@ class Pack extends Model
 
     public function memberships()
     {
-        return $this->belongsToMany(Membership::class);
+        return $this->belongsToMany(Membership::class, 'membership_pack')
+            ->withPivot('quantity', 'quantity_remaining', 'expiry_date')
+            ->withTimestamps();
     }
 
     public function sales()
     {
-        return $this->belongsToMany(Sale::class);
+        return $this->belongsToMany(Sale::class, 'pack_sale')
+            ->withPivot('quantity', 'price')
+            ->withTimestamps();
     }
 
 

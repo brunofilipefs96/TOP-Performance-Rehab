@@ -41,7 +41,7 @@
 
             @if(!Auth::user()->hasRole('admin'))
                 <div class="flex justify-end items-center mb-4 mt-10">
-                    <form id="add-cart-form-{{$product->id}}" action="{{ url('cart/add') }}" method="POST" class="inline">
+                    <form id="add-cart-form-{{$product->id}}" action="{{ route('cart.addProduct') }}" method="POST" class="inline">
                         @csrf
                         @method('POST')
                         <input type="hidden" name="product_id" value="{{ $product->id }}">

@@ -10,6 +10,7 @@ use App\Http\Controllers\PackController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SetupController;
 use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\TrainingTypeController;
 use App\Http\Controllers\UserController;
@@ -61,6 +62,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/insurance', [InsuranceController::class, 'store'])->name('insurance.store');
     Route::put('/profile/insurance/{insurance}', [InsuranceController::class, 'update'])->name('insurance.update');
     Route::delete('/profile/insurance/{insurance}', [InsuranceController::class, 'destroy'])->name('insurance.destroy');
+
+    Route::get('/setup/address', [SetupController::class, 'addressShow'])->name('setup.addressShow');
+    Route::get('/setup/membership', [SetupController::class, 'membershipShow'])->name('setup.membershipShow');
+    Route::get('/setup/training-types', [SetupController::class, 'trainingTypesShow'])->name('setup.trainingTypesShow');
+    Route::get('/setup/insurance', [SetupController::class, 'insuranceShow'])->name('setup.insuranceShow');
+    Route::get('/setup/payment', [SetupController::class, 'paymentShow'])->name('setup.paymentShow');
 
     Route::post('trainings/{training}/enroll', [TrainingController::class, 'enroll'])->name('trainings.enroll');
     Route::post('trainings/{training}/cancel', [TrainingController::class, 'cancel'])->name('trainings.cancel');

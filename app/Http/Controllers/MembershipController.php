@@ -49,7 +49,9 @@ class MembershipController extends Controller
             'address_id' => $request->address_id,
         ]);
 
-        return redirect()->route('memberships.show', ['membership' => $membership])->with('success', 'Membership Created!');
+        //return redirect()->route('memberships.show', ['membership' => $membership])->with('success', 'Membership Created!');
+        return redirect()->route('setup.trainingTypesShow')->with('success', 'Membership Created!');
+
     }
 
     /**

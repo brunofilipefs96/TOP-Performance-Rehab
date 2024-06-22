@@ -169,9 +169,6 @@
                 const selectedRadio3 = section.querySelectorAll('input[type="radio"]:checked')[1];
                 const textBox4 = section.querySelectorAll('input[type="text"]')[1];
 
-                alert(selectedRadio1);
-                alert(textBox2);
-
                 if (selectedRadio1 && selectedRadio1.value === 'Sim' && textBox2.value.trim() === '') {
                     allAnswered = false;
                     showError(textBox2.name, 'Esta pergunta é obrigatória.');
@@ -209,7 +206,7 @@
 
             // Adiciona a funcionalidade de redirecionamento ao botão "Sair"
             exitButton.addEventListener('click', function () {
-                window.location.href = '{{ route('memberships.create') }}';
+                window.location.href = '{{ route('setup.membershipShow') }}';
             });
         }
 
@@ -333,9 +330,6 @@
             const textBox1 = section.querySelectorAll('input[type="text"]')[0];
             const radioButton2 = section.querySelectorAll('input[type="radio"]')[1];
             const textBox2 = section.querySelectorAll('input[type="text"]')[1];
-
-            alert(radioButton1);
-            alert(textBox1);
 
             radioButton1.addEventListener('change', function () {
                 if (radioButton1.value === 'Sim') {

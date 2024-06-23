@@ -90,12 +90,27 @@
             <form method="POST" action="{{ route('memberships.store') }}" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="address_id" id="address_id">
-                <div class="flex items-center mt-6">
-                    <a href="{{ url('entries/1/fill') }}">
-                        <button type="button" class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150">
-                            Preencher Formulário
-                        </button>
-                    </a>
+
+
+                <div class="flex items-center mt-6 mb-4">
+                    @foreach ($user->entries as $entry)
+                        @if ($entry->survey_id == 1)
+                            <a href="{{ url('entries/'.$entry->id) }}">
+                                <button type="button"
+                                        class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150">
+                                    Ver Formulário
+                                </button>
+                            </a>
+                            @else
+                            <div class="flex items-center mt-6">
+                                <a href="{{ url('entries/1/fill') }}">
+                                    <button type="button" class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150">
+                                        Preencher Formulário
+                                    </button>
+                                </a>
+                            </div>
+                        @endif
+                    @endforeach
                 </div>
 
                 <div class="flex justify-between items-center gap-2">

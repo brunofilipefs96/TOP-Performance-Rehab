@@ -1,56 +1,3 @@
-<style>
-    .custom-checkbox {
-        appearance: none;
-        background-color: #fff;
-        border: 2px solid #ccc;
-        border-radius: 50%;
-        width: 1.5em;
-        height: 1.5em;
-        cursor: pointer;
-        position: relative;
-        transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
-        outline: none; /* Remove default outline */
-    }
-
-    .custom-checkbox:checked {
-        background-color: #fff;
-        border-color: #ccc; /* Keep border color same as default */
-    }
-
-    .custom-checkbox:checked::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 1em; /* Increase width */
-        height: 1em; /* Increase height */
-        background-color: #a3e635; /* Tailwind's lime-400 */
-        border-radius: 50%;
-    }
-
-    .selectable-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1.5rem;
-        border-radius: 9999px; /* Full rounded */
-        background-color: #e5e7eb; /* bg-gray-200 */
-        border: 1px solid #d1d5db; /* border-gray-400 */
-        transition: transform 0.2s, background-color 0.2s;
-        cursor: pointer;
-    }
-
-    .selectable-item:hover {
-        transform: scale(1.02); /* Slightly reduce the scale */
-        background-color: #d1d5db; /* hover:bg-gray-300 */
-    }
-
-    .selectable-item input {
-        pointer-events: none; /* Make checkbox non-interactive, click will be on the whole label */
-    }
-</style>
-
 <div class="container mx-auto mt-10 pt-5 glass">
     <div class="flex justify-center mb-8">
         <div class="w-full max-w-2xl relative">
@@ -108,3 +55,56 @@
         </div>
     </div>
 </div>
+
+<style>
+    .custom-checkbox {
+        appearance: none;
+        background-color: #fff;
+        border: 2px solid #ccc;
+        border-radius: 50%;
+        width: 1.5em;
+        height: 1.5em;
+        cursor: pointer;
+        position: relative;
+        transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+        outline: none;
+    }
+
+    .custom-checkbox:checked {
+        background-color: #fff;
+        border-color: #ccc;
+    }
+
+    .custom-checkbox:checked::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 1em;
+        height: 1em;
+        background-color: #a3e635;
+        border-radius: 50%;
+    }
+
+    .selectable-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.5rem;
+        border-radius: 9999px;
+        background-color: #e5e7eb;
+        border: 1px solid #d1d5db;
+        transition: transform 0.2s, background-color 0.2s;
+        cursor: pointer;
+    }
+
+    .selectable-item:hover {
+        transform: scale(1.02);
+        background-color: #d1d5db;
+    }
+
+    .selectable-item input {
+        pointer-events: none;
+    }
+</style>

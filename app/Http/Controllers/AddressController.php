@@ -31,12 +31,17 @@ class AddressController extends Controller
     {
         $this->authorize('update', $address);
 
+        if ($address->user->membership && $address->id == $address->user->membership->address_id) {
+            return Redirect::back()->with('status', 'A morada está associada a uma Matrícula!');
+        }
+
         $validatedData = $request->validated();
 
         $address->update($validatedData);
 
         return Redirect::back()->with('status', 'Address Updated!');
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -45,12 +50,14 @@ class AddressController extends Controller
     {
         $this->authorize('delete', $address);
 
-        if ($address->user->membership->exists()) {
-            return Redirect::back()->with('status', 'A morada está associado a um Matrícula!');
-        }
+            if ($address->user->membership && $address->id == $address->user->membership->address_id) {
+                return Redirect::back()->with('status', 'A morada está associada a uma Matrícula!');
+            }
 
         $address->delete();
 
-        return Redirect::back()->with('status', 'Address Deleted!');
+        return Redirect::back()->with('status', 'Morada removida com sucesso!');
     }
+
+
 }

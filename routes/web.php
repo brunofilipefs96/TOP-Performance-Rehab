@@ -88,6 +88,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
     Route::post('/checkout', [CartController::class, 'processCheckout'])->name('cart.processCheckout');
 
+    Route::get('/faq', function () {
+        return view('pages.faq.index');
+    })->name('faq.index');
+
+
 });
 
 

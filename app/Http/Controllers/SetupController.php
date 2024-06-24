@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Address;
+use App\Models\TrainingType;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,7 +33,9 @@ class SetupController extends Controller
         $user = auth()->user();
         $this->authorize('view', $user);
 
-        return view('pages.setup.trainingTypesShow', ['user' => $user]);
+        $trainingTypes = TrainingType::all();
+
+        return view('pages.setup.trainingTypesShow', ['user' => $user, 'trainingTypes' => $trainingTypes]);
     }
 
     public function insuranceShow()

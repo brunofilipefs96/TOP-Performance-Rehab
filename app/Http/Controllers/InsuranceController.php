@@ -45,7 +45,8 @@ class InsuranceController extends Controller
             'end_date' => $request->end_date ?? now()->addYear(),
         ]);
 
-        return view('pages.insurances.show', ['insurance' => $insurance] )->with('success', 'Insurance Created!');
+        //return view('pages.insurances.show', ['insurance' => $insurance] )->with('success', 'Insurance Created!');
+        return redirect()->route('setup.paymentShow')->with('success', 'Insurance Created!');
     }
 
 

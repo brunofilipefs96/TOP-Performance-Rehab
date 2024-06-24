@@ -163,18 +163,15 @@
 
                 <!-- Settings Dropdown -->
                 <div class="hidden md:flex md:items-center md:ms-6">
-                    <x-dropdown align="right" width="48">
-                        <x-slot name="trigger">
-                            <button
-                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 hover:text-blue-400 dark:hover:text-lime-400 focus:outline-none transition ease-in-out duration-150">
-                                <div>
-                                    <i class="fa-solid fa-user mr-2"></i>
-                                    {{ Auth::user()->firstLastName() }}
-                                </div>
-                            </button>
-                        </x-slot>
-
-                        <x-slot name="content">
+                    <div x-data="{ dropdownOpen: false }" @mouseover="dropdownOpen = true" @mouseout="dropdownOpen = false" class="relative">
+                        <button
+                            class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 hover:text-blue-400 dark:hover:text-lime-400 focus:outline-none transition ease-in-out duration-150">
+                            <div>
+                                <i class="fa-solid fa-user mr-2"></i>
+                                {{ Auth::user()->firstLastName() }}
+                            </div>
+                        </button>
+                        <div x-show="dropdownOpen" class="absolute right-0 mt-0 w-48 rounded-md shadow-lg bg-white dark:bg-gray-700 z-50" @mouseover="dropdownOpen = true" @mouseout="dropdownOpen = false">
                             <x-dropdown-link :href="route('profile.edit')"
                                              class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
                                 {{ __('Perfil') }}
@@ -186,14 +183,17 @@
 
                                 <x-dropdown-link :href="route('logout')"
                                                  class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400"
-                                                 onclick="event.preventDefault();
-                                                    this.closest('form').submit();">
+                                                 onclick="event.preventDefault(); this.closest('form').submit();">
                                     {{ __('Log Out') }}
                                 </x-dropdown-link>
                             </form>
-                        </x-slot>
-                    </x-dropdown>
+                        </div>
+                    </div>
                 </div>
+
+
+
+
 
                 <!-- Hamburger -->
                 <div class="-me-2 flex items-center md:hidden">

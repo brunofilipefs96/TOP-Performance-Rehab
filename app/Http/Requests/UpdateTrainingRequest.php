@@ -52,15 +52,15 @@ class UpdateTrainingRequest extends FormRequest
                 }
             }
 
-            $startOfDay = Carbon::createFromFormat('Y-m-d H:i', $this->start_date . ' 08:00');
-            $endOfDay = Carbon::createFromFormat('Y-m-d H:i', $this->start_date . ' 20:00');
+            $startOfDay = Carbon::createFromFormat('Y-m-d H:i', $this->start_date . ' 06:00');
+            $endOfDay = Carbon::createFromFormat('Y-m-d H:i', $this->start_date . ' 23:59');
 
             if ($startDate->lt($startOfDay) || $startDate->gt($endOfDay)) {
-                $validator->errors()->add('start_time', 'A hora de início deve estar entre 08:00 e 20:00.');
+                $validator->errors()->add('start_time', 'A hora de início deve estar entre 06:00 e 23:59.');
             }
 
             if ($endDate->gt($endOfDay)) {
-                $validator->errors()->add('end_time', 'O treino deve terminar antes das 20:00.');
+                $validator->errors()->add('end_time', 'O treino deve terminar antes das 23:59.');
             }
 
             if ($duration < 30) {

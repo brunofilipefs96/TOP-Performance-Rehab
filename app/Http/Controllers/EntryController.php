@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use MattDaneshvar\Survey\Models\Entry;
 use MattDaneshvar\Survey\Models\Survey;
 
@@ -13,14 +15,15 @@ class EntryController extends Controller
         return view('pages.entries.index', ['surveys' => Survey::all()]);
     }
 
-    public function show(Survey $survey){
-        $entry = $survey->entriesFrom(Auth::user())->first();
-        return view('pages.entries.show', ['entry' => $entry]);
+    public function show(Entry $entry){
+
+        $user = User::find($entry->participant_id);
+        return view('pages.entries.show', ['entry' => $entry, 'user' => $user]);
     }
 
     public function fill(Survey $survey){
         if ($survey->entriesFrom(Auth::user())->exists()) {
-            return redirect()->route('memberships.create');
+            return redirect()->route('setup.membershipShow');
         }
         else
         {
@@ -33,6 +36,6 @@ class EntryController extends Controller
         $answers = $request->validate($survey->rules);
 
         (new Entry)->for($survey)->by(Auth::user())->fromArray($answers)->push();
-        return redirect()->route('memberships.create');
+        return redirect()->route('setup.membershipShow');
     }
 }

@@ -2,7 +2,7 @@
     <div class="flex justify-center">
         <div class="w-full max-w-lg bg-gray-300 dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm relative">
             <div class="absolute top-4 left-4">
-                <a href="{{ route('users.index') }}" class="inline-block bg-gray-500 py-1 px-2 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                <a href="{{ URL::previous() }}" class="inline-block bg-gray-500 py-1 px-2 rounded-md shadow-sm hover:bg-gray-700 text-white">
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
             </div>
@@ -59,18 +59,12 @@
             </div>
 
             <h2 class="text-xl dark:text-white text-gray-800">Matrícula</h2>
-            <div class="mt-1 block gap-4 p-2 dark:text-white mb-4">
+            <div class="mt-1 block gap-4 p-2 text-gray-700 dark:text-gray-200 mb-4">
                 @if (!$user->membership)
                     <p class="dark:text-red-400 text-red-500">O Utilizador ainda não se matriculou.</p>
                 @else
-                    <p class="text-green-300">O Utilizador já possui uma matrícula.</p>
+                    <p class="mb-6">O Utilizador já possui uma matrícula.</p>
                     <a href="{{ route('memberships.show', ['membership' => $user->membership]) }}" class="bg-green-500 text-white py-2 px-6 rounded-md shadow-sm transition duration-300 ease-in-out hover:bg-green-700 hover:shadow-lg">Ver Detalhes da Matrícula</a>
-                @endif
-            </div>
-
-            <div class="flex justify-end gap-2">
-                @if ($user->membership)
-                    <a href="{{ route('users.membership.show', ['membership' => $user->membership]) }}" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-700 dark:bg-blue-400 dark:hover:bg-blue-300 dark:hover:text-blue-800">Detalhes da Matrícula</a>
                 @endif
             </div>
 

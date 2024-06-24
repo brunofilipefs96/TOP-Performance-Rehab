@@ -33,8 +33,8 @@
             </div>
         @else
             <div class="flex items-center mt-5">
-                <span class="mr-2">Estado:</span>
-                <span class="inline-block w-3 h-3 bg-red-500 rounded-full" title="Sem Matrícula"></span>
+                <span class="mr-2 text-gray-500 dark:text-gray-400">Estado:</span>
+                <span class="inline-block w-3 h-3 bg-red-500 rounded-full text-gray-500 dark:text-gray-400" title="Sem Matrícula"></span>
                 <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Sem Matrícula</span>
             </div>
 

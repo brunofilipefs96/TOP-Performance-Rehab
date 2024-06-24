@@ -116,4 +116,56 @@
     background: #777;
 }
 
+.progress-steps {
+    align-items: center;
+    display: flex;
+    opacity: 1;
+    position: relative;
+    top: 0;
+    transition: .2s;
+    visibility: visible;
+}
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    flex: 1;
+}
+.number {
+    background-color: #3d3d3d;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    width: 2.5rem;
+}
+.text {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+}
+.spacer {
+    position: absolute;
+    top: 1.25rem;
+    left: calc(50% + 1.25rem);
+    height: 4px;
+    width: calc(100% - 2.5rem);
+    background-color: #3d3d3d;
+}
+.step:last-child .spacer {
+    display: none;
+}
+.step.active .number {
+    background-color: #ff5400;
+}
+.step.complete .number,
+.step.complete .spacer {
+    background-color: #ff5400;
+}
+.step .text.last {
+    padding-right: 1rem;
+}
+
 

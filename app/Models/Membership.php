@@ -27,7 +27,9 @@ class Membership extends Model
 
     public function packs()
     {
-        return $this->belongsToMany(Pack::class);
+        return $this->belongsToMany(Pack::class, 'membership_pack')
+            ->withPivot('quantity', 'quantity_remaining', 'expiry_date')
+            ->withTimestamps();
     }
 
     public function insurance()

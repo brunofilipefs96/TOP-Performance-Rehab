@@ -6,6 +6,7 @@ use App\Models\Pack;
 use App\Http\Requests\StorePackRequest;
 use App\Http\Requests\UpdatePackRequest;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
 
 class PackController extends Controller
 {
@@ -80,6 +81,4 @@ class PackController extends Controller
         $pack->delete();
         return redirect()->route('packs.index')->with('success', 'Pack deleted successfully.');
     }
-
-
 }

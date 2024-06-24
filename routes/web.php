@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\InsuranceController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\PackController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SetupController;
 use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\TrainingTypeController;
 use App\Http\Controllers\UserController;
@@ -51,7 +53,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/entries/{survey}/fill', [EntryController::class, 'fill'])->name('entries.fill');
     Route::post('/entries/{survey}', [EntryController::class, 'store'])->name('entries.store');
-    Route::get('/entries/{survey}', [EntryController::class, 'show'])->name('entries.show');
+    Route::get('/entries/{entry}', [EntryController::class, 'show'])->name('entries.show');
 
     Route::post('/profile/addresses', [AddressController::class, 'store'])->name('addresses.store');
     Route::put('/profile/addresses/{address}', [AddressController::class, 'update'])->name('addresses.update');
@@ -61,20 +63,30 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile/insurance/{insurance}', [InsuranceController::class, 'update'])->name('insurance.update');
     Route::delete('/profile/insurance/{insurance}', [InsuranceController::class, 'destroy'])->name('insurance.destroy');
 
+    Route::get('/setup/address', [SetupController::class, 'addressShow'])->name('setup.addressShow');
+    Route::get('/setup/membership', [SetupController::class, 'membershipShow'])->name('setup.membershipShow');
+    Route::get('/setup/training-types', [SetupController::class, 'trainingTypesShow'])->name('setup.trainingTypesShow');
+    Route::get('/setup/insurance', [SetupController::class, 'insuranceShow'])->name('setup.insuranceShow');
+    Route::get('/setup/payment', [SetupController::class, 'paymentShow'])->name('setup.paymentShow');
+
     Route::post('trainings/{training}/enroll', [TrainingController::class, 'enroll'])->name('trainings.enroll');
     Route::post('trainings/{training}/cancel', [TrainingController::class, 'cancel'])->name('trainings.cancel');
-    Route::delete('/trainings/multi-delete', [TrainingController::class, 'multiDelete'])->name('trainings.multi-delete');
+    Route::post('/trainings/{training}/mark-presence', [TrainingController::class, 'markPresence'])->name('trainings.markPresence');
+    Route::delete('/trainings/multiDelete', [TrainingController::class, 'multiDelete'])->name('trainings.multiDelete');
     Route::resource('trainings', TrainingController::class);
 
     Route::post('/dashboard/change-week', [DashboardController::class, 'changeWeek'])->name('dashboard.changeWeek');
 
-    Route::post('/cart/add', [ProductController::class, 'addToCart'])->name('cart.add');
-    Route::get('/cart', [ProductController::class, 'cart'])->name('cart.index');
-    Route::delete('cart/remove/{id}', [ProductController::class, 'removeFromCart'])->name('cart.remove');
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add-product', [CartController::class, 'addProductToCart'])->name('cart.addProduct');
+    Route::post('/cart/add-pack', [CartController::class, 'addPackToCart'])->name('cart.addPack');
+    Route::delete('/cart/remove-product/{id}', [CartController::class, 'removeProductFromCart'])->name('cart.removeProduct');
+    Route::delete('/cart/remove-pack/{id}', [CartController::class, 'removePackFromCart'])->name('cart.removePack');
+    Route::patch('/cart/increase-product/{id}', [CartController::class, 'increaseProductQuantity'])->name('cart.increaseProduct');
+    Route::patch('/cart/decrease-product/{id}', [CartController::class, 'decreaseProductQuantity'])->name('cart.decreaseProduct');
 
-    Route::patch('cart/increase/{id}', [ProductController::class, 'increaseQuantity'])->name('cart.increase');
-    Route::patch('cart/decrease/{id}', [ProductController::class, 'decreaseQuantity'])->name('cart.decrease');
-
+    Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
+    Route::post('/checkout', [CartController::class, 'processCheckout'])->name('cart.processCheckout');
 
 });
 

@@ -3,7 +3,8 @@
         'trainings' => $trainings,
         'currentWeek' => $currentWeek,
         'selectedWeek' => $selectedWeek,
-        'daysOfWeek' => $daysOfWeek
+        'daysOfWeek' => $daysOfWeek,
+        'showMembershipModal' => $showMembershipModal,
     ])
     @endcomponent
 </x-app-layout>

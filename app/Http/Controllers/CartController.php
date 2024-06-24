@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Pack;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class CartController extends Controller
@@ -65,6 +66,12 @@ class CartController extends Controller
 
         if (!$pack) {
             return redirect()->route('packs.index')->with('error', 'Pack not found!');
+        }
+
+        // Verificar se o usuário tem uma matrícula ativa
+        $membership = auth()->user()->membership;
+        if (!$membership || $membership->status->name !== 'active') {
+            return redirect()->route('packs.index')->with('error', 'You need an active membership to add packs to the cart.');
         }
 
         // Add pack to cart
@@ -164,21 +171,50 @@ class CartController extends Controller
     public function processCheckout(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'address_id' => 'required_without:new_address|exists:addresses,id',
-            'new_address' => 'sometimes|boolean',
-            'name' => 'required_if:new_address,1|max:50',
-            'street' => 'required_if:new_address,1|max:100',
-            'city' => 'required_if:new_address,1|max:50',
-            'postal_code' => 'required_if:new_address,1|regex:/\d{4}-\d{3}/',
+            'payment_method' => 'required',
             'nif_option' => 'required|in:personal,final',
-            'payment_method' => 'required|string',
+            'new_address' => 'nullable|in:on',
         ]);
+
+        if ($request->input('new_address') === 'on') {
+            $validator->after(function ($validator) use ($request) {
+                $additionalRules = [
+                    'name' => 'required|string|max:255',
+                    'street' => 'required|string|max:255',
+                    'city' => 'required|string|max:255',
+                    'postal_code' => [
+                        'required',
+                        'string',
+                        'max:8',
+                        function ($attribute, $value, $fail) {
+                            if (!preg_match('/^\d{4}-\d{3}$/', $value)) {
+                                $fail('O campo ' . $attribute . ' deve estar no formato xxxx-xxx.');
+                            }
+                        },
+                    ],
+                ];
+
+                $additionalValidator = Validator::make($request->all(), $additionalRules);
+
+                if ($additionalValidator->fails()) {
+                    foreach ($additionalValidator->errors()->messages() as $field => $messages) {
+                        foreach ($messages as $message) {
+                            $validator->errors()->add($field, $message);
+                        }
+                    }
+                }
+            });
+        } else {
+            $validator->addRules([
+                'address_id' => 'required|exists:addresses,id',
+            ]);
+        }
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        if ($request->input('new_address')) {
+        if ($request->input('new_address') === 'on') {
             $address = new Address();
             $address->name = $request->input('name');
             $address->street = $request->input('street');
@@ -225,24 +261,30 @@ class CartController extends Controller
             $product->save();
         }
 
-        $membership = Membership::where('user_id', auth()->id())->firstOrFail();
-        foreach ($packCart as $id => $details) {
-            $sale->packs()->attach($id, [
-                'quantity' => $details['quantity'],
-                'price' => $details['price'],
-            ]);
+        if (!empty($packCart)) {
+            $membership = Membership::where('user_id', auth()->id())->first();
+            if (!$membership || $membership->status->name !== 'active') {
+                return redirect()->route('cart.index')->with('error', 'You need an active membership to purchase packs.');
+            }
 
-            $pack = Pack::find($id);
-            $membership->packs()->attach($id, [
-                'quantity' => $details['quantity'],
-                'quantity_remaining' => $details['quantity'],
-                'expiry_date' => Carbon::now()->addDays($pack->duration),
-            ]);
+            foreach ($packCart as $id => $details) {
+                $sale->packs()->attach($id, [
+                    'quantity' => $details['quantity'],
+                    'price' => $details['price'],
+                ]);
+
+                $pack = Pack::find($id);
+                $membership->packs()->attach($id, [
+                    'quantity' => $pack->trainings_number,
+                    'quantity_remaining' => $pack->trainings_number,
+                    'expiry_date' => Carbon::now()->addDays($pack->duration),
+                ]);
+            }
         }
 
         session()->forget('cart');
         session()->forget('packCart');
 
-        return redirect()->route('sales.index')->with('success', 'Compra realizada com sucesso!');
+        return redirect()->route('cart.index')->with('success', 'Compra realizada com sucesso!');
     }
 }

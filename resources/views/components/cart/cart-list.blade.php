@@ -15,6 +15,18 @@
     @php
         $cart = session()->get('cart', []);
         $packCart = session()->get('packCart', []);
+        $totalCart = 0;
+        $totalPackCart = 0;
+
+        foreach ($cart as $details) {
+            $totalCart += $details['price'] * $details['quantity'];
+        }
+
+        foreach ($packCart as $details) {
+            $totalPackCart += $details['price'] * $details['quantity'];
+        }
+
+        $totalGeral = $totalCart + $totalPackCart;
     @endphp
 
     @if(count($cart) > 0 || count($packCart) > 0)
@@ -25,7 +37,7 @@
                     <th class="p-4 text-left">Artigo</th>
                     <th class="p-4">Quantidade</th>
                     <th class="p-4">Preço</th>
-                    <th class="p-4">Total</th>
+                    <th class="p-4">Subtotal</th>
                     <th class="p-4">Ações</th>
                 </tr>
                 </thead>
@@ -97,8 +109,14 @@
                 </tbody>
             </table>
         </div>
+        <div class="mt-4 pt-4 border-t-2 border-gray-400">
+            <div class="flex justify-end items-center text-gray-800 dark:text-gray-100">
+                <span class="text-lg font-bold mr-2">Total:</span>
+                <span class="text-lg font-bold">{{ number_format($totalGeral, 2) }} €</span>
+            </div>
+        </div>
         <div class="mt-6 flex justify-end">
-            <a href="{{ route('products.index') }}" class="dark:bg-gray-500 bg-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-600">Continuar a Comprar</a>
+            <a href="{{ route('products.index') }}" class="dark:bg-gray-500 bg-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-600 dark:hover:bg-gray-600">Continuar a Comprar</a>
             <a href="{{ route('checkout') }}" class="bg-green-600 text-white px-4 py-2 ml-4 rounded-md hover:bg-green-700">Finalizar Compra</a>
         </div>
     @else

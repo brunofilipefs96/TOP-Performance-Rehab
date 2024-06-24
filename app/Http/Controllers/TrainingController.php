@@ -40,8 +40,8 @@ class TrainingController extends Controller
         }
 
         $showMembershipModal = false;
-        if (auth()->user()->hasRole('client') && (!auth()->user()->membership || auth()->user()->membership->status->name !== 'active') && !session()->has('membership_modal_shown')) {
-            session(['membership_modal_shown' => true]);
+        if (auth()->user()->hasRole('client') && (!auth()->user()->membership || auth()->user()->membership->status->name !== 'active') && !session()->has('trainings_membership_modal_shown')) {
+            session(['trainings_membership_modal_shown' => true]);
             $showMembershipModal = true;
         }
 
@@ -53,6 +53,7 @@ class TrainingController extends Controller
             'showMembershipModal' => $showMembershipModal,
         ]);
     }
+
 
     public function create()
     {

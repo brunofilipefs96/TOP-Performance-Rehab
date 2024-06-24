@@ -13,6 +13,7 @@
                 @csrf
 
                 @if ($addresses->isEmpty())
+                    <input type="hidden" name="new_address" value="on">
                     <div>
                         <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Morada</h2>
                     </div>
@@ -62,7 +63,7 @@
                         @enderror
                     </div>
                     <div class="flex items-center mt-4">
-                        <input type="checkbox" id="new_address" name="new_address" class="mr-2">
+                        <input type="checkbox" id="new_address" name="new_address" class="mr-2" value="on">
                         <label for="new_address" class="text-gray-800 dark:text-gray-200">Usar nova morada</label>
                     </div>
 
@@ -142,7 +143,14 @@
                         </tr>
                         </thead>
                         <tbody>
+                        @php
+                            $totalCart = 0;
+                            $totalPackCart = 0;
+                        @endphp
                         @foreach($cart as $id => $details)
+                            @php
+                                $totalCart += $details['price'] * $details['quantity'];
+                            @endphp
                             <tr>
                                 <td class="p-4 text-left">
                                     <a href="{{ route('products.show', $id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
@@ -155,6 +163,9 @@
                             </tr>
                         @endforeach
                         @foreach($packCart as $id => $details)
+                            @php
+                                $totalPackCart += $details['price'] * $details['quantity'];
+                            @endphp
                             <tr>
                                 <td class="p-4 text-left">
                                     <a href="{{ route('packs.show', $id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
@@ -169,6 +180,12 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="mt-4 pt-4 border-t-2 border-gray-400">
+                    <div class="flex justify-end items-center">
+                        <span class="text-lg font-bold mr-2">Total Geral:</span>
+                        <span class="text-lg font-bold">{{ number_format($totalCart + $totalPackCart, 2) }} €</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -179,6 +196,11 @@
     if (newAddressCheckbox) {
         newAddressCheckbox.addEventListener('change', function() {
             document.getElementById('new_address_fields').classList.toggle('hidden', !this.checked);
+
+            const newAddressFields = document.querySelectorAll('#new_address_fields input');
+            newAddressFields.forEach(field => {
+                field.required = this.checked;
+            });
         });
     }
 

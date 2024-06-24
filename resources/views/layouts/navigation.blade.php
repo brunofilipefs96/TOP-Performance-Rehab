@@ -136,11 +136,21 @@
                         @endif
                     @endif
 
+                    @php
+                        $cart = session()->get('cart', []);
+                        $packCart = session()->get('packCart', []);
+                        $cartCount = count($cart) + count($packCart);
+                    @endphp
+
                     <x-nav-link :href="route('cart.index')" :activeRoutes="['cart.index']"
                                 class="group flex px-5 items-center justify-center text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
                         <i class="fa-solid fa-cart-shopping text-xl transition-transform group-hover:-translate-y-2 group-hover:scale-75"></i>
                         <span
                             class="absolute bottom-1 transform translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all">Carrinho</span>
+                        @if($cartCount > 0)
+                            <span
+                                class="absolute top-0 right-0 inline-flex items-center justify-center px-1 py-0.5 text-xs font-bold leading-none text-red-100 transform -translate-x-2 translate-y-2 bg-red-600 rounded-full">{{ $cartCount }}</span>
+                        @endif
                     </x-nav-link>
                 </div>
             </div>
@@ -191,12 +201,16 @@
                     </div>
                 </div>
 
-
-
-
-
-                <!-- Hamburger -->
-                <div class="-me-2 flex items-center md:hidden">
+                <!-- Hamburger and Cart for Mobile -->
+                <div class="flex items-center md:hidden">
+                    <x-nav-link :href="route('cart.index')" :activeRoutes="['cart.index']"
+                                class="group flex px-5 items-center justify-center text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                        <i class="fa-solid fa-cart-shopping text-xl transition-transform group-hover:-translate-y-2 group-hover:scale-75"></i>
+                        @if($cartCount > 0)
+                            <span
+                                class="absolute top-0 right-0 inline-flex items-center justify-center px-1 py-0.5 text-xs font-bold leading-none text-red-100 transform -translate-x-2 -translate-y-1 bg-red-600 rounded-full">{{ $cartCount }}</span>
+                        @endif
+                    </x-nav-link>
                     <button @click="open = ! open"
                             class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 focus:outline-none focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
                         <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">

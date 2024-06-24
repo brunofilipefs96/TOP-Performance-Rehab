@@ -1,5 +1,5 @@
 <div class="container mx-auto mt-5">
-    <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Lista de Servico</h1>
+    <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Lista de Serviço</h1>
     @can('create', App\Models\Service::class)
         <div class="mb-10 flex justify-between items-center">
             <a href="{{ route('services.create') }}">

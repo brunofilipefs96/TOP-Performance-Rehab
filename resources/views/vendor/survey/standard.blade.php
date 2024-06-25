@@ -413,4 +413,5 @@
 
         showSection(currentSectionIndex);
     });
+
 </script>

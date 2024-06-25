@@ -44,15 +44,11 @@ class CartController extends Controller
             return redirect()->route('products.index')->with('error', 'Produto não encontrado!');
         }
 
-        // Add product to cart
         $cart = session()->get('cart', []);
 
-        // Check if product is already in cart
         if (isset($cart[$productId])) {
-            // Increment quantity
             $cart[$productId]['quantity']++;
         } else {
-            // Add new product to cart with quantity 1
             $cart[$productId] = [
                 'name' => $product->name,
                 'price' => $product->price,
@@ -60,10 +56,9 @@ class CartController extends Controller
             ];
         }
 
-        // Save the cart back to the session
         session()->put('cart', $cart);
 
-        return redirect()->route('cart.index')->with('success', 'Produto adicionado ao carrinho com sucesso!');
+        return redirect()->route('products.index')->with('success', 'Produto adicionado ao carrinho com sucesso!');
     }
 
     public function addPackToCart(Request $request)
@@ -75,16 +70,13 @@ class CartController extends Controller
             return redirect()->route('packs.index')->with('error', 'Pack não encontrado!');
         }
 
-        // Verificar se o usuário tem uma matrícula ativa
         $membership = auth()->user()->membership;
         if (!$membership || $membership->status->name !== 'active') {
             return redirect()->route('packs.index')->with('error', 'Necessita de ter uma matrícula ativa para adicionar packs ao carrinho.');
         }
 
-        // Add pack to cart
         $packCart = session()->get('packCart', []);
 
-        // Check if pack is already in cart
         if (isset($packCart[$packId])) {
             return redirect()->route('packs.index')->with('error', 'Pack já está no carrinho!');
         } else {
@@ -95,7 +87,6 @@ class CartController extends Controller
             ];
         }
 
-        // Save the cart back to the session
         session()->put('packCart', $packCart);
 
         return redirect()->route('packs.index')->with('success', 'Pack adicionado ao carrinho com sucesso!');

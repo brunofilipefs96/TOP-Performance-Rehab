@@ -1,12 +1,16 @@
 <div class="container mx-auto mt-5 p-5 glass rounded-lg shadow-md bg-white dark:bg-gray-800">
     <div class="mb-6">
-        <h1 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Detalhes da Venda</h1>
+        <h1 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Encomenda nº {{ $sale->id }}</h1>
         <hr class="border-gray-400 dark:border-gray-600">
     </div>
 
     <!-- Dados do Cliente -->
     <div class="mb-6">
-        <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Dados do Cliente</h2>
+        @if(auth()->id() == $sale->user_id)
+            <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Os seus dados</h2>
+        @else
+            <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Dados do Cliente</h2>
+        @endif
         <div class="p-4 bg-gray-200 dark:bg-gray-700 rounded-lg shadow-md">
             <p><strong class="text-gray-800 dark:text-gray-200">Nome:</strong> <span class="text-gray-900 dark:text-gray-300">{{ $sale->user->full_name ?? 'N/A' }}</span></p>
             <p><strong class="text-gray-800 dark:text-gray-200">Rua:</strong> <span class="text-gray-900 dark:text-gray-300">{{ $sale->address->street ?? 'N/A' }}, {{ $sale->address->city ?? 'N/A' }}</span></p>
@@ -32,10 +36,14 @@
                 </thead>
                 <tbody>
                 @foreach($sale->products as $product)
-                    <tr>
+                    <tr class="{{ $product->pivot->quantity_shortage > 0 ? 'bg-red-100 dark:bg-red-900' : '' }}">
                         <td class="p-4 text-left">
                             <a href="{{ route('products.show', $product->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
-                                <i class="fa-solid fa-basket-shopping mr-2"></i>{{ $product->name }}
+                                <i class="fa-solid fa-basket-shopping mr-2"></i>
+                                @if($product->pivot->quantity_shortage > 0)
+                                    <i class="fa-solid fa-triangle-exclamation text-yellow-500 dark:text-yellow-300 mr-1"></i>
+                                @endif
+                                {{ $product->name }}
                             </a>
                         </td>
                         <td class="p-4 text-center">{{ $product->pivot->quantity }}</td>
@@ -82,7 +90,7 @@
         </div>
     </div>
 
-    @if(auth()->id() == $sale->user_id)
+    @if(auth()->id() == $sale->user_id && $sale->products->where('pivot.quantity_shortage', '>', 0)->count() > 0)
         <div class="p-4 mt-4 bg-yellow-200 dark:bg-yellow-700 text-yellow-800 dark:text-yellow-200 rounded-lg shadow-md">
             <p>Alguns dos produtos que encomendou estão em falta. O seu pedido poderá demorar mais tempo.</p>
         </div>

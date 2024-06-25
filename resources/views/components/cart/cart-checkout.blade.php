@@ -146,15 +146,24 @@
                         @php
                             $totalCart = 0;
                             $totalPackCart = 0;
+                            $hasShortages = false;
                         @endphp
                         @foreach($cart as $id => $details)
                             @php
+                                $product = App\Models\Product::find($id);
+                                $isShortage = $product && $details['quantity'] > $product->quantity;
                                 $totalCart += $details['price'] * $details['quantity'];
+                                if ($isShortage) {
+                                    $hasShortages = true;
+                                }
                             @endphp
                             <tr>
                                 <td class="p-4 text-left">
                                     <a href="{{ route('products.show', $id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
                                         <i class="fa-solid fa-basket-shopping mr-2"></i>{{ $details['name'] }}
+                                        @if($isShortage)
+                                            <i class="fa-solid fa-triangle-exclamation text-yellow-500 dark:text-yellow-300 ml-1"></i>
+                                        @endif
                                     </a>
                                 </td>
                                 <td class="p-4 text-center">{{ $details['quantity'] ?? 'N/A' }}</td>

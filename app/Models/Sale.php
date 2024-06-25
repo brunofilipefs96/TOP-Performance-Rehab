@@ -27,12 +27,36 @@ class Sale extends Model
     public function products()
     {
         return $this->belongsToMany(Product::class)
-            ->withPivot('quantity', 'price');
+            ->withPivot('quantity', 'price', 'quantity_shortage');
     }
 
     public function packs()
     {
         return $this->belongsToMany(Pack::class)
             ->withPivot('quantity', 'price');
+    }
+
+    public function address()
+    {
+        return $this->belongsTo(Address::class);
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class);
+    }
+
+    public function getTranslatedStatusAttribute()
+    {
+        $translations = [
+            'pending_payment' => 'A aguardar pagamento',
+            'paid' => 'Pago',
+            'canceled' => 'Cancelado',
+            'delivered' => 'Entregue',
+            'returned' => 'Devolvido',
+            'refunded' => 'Reembolsado',
+        ];
+
+        return $translations[$this->status->name] ?? 'Desconhecido';
     }
 }

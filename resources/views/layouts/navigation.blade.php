@@ -51,6 +51,11 @@
                                                      class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
                                         {{ __('Packs') }}
                                     </x-dropdown-link>
+                                    <x-dropdown-link :href="route('sales.index')"
+                                                     :active="request()->routeIs('sales.index')"
+                                                     class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
+                                        {{ __('Vendas') }}
+                                    </x-dropdown-link>
                                 </div>
                             </div>
 

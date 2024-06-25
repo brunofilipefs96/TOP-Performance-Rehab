@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained();
             $table->foreignId('sale_id')->constrained();
             $table->integer('quantity');
+            $table->integer('quantity_shortage')->default(0);
             $table->decimal('price', 8, 2);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();

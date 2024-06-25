@@ -7,7 +7,7 @@
         </div>
     @endif
     @if (session('warning'))
-        <div class="dark:bg-gray-800 bg-gray-300 dark:text-white text-gray-800 p-4 rounded mb-4">
+        <div class="bg-yellow-500 text-black p-4 rounded mb-4">
             {{ session('warning') }}
         </div>
     @endif
@@ -18,11 +18,11 @@
         $totalCart = 0;
         $totalPackCart = 0;
 
-        foreach ($cart as $details) {
+        foreach ($cart as $id => $details) {
             $totalCart += $details['price'] * $details['quantity'];
         }
 
-        foreach ($packCart as $details) {
+        foreach ($packCart as $id => $details) {
             $totalPackCart += $details['price'] * $details['quantity'];
         }
 
@@ -30,6 +30,11 @@
     @endphp
 
     @if(count($cart) > 0 || count($packCart) > 0)
+        @if(isset($warningMessage) && !empty($warningMessage))
+            <div class="bg-yellow-500 text-black p-4 rounded mb-4">
+                <p>{{ $warningMessage }}</p>
+            </div>
+        @endif
         <div class="overflow-x-auto p-4">
             <table class="min-w-full bg-gray-300 dark:bg-gray-800 rounded-2xl shadow-md text-gray-900 dark:text-gray-200">
                 <thead>

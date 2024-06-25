@@ -9,6 +9,7 @@ use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\PackController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\SaleController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\TrainingController;
@@ -87,6 +88,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
     Route::post('/checkout', [CartController::class, 'processCheckout'])->name('cart.processCheckout');
+
+    Route::resource('/sales', SaleController::class)->only(['index', 'show']);
 
     Route::get('/faq', function () {
         return view('pages.faq.index');

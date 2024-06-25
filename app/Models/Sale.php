@@ -26,15 +26,13 @@ class Sale extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Product::class, 'product_sale')
-            ->withPivot('quantity', 'price')
-            ->withTimestamps();
+        return $this->belongsToMany(Product::class)
+            ->withPivot('quantity', 'price');
     }
 
     public function packs()
     {
-        return $this->belongsToMany(Pack::class, 'pack_sale')
-            ->withPivot('quantity', 'price')
-            ->withTimestamps();
+        return $this->belongsToMany(Pack::class)
+            ->withPivot('quantity', 'price');
     }
 }

@@ -36,34 +36,23 @@
                             <span>{{ $pack->price }}€</span>
                         </p>
                     </div>
-                    <div class="flex justify-end items-center p-4 mt-auto space-x-2" onclick="event.stopPropagation();">
-                        @can('update', $pack)
-                            <a href="{{ url('packs/' . $pack->id . '/edit') }}" class="bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400 text-sm">
-                                <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
-                                Editar
-                            </a>
-                        @endcan
-                        @can('delete', $pack)
-                            <form id="delete-form-{{$pack->id}}" action="{{ url('packs/' . $pack->id) }}" method="POST" class="inline text-sm">
-                                @csrf
-                                @method('DELETE')
-                                <button type="button" class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500" id="delete-button" onclick="confirmarEliminacao({{ $pack->id }})">
-                                    <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
-                                    Eliminar
-                                </button>
-                            </form>
-                        @endcan
-                    </div>
                     @if(!Auth::user()->hasRole('admin'))
                         <div class="flex justify-end items-center p-4 mt-auto space-x-2" onclick="event.stopPropagation();">
-                            <form action="{{ route('cart.addPack') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="pack_id" value="{{ $pack->id }}">
-                                <button type="submit" class="bg-blue-500 dark:bg-lime-500 text-white flex items-center px-2 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400 text-sm">
-                                    <i class="fa-solid fa-cart-plus w-4 h-4 mr-2"></i>
+                            @if(Auth::user()->membership && Auth::user()->membership->status->name === 'active')
+                                <form action="{{ route('cart.addPack') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="pack_id" value="{{ $pack->id }}">
+                                    <button type="submit" class="bg-blue-500 dark:bg-lime-500 text-white flex items-center px-2 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400 text-sm">
+                                        <i class="fa-solid fa-cart-plus w-4 h-4 mr-2"></i>
+                                        Adicionar
+                                    </button>
+                                </form>
+                            @else
+                                <button type="button" class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 flex items-center px-2 py-1 rounded-md cursor-not-allowed text-sm" title="Necessita de uma matrícula ativa">
+                                    <i class="fa-solid fa-lock w-4 h-4 mr-2"></i>
                                     Adicionar
                                 </button>
-                            </form>
+                            @endif
                         </div>
                     @endif
                 </div>
@@ -93,34 +82,23 @@
                             <span>{{ $pack->price }}€</span>
                         </p>
                     </div>
-                    <div class="flex justify-end items-center p-4 mt-auto space-x-2" onclick="event.stopPropagation();">
-                        @can('update', $pack)
-                            <a href="{{ url('packs/' . $pack->id . '/edit') }}" class="bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400 text-sm">
-                                <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
-                                Editar
-                            </a>
-                        @endcan
-                        @can('delete', $pack)
-                            <form id="delete-form-{{$pack->id}}" action="{{ url('packs/' . $pack->id) }}" method="POST" class="inline text-sm">
-                                @csrf
-                                @method('DELETE')
-                                <button type="button" class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500" id="delete-button" onclick="confirmarEliminacao({{ $pack->id }})">
-                                    <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
-                                    Eliminar
-                                </button>
-                            </form>
-                        @endcan
-                    </div>
                     @if(!Auth::user()->hasRole('admin'))
                         <div class="flex justify-end items-center p-4 mt-auto space-x-2" onclick="event.stopPropagation();">
-                            <form action="{{ route('cart.addPack') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="pack_id" value="{{ $pack->id }}">
-                                <button type="submit" class="bg-blue-500 dark:bg-lime-500 text-white flex items-center px-2 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400 text-sm">
-                                    <i class="fa-solid fa-cart-plus w-4 h-4 mr-2"></i>
+                            @if(Auth::user()->membership && Auth::user()->membership->status->name === 'active')
+                                <form action="{{ route('cart.addPack') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="pack_id" value="{{ $pack->id }}">
+                                    <button type="submit" class="bg-blue-500 dark:bg-lime-500 text-white flex items-center px-2 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400 text-sm">
+                                        <i class="fa-solid fa-cart-plus w-4 h-4 mr-2"></i>
+                                        Adicionar
+                                    </button>
+                                </form>
+                            @else
+                                <button type="button" class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 flex items-center px-2 py-1 rounded-md cursor-not-allowed text-sm" title="Necessita de uma matrícula ativa">
+                                    <i class="fa-solid fa-lock w-4 h-4 mr-2"></i>
                                     Adicionar
                                 </button>
-                            </form>
+                            @endif
                         </div>
                     @endif
                 </div>
@@ -133,21 +111,47 @@
     </div>
 </div>
 
+@if($showMembershipModal)
+    <div id="membership-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
+        <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
+            <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Atenção</h2>
+            <p class="mb-4 text-gray-700 dark:text-gray-200">Necessita de uma matrícula ativa para comprar packs de aulas.</p>
+            <div class="flex justify-end">
+                <button type="button" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500" onclick="closeMembershipModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+@endif
+
+<div id="confirmation-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
+    <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
+        <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800" id="confirmation-title">Pretende eliminar?</h2>
+        <p class="mb-4 text-red-500 dark:text-red-300" id="confirmation-message">Não poderá reverter isso!</p>
+        <div class="flex justify-end gap-4">
+            <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400" onclick="cancelAction()">Cancelar</button>
+            <form id="confirmation-form" method="POST" class="inline">
+                @csrf
+                <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500">Confirmar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
     let packDeleted = 0;
 
-    function confirmarEliminacao(id) {
+    function confirmDelete(id) {
         document.getElementById('confirmation-modal').classList.remove('hidden');
         packDeleted = id;
     }
 
-    document.getElementById('cancel-button').addEventListener('click', function () {
+    function cancelAction() {
         document.getElementById('confirmation-modal').classList.add('hidden');
-    });
+    }
 
-    document.getElementById('confirm-button').addEventListener('click', function () {
-        document.getElementById(`delete-form-${packDeleted}`).submit();
-    });
+    function closeMembershipModal() {
+        document.getElementById('membership-modal').classList.add('hidden');
+    }
 
     function filterPacks() {
         const searchTerm = document.getElementById('search').value.toLowerCase();
@@ -162,5 +166,14 @@
         });
     }
 
-    document.getElementById('search').addEventListener('input', filterPacks);
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('search');
+        if (searchInput) {
+            searchInput.addEventListener('input', filterPacks);
+        }
+
+        @if($showMembershipModal)
+        document.getElementById('membership-modal').classList.remove('hidden');
+        @endif
+    });
 </script>

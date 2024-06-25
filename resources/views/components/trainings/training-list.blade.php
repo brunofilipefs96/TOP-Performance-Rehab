@@ -188,16 +188,6 @@
             </div>
         </div>
     </div>
-
-    <script>
-        function closeMembershipModal() {
-            document.getElementById('membership-modal').classList.add('hidden');
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('membership-modal').classList.remove('hidden');
-        });
-    </script>
 @endif
 
 <div id="confirmation-modal"
@@ -219,47 +209,42 @@
 </div>
 
 <script>
-    function openModal(title, message, actionUrl, method = 'POST') {
-        document.getElementById('confirmation-title').innerText = title;
-        document.getElementById('confirmation-message').innerText = message;
-        const form = document.getElementById('confirmation-form');
-        form.action = actionUrl;
+    let packDeleted = 0;
 
-        let methodField = form.querySelector('input[name="_method"]');
-        if (methodField) {
-            methodField.remove();
-        }
-
-        if (method !== 'POST') {
-            methodField = document.createElement('input');
-            methodField.type = 'hidden';
-            methodField.name = '_method';
-            methodField.value = method;
-            form.appendChild(methodField);
-        }
-
+    function confirmDelete(id) {
         document.getElementById('confirmation-modal').classList.remove('hidden');
+        packDeleted = id;
     }
 
     function cancelAction() {
         document.getElementById('confirmation-modal').classList.add('hidden');
     }
 
-    function confirmEnroll(id) {
-        openModal('Pretende inscrever-se?', '', `/trainings/${id}/enroll`, 'POST');
+    function closeMembershipModal() {
+        document.getElementById('membership-modal').classList.add('hidden');
     }
 
-    function confirmCancel(id) {
-        openModal('Pretende cancelar a inscrição?', '', `/trainings/${id}/cancel`, 'POST');
+    function filterPacks() {
+        const searchTerm = document.getElementById('search').value.toLowerCase();
+        const packCards = document.querySelectorAll('.pack-card');
+        packCards.forEach(card => {
+            const name = card.getAttribute('data-name').toLowerCase();
+            if (name.includes(searchTerm)) {
+                card.classList.remove('hidden');
+            } else {
+                card.classList.add('hidden');
+            }
+        });
     }
 
-    function confirmDelete(id) {
-        openModal('Pretende eliminar?', 'Não poderá reverter isso!', `/trainings/${id}`, 'DELETE');
-    }
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('search');
+        if (searchInput) {
+            searchInput.addEventListener('input', filterPacks);
+        }
 
-    function navigateToWeek(week) {
-        const url = new URL(window.location.href);
-        url.searchParams.set('week', week);
-        window.location.href = url.toString();
-    }
+        @if($showMembershipModal)
+        document.getElementById('membership-modal').classList.remove('hidden');
+        @endif
+    });
 </script>

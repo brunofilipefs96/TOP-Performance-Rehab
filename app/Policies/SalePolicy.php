@@ -13,7 +13,7 @@ class SalePolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -21,7 +21,7 @@ class SalePolicy
      */
     public function view(User $user, Sale $sale): bool
     {
-        //
+        return $user->hasRole('admin') || $user->id === $sale->user_id;
     }
 
     /**
@@ -29,7 +29,7 @@ class SalePolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -37,7 +37,7 @@ class SalePolicy
      */
     public function update(User $user, Sale $sale): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -45,7 +45,7 @@ class SalePolicy
      */
     public function delete(User $user, Sale $sale): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -53,7 +53,7 @@ class SalePolicy
      */
     public function restore(User $user, Sale $sale): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -61,6 +61,6 @@ class SalePolicy
      */
     public function forceDelete(User $user, Sale $sale): bool
     {
-        //
+        return $user->hasRole('admin');
     }
 }

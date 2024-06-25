@@ -43,7 +43,6 @@
                 <div class="flex justify-end items-center mb-4 mt-10">
                     <form id="add-cart-form-{{$product->id}}" action="{{ route('cart.addProduct') }}" method="POST" class="inline">
                         @csrf
-                        @method('POST')
                         <input type="hidden" name="product_id" value="{{ $product->id }}">
                         <button type="submit" class="dark:bg-lime-500 bg-blue-500 text-white flex items-center px-4 py-2 rounded-md hover:bg-blue-400 dark:hover:bg-lime-400 mr-2">
                             <i class="fa-solid fa-cart-plus w-5 h-5 mr-2"></i>
@@ -63,7 +62,7 @@
                         <form id="delete-form-{{$product->id}}" action="{{ url('products/' . $product->id) }}" method="POST" class="inline mr-2">
                             @csrf
                             @method('DELETE')
-                            <button type="button" class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500" id="delete-button" onclick="confirmDelete({{ $product->id }})">
+                            <button type="button" class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500" onclick="confirmDelete({{ $product->id }})">
                                 <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
                                 Eliminar
                             </button>
@@ -82,10 +81,7 @@
         <p class="mb-4 text-red-500 dark:text-red-300" id="confirmation-message">Não poderá reverter isso!</p>
         <div class="flex justify-end gap-4">
             <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400" onclick="cancelAction()">Cancelar</button>
-            <form id="confirmation-form" method="POST" class="inline">
-                @csrf
-                <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500">Confirmar</button>
-            </form>
+            <button type="button" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500" onclick="confirmAction()">Confirmar</button>
         </div>
     </div>
 </div>
@@ -102,7 +98,7 @@
         document.getElementById('confirmation-modal').classList.add('hidden');
     }
 
-    document.getElementById('confirm-button').addEventListener('click', function() {
+    function confirmAction() {
         document.getElementById(`delete-form-${productDeleted}`).submit();
-    });
+    }
 </script>

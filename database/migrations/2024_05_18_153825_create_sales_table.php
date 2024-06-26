@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->foreignId('address_id')->constrained();
             $table->foreignId('status_id')->constrained();
+            $table->string('payment_intent_id')->nullable();
             $table->integer('nif');
             $table->decimal('total', 8, 2);
             $table->string('payment_method');

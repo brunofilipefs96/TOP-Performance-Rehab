@@ -137,7 +137,7 @@
         </div>
         <div class="mt-6 flex justify-end">
             <a href="{{ route('products.index') }}" class="dark:bg-gray-500 bg-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-600 dark:hover:bg-gray-600">Continuar a Comprar</a>
-            <a href="{{ route('checkout') }}" class="bg-green-600 text-white px-4 py-2 ml-4 rounded-md hover:bg-green-700">Finalizar Compra</a>
+            <a href="{{ route('cart.checkout') }}" class="bg-green-600 text-white px-4 py-2 ml-4 rounded-md hover:bg-green-700">Finalizar Compra</a>
         </div>
     @else
         <div class="dark:bg-gray-800 bg-gray-400 text-white p-4 rounded-xl">

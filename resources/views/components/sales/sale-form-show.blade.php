@@ -90,9 +90,21 @@
         </div>
     </div>
 
-    @if(auth()->id() == $sale->user_id && $sale->products->where('pivot.quantity_shortage', '>', 0)->count() > 0)
-        <div class="p-4 mt-4 bg-yellow-200 dark:bg-yellow-700 text-yellow-800 dark:text-yellow-200 rounded-lg shadow-md">
-            <p>Alguns dos produtos que encomendou estão em falta. O seu pedido poderá demorar mais tempo.</p>
+    <!-- Dados para Pagamento -->
+    @if ($paymentStatus !== 'succeeded')
+        <div class="mt-6 p-4 bg-blue-500 dark:bg-lime-500 text-gray-800 dark:text-gray-900 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-800">Dados para Pagamento</h2>
+            <p><strong>Entidade:</strong> {{ $paymentEntity }}</p>
+            <p><strong>Referência:</strong> {{ $paymentReference }}</p>
+            <p><strong>Total a Pagar:</strong> {{ number_format($amount, 2) }} €</p>
+            @if(isset($paymentVoucherUrl))
+                <p><strong>Link de Pagamento:</strong> <a href="{{ $paymentVoucherUrl }}" class="text-white underline inline-flex items-center" target="_blank"><i class="fa-solid fa-receipt mr-2"></i>Ver Link de Pagamento</a></p>
+            @endif
+        </div>
+    @else
+        <div class="mt-6 p-4 bg-blue-500 dark:bg-lime-500 text-gray-800 dark:text-gray-900 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-800">Pagamento Concluído</h2>
+            <p><a href="{{ $receiptUrl }}" class="text-white underline inline-flex items-center" target="_blank"><i class="fa-solid fa-file-invoice-dollar mr-2"></i>Ver Comprovativo</a></p>
         </div>
     @endif
 </div>

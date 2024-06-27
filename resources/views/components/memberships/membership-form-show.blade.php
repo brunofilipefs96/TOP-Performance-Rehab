@@ -76,6 +76,43 @@
                         @endforeach
                     </div>
 
+
+
+                    <!-- New section for questions and answers -->
+                    <div class="mb-4">
+                        <h2 class="mb-2 text-xl text-gray-900 dark:text-gray-200">Detalhes das Perguntas</h2>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                @foreach ($membership->user->entries as $entry)
+                                    @foreach ($entry->answers as $answer)
+                                        @if($answer->question_id >= 14 && $answer->question_id <= 18 && $answer->value != 'Nenhum')
+                                            @foreach(explode(', ', $answer->value) as $individualAnswer)
+                                                <div class="flex items-center">
+                                                    <span class="h-2 w-2 rounded-full inline-block mr-2 bg-gray-900 dark:bg-gray-200"></span>
+                                                    <label class="block text-gray-900 dark:text-gray-200">{{ $individualAnswer }}</label>
+                                                </div>
+                                            @endforeach
+                                        @endif
+                                    @endforeach
+                                @endforeach
+                            </div>
+                            <div>
+                                @foreach ($membership->user->entries as $entry)
+                                    @foreach ($entry->answers as $answer)
+                                        @if($answer->question_id >= 19 && $answer->question_id <= 22 && $answer->value != 'Nenhum')
+                                            @foreach(explode(', ', $answer->value) as $individualAnswer)
+                                                <div class="flex items-center">
+                                                    <span class="h-2 w-2 rounded-full inline-block mr-2 bg-gray-900 dark:bg-gray-200"></span>
+                                                    <label class="block text-gray-900 dark:text-gray-200">{{ $individualAnswer }}</label>
+                                                </div>
+                                            @endforeach
+                                        @endif
+                                    @endforeach
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="flex items-center mb-2">
                         @if($membership->status->name == 'active')
                             <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Ativo</p>
@@ -152,15 +189,15 @@
                         @endcan
                         <div class="flex justify-end">
                             @if(Auth::user()->hasRole('admin'))
-                            <a href="{{ route('memberships.index') }}"
-                               class="inline-block bg-gray-500 ml-1 mt-4 py-2 px-6 rounded-md shadow-sm hover:bg-gray-700 text-white">
-                                Voltar
-                            </a>
+                                <a href="{{ route('memberships.index') }}"
+                                   class="inline-block bg-gray-500 ml-1 mt-4 py-2 px-6 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                                    Voltar
+                                </a>
                             @else
-                            <a href="{{ route('profile.edit') }}"
-                               class="inline-block bg-gray-500 ml-1 mt-4 py-2 px-6 rounded-md shadow-sm hover:bg-gray-700 text-white">
-                                Voltar
-                            </a>
+                                <a href="{{ route('profile.edit') }}"
+                                   class="inline-block bg-gray-500 ml-1 mt-4 py-2 px-6 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                                    Voltar
+                                </a>
                             @endif
                         </div>
                     </div>

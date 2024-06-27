@@ -16,8 +16,6 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->foreignId('address_id')->constrained();
             $table->foreignId('status_id')->default(1)->constrained();
-            $table->integer('total_trainings_supervised')->default(0);
-            $table->integer('total_trainings_individual')->default(0);
             $table->string('description')->nullable();
             $table->dateTime('start_date')->nullable();
             $table->dateTime('end_date')->nullable();

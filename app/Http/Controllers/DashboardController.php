@@ -41,14 +41,6 @@ class DashboardController extends Controller
             $annualData->push(User::whereMonth('created_at', $date->month)->whereYear('created_at', $date->year)->count());
         }
 
-        // Date manipulation for week navigation
-        if (!$request->session()->has('currentWeek')) {
-            $request->session()->put('currentWeek', Carbon::now()->format('Y-m-d'));
-        }
-        $currentWeek = Carbon::parse($request->session()->get('currentWeek'));
-        $startOfWeek = $currentWeek->copy()->startOfWeek();
-        $endOfWeek = $currentWeek->copy()->endOfWeek();
-
         if (in_array('admin', $roles)) {
             return view('pages.dashboard.admin', [
                 'newMembersMonthly' => $newMembersMonthly,
@@ -59,18 +51,11 @@ class DashboardController extends Controller
                 'annualData' => $annualData,
             ]);
         } elseif (in_array('client', $roles)) {
-            $products = Product::orderBy('created_at', 'desc')->paginate(6);
-            $trainings = $user->trainings()
-                ->whereBetween('start_date', [$startOfWeek, $endOfWeek])
-                ->get();
+            $products = Product::orderBy('created_at', 'desc')->take(6)->get();
 
             return view('pages.dashboard.client', [
                 'user'  => $user,
                 'products' => $products,
-                'trainings' => $trainings,
-                'startOfWeek' => $startOfWeek,
-                'endOfWeek' => $endOfWeek,
-                'currentWeek' => $currentWeek->format('Y-m-d')
             ]);
         } elseif (in_array('personal_trainer', $roles)) {
             return view('pages.dashboard.personal-trainer');
@@ -79,6 +64,35 @@ class DashboardController extends Controller
         } else {
             abort(403, 'Unauthorized access.');
         }
+    }
+
+    public function showCalendar(Request $request)
+    {
+        if (!Auth::check()) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $user = Auth::user();
+
+        // Date manipulation for week navigation
+        if (!$request->session()->has('currentWeek')) {
+            $request->session()->put('currentWeek', Carbon::now()->format('Y-m-d'));
+        }
+        $currentWeek = Carbon::parse($request->session()->get('currentWeek'));
+        $startOfWeek = $currentWeek->copy()->startOfWeek();
+        $endOfWeek = $currentWeek->copy()->endOfWeek();
+
+        $trainings = $user->trainings()
+            ->whereBetween('start_date', [$startOfWeek, $endOfWeek])
+            ->get();
+
+        return view('pages.dashboard.calendar', [
+            'user' => $user,
+            'trainings' => $trainings,
+            'startOfWeek' => $startOfWeek,
+            'endOfWeek' => $endOfWeek,
+            'currentWeek' => $currentWeek->format('Y-m-d')
+        ]);
     }
 
     public function changeWeek(Request $request)
@@ -97,6 +111,6 @@ class DashboardController extends Controller
 
         $request->session()->put('currentWeek', $newWeek->format('Y-m-d'));
 
-        return redirect()->route('dashboard');
+        return redirect()->route('calendar');
     }
 }

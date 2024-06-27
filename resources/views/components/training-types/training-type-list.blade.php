@@ -53,6 +53,17 @@
                 </div>
             </div>
         @endforeach
+
+            <div id="confirmation-modal" class="fixed flex inset-0 items-center justify-center bg-gray-800 bg-opacity-75 hidden">
+                <div class="bg-gray-300 p-6 rounded-md shadow-md w-96 dark:bg-gray-900">
+                    <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Pretende eliminar?</h2>
+                    <p class="mb-4 dark:text-red-300 text-red-500">Não poderá reverter isso!</p>
+                    <div class="flex justify-end gap-4">
+                        <button id="cancel-button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400">Cancelar</button>
+                        <button id="confirm-button" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Eliminar</button>
+                    </div>
+                </div>
+            </div>
     </div>
 
     <div class="flex justify-center mt-4 mb-3">

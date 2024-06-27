@@ -177,6 +177,7 @@
     padding-right: 1rem;
 }
 
+
 /* Dark Mode */
 .dark .step .number {
     background-color: #3d3d3d;
@@ -198,6 +199,23 @@
 .step.active .number {
     background-color: #3b82f6; /* Blue color */
 }
+
+.fixed-button {
+    top: 1rem;
+    left: 1rem;
+    z-index: 50;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #000;
+    border-radius: 9999px;
+    padding: 1rem;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.fixed-button.dark {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+}
+
 
 /* Wizard CSS End */
 

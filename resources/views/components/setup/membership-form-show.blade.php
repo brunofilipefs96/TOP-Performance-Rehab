@@ -3,28 +3,28 @@
         <div class="w-full max-w-2xl relative">
             <div class="progress-steps">
                 <span class="step complete">
-                    <span class="number"><i class="fa-solid fa-check"></i></span>
-                    <span class="text">Morada</span>
+                    <span class="number text-gray-900 dark:text-white">1</span>
+                    <span class="text text-gray-900 dark:text-white">Morada</span>
                     <span class="spacer"></span>
                 </span>
                 <span class="step active">
-                    <span class="number">2</span>
-                    <span class="text">Matrícula</span>
+                    <span class="number text-gray-900 dark:text-white">2</span>
+                    <span class="text text-gray-900 dark:text-white">Matrícula</span>
                     <span class="spacer"></span>
                 </span>
                 <span class="step">
-                    <span class="number">3</span>
-                    <span class="text">Modalidades</span>
+                    <span class="number text-gray-900 dark:text-white">3</span>
+                    <span class="text text-gray-900 dark:text-white">Modalidades</span>
                     <span class="spacer"></span>
                 </span>
                 <span class="step">
-                    <span class="number">4</span>
-                    <span class="text">Seguro</span>
+                    <span class="number text-gray-900 dark:text-white">4</span>
+                    <span class="text text-gray-900 dark:text-white">Seguro</span>
                     <span class="spacer"></span>
                 </span>
                 <span class="step">
-                    <span class="number">5</span>
-                    <span class="text last">Pagamento</span>
+                    <span class="number text-gray-900 dark:text-white">5</span>
+                    <span class="text last text-gray-900 dark:text-white">Pagamento</span>
                 </span>
             </div>
         </div>
@@ -64,7 +64,7 @@
                 </div>
 
                 <!-- Label de Verificação de Morada -->
-                <div id="address-check-label" class="mt-2 text-sm text-yellow-500" style="display: none;">
+                <div id="address-check-label" class="mt-2 text-sm dark:text-yellow-500 text-gray-700" style="display: none;">
                     Por favor, certefique-se se a morada selecionada é a morada que pretende vincular á sua matrícula.
                 </div>
 
@@ -114,7 +114,7 @@
                             @if ($entry->survey_id == 1)
                                 <a href="{{ url('entries/'.$entry->id) }}">
                                     <button type="button"
-                                            class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150">
+                                            class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm w-full justify-center max-w-[150px]">
                                         Ver Formulário
                                     </button>
                                 </a>
@@ -124,7 +124,7 @@
                         <div class="flex items-center mt-6">
                             <a href="{{ url('entries/1/fill') }}">
                                 <button type="button"
-                                        class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150">
+                                        class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm w-full justify-center max-w-[150px]">
                                     Preencher Formulário
                                 </button>
                             </a>
@@ -134,15 +134,17 @@
 
                 <div class="flex justify-between items-center gap-2">
                     <a href="{{ route('setup.addressShow') }}"
-                       class="inline-block bg-gray-500 mt-4 mb-5 py-2 px-4 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                       class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-700 font-semibold flex items-center text-sm mt-4 mb-5 shadow-sm w-full justify-center max-w-[100px]">
+                        <i class="fa-solid fa-arrow-left w-4 h-4 mr-2"></i>
                         Voltar
                     </a>
-                    <div class="flex gap-2">
+                    <div class="flex gap-2 items-center">
                         @if(!$user->membership)
                             @if($user->entries->count() > 0 )
                                 <button type="submit"
-                                        class="mt-4 mb-5 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300">
+                                        class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm w-full justify-center max-w-[150px]">
                                     Avançar
+                                    <i class="fa-solid fa-arrow-right w-4 h-4 ml-2"></i>
                                 </button>
                             @else
                                 <p class="mt-1 text-sm text-red-500">
@@ -150,14 +152,15 @@
                                 </p>
                             @endif
                         @else
-                            <div class="flex justify-end mt-4">
-                                <a href="{{ route('setup.trainingTypesShow') }}" class="mt-4 mb-5 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300">Avançar</a>
-                            </div>
+                            <a href="{{ route('setup.trainingTypesShow') }}"
+                               class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm w-full justify-center max-w-[150px]">
+                                Avançar
+                                <i class="fa-solid fa-arrow-right w-4 h-4 ml-2"></i>
+                            </a>
                         @endif
                     </div>
                 </div>
             </form>
-
         </div>
     </div>
 </div>
@@ -187,7 +190,7 @@
     // Mostrar a label de verificação se há mais de um endereço
     function checkMultipleAddresses() {
         var addresses = {!! json_encode($user->addresses) !!};
-        if (addresses.length > 1) {
+        if (addresses.length > 0) {
             document.getElementById('address-check-label').style.display = 'block';
         }
     }

@@ -80,18 +80,19 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/dashboard/change-week', [DashboardController::class, 'changeWeek'])->name('dashboard.changeWeek');
 
-    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart/add-product', [CartController::class, 'addProductToCart'])->name('cart.addProduct');
-    Route::post('/cart/add-pack', [CartController::class, 'addPackToCart'])->name('cart.addPack');
-    Route::delete('/cart/remove-product/{id}', [CartController::class, 'removeProductFromCart'])->name('cart.removeProduct');
-    Route::delete('/cart/remove-pack/{id}', [CartController::class, 'removePackFromCart'])->name('cart.removePack');
-    Route::patch('/cart/increase-product/{id}', [CartController::class, 'increaseProductQuantity'])->name('cart.increaseProduct');
-    Route::patch('/cart/decrease-product/{id}', [CartController::class, 'decreaseProductQuantity'])->name('cart.decreaseProduct');
-
-    Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
-    Route::post('/checkout', [CartController::class, 'processCheckout'])->name('cart.processCheckout');
+    Route::get('cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('cart/add-product', [CartController::class, 'addProductToCart'])->name('cart.addProduct');
+    Route::post('cart/add-pack', [CartController::class, 'addPackToCart'])->name('cart.addPack');
+    Route::patch('cart/increase-product/{id}', [CartController::class, 'increaseProductQuantity'])->name('cart.increaseProduct');
+    Route::patch('cart/decrease-product/{id}', [CartController::class, 'decreaseProductQuantity'])->name('cart.decreaseProduct');
+    Route::delete('cart/remove-product/{id}', [CartController::class, 'removeProductFromCart'])->name('cart.removeProduct');
+    Route::delete('cart/remove-pack/{id}', [CartController::class, 'removePackFromCart'])->name('cart.removePack');
+    Route::get('cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+    Route::post('cart/checkout', [CartController::class, 'processCheckout'])->name('cart.processCheckout');
 
     Route::resource('/sales', SaleController::class)->only(['index', 'show']);
+    Route::get('/sales/{sale}/payment-reference', [SaleController::class, 'showPaymentReference'])->name('sales.showPaymentReference');
+    Route::post('/webhook/stripe', [SaleController::class, 'handleWebhook'])->name('webhook.stripe');
 
     Route::get('/faq', function () {
         return view('pages.faq.index');

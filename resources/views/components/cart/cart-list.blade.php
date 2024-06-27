@@ -17,12 +17,19 @@
         $packCart = session()->get('packCart', []);
         $totalCart = 0;
         $totalPackCart = 0;
+        $warnings = [];
+        $hasShortages = false;
 
         foreach ($cart as $id => $details) {
+            $product = App\Models\Product::find($id);
             $totalCart += $details['price'] * $details['quantity'];
+            if ($product && $details['quantity'] > $product->quantity) {
+                $hasShortages = true;
+                $warnings[] = 'A quantidade de ' . $product->name . ' excede o estoque disponível.';
+            }
         }
 
-        foreach ($packCart as $id => $details) {
+        foreach ($packCart as $details) {
             $totalPackCart += $details['price'] * $details['quantity'];
         }
 
@@ -30,9 +37,10 @@
     @endphp
 
     @if(count($cart) > 0 || count($packCart) > 0)
-        @if(isset($warningMessage) && !empty($warningMessage))
+        @if($hasShortages)
             <div class="bg-yellow-500 text-black p-4 rounded mb-4">
-                <p>{{ $warningMessage }}</p>
+                <p> <i class="fa-solid fa-triangle-exclamation text-black"></i> Os produtos assinalados no carrinho estão com falta de stock.</p>
+                <p> A sua encomenda poderá demorar mais tempo a ser processada.</p>
             </div>
         @endif
         <div class="overflow-x-auto p-4">
@@ -48,11 +56,18 @@
                 </thead>
                 <tbody>
                 @foreach($cart as $id => $details)
+                    @php
+                        $product = App\Models\Product::find($id);
+                        $isShortage = $product && $details['quantity'] > $product->quantity;
+                    @endphp
                     <tr>
                         <td class="p-4 text-left">
                             @if(isset($details['name']))
                                 <a href="{{ route('products.show', $id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
                                     <i class="fa-solid fa-basket-shopping mr-2"></i>{{ $details['name'] }}
+                                    @if($isShortage)
+                                        <i class="fa-solid fa-triangle-exclamation text-yellow-500 dark:text-yellow-300 ml-1"></i>
+                                    @endif
                                 </a>
                             @else
                                 <span>Produto não encontrado</span>
@@ -122,7 +137,7 @@
         </div>
         <div class="mt-6 flex justify-end">
             <a href="{{ route('products.index') }}" class="dark:bg-gray-500 bg-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-600 dark:hover:bg-gray-600">Continuar a Comprar</a>
-            <a href="{{ route('checkout') }}" class="bg-green-600 text-white px-4 py-2 ml-4 rounded-md hover:bg-green-700">Finalizar Compra</a>
+            <a href="{{ route('cart.checkout') }}" class="bg-green-600 text-white px-4 py-2 ml-4 rounded-md hover:bg-green-700">Finalizar Compra</a>
         </div>
     @else
         <div class="dark:bg-gray-800 bg-gray-400 text-white p-4 rounded-xl">

@@ -3,14 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Address;
-use App\Models\Membership;
 use App\Models\Sale;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Pack;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Stripe\PaymentIntent;
+use Stripe\PaymentMethod;
+use Stripe\Stripe;
+use Stripe\StripeClient;
 
 class CartController extends Controller
 {
@@ -44,15 +46,11 @@ class CartController extends Controller
             return redirect()->route('products.index')->with('error', 'Produto não encontrado!');
         }
 
-        // Add product to cart
         $cart = session()->get('cart', []);
 
-        // Check if product is already in cart
         if (isset($cart[$productId])) {
-            // Increment quantity
             $cart[$productId]['quantity']++;
         } else {
-            // Add new product to cart with quantity 1
             $cart[$productId] = [
                 'name' => $product->name,
                 'price' => $product->price,
@@ -60,10 +58,9 @@ class CartController extends Controller
             ];
         }
 
-        // Save the cart back to the session
         session()->put('cart', $cart);
 
-        return redirect()->route('cart.index')->with('success', 'Produto adicionado ao carrinho com sucesso!');
+        return redirect()->route('products.index')->with('success', 'Produto adicionado ao carrinho com sucesso!');
     }
 
     public function addPackToCart(Request $request)
@@ -75,16 +72,13 @@ class CartController extends Controller
             return redirect()->route('packs.index')->with('error', 'Pack não encontrado!');
         }
 
-        // Verificar se o usuário tem uma matrícula ativa
         $membership = auth()->user()->membership;
         if (!$membership || $membership->status->name !== 'active') {
             return redirect()->route('packs.index')->with('error', 'Necessita de ter uma matrícula ativa para adicionar packs ao carrinho.');
         }
 
-        // Add pack to cart
         $packCart = session()->get('packCart', []);
 
-        // Check if pack is already in cart
         if (isset($packCart[$packId])) {
             return redirect()->route('packs.index')->with('error', 'Pack já está no carrinho!');
         } else {
@@ -95,7 +89,6 @@ class CartController extends Controller
             ];
         }
 
-        // Save the cart back to the session
         session()->put('packCart', $packCart);
 
         return redirect()->route('packs.index')->with('success', 'Pack adicionado ao carrinho com sucesso!');
@@ -170,7 +163,6 @@ class CartController extends Controller
     public function processCheckout(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'payment_method' => 'required',
             'nif_option' => 'required|in:personal,final',
             'new_address' => 'nullable|in:on',
         ]);
@@ -245,7 +237,7 @@ class CartController extends Controller
             'address_id' => $addressId,
             'status_id' => 5,
             'total' => $total,
-            'payment_method' => $request->input('payment_method'),
+            'payment_method' => 'multibanco',
             'nif' => $nif,
         ]);
 
@@ -271,30 +263,40 @@ class CartController extends Controller
             $product->save();
         }
 
-        if (!empty($packCart)) {
-            $membership = Membership::where('user_id', auth()->id())->first();
-            if (!$membership || $membership->status->name !== 'active') {
-                return redirect()->route('cart.index')->with('error', 'Necessita de ter uma matrícula ativa para comprar packs.');
-            }
-
-            foreach ($packCart as $id => $details) {
-                $sale->packs()->attach($id, [
-                    'quantity' => $details['quantity'],
-                    'price' => $details['price'],
-                ]);
-
-                $pack = Pack::find($id);
-                $membership->packs()->attach($id, [
-                    'quantity' => $pack->trainings_number,
-                    'quantity_remaining' => $pack->trainings_number,
-                    'expiry_date' => Carbon::now()->addDays($pack->duration),
-                ]);
-            }
+        foreach ($packCart as $id => $details) {
+            $sale->packs()->attach($id, [
+                'quantity' => $details['quantity'],
+                'price' => $details['price'],
+            ]);
         }
+
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        $stripe = new StripeClient(env('STRIPE_SECRET'));
+
+        $paymentMethod = PaymentMethod::create([
+            'type' => 'multibanco',
+            'billing_details' => [
+                'email' => Auth::user()->email,
+            ],
+        ]);
+
+        $paymentIntent = PaymentIntent::create([
+            'amount' => $total * 100,
+            'currency' => 'eur',
+            'payment_method_types' => ['multibanco'],
+            'payment_method' => $paymentMethod->id,
+            'confirmation_method' => 'automatic',
+            'confirm' => true,
+        ]);
+
+        $sale->payment_intent_id = $paymentIntent->id;
+        $sale->save();
 
         session()->forget('cart');
         session()->forget('packCart');
 
-        return redirect()->route('cart.index')->with('success', 'Compra realizada com sucesso!');
+        return redirect()->route('sales.show', ['sale' => $sale->id]);
     }
+
 }

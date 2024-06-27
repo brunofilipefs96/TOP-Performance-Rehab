@@ -88,30 +88,10 @@
         <p class="mb-4 text-red-500 dark:text-red-300" id="confirmation-message">Não poderá reverter isso!</p>
         <div class="flex justify-end gap-4">
             <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400" onclick="cancelAction()">Cancelar</button>
-            <form id="confirmation-form" method="POST" class="inline">
-                @csrf
-                <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500">Confirmar</button>
-            </form>
+            <button type="button" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500" onclick="confirmAction()">Confirmar</button>
         </div>
     </div>
 </div>
-
-<script>
-    let packDeleted = 0;
-
-    function confirmDelete(id) {
-        document.getElementById('confirmation-modal').classList.remove('hidden');
-        packDeleted = id;
-    }
-
-    function cancelAction() {
-        document.getElementById('confirmation-modal').classList.add('hidden');
-    }
-
-    document.getElementById('confirm-button').addEventListener('click', function() {
-        document.getElementById(`delete-form-${packDeleted}`).submit();
-    });
-</script>
 
 @if($showMembershipModal)
     <div id="membership-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
@@ -134,3 +114,21 @@
         });
     </script>
 @endif
+
+<script>
+    let packDeleted = 0;
+
+    function confirmDelete(id) {
+        document.getElementById('confirmation-modal').classList.remove('hidden');
+        packDeleted = id;
+    }
+
+    function cancelAction() {
+        document.getElementById('confirmation-modal').classList.add('hidden');
+    }
+
+    function confirmAction() {
+        document.getElementById(`delete-form-${packDeleted}`).submit();
+    }
+</script>
+

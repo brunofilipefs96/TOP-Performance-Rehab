@@ -1,3 +1,5 @@
+<!-- resources/views/pages/cart/checkout.blade.php -->
+
 <div class="container mx-auto mt-10 pt-5 glass">
     <div class="flex justify-center">
         <div class="w-full max-w-4xl dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm bg-gray-300 relative">
@@ -103,7 +105,7 @@
                 @endif
 
                 <div class="mb-4">
-                    <label class="block text-gray-800 dark:text-white">NIF</label>
+                    <label class="block text-gray-800 dark:text-white mt-4">NIF</label>
                     <div class="mt-1 flex flex-col sm:flex-row">
                         <label class="inline-flex items-center mr-4 mb-2 sm:mb-0">
                             <input type="radio" name="nif_option" value="personal" checked class="form-radio text-blue-500 dark:text-lime-400 h-4 w-4 dark:bg-gray-600 dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50 dark:checked:bg-lime-400 focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 checked:bg-blue-500">
@@ -116,14 +118,14 @@
                     </div>
                 </div>
 
-                <div class="mb-4">
-                    <label for="payment_method" class="block text-gray-800 dark:text-white">Método de Pagamento</label>
-                    <select name="payment_method" id="payment_method" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white" required>
-                        <option value="credit_card">Cartão de Crédito</option>
-                        <option value="paypal">PayPal</option>
-                        <option value="bank_transfer">Transferência Bancária</option>
-                    </select>
+                <!-- Método de Pagamento -->
+                <div class="mb-4 mt-4">
+                    <label class="block text-gray-800 dark:text-white">Método de Pagamento</label>
+                    <div class="mt-1 p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm bg-gray-100 dark:bg-gray-600 dark:text-white">
+                        Referência Multibanco
+                    </div>
                 </div>
+
 
                 <div class="flex justify-end mt-6">
                     <button type="submit" class="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700">Finalizar Compra</button>
@@ -146,15 +148,24 @@
                         @php
                             $totalCart = 0;
                             $totalPackCart = 0;
+                            $hasShortages = false;
                         @endphp
                         @foreach($cart as $id => $details)
                             @php
+                                $product = App\Models\Product::find($id);
+                                $isShortage = $product && $details['quantity'] > $product->quantity;
                                 $totalCart += $details['price'] * $details['quantity'];
+                                if ($isShortage) {
+                                    $hasShortages = true;
+                                }
                             @endphp
                             <tr>
                                 <td class="p-4 text-left">
                                     <a href="{{ route('products.show', $id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
                                         <i class="fa-solid fa-basket-shopping mr-2"></i>{{ $details['name'] }}
+                                        @if($isShortage)
+                                            <i class="fa-solid fa-triangle-exclamation text-yellow-500 dark:text-yellow-300 ml-1"></i>
+                                        @endif
                                     </a>
                                 </td>
                                 <td class="p-4 text-center">{{ $details['quantity'] ?? 'N/A' }}</td>
@@ -180,12 +191,14 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="mt-4 pt-4 border-t-2 border-gray-400">
+
+                <div class="mt-4 pt-4 border-t-2 border-gray-400 text-gray-700 dark:text-gray-200">
                     <div class="flex justify-end items-center">
                         <span class="text-lg font-bold mr-2">Total Geral:</span>
                         <span class="text-lg font-bold">{{ number_format($totalCart + $totalPackCart, 2) }} €</span>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>

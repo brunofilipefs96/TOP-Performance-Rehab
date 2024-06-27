@@ -42,7 +42,6 @@ class ServiceController extends Controller
     public function store(StoreServiceRequest $request)
     {
         $validatedData = $request->validated();
-        dd($request->all());
         Service::create($validatedData);
         return redirect()->route('services.index')->with('Success', 'Service created successfully.');
     }

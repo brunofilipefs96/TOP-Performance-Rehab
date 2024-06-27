@@ -64,7 +64,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile/insurance/{insurance}', [InsuranceController::class, 'update'])->name('insurance.update');
     Route::delete('/profile/insurance/{insurance}', [InsuranceController::class, 'destroy'])->name('insurance.destroy');
 
+    Route::get('/setup', [SetupController::class, 'setup'])->name('setup');
     Route::get('/setup/address', [SetupController::class, 'addressShow'])->name('setup.addressShow');
+    Route::post('/setup/address/store', [SetupController::class, 'storeAddress'])->name('setup.address.store');
     Route::get('/setup/membership', [SetupController::class, 'membershipShow'])->name('setup.membershipShow');
     Route::get('/setup/training-types', [SetupController::class, 'trainingTypesShow'])->name('setup.trainingTypesShow');
     Route::get('/setup/insurance', [SetupController::class, 'insuranceShow'])->name('setup.insuranceShow');

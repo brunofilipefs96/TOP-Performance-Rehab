@@ -39,7 +39,8 @@
 
             <div class="mb-4">
                 <label for="name" class="block text-gray-800 dark:text-white">Nome</label>
-                <input type="text" value="{{ Auth::user()->full_name }}" disabled class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
+                <input type="text" value="{{ Auth::user()->full_name }}" disabled
+                       class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
             </div>
 
             <header>
@@ -52,33 +53,49 @@
                 <!-- Seleção de Morada -->
                 <div>
                     <x-input-label for="address" :value="__('Minhas Moradas')" class="mt-5 mb-1"/>
-                    <select id="address" name="address" class="w-1/2 dark:border-gray-300 dark:border-gray-700 dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm" onchange="updateAddressFields()">
+                    <select id="address" name="address"
+                            class="w-1/2 dark:border-gray-300 dark:border-gray-700 dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm"
+                            onchange="updateAddressFields()">
                         @foreach($user->addresses as $address)
-                            <option value="{{ $address->id }}" @if($loop->first) selected @endif>{{ $address->name }}</option>
+                            <option value="{{ $address->id }}"
+                                    @if($loop->first) selected @endif>{{ $address->name }}</option>
                         @endforeach
                     </select>
+                </div>
+
+                <!-- Label de Verificação de Morada -->
+                <div id="address-check-label" class="mt-2 text-sm text-yellow-500" style="display: none;">
+                    Por favor, certefique-se se a morada selecionada é a morada que pretende vincular á sua matrícula.
                 </div>
 
                 <!-- Campos de Morada -->
                 <div class="mt-6">
                     <div class="mb-4">
                         <label class="block text-sm font-medium dark:text-gray-200 text-gray-800">Nome da Morada</label>
-                        <input type="text" id="name" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white" disabled>
+                        <input type="text" id="name"
+                               class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white"
+                               disabled>
                     </div>
 
                     <div class="mb-4">
                         <label class="block text-sm font-medium dark:text-gray-200 text-gray-800">Rua</label>
-                        <input type="text" id="street" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white" disabled>
+                        <input type="text" id="street"
+                               class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white"
+                               disabled>
                     </div>
 
                     <div class="mb-4">
                         <label class="block text-sm font-medium dark:text-gray-200 text-gray-800">Cidade</label>
-                        <input type="text" id="city" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white" disabled>
+                        <input type="text" id="city"
+                               class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white"
+                               disabled>
                     </div>
 
                     <div class="mb-4">
                         <label class="block text-sm font-medium dark:text-gray-200 text-gray-800">Código Postal</label>
-                        <input type="text" id="postal_code" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white" disabled>
+                        <input type="text" id="postal_code"
+                               class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white"
+                               disabled>
                     </div>
                 </div>
             @else
@@ -101,26 +118,18 @@
                                         Ver Formulário
                                     </button>
                                 </a>
-                            @else
-                                <div class="flex items-center mt-6">
-                                    <a href="{{ url('entries/1/fill') }}">
-                                        <button type="button" class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150">
-                                            Preencher Formulário
-                                        </button>
-                                    </a>
-                                </div>
                             @endif
                         @endforeach
                     @else
                         <div class="flex items-center mt-6">
                             <a href="{{ url('entries/1/fill') }}">
-                                <button type="button" class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150">
+                                <button type="button"
+                                        class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150">
                                     Preencher Formulário
                                 </button>
                             </a>
                         </div>
                     @endif
-
                 </div>
 
                 <div class="flex justify-between items-center gap-2">
@@ -129,19 +138,26 @@
                         Voltar
                     </a>
                     <div class="flex gap-2">
-                        @if($user->entries->count() > 0)
-                            <button type="submit"
-                                    class="mt-4 mb-5 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300">
-                                Seguir
-                            </button>
+                        @if(!$user->membership)
+                            @if($user->entries->count() > 0 )
+                                <button type="submit"
+                                        class="mt-4 mb-5 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300">
+                                    Avançar
+                                </button>
+                            @else
+                                <p class="mt-1 text-sm text-red-500">
+                                    {{ __("Você precisa preencher o formulário antes de adicionar um membership.") }}
+                                </p>
+                            @endif
                         @else
-                            <p class="mt-1 text-sm text-red-500">
-                                {{ __("Você precisa preencher o formulário antes de adicionar um membership.") }}
-                            </p>
+                            <div class="flex justify-end mt-4">
+                                <a href="{{ route('setup.trainingTypesShow') }}" class="mt-4 mb-5 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300">Avançar</a>
+                            </div>
                         @endif
                     </div>
                 </div>
             </form>
+
         </div>
     </div>
 </div>
@@ -153,7 +169,7 @@
         } else {
             var selectedAddressId = document.getElementById('address').value;
             var addresses = {!! json_encode($user->addresses) !!};
-            var selectedAddress = addresses.find(function(address) {
+            var selectedAddress = addresses.find(function (address) {
                 return address.id == selectedAddressId;
             });
 
@@ -167,4 +183,14 @@
 
     updateAddressFields();
     document.getElementById('address').addEventListener('change', updateAddressFields); // Adiciona um listener para atualizar o campo oculto quando a seleção muda
+
+    // Mostrar a label de verificação se há mais de um endereço
+    function checkMultipleAddresses() {
+        var addresses = {!! json_encode($user->addresses) !!};
+        if (addresses.length > 1) {
+            document.getElementById('address-check-label').style.display = 'block';
+        }
+    }
+
+    checkMultipleAddresses(); // Chama a função ao carregar a página
 </script>

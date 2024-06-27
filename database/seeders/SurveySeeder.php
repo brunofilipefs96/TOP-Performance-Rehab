@@ -67,6 +67,13 @@ class SurveySeeder extends Seeder
             'rules' => ['nullable']
         ]);
 
+        $one->questions()->create([
+            'content' => 'Realizou alguma cirurgia nos últimos 3 meses?',
+            'type' => 'radio',
+            'options' => ['Sim', 'Não'],
+            'rules' => ['nullable']
+        ]);
+
 
         $two = $survey->sections()->create(['name' => 'Secção Dois | 2/8']);
 

@@ -23,7 +23,8 @@
                 <!-- Page Content -->
                 <main class="p-4">
                     {{ $slot }}
-                    <div id="success-modal" class="fixed top-20 right-5 flex items-center justify-center bg-opacity-75 hidden">
+                    <div id="success-modal"
+                         class="fixed top-20 right-5 flex items-center justify-center bg-opacity-75 hidden">
                         <div class="bg-blue-300 p-4 rounded-md shadow-md w-64 dark:bg-lime-500">
                             <h2 class="text-base font-bold mb-2 dark:text-white text-gray-800">Ação bem-sucedida!</h2>
                             <p class="text-sm mb-2 dark:text-white text-gray-800">A ação foi realizada com sucesso.</p>
@@ -52,12 +53,12 @@
         function applyTheme(theme) {
             if (theme === "dark") {
                 document.documentElement.classList.add("dark");
-                document.getElementById("theme-toggle-dark-icon").classList.add("hidden");
-                document.getElementById("theme-toggle-light-icon").classList.remove("hidden");
+                document.querySelectorAll('.theme-toggle-dark-icon').forEach(icon => icon.classList.add('hidden'));
+                document.querySelectorAll('.theme-toggle-light-icon').forEach(icon => icon.classList.remove('hidden'));
             } else {
                 document.documentElement.classList.remove("dark");
-                document.getElementById("theme-toggle-dark-icon").classList.remove("hidden");
-                document.getElementById("theme-toggle-light-icon").classList.add("hidden");
+                document.querySelectorAll('.theme-toggle-dark-icon').forEach(icon => icon.classList.remove('hidden'));
+                document.querySelectorAll('.theme-toggle-light-icon').forEach(icon => icon.classList.add('hidden'));
             }
         }
 
@@ -86,21 +87,20 @@
         }
 
         // Theme toggle
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
-
-        themeToggleBtn.addEventListener('click', () => {
-            const isDarkMode = document.documentElement.classList.toggle('dark');
-            if (isDarkMode) {
-                themeToggleDarkIcon.classList.add('hidden');
-                themeToggleLightIcon.classList.remove('hidden');
-                localStorage.setItem('color-theme', 'dark');
-            } else {
-                themeToggleDarkIcon.classList.remove('hidden');
-                themeToggleLightIcon.classList.add('hidden');
-                localStorage.setItem('color-theme', 'light');
-            }
+        const themeToggleBtns = document.querySelectorAll('.theme-toggle-btn');
+        themeToggleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const isDarkMode = document.documentElement.classList.toggle('dark');
+                if (isDarkMode) {
+                    document.querySelectorAll('.theme-toggle-dark-icon').forEach(icon => icon.classList.add('hidden'));
+                    document.querySelectorAll('.theme-toggle-light-icon').forEach(icon => icon.classList.remove('hidden'));
+                    localStorage.setItem('color-theme', 'dark');
+                } else {
+                    document.querySelectorAll('.theme-toggle-dark-icon').forEach(icon => icon.classList.remove('hidden'));
+                    document.querySelectorAll('.theme-toggle-light-icon').forEach(icon => icon.classList.add('hidden'));
+                    localStorage.setItem('color-theme', 'light');
+                }
+            });
         });
     });
 </script>

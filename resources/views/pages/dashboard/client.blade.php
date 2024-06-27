@@ -4,9 +4,9 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
             @foreach ($products as $product)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-                    <h2 class="text-lg font-semibold">{{ $product->name }}</h2>
-                    <p class="text-gray-500">{{ $product->description }}</p>
-                    <p class="text-gray-800 dark:text-gray-200 font-bold">{{ $product->price }}</p>
+                    <h2 class="text-lg text-gray-700 dark:text-gray-200 font-semibold">{{ $product->name }}</h2>
+                    <p class="text-gray-700 dark:text-gray-200">{{ $product->description }}</p>
+                    <p class="text-gray-700 dark:text-gray-200 font-bold">{{ $product->price }}</p>
                 </div>
             @endforeach
         </div>

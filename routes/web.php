@@ -92,7 +92,6 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/sales', SaleController::class)->only(['index', 'show']);
     Route::get('/sales/{sale}/payment-reference', [SaleController::class, 'showPaymentReference'])->name('sales.showPaymentReference');
-    Route::post('/webhook/stripe', [SaleController::class, 'handleWebhook'])->name('webhook.stripe');
 
     Route::get('/faq', function () {
         return view('pages.faq.index');
@@ -101,6 +100,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/calendar', [DashboardController::class, 'showCalendar'])->name('calendar');
 
 });
+
+Route::post('/webhook/stripe', [SaleController::class, 'handleWebhook'])->name('webhook.stripe');
 
 
 require __DIR__.'/auth.php';

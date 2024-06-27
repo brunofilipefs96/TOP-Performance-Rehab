@@ -96,6 +96,7 @@ Route::middleware('auth')->group(function () {
         return view('pages.faq.index');
     })->name('faq.index');
 
+    Route::get('/calendar', [DashboardController::class, 'showCalendar'])->name('calendar');
 
 });
 

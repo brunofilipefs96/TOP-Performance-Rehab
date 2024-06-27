@@ -330,6 +330,7 @@
                                            class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
                         {{ __('Treinos') }}
                     </x-responsive-nav-link>
+
                 @elseif(Auth::user()->hasRole('employee'))
                     <x-responsive-nav-link :href="route('services.index')"
                                            :active="request()->routeIs('services.index')"

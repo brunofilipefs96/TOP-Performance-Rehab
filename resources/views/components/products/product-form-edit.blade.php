@@ -1,4 +1,4 @@
-<div class="container mx-auto mt-10 pt-5 glass">
+<div class="container mx-auto mt-10 pt-5 glass mb-20">
     <div class="flex justify-center">
         <div class="w-full max-w-lg dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm bg-gray-300 relative">
             <div class="absolute top-4 left-4">

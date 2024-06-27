@@ -100,6 +100,17 @@
     </div>
 </div>
 
+<div id="confirmation-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
+    <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
+        <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800" id="confirmation-title">Pretende eliminar?</h2>
+        <p class="mb-4 text-red-500 dark:text-red-300" id="confirmation-message">Não poderá reverter isso!</p>
+        <div class="flex justify-end gap-4">
+            <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400" onclick="cancelAction()">Cancelar</button>
+            <button type="button" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500" onclick="confirmAction()">Confirmar</button>
+        </div>
+    </div>
+</div>
+
 <script>
     let productDeleted = 0;
 
@@ -108,22 +119,16 @@
         productDeleted = id;
     }
 
+    function cancelAction() {
+        document.getElementById('confirmation-modal').classList.add('hidden');
+    }
+
+    function confirmAction() {
+        document.getElementById(`delete-form-${productDeleted}`).submit();
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
-        const cancelButton = document.getElementById('cancel-button');
-        const confirmButton = document.getElementById('confirm-button');
         const searchInput = document.getElementById('search');
-
-        if (cancelButton) {
-            cancelButton.addEventListener('click', function () {
-                document.getElementById('confirmation-modal').classList.add('hidden');
-            });
-        }
-
-        if (confirmButton) {
-            confirmButton.addEventListener('click', function () {
-                document.getElementById(`delete-form-${productDeleted}`).submit();
-            });
-        }
 
         if (searchInput) {
             searchInput.addEventListener('input', filterProducts);

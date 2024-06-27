@@ -36,8 +36,25 @@
                             <span>{{ $pack->price }}€</span>
                         </p>
                     </div>
-                    @if(!Auth::user()->hasRole('admin'))
-                        <div class="flex justify-end items-center p-4 mt-auto space-x-2" onclick="event.stopPropagation();">
+                    <div class="flex justify-end items-center p-4 mt-auto space-x-2" onclick="event.stopPropagation();">
+                        @if(Auth::user()->hasRole('admin'))
+                            @can('update', $pack)
+                                <a href="{{ url('packs/' . $pack->id . '/edit') }}" class="bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400 mr-2">
+                                    <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
+                                    Editar
+                                </a>
+                            @endcan
+                            @can('delete', $pack)
+                                <form id="delete-form-{{$pack->id}}" action="{{ url('packs/' . $pack->id) }}" method="POST" class="inline mr-2">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500" onclick="confirmDelete({{ $pack->id }})">
+                                        <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
+                                        Eliminar
+                                    </button>
+                                </form>
+                            @endcan
+                        @else
                             @if(Auth::user()->membership && Auth::user()->membership->status->name === 'active')
                                 <form action="{{ route('cart.addPack') }}" method="POST">
                                     @csrf
@@ -53,8 +70,8 @@
                                     Adicionar
                                 </button>
                             @endif
-                        </div>
-                    @endif
+                        @endif
+                    </div>
                 </div>
             @endif
         @endforeach
@@ -82,8 +99,25 @@
                             <span>{{ $pack->price }}€</span>
                         </p>
                     </div>
-                    @if(!Auth::user()->hasRole('admin'))
-                        <div class="flex justify-end items-center p-4 mt-auto space-x-2" onclick="event.stopPropagation();">
+                    <div class="flex justify-end items-center p-4 mt-auto space-x-2" onclick="event.stopPropagation();">
+                        @if(Auth::user()->hasRole('admin'))
+                            @can('update', $pack)
+                                <a href="{{ url('packs/' . $pack->id . '/edit') }}" class="bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400 mr-2">
+                                    <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
+                                    Editar
+                                </a>
+                            @endcan
+                            @can('delete', $pack)
+                                <form id="delete-form-{{$pack->id}}" action="{{ url('packs/' . $pack->id) }}" method="POST" class="inline mr-2">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500" onclick="confirmDelete({{ $pack->id }})">
+                                        <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
+                                        Eliminar
+                                    </button>
+                                </form>
+                            @endcan
+                        @else
                             @if(Auth::user()->membership && Auth::user()->membership->status->name === 'active')
                                 <form action="{{ route('cart.addPack') }}" method="POST">
                                     @csrf
@@ -99,8 +133,8 @@
                                     Adicionar
                                 </button>
                             @endif
-                        </div>
-                    @endif
+                        @endif
+                    </div>
                 </div>
             @endif
         @endforeach
@@ -129,10 +163,7 @@
         <p class="mb-4 text-red-500 dark:text-red-300" id="confirmation-message">Não poderá reverter isso!</p>
         <div class="flex justify-end gap-4">
             <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400" onclick="cancelAction()">Cancelar</button>
-            <form id="confirmation-form" method="POST" class="inline">
-                @csrf
-                <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500">Confirmar</button>
-            </form>
+            <button type="button" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500" onclick="confirmAction()">Confirmar</button>
         </div>
     </div>
 </div>
@@ -147,6 +178,10 @@
 
     function cancelAction() {
         document.getElementById('confirmation-modal').classList.add('hidden');
+    }
+
+    function confirmAction() {
+        document.getElementById(`delete-form-${packDeleted}`).submit();
     }
 
     function closeMembershipModal() {

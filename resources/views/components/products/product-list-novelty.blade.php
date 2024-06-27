@@ -1,10 +1,10 @@
 
-<div class="container mx-auto ">
+<div class="container ">
     <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Novidades para si!</h1>
 
     <hr class="mb-10 border-gray-400 dark:border-gray-300">
 
-    <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @foreach ($products as $product)
             <div class="product-card dark:bg-gray-800 bg-gray-500 rounded-lg overflow-hidden shadow-md text-white select-none transform transition-transform duration-300 hover:scale-105 flex flex-col justify-between" data-name="{{ $product->name }}">
                 <a href="{{ url('products/' . $product->id) }}" class="flex-grow">

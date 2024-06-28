@@ -2,23 +2,39 @@
     $user = Auth::user();
 @endphp
 
-<div x-data="{ open: false }" @keydown.window.escape="open = false" class="relative">
-    <div class="flex flex-no-wrap content-center">
-        <div style="min-height: 1150px" class="w-64 absolute sm:relative bg-gray-800 shadow h-full flex-col justify-between hidden sm:flex">
-            <div class="px-8 ">
+<div x-data="{ open: false }" @keydown.window.escape="open = false" class="relative h-full">
+    <div class="flex h-full min-h-screen">
+        <div class="w-64 bg-gray-800 shadow h-full flex flex-col justify-between hidden sm:flex">
+            <div class="px-8">
                 <div class="h-40 w-full flex items-center mt-8 mb-4">
-                    <div class=" w-full flex flex-col items-center">
-                        <img src="{{ asset('storage/' . $user->image) }}" alt class="h-32 w-32 bg-gray-200 border rounded-full" />
+                    <div class="w-full flex flex-col items-center">
+                        <h1 class="font-bold text-2xl mb-4">
+                            <span class="text-black dark:text-white">Ginásio</span>
+                            <span class="text-blue-500 dark:text-lime-500">TOP</span>
+                        </h1>
+                        @if($user->image && file_exists(public_path('storage/' . $user->image)))
+                            <img src="{{ asset('storage/' . $user->image) }}" alt="{{ $user->firstLastName() }}" class="h-32 w-32 object-cover rounded-full border-2 border-gray-300">
+                        @else
+                            <div class="h-32 w-32 bg-gray-300 dark:bg-gray-600 flex items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600">
+                                <i class="fa-solid fa-user text-4xl text-gray-800 dark:text-white"></i>
+                            </div>
+                        @endif
                         <span class="flex flex-col mt-2 content-center">
-                            <span class="text-lg">{{$user->full_name}}</span>
+                            <span class="text-lg text-gray-300">{{$user->full_name}}</span>
                         </span>
                     </div>
                 </div>
-                <ul>
+                <ul class="flex-1">
                     <li class="flex w-full justify-between text-gray-300 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
                         <a href="{{ route('dashboard') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
                             <i class="fa-solid fa-chart-line text-xl transition-transform group-hover:-translate-y-2 group-hover:scale-75"></i>
                             <span class="text-md ml-2">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="flex w-full justify-between text-gray-300 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
+                        <a href="{{ route('profile.edit') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                            <i class="fa-solid fa-user text-xl transition-transform group-hover:-translate-y-2 group-hover:scale-75"></i>
+                            <span class="text-md ml-2">Perfil</span>
                         </a>
                     </li>
                     <li class="flex w-full justify-between text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
@@ -28,27 +44,41 @@
                         </a>
                     </li>
                     <li class="flex w-full justify-between text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
+                        <a href="{{ route('packs.index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                            <i class="fa-solid fa-box text-xl transition-transform group-hover:-translate-y-1"></i>
+                            <span class="text-md ml-2">Packs</span>
+                        </a>
+                    </li>
+                    <li class="flex w-full justify-between text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
+                        <a href="{{ route('sales.index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                            <i class="fa-solid fa-receipt text-xl transition-transform group-hover:-translate-y-1"></i>
+                            <span class="text-md ml-2">Minhas Encomendas</span>
+                        </a>
+                    </li>
+                    <li class="flex w-full justify-between text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
                         <a href="{{ route('trainings.index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
                             <i class="fa-solid fa-dumbbell text-xl transition-transform group-hover:-translate-y-1"></i>
                             <span class="text-md ml-2">Treinos</span>
                         </a>
                     </li>
                     <li class="flex w-full justify-between text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
-                        <a href="{{ route('calendar') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                            <i class="fa-regular fa-calendar text-2xl transition-transform group-hover:-translate-y-1"></i>
-                            <span class="text-md ml-2">Agenda</span>
+                        <a href="{{ route('cart.index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                            <i class="fa-solid fa-cart-shopping text-xl transition-transform group-hover:-translate-y-1"></i>
+                            <span class="text-md ml-2">Carrinho</span>
                         </a>
                     </li>
-                    <li class="flex w-full justify-between text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
-                        <form method="POST" action="{{ route('logout') }}">
+                </ul>
+                <div class="mt-auto mb-8">
+                    <li class="flex w-full justify-between text-gray-400 cursor-pointer items-center dark:hover:text-lime-400 hover:text-blue-600">
+                        <form method="POST" action="{{ route('logout') }}" class="w-full">
                             @csrf
                             <a href="javascript:void(0)" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white" onclick="event.preventDefault(); this.closest('form').submit();">
                                 <i class="fa-solid fa-right-from-bracket text-2xl transition-transform group-hover:-translate-y-1"></i>
-                                <span class="text-sm ml-2">Sair</span>
+                                <span class="text-md ml-2">Sair</span>
                             </a>
                         </form>
                     </li>
-                </ul>
+                </div>
             </div>
         </div>
 
@@ -66,9 +96,12 @@
                 <div class="flex-1 overflow-y-auto">
                     <ul class="space-y-4 p-4">
                         <li><a href="{{ route('dashboard') }}" class="block text-gray-800 dark:text-gray-200">Dashboard</a></li>
+                        <li><a href="{{ route('profile.edit') }}" class="block text-gray-800 dark:text-gray-200">Perfil</a></li>
                         <li><a href="{{ route('products.index') }}" class="block text-gray-800 dark:text-gray-200">Produtos</a></li>
+                        <li><a href="{{ route('packs.index') }}" class="block text-gray-800 dark:text-gray-200">Packs</a></li>
+                        <li><a href="{{ route('sales.index') }}" class="block text-gray-800 dark:text-gray-200">Minhas Encomendas</a></li>
                         <li><a href="{{ route('trainings.index') }}" class="block text-gray-800 dark:text-gray-200">Treinos</a></li>
-                        <li><a href="{{ route('calendar') }}" class="block text-gray-800 dark:text-gray-200">Agenda</a></li>
+                        <li><a href="{{ route('cart.index') }}" class="block text-gray-800 dark:text-gray-200">Carrinho</a></li>
                         <li>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf

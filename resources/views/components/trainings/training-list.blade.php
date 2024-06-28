@@ -201,6 +201,7 @@
             </button>
             <form id="confirmation-form" method="POST" class="inline">
                 @csrf
+                @method('DELETE')
                 <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500">Confirmar
                 </button>
             </form>
@@ -212,8 +213,7 @@
     let packDeleted = 0;
 
     function confirmDelete(id) {
-        document.getElementById('confirmation-modal').classList.remove('hidden');
-        packDeleted = id;
+        openModal('Pretende eliminar?', 'Não poderá reverter isso!', `/trainings/${id}`);
     }
 
     function cancelAction() {
@@ -235,6 +235,27 @@
                 card.classList.add('hidden');
             }
         });
+    }
+
+    function navigateToWeek(weekDate) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('week', weekDate);
+        window.location.href = url.toString();
+    }
+
+    function confirmEnroll(id) {
+        openModal('Pretende inscrever-se?', '', `/trainings/${id}/enroll`);
+    }
+
+    function confirmCancel(id) {
+        openModal('Pretende cancelar a inscrição?', '', `/trainings/${id}/cancel`);
+    }
+
+    function openModal(title, message, actionUrl) {
+        document.getElementById('confirmation-title').innerText = title;
+        document.getElementById('confirmation-message').innerText = message;
+        document.getElementById('confirmation-form').action = actionUrl;
+        document.getElementById('confirmation-modal').classList.remove('hidden');
     }
 
     document.addEventListener('DOMContentLoaded', function () {

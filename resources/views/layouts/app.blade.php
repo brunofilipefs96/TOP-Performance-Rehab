@@ -15,13 +15,13 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased text-gray-100 dark:bg-gray-900">
-<div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+<div class="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col">
     @if(auth()->user()->hasRole('client'))
-        <div class="flex">
+        <div class="flex flex-1">
             @include('layouts.client-navigation')
-            <div class="flex-1">
+            <div class="flex-1 flex flex-col">
                 <!-- Page Content -->
-                <main class="p-4">
+                <main class="p-4 flex-1">
                     {{ $slot }}
                     <div id="success-modal"
                          class="fixed top-20 right-5 flex items-center justify-center bg-opacity-75 hidden">
@@ -31,20 +31,28 @@
                         </div>
                     </div>
                 </main>
+                <footer class="bg-gray-800 text-white p-4">
+                    @include('layouts.client-footer')
+                </footer>
             </div>
         </div>
     @else
-        @include('layouts.navigation')
-        <!-- Page Content -->
-        <main class="p-4">
-            {{ $slot }}
-            <div id="success-modal" class="fixed top-20 right-5 flex items-center justify-center bg-opacity-75 hidden">
-                <div class="bg-blue-300 p-4 rounded-md shadow-md w-64 dark:bg-lime-500">
-                    <h2 class="text-base font-bold mb-2 dark:text-white text-gray-800">Ação bem-sucedida!</h2>
-                    <p class="text-sm mb-2 dark:text-white text-gray-800">A ação foi realizada com sucesso.</p>
+        <div class="flex-1 flex flex-col">
+            @include('layouts.navigation')
+            <!-- Page Content -->
+            <main class="p-4 flex-1">
+                {{ $slot }}
+                <div id="success-modal" class="fixed top-20 right-5 flex items-center justify-center bg-opacity-75 hidden">
+                    <div class="bg-blue-300 p-4 rounded-md shadow-md w-64 dark:bg-lime-500">
+                        <h2 class="text-base font-bold mb-2 dark:text-white text-gray-800">Ação bem-sucedida!</h2>
+                        <p class="text-sm mb-2 dark:text-white text-gray-800">A ação foi realizada com sucesso.</p>
+                    </div>
                 </div>
-            </div>
-        </main>
+            </main>
+            <footer class="bg-gray-800 text-white p-4">
+                @include('layouts.footer')
+            </footer>
+        </div>
     @endif
 </div>
 
@@ -105,52 +113,4 @@
     });
 </script>
 </body>
-<footer class="text-center text-sm text-black dark:text-white/70 dark:bg-gray-800 bg-gray-50">
-    <div class="dark:text-white text-gray-400 p-6">
-        <div class="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-                <h3 class="text-xl font-semibold mb-4">Apoio ao Cliente </h3>
-                <div class="flex justify-center items-center mb-4">
-                    <a href="{{ route('faq.index') }}"
-                       class="hover:underline dark:hover:text-lime-400 hover:text-blue-500">Perguntas Frequentes</a>
-                </div>
-            </div>
-            <div>
-                <h3 class="text-xl font-semibold mb-4 pr-20">Opening Hours</h3>
-                <ul class="space-y-2 text-gray-400 text-start">
-                    <li>Monday ---------------------------- 10 AM - 05 PM</li>
-                    <li>Tuesday ---------------------------- 10 AM - 05 PM</li>
-                    <li>Wednesday ------------------------ 10 AM - 05 PM</li>
-                    <li>Thursday --------------------------- 10 AM - 05 PM</li>
-                    <li>Friday ------------------------------ 10 AM - 02 PM</li>
-                    <li>Saturday --------------------------- 10 AM - 12 PM</li>
-                    <li>Sunday ----------------------------- Closed</li>
-                </ul>
-            </div>
-            <div>
-                <h3 class="text-xl font-semibold mb-4">Get in Touch</h3>
-                <p class="text-gray-400 mb-2">
-                    <strong>Address:</strong> 8953 South Gainsway Avenue Park Ridge, IL 60068
-                </p>
-                <p class="text-gray-400 mb-2">
-                    <strong>Phone:</strong> +91 345-677-554, +22 333-444-555
-                </p>
-                <p class="text-gray-400 mb-4">
-                    <strong>Email:</strong> info@sitename.com
-                </p>
-                <div class="flex justify-center space-x-4">
-                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-linkedin"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-google-plus"></i></a>
-                </div>
-            </div>
-        </div>
-        <div class="mt-8 pt-4">
-            <div class="max-w-screen-xl mx-auto flex justify-center items-center text-gray-400 text-sm">
-                <p>2024 © Ginásio TOP Performance & Rehab</p>
-            </div>
-        </div>
-    </div>
-</footer>
 </html>

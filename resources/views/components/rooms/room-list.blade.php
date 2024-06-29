@@ -25,24 +25,34 @@
                 </div>
                 <div class="flex justify-end items-center p-4 mt-auto space-x-2" onclick="event.stopPropagation();">
                     @can('update', $room)
-                        <a href="{{ url('rooms/' . $room->id . '/edit') }}" class="bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400 text-sm">
+                        <a href="{{ url('rooms/' . $room->id . '/edit') }}" class="mt-2 bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400 text-sm">
                             <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
                             Editar
                         </a>
                     @endcan
                     @can('delete', $room)
-                        <form id="delete-form-{{$room->id}}" action="{{ url('rooms/' . $room->id) }}" method="POST" class="inline text-sm">
-                            @csrf
-                            @method('DELETE')
-                            <button type="button" class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500" id="delete-button" onclick="confirmarEliminacao({{ $room->id }})">
-                                <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
-                                Eliminar
-                            </button>
-                        </form>
+                            <form id="delete-form-{{$room->id}}" action="{{ url('rooms/' . $room->id) }}" method="POST" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button" class="bg-red-600 rounded-md text-white px-2 py-1 hover:bg-red-500 flex items-center mt-2 h-7" id="delete-button" onclick="confirmarEliminacao({{ $room->id }})">
+                                    <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>Eliminar
+                                </button>
+                            </form>
                     @endcan
                 </div>
             </div>
         @endforeach
+
+            <div id="confirmation-modal" class="fixed flex inset-0 items-center justify-center bg-gray-800 bg-opacity-75 hidden">
+                <div class="bg-gray-300 p-6 rounded-md shadow-md w-96 dark:bg-gray-900">
+                    <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Pretende eliminar?</h2>
+                    <p class="mb-4 dark:text-red-300 text-red-500">Não poderá reverter isso!</p>
+                    <div class="flex justify-end gap-4">
+                        <button id="cancel-button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400">Cancelar</button>
+                        <button id="confirm-button" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Eliminar</button>
+                    </div>
+                </div>
+            </div>
     </div>
 
     <div class="flex justify-center mt-4 mb-3">

@@ -22,6 +22,11 @@
             @foreach($survey->sections as $section)
                 <div class="section" data-section-id="{{ $section->id }}" style="display: none;">
                     @include('survey::sections.single', ['section' => $section])
+                    @if ($section->id == 2) <!-- Assumindo que a seção 2 tem id 2 -->
+                    <p class="section-message">
+                        Se tiver alguma dúvida ou questão, não hesite em contactar-nos.
+                    </p>
+                    @endif
                 </div>
             @endforeach
 
@@ -413,4 +418,15 @@
 
         showSection(currentSectionIndex);
     });
+
 </script>
+
+<style>
+    .section-message {
+        color: #4A5568; /* text-gray-600 */
+        margin-top: 1rem;
+    }
+    .dark .section-message {
+        color: #A0AEC0; /* dark:text-gray-400 */
+    }
+</style>

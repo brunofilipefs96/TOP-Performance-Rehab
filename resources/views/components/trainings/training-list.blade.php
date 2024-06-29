@@ -188,16 +188,6 @@
             </div>
         </div>
     </div>
-
-    <script>
-        function closeMembershipModal() {
-            document.getElementById('membership-modal').classList.add('hidden');
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('membership-modal').classList.remove('hidden');
-        });
-    </script>
 @endif
 
 <div id="confirmation-modal"
@@ -211,6 +201,7 @@
             </button>
             <form id="confirmation-form" method="POST" class="inline">
                 @csrf
+                @method('DELETE')
                 <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500">Confirmar
                 </button>
             </form>
@@ -219,47 +210,62 @@
 </div>
 
 <script>
-    function openModal(title, message, actionUrl, method = 'POST') {
-        document.getElementById('confirmation-title').innerText = title;
-        document.getElementById('confirmation-message').innerText = message;
-        const form = document.getElementById('confirmation-form');
-        form.action = actionUrl;
+    let packDeleted = 0;
 
-        let methodField = form.querySelector('input[name="_method"]');
-        if (methodField) {
-            methodField.remove();
-        }
-
-        if (method !== 'POST') {
-            methodField = document.createElement('input');
-            methodField.type = 'hidden';
-            methodField.name = '_method';
-            methodField.value = method;
-            form.appendChild(methodField);
-        }
-
-        document.getElementById('confirmation-modal').classList.remove('hidden');
+    function confirmDelete(id) {
+        openModal('Pretende eliminar?', 'Não poderá reverter isso!', `/trainings/${id}`);
     }
 
     function cancelAction() {
         document.getElementById('confirmation-modal').classList.add('hidden');
     }
 
+    function closeMembershipModal() {
+        document.getElementById('membership-modal').classList.add('hidden');
+    }
+
+    function filterPacks() {
+        const searchTerm = document.getElementById('search').value.toLowerCase();
+        const packCards = document.querySelectorAll('.pack-card');
+        packCards.forEach(card => {
+            const name = card.getAttribute('data-name').toLowerCase();
+            if (name.includes(searchTerm)) {
+                card.classList.remove('hidden');
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+    }
+
+    function navigateToWeek(weekDate) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('week', weekDate);
+        window.location.href = url.toString();
+    }
+
     function confirmEnroll(id) {
-        openModal('Pretende inscrever-se?', '', `/trainings/${id}/enroll`, 'POST');
+        openModal('Pretende inscrever-se?', '', `/trainings/${id}/enroll`);
     }
 
     function confirmCancel(id) {
-        openModal('Pretende cancelar a inscrição?', '', `/trainings/${id}/cancel`, 'POST');
+        openModal('Pretende cancelar a inscrição?', '', `/trainings/${id}/cancel`);
     }
 
-    function confirmDelete(id) {
-        openModal('Pretende eliminar?', 'Não poderá reverter isso!', `/trainings/${id}`, 'DELETE');
+    function openModal(title, message, actionUrl) {
+        document.getElementById('confirmation-title').innerText = title;
+        document.getElementById('confirmation-message').innerText = message;
+        document.getElementById('confirmation-form').action = actionUrl;
+        document.getElementById('confirmation-modal').classList.remove('hidden');
     }
 
-    function navigateToWeek(week) {
-        const url = new URL(window.location.href);
-        url.searchParams.set('week', week);
-        window.location.href = url.toString();
-    }
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('search');
+        if (searchInput) {
+            searchInput.addEventListener('input', filterPacks);
+        }
+
+        @if($showMembershipModal)
+        document.getElementById('membership-modal').classList.remove('hidden');
+        @endif
+    });
 </script>

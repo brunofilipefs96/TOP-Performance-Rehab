@@ -3,28 +3,28 @@
         <div class="w-full max-w-2xl relative">
             <div class="progress-steps">
                 <span class="step complete">
-                    <span class="number"><i class="fa-solid fa-check"></i></span>
-                    <span class="text">Morada</span>
+                    <span class="number text-gray-900 dark:text-white">1</span>
+                    <span class="text text-gray-900 dark:text-white">Morada</span>
                     <span class="spacer"></span>
                 </span>
                 <span class="step complete">
-                    <span class="number"><i class="fa-solid fa-check"></i></span>
-                    <span class="text">Matrícula</span>
+                    <span class="number text-gray-900 dark:text-white">2</span>
+                    <span class="text text-gray-900 dark:text-white">Matrícula</span>
                     <span class="spacer"></span>
                 </span>
                 <span class="step complete">
-                    <span class="number"><i class="fa-solid fa-check"></i></span>
-                    <span class="text">Modalidades</span>
+                    <span class="number text-gray-900 dark:text-white">3</span>
+                    <span class="text text-gray-900 dark:text-white">Modalidades</span>
                     <span class="spacer"></span>
                 </span>
                 <span class="step active">
-                    <span class="number">4</span>
-                    <span class="text">Seguro</span>
+                    <span class="number text-gray-900 dark:text-white">4</span>
+                    <span class="text text-gray-900 dark:text-white">Seguro</span>
                     <span class="spacer"></span>
                 </span>
                 <span class="step">
-                    <span class="number">5</span>
-                    <span class="text last">Pagamento</span>
+                    <span class="number text-gray-900 dark:text-white">5</span>
+                    <span class="text last text-gray-900 dark:text-white">Pagamento</span>
                 </span>
             </div>
         </div>
@@ -89,17 +89,25 @@
 
                 <div class="flex justify-between items-center gap-2">
                     <a href="{{ route('setup.trainingTypesShow') }}"
-                       class="inline-block bg-gray-500 mt-4 mb-5 py-2 px-4 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                       class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-700 font-semibold flex items-center text-sm mt-4 mb-5 shadow-sm w-full justify-center max-w-[100px]">
+                        <i class="fa-solid fa-arrow-left w-4 h-4 mr-2"></i>
                         Voltar
                     </a>
+
                     <div class="flex gap-2">
-                        <button id="submit-button" type="submit"
-                                class="mt-4 mb-5 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300 hidden">
-                            Seguir
-                        </button>
-                    </div>
-                    <div id="warning-message" class="text-red-500 text-sm mt-2 hidden">
-                        <strong>Por favor, selecione um tipo de seguro.</strong>
+                        @if(!$user->membership->insurance)
+                            <button type="submit"
+                                    class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm w-full justify-center max-w-[150px]">
+                                Avançar
+                                <i class="fa-solid fa-arrow-right w-4 h-4 ml-2"></i>
+                            </button>
+                        @else
+                            <a href="{{ route('setup.paymentShow') }}"
+                               class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm w-full justify-center max-w-[150px]">
+                                Avançar
+                                <i class="fa-solid fa-arrow-right w-4 h-4 ml-2"></i>
+                            </a>
+                        @endif
                     </div>
                 </div>
             </form>

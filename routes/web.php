@@ -9,6 +9,7 @@ use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\PackController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\SaleController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\TrainingController;
@@ -63,7 +64,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile/insurance/{insurance}', [InsuranceController::class, 'update'])->name('insurance.update');
     Route::delete('/profile/insurance/{insurance}', [InsuranceController::class, 'destroy'])->name('insurance.destroy');
 
+    Route::get('/setup', [SetupController::class, 'setup'])->name('setup');
     Route::get('/setup/address', [SetupController::class, 'addressShow'])->name('setup.addressShow');
+    Route::post('/setup/address/store', [SetupController::class, 'storeAddress'])->name('setup.address.store');
     Route::get('/setup/membership', [SetupController::class, 'membershipShow'])->name('setup.membershipShow');
     Route::get('/setup/training-types', [SetupController::class, 'trainingTypesShow'])->name('setup.trainingTypesShow');
     Route::get('/setup/insurance', [SetupController::class, 'insuranceShow'])->name('setup.insuranceShow');
@@ -77,18 +80,28 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/dashboard/change-week', [DashboardController::class, 'changeWeek'])->name('dashboard.changeWeek');
 
-    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart/add-product', [CartController::class, 'addProductToCart'])->name('cart.addProduct');
-    Route::post('/cart/add-pack', [CartController::class, 'addPackToCart'])->name('cart.addPack');
-    Route::delete('/cart/remove-product/{id}', [CartController::class, 'removeProductFromCart'])->name('cart.removeProduct');
-    Route::delete('/cart/remove-pack/{id}', [CartController::class, 'removePackFromCart'])->name('cart.removePack');
-    Route::patch('/cart/increase-product/{id}', [CartController::class, 'increaseProductQuantity'])->name('cart.increaseProduct');
-    Route::patch('/cart/decrease-product/{id}', [CartController::class, 'decreaseProductQuantity'])->name('cart.decreaseProduct');
+    Route::get('cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('cart/add-product', [CartController::class, 'addProductToCart'])->name('cart.addProduct');
+    Route::post('cart/add-pack', [CartController::class, 'addPackToCart'])->name('cart.addPack');
+    Route::patch('cart/increase-product/{id}', [CartController::class, 'increaseProductQuantity'])->name('cart.increaseProduct');
+    Route::patch('cart/decrease-product/{id}', [CartController::class, 'decreaseProductQuantity'])->name('cart.decreaseProduct');
+    Route::delete('cart/remove-product/{id}', [CartController::class, 'removeProductFromCart'])->name('cart.removeProduct');
+    Route::delete('cart/remove-pack/{id}', [CartController::class, 'removePackFromCart'])->name('cart.removePack');
+    Route::get('cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+    Route::post('cart/checkout', [CartController::class, 'processCheckout'])->name('cart.processCheckout');
 
-    Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
-    Route::post('/checkout', [CartController::class, 'processCheckout'])->name('cart.processCheckout');
+    Route::resource('/sales', SaleController::class)->only(['index', 'show']);
+    Route::get('/sales/{sale}/payment-reference', [SaleController::class, 'showPaymentReference'])->name('sales.showPaymentReference');
+
+    Route::get('/faq', function () {
+        return view('pages.faq.index');
+    })->name('faq.index');
+
+    Route::get('/calendar', [DashboardController::class, 'showCalendar'])->name('calendar');
 
 });
+
+Route::post('/webhook/stripe', [SaleController::class, 'handleWebhook'])->name('webhook.stripe');
 
 
 require __DIR__.'/auth.php';

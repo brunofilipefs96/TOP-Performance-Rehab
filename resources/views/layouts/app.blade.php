@@ -1,59 +1,46 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet"/>
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    </head>
-    <body class="font-sans antialiased text-gray-100 dark:bg-gray-900">
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-            @include('layouts.navigation')
-            <script>
-                (function() {
-                    function applyTheme(theme) {
-                        if (theme === "dark") {
-                            document.documentElement.classList.add("dark");
-                            document.getElementById("theme-toggle-dark-icon").classList.add("hidden");
-                            document.getElementById("theme-toggle-light-icon").classList.remove("hidden");
-                        } else {
-                            document.documentElement.classList.remove("dark");
-                            document.getElementById("theme-toggle-dark-icon").classList.remove("hidden");
-                            document.getElementById("theme-toggle-light-icon").classList.add("hidden");
-                        }
-                    }
-
-                    var savedTheme = localStorage.getItem("color-theme");
-                    if (savedTheme) {
-                        applyTheme(savedTheme);
-                    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-                        applyTheme("dark");
-                    } else {
-                        applyTheme("light");
-                    }
-                })();
-            </script>
-
-            <!-- Page Heading -->
-            @if (isset($header))
-                <header class="bg-white dark:bg-gray-800 shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="font-sans antialiased text-gray-100 dark:bg-gray-900">
+<div class="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col">
+    @if(auth()->user()->hasRole('client'))
+        <div class="flex flex-1">
+            @include('layouts.client-navigation')
+            <div class="flex-1 flex flex-col">
+                <!-- Page Content -->
+                <main class="p-4 flex-1">
+                    {{ $slot }}
+                    <div id="success-modal"
+                         class="fixed top-20 right-5 flex items-center justify-center bg-opacity-75 hidden">
+                        <div class="bg-blue-300 p-4 rounded-md shadow-md w-64 dark:bg-lime-500">
+                            <h2 class="text-base font-bold mb-2 dark:text-white text-gray-800">Ação bem-sucedida!</h2>
+                            <p class="text-sm mb-2 dark:text-white text-gray-800">A ação foi realizada com sucesso.</p>
+                        </div>
                     </div>
-                </header>
-            @endif
-
+                </main>
+                <footer class="bg-gray-800 text-white p-4">
+                    @include('layouts.client-footer')
+                </footer>
+            </div>
+        </div>
+    @else
+        <div class="flex-1 flex flex-col">
+            @include('layouts.navigation')
             <!-- Page Content -->
-            <main class="px-10 py-5">
+            <main class="p-4 flex-1">
                 {{ $slot }}
                 <div id="success-modal" class="fixed top-20 right-5 flex items-center justify-center bg-opacity-75 hidden">
                     <div class="bg-blue-300 p-4 rounded-md shadow-md w-64 dark:bg-lime-500">
@@ -62,32 +49,68 @@
                     </div>
                 </div>
             </main>
+            <footer class="bg-gray-800 text-white p-4">
+                @include('layouts.footer')
+            </footer>
         </div>
+    @endif
+</div>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                var successInfo = @json(session('success', false));
-                if (successInfo) {
-                    const successModal = document.getElementById('success-modal');
-                    successModal.classList.remove('hidden');
-                    setTimeout(function() {
-                        successModal.classList.add('fade-out');
-                    }, 1500);
+<script>
+    (function () {
+        function applyTheme(theme) {
+            if (theme === "dark") {
+                document.documentElement.classList.add("dark");
+                document.querySelectorAll('.theme-toggle-dark-icon').forEach(icon => icon.classList.add('hidden'));
+                document.querySelectorAll('.theme-toggle-light-icon').forEach(icon => icon.classList.remove('hidden'));
+            } else {
+                document.documentElement.classList.remove("dark");
+                document.querySelectorAll('.theme-toggle-dark-icon').forEach(icon => icon.classList.remove('hidden'));
+                document.querySelectorAll('.theme-toggle-light-icon').forEach(icon => icon.classList.add('hidden'));
+            }
+        }
 
-                    setTimeout(function() {
-                        successModal.classList.add('hidden');
-                    }, 2500);
+        var savedTheme = localStorage.getItem("color-theme");
+        if (savedTheme) {
+            applyTheme(savedTheme);
+        } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            applyTheme("dark");
+        } else {
+            applyTheme("light");
+        }
+    })();
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var successInfo = @json(session('success', false));
+        if (successInfo) {
+            const successModal = document.getElementById('success-modal');
+            successModal.classList.remove('hidden');
+            setTimeout(function () {
+                successModal.classList.add('fade-out');
+            }, 1500);
+
+            setTimeout(function () {
+                successModal.classList.add('hidden');
+            }, 2500);
+        }
+
+        // Theme toggle
+        const themeToggleBtns = document.querySelectorAll('.theme-toggle-btn');
+        themeToggleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const isDarkMode = document.documentElement.classList.toggle('dark');
+                if (isDarkMode) {
+                    document.querySelectorAll('.theme-toggle-dark-icon').forEach(icon => icon.classList.add('hidden'));
+                    document.querySelectorAll('.theme-toggle-light-icon').forEach(icon => icon.classList.remove('hidden'));
+                    localStorage.setItem('color-theme', 'dark');
+                } else {
+                    document.querySelectorAll('.theme-toggle-dark-icon').forEach(icon => icon.classList.remove('hidden'));
+                    document.querySelectorAll('.theme-toggle-light-icon').forEach(icon => icon.classList.add('hidden'));
+                    localStorage.setItem('color-theme', 'light');
                 }
             });
-        </script>
-
-
-
-
-
-
-    </body>
-    <footer class="py-16 text-center text-sm text-black dark:text-white/70 dark:bg-gray-900">
-        2024 © TOP Performance & Rehab
-    </footer>
+        });
+    });
+</script>
+</body>
 </html>

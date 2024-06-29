@@ -3,19 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Models\Address;
-use App\Models\Membership;
 use App\Models\Sale;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Pack;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Stripe\PaymentIntent;
+use Stripe\PaymentMethod;
+use Stripe\Stripe;
+use Stripe\StripeClient;
 
 class CartController extends Controller
 {
     public function index()
     {
-        return view('pages.cart.index');
+        $cart = session()->get('cart', []);
+        $packCart = session()->get('packCart', []);
+        $warnings = [];
+
+        foreach ($cart as $id => $details) {
+            $product = Product::find($id);
+            if ($product && $details['quantity'] > $product->quantity) {
+                $warnings[] = $product->name;
+            }
+        }
+
+        $warningMessage = '';
+        if (!empty($warnings)) {
+            $warningMessage = 'A quantidade de ' . implode(' e ', $warnings) . ' excede o stock disponível. O pedido poderá demorar mais tempo.';
+        }
+
+        return view('pages.cart.index', ['warningMessage' => $warningMessage]);
     }
 
     public function addProductToCart(Request $request)
@@ -24,38 +43,24 @@ class CartController extends Controller
         $product = Product::find($productId);
 
         if (!$product) {
-            return redirect()->route('products.index')->with('error', 'Product not found!');
+            return redirect()->route('products.index')->with('error', 'Produto não encontrado!');
         }
 
-        // Add product to cart
         $cart = session()->get('cart', []);
 
-        // Check if product is already in cart
         if (isset($cart[$productId])) {
-            // Check if there is enough stock to add one more unit
-            if ($product->quantity > $cart[$productId]['quantity']) {
-                // Increment quantity
-                $cart[$productId]['quantity']++;
-            } else {
-                return redirect()->route('products.index')->with('error', 'Not enough stock for this product!');
-            }
+            $cart[$productId]['quantity']++;
         } else {
-            // Add new product to cart with quantity 1
-            if ($product->quantity > 0) {
-                $cart[$productId] = [
-                    'name' => $product->name,
-                    'price' => $product->price,
-                    'quantity' => 1
-                ];
-            } else {
-                return redirect()->route('products.index')->with('error', 'Not enough stock for this product!');
-            }
+            $cart[$productId] = [
+                'name' => $product->name,
+                'price' => $product->price,
+                'quantity' => 1
+            ];
         }
 
-        // Save the cart back to the session
         session()->put('cart', $cart);
 
-        return redirect()->route('products.index')->with('success', 'Product added to cart successfully!');
+        return redirect()->route('products.index')->with('success', 'Produto adicionado ao carrinho com sucesso!');
     }
 
     public function addPackToCart(Request $request)
@@ -64,15 +69,18 @@ class CartController extends Controller
         $pack = Pack::find($packId);
 
         if (!$pack) {
-            return redirect()->route('packs.index')->with('error', 'Pack not found!');
+            return redirect()->route('packs.index')->with('error', 'Pack não encontrado!');
         }
 
-        // Add pack to cart
+        $membership = auth()->user()->membership;
+        if (!$membership || $membership->status->name !== 'active') {
+            return redirect()->route('packs.index')->with('error', 'Necessita de ter uma matrícula ativa para adicionar packs ao carrinho.');
+        }
+
         $packCart = session()->get('packCart', []);
 
-        // Check if pack is already in cart
         if (isset($packCart[$packId])) {
-            return redirect()->route('packs.index')->with('error', 'Pack already in cart!');
+            return redirect()->route('packs.index')->with('error', 'Pack já está no carrinho!');
         } else {
             $packCart[$packId] = [
                 'name' => $pack->name,
@@ -81,10 +89,9 @@ class CartController extends Controller
             ];
         }
 
-        // Save the cart back to the session
         session()->put('packCart', $packCart);
 
-        return redirect()->route('packs.index')->with('success', 'Pack added to cart successfully!');
+        return redirect()->route('packs.index')->with('success', 'Pack adicionado ao carrinho com sucesso!');
     }
 
     public function removeProductFromCart($id)
@@ -94,10 +101,10 @@ class CartController extends Controller
         if (isset($cart[$id])) {
             unset($cart[$id]);
             session()->put('cart', $cart);
-            return redirect()->route('cart.index')->with('success', 'Product removed from cart successfully!');
+            return redirect()->route('cart.index')->with('success', 'Produto removido do carrinho com sucesso!');
         }
 
-        return redirect()->route('cart.index')->with('error', 'Product not found in cart!');
+        return redirect()->route('cart.index')->with('error', 'Produto não encontrado no carrinho!');
     }
 
     public function removePackFromCart($id)
@@ -107,10 +114,10 @@ class CartController extends Controller
         if (isset($packCart[$id])) {
             unset($packCart[$id]);
             session()->put('packCart', $packCart);
-            return redirect()->route('cart.index')->with('success', 'Pack removed from cart successfully!');
+            return redirect()->route('cart.index')->with('success', 'Pack removido do carrinho com sucesso!');
         }
 
-        return redirect()->route('cart.index')->with('error', 'Pack not found in cart!');
+        return redirect()->route('cart.index')->with('error', 'Pack não encontrado no carrinho!');
     }
 
     public function increaseProductQuantity($id)
@@ -119,14 +126,6 @@ class CartController extends Controller
 
         if (isset($cart[$id])) {
             $cart[$id]['quantity']++;
-
-            // Check if cart quantity exceeds stock
-            $product = Product::find($id);
-            if ($cart[$id]['quantity'] > $product->quantity) {
-                session()->flash('error', 'The quantity of ' . $product->name . ' exceeds available stock.');
-                session()->flash('warning', 'The order might take longer due to stock shortage.');
-            }
-
             session()->put('cart', $cart);
         }
 
@@ -164,21 +163,49 @@ class CartController extends Controller
     public function processCheckout(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'address_id' => 'required_without:new_address|exists:addresses,id',
-            'new_address' => 'sometimes|boolean',
-            'name' => 'required_if:new_address,1|max:50',
-            'street' => 'required_if:new_address,1|max:100',
-            'city' => 'required_if:new_address,1|max:50',
-            'postal_code' => 'required_if:new_address,1|regex:/\d{4}-\d{3}/',
             'nif_option' => 'required|in:personal,final',
-            'payment_method' => 'required|string',
+            'new_address' => 'nullable|in:on',
         ]);
+
+        if ($request->input('new_address') === 'on') {
+            $validator->after(function ($validator) use ($request) {
+                $additionalRules = [
+                    'name' => 'required|string|max:255',
+                    'street' => 'required|string|max:255',
+                    'city' => 'required|string|max:255',
+                    'postal_code' => [
+                        'required',
+                        'string',
+                        'max:8',
+                        function ($attribute, $value, $fail) {
+                            if (!preg_match('/^\d{4}-\d{3}$/', $value)) {
+                                $fail('O campo ' . $attribute . ' deve estar no formato xxxx-xxx.');
+                            }
+                        },
+                    ],
+                ];
+
+                $additionalValidator = Validator::make($request->all(), $additionalRules);
+
+                if ($additionalValidator->fails()) {
+                    foreach ($additionalValidator->errors()->messages() as $field => $messages) {
+                        foreach ($messages as $message) {
+                            $validator->errors()->add($field, $message);
+                        }
+                    }
+                }
+            });
+        } else {
+            $validator->addRules([
+                'address_id' => 'required|exists:addresses,id',
+            ]);
+        }
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        if ($request->input('new_address')) {
+        if ($request->input('new_address') === 'on') {
             $address = new Address();
             $address->name = $request->input('name');
             $address->street = $request->input('street');
@@ -208,41 +235,68 @@ class CartController extends Controller
         $sale = Sale::create([
             'user_id' => auth()->id(),
             'address_id' => $addressId,
-            'status_id' => 1,
+            'status_id' => 5,
             'total' => $total,
-            'payment_method' => $request->input('payment_method'),
+            'payment_method' => 'multibanco',
             'nif' => $nif,
         ]);
 
         foreach ($cart as $id => $details) {
-            $sale->products()->attach($id, [
-                'quantity' => $details['quantity'],
-                'price' => $details['price'],
-            ]);
-
             $product = Product::find($id);
-            $product->quantity -= $details['quantity'];
+            $quantityToReduce = $details['quantity'];
+            if ($product->quantity < $quantityToReduce) {
+                $quantityToReduce = $product->quantity;
+                $sale->products()->attach($id, [
+                    'quantity' => $details['quantity'],
+                    'price' => $details['price'],
+                    'quantity_shortage' => $details['quantity'] - $product->quantity,
+                ]);
+            } else {
+                $sale->products()->attach($id, [
+                    'quantity' => $details['quantity'],
+                    'price' => $details['price'],
+                    'quantity_shortage' => 0,
+                ]);
+            }
+
+            $product->quantity -= $quantityToReduce;
             $product->save();
         }
 
-        $membership = Membership::where('user_id', auth()->id())->firstOrFail();
         foreach ($packCart as $id => $details) {
             $sale->packs()->attach($id, [
                 'quantity' => $details['quantity'],
                 'price' => $details['price'],
             ]);
-
-            $pack = Pack::find($id);
-            $membership->packs()->attach($id, [
-                'quantity' => $details['quantity'],
-                'quantity_remaining' => $details['quantity'],
-                'expiry_date' => Carbon::now()->addDays($pack->duration),
-            ]);
         }
+
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        $stripe = new StripeClient(env('STRIPE_SECRET'));
+
+        $paymentMethod = PaymentMethod::create([
+            'type' => 'multibanco',
+            'billing_details' => [
+                'email' => Auth::user()->email,
+            ],
+        ]);
+
+        $paymentIntent = PaymentIntent::create([
+            'amount' => $total * 100,
+            'currency' => 'eur',
+            'payment_method_types' => ['multibanco'],
+            'payment_method' => $paymentMethod->id,
+            'confirmation_method' => 'automatic',
+            'confirm' => true,
+        ]);
+
+        $sale->payment_intent_id = $paymentIntent->id;
+        $sale->save();
 
         session()->forget('cart');
         session()->forget('packCart');
 
-        return redirect()->route('sales.index')->with('success', 'Compra realizada com sucesso!');
+        return redirect()->route('sales.show', ['sale' => $sale->id]);
     }
+
 }

@@ -137,13 +137,16 @@
         </div>
 
         <div class="navigation-buttons mt-4 mb-5 flex justify-between">
-            <a href="{{ url('memberships/' . $user->membership->id) }}" class="bg-red-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-red-400 dark:bg-lime-400 dark:hover:bg-lime-300 dark:text-gray-900">Sair</a>
+            @if($user->membership && $user->membership->id > 0)
+                <a href="{{ url('memberships/' . $user->membership->id) }}" class="bg-red-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-red-400 dark:bg-lime-400 dark:hover:bg-lime-300 dark:text-gray-900">Sair</a>
+            @else
+                <a href="{{ url()->previous() }}" class="bg-red-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-red-400 dark:bg-lime-400 dark:hover:bg-lime-300 dark:text-gray-900">Sair</a>
+            @endif
             <div>
                 <button type="button" id="prev-button" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:hover:bg-lime-300 dark:text-gray-900">Anterior</button>
                 <button type="button" id="next-button" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:hover:bg-lime-300 dark:text-gray-900 ml-2">Próximo</button>
             </div>
         </div>
-
     @endif
 </div>
 

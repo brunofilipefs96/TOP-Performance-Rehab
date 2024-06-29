@@ -6,7 +6,6 @@
     </header>
 
     @if ($user->addresses && $user->addresses->count() > 0)
-        <!-- Seleção de Morada -->
         <div>
             <x-input-label for="address" :value="__('Minhas Moradas')" class="mt-5 mb-1"/>
             <select id="address" name="address" class="w-1/2 dark:border-gray-300 dark:border-gray-700 dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm" onchange="updateAddressFields()">
@@ -16,14 +15,14 @@
             </select>
             @error('address')
             <span class="text-red-500 text-sm mt-2" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
+                <strong>{{ $message }}</strong>
+            </span>
             @enderror
         </div>
         <div class="flex items-center">
             <button id="create-address-button" type="button" class="inline-flex items-center px-4 py-2 mt-6 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150" onclick="createAddress()">Inserir Morada</button>
         </div>
-        <h1 id="form-title" class="text-lg mt-10 text-gray-800 dark:text-gray-200">Atualizar Morada</h1>
+        <h1 id="form-title" class="text-lg mt-10 text-gray-800 dark:text-gray-200">Detalhes</h1>
         <form id="updateAddressForm" method="POST" action="{{ route('addresses.update', $user->addresses->first()->id) }}" class="mt-2 space-y-6">
             @csrf
             @method('put')
@@ -34,8 +33,8 @@
                 <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->addresses->first()->name)" required autofocus autocomplete="name" maxlength="50" />
                 @error('name')
                 <span class="text-red-500 text-sm mt-2" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
+                    <strong>{{ $message }}</strong>
+                </span>
                 @enderror
             </div>
 
@@ -45,8 +44,8 @@
                 <x-text-input id="street" name="street" type="text" class="mt-1 block w-full" :value="old('street', $user->addresses->first()->street)" required autocomplete="street" maxlength="100" />
                 @error('street')
                 <span class="text-red-500 text-sm mt-2" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
+                    <strong>{{ $message }}</strong>
+                </span>
                 @enderror
             </div>
 
@@ -56,8 +55,8 @@
                 <x-text-input id="city" name="city" type="text" class="mt-1 block w-full" :value="old('city', $user->addresses->first()->city)" required autocomplete="city" maxlength="50" />
                 @error('city')
                 <span class="text-red-500 text-sm mt-2" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
+                    <strong>{{ $message }}</strong>
+                </span>
                 @enderror
             </div>
 
@@ -67,19 +66,19 @@
                 <x-text-input id="postal_code" name="postal_code" type="text" class="mt-1 block w-full" pattern="\d{4}-\d{3}" :value="old('postal_code', $user->addresses->first()->postal_code)" required autocomplete="postal_code" maxlength="8" />
                 @error('postal_code')
                 <span class="text-red-500 text-sm mt-2" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
+                    <strong>{{ $message }}</strong>
+                </span>
                 @enderror
             </div>
 
-            <div class="flex items-center gap-4">
-                <button id="submit-button" type="submit" class="inline-flex items-center px-4 py-2 mt-6 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150">Atualizar</button>
+            <div class="flex items-center gap-4 mt-6">
+                <button id="submit-button" type="submit" class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150">Atualizar</button>
+                <button type="button" class="inline-flex items-center px-4 py-2 bg-red-500 hover:bg-red-400 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150" id="delete-button" onclick="confirmDelete()">Eliminar</button>
             </div>
         </form>
-        <form id="delete-form" action="" method="POST" class="inline">
+        <form id="delete-form" action="" method="POST" class="hidden">
             @csrf
             @method('DELETE')
-            <button type="button" class="inline-flex items-center px-4 py-2 mt-6 bg-red-500 hover:bg-red-400 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150" id="delete-button" onclick="confirmDelete()">Eliminar</button>
         </form>
     @else
         <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
@@ -115,8 +114,8 @@
                     <x-text-input id="create_name" name="name" type="text" class="mt-1 block w-full" value="{{ old('name') }}" required autofocus autocomplete="name" maxlength="50" />
                     @error('name')
                     <span class="text-red-500 text-sm mt-2" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
+                        <strong>{{ $message }}</strong>
+                    </span>
                     @enderror
                 </div>
 
@@ -126,8 +125,8 @@
                     <x-text-input id="create_street" name="street" type="text" class="mt-1 block w-full" value="{{ old('street') }}" required autocomplete="street" maxlength="100" />
                     @error('street')
                     <span class="text-red-500 text-sm mt-2" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
+                        <strong>{{ $message }}</strong>
+                    </span>
                     @enderror
                 </div>
 
@@ -137,8 +136,8 @@
                     <x-text-input id="create_city" name="city" type="text" class="mt-1 block w-full" value="{{ old('city') }}" required autocomplete="city" maxlength="50" />
                     @error('city')
                     <span class="text-red-500 text-sm mt-2" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
+                        <strong>{{ $message }}</strong>
+                    </span>
                     @enderror
                 </div>
 
@@ -148,8 +147,8 @@
                     <x-text-input id="create_postal_code" name="postal_code" type="text" class="mt-1 block w-full" pattern="\d{4}-\d{3}" value="{{ old('postal_code') }}" required autocomplete="postal_code" maxlength="8" />
                     @error('postal_code')
                     <span class="text-red-500 text-sm mt-2" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
+                        <strong>{{ $message }}</strong>
+                    </span>
                     @enderror
                 </div>
 
@@ -229,6 +228,16 @@
 
             document.getElementById('updateAddressForm').action = "{{ route('addresses.update', '') }}/" + selectedAddressId;
 
+            var membershipAddressId = "{{ $user->membership ? $user->membership->address_id : '' }}";
+            var isAddressAssociated = selectedAddressId == membershipAddressId;
+
+            // Ocultar botões e desabilitar campos se a morada estiver associada a uma matrícula
+            document.getElementById('submit-button').style.display = isAddressAssociated ? 'none' : 'inline-flex';
+            document.getElementById('delete-button').style.display = isAddressAssociated ? 'none' : 'inline-flex';
+            document.getElementById('name').disabled = isAddressAssociated;
+            document.getElementById('street').disabled = isAddressAssociated;
+            document.getElementById('city').disabled = isAddressAssociated;
+            document.getElementById('postal_code').disabled = isAddressAssociated;
         }
     }
 

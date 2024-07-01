@@ -65,7 +65,7 @@
 
                 <!-- Label de Verificação de Morada -->
                 <div id="address-check-label" class="mt-2 text-sm dark:text-yellow-500 text-gray-700" style="display: none;">
-                    Por favor, certefique-se se a morada selecionada é a morada que pretende vincular á sua matrícula.
+                    Por favor, certifique-se de que a morada selecionada é a que pretende vincular à sua matrícula.
                 </div>
 
                 <!-- Campos de Morada -->

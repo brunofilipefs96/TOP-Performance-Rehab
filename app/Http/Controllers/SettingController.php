@@ -10,12 +10,20 @@ class SettingController extends Controller
 {
     public function index()
     {
+        if (!Auth::user()->hasRole('admin')) {
+            return redirect()->route('unavailable');
+        }
+
         $settings = Setting::all()->pluck('value', 'key')->toArray();
         return view('pages.settings.index', compact('settings'));
     }
 
     public function update(Request $request)
     {
+        if (!Auth::user()->hasRole('admin')) {
+            return redirect()->route('unavailable');
+        }
+
         $request->validate([
             'taxa_inscricao' => 'required|numeric',
             'taxa_seguro' => 'required|numeric',

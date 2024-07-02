@@ -37,21 +37,34 @@
                         <h1 class="mb-8 text-3xl text-gray-900 dark:text-lime-400">Modalidades</h1>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        @foreach ($trainingTypes as $trainingType)
-                            <label class="selectable-item mb-4 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600" data-id="{{ $trainingType->id }}">
-                                <p class="block text-gray-800 dark:text-gray-200">{{ $trainingType->name }}</p>
-                            </label>
-                        @endforeach
-                    </div>
-
-                    <div class="flex justify-end mt-6">
-                        <a href="{{ route('setup.membershipShow') }}"
-                           class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-700 font-semibold flex items-center text-sm mt-4 mb-5 shadow-sm w-full justify-center max-w-[100px]">
-                            <i class="fa-solid fa-arrow-left w-4 h-4 mr-2"></i>
-                            Voltar
-                        </a>
-                    </div>
+                    <form method="POST" action="{{ route('setup.storeTrainingTypes') }}" id="trainingTypesForm">
+                        @csrf
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @foreach ($trainingTypes as $trainingType)
+                                <label class="selectable-item mb-4 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 {{ in_array($trainingType->id, $userTrainingTypes) ? 'selected locked' : '' }}" data-id="{{ $trainingType->id }}">
+                                    <p class="block text-gray-800 dark:text-gray-200">{{ $trainingType->name }}</p>
+                                    <input type="hidden" name="trainingTypes[]" value="{{ $trainingType->id }}" {{ in_array($trainingType->id, $userTrainingTypes) ? '' : 'disabled' }}>
+                                </label>
+                            @endforeach
+                        </div>
+                        <div class="flex justify-between items-center mt-6 gap-2">
+                            <a href="{{ route('setup.membershipShow') }}"
+                               class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-700 font-semibold flex items-center text-sm mt-4 mb-5 shadow-sm w-full justify-center max-w-[100px]">
+                                <i class="fa-solid fa-arrow-left w-4 h-4 mr-2"></i>
+                                Voltar
+                            </a>
+                            <div class="flex gap-2 items-center">
+                                <a href="{{ route('setup.insuranceShow') }}" id="advanceButton" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm w-full justify-center max-w-[150px]" style="display: none;">
+                                    Avançar
+                                    <i class="fa-solid fa-arrow-right w-4 h-4 ml-2"></i>
+                                </a>
+                                <button type="submit" id="submitButton" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm w-full justify-center max-w-[150px]">
+                                    Avançar
+                                    <i class="fa-solid fa-arrow-right w-4 h-4 ml-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -60,24 +73,30 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', (event) => {
-        // Restaurar seleções do localStorage
-        document.querySelectorAll('.selectable-item').forEach((label) => {
-            const trainingId = label.dataset.id;
-            if (localStorage.getItem(`training-selected-${trainingId}`) === 'true') {
-                label.classList.add('selected');
-            }
+        const hasLockedItems = document.querySelectorAll('.selectable-item.locked').length > 0;
 
-            // Adicionar evento de clique para guardar a seleção
-            label.addEventListener('click', (event) => {
-                if (label.classList.contains('selected')) {
-                    label.classList.remove('selected');
-                    localStorage.setItem(`training-selected-${trainingId}`, false);
-                } else {
-                    label.classList.add('selected');
-                    localStorage.setItem(`training-selected-${trainingId}`, true);
-                }
+        if (hasLockedItems) {
+            document.querySelectorAll('.selectable-item').forEach((label) => {
+                label.classList.add('locked');
             });
-        });
+            document.getElementById('submitButton').style.display = 'none';
+            document.getElementById('advanceButton').style.display = 'flex';
+        } else {
+            document.querySelectorAll('.selectable-item').forEach((label) => {
+                label.addEventListener('click', (event) => {
+                    const input = label.querySelector('input');
+                    if (label.classList.contains('selected')) {
+                        label.classList.remove('selected');
+                        input.disabled = true;
+                    } else {
+                        label.classList.add('selected');
+                        input.disabled = false;
+                    }
+                });
+            });
+            document.getElementById('submitButton').style.display = 'flex';
+            document.getElementById('advanceButton').style.display = 'none';
+        }
     });
 </script>
 
@@ -125,6 +144,12 @@
     }
 
     .selectable-item p {
+        pointer-events: none;
+    }
+
+    .locked {
+        cursor: not-allowed;
+        opacity: 0.6;
         pointer-events: none;
     }
 </style>

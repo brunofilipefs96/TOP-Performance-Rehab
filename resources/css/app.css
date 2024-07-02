@@ -177,6 +177,30 @@
     padding-right: 1rem;
 }
 
+.spacer.half {
+    width: calc(100% - 2.5rem);
+    display: flex;
+}
+
+.spacer.half .half-filled {
+    width: 48%;
+    background-color: #ff5400;
+}
+
+.spacer.half::after {
+    content: '';
+    width: 52%;
+    background-color: gray;
+}
+
+.icon-wrapper {
+    position: absolute;
+    left: 50%; /* Ajustado para a esquerda */
+    transform: translate(-50%, -50%);
+    font-size: 35px;
+    color: #ff5400;
+    z-index: 10;
+}
 
 /* Dark Mode */
 .dark .step .number {
@@ -189,6 +213,14 @@
     background-color: #84cc16; /* Lime color */
 }
 
+.dark .spacer.half .half-filled {
+    background-color: #84cc16; /* Lime color */
+}
+
+.dark .spacer.half::after {
+    background-color: #3d3d3d; /* Dark gray color */
+}
+
 /* Light Mode */
 .step .number {
     background-color: #555555;
@@ -198,6 +230,14 @@
 .step.complete .spacer,
 .step.active .number {
     background-color: #3b82f6; /* Blue color */
+}
+
+.spacer.half .half-filled {
+    background-color: #3b82f6; /* Blue color */
+}
+
+.spacer.half::after {
+    background-color: gray; /* Light gray color */
 }
 
 .fixed-button {
@@ -215,7 +255,8 @@
     background-color: rgba(0, 0, 0, 0.8);
     color: #fff;
 }
-
-
 /* Wizard CSS End */
+
+
+
 

@@ -15,45 +15,46 @@ class SetupController extends Controller
     {
         $user = auth()->user();
 
-        if (!$user->hasRole('client') || ($user->membership && $user->membership->status->name == 'active')) {
-            return redirect()->route('dashboard.index')->with('error', 'Não tem permissão para aceder a esta página.');
+        if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name == 'active') && ($user->membership->insurance->status->name == 'active'))) {
+            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
         }
 
-        // Verifica se o usuário não tem endereço cadastrado
         if (!$user->addresses || $user->addresses->count() <= 0) {
             return redirect()->route('setup.addressShow');
         }
 
-        // Verifica se o usuário não tem uma associação ou se a associação não está ativa
         if (!$user->membership) {
             return redirect()->route('setup.membershipShow');
         }
 
-        // Verifica se o usuário não tem tipos de treinamento selecionados
         if ($user->membership->trainingTypes->count() <= 0) {
             return redirect()->route('setup.trainingTypesShow');
         }
 
-        // Verifica se o usuário não tem seguro ou se o seguro não está ativo
+        if($user->addresses || $user->addresses->count() <= 0 && $user->membership && $user->membership->trainingTypes->count() <= 0 && $user->insurance) {
+            if($user->membership->status->name == 'active' && $user->membership->insurance->status->name) {
+                return redirect()->route('setup.paymentShow');
+            }
+            return redirect()->route('setup.awaitingShow');
+        }
+
         if (!$user->insurance) {
             return redirect()->route('setup.insuranceShow');
         }
 
-        // Verifica se o pagamento não foi realizado
         if ($user->membership->status->name == 'pending_payment' && $user->insurance->status->name == 'pending_payment') {
             return redirect()->route('setup.paymentShow');
         }
 
-        // Se todos os passos estão completos, redireciona para o dashboard
-        return redirect()->route('dashboard.index')->with('success', 'Processo de inscrição completo.');
+        return redirect()->route('dashboard')->with('success', 'Processo de inscrição completo.');
     }
 
     public function addressShow()
     {
         $user = auth()->user();
 
-        if (!$user->hasRole('client') || ($user->membership && $user->membership->status->name == 'active')) {
-            return redirect()->route('dashboard.index')->with('error', 'Não tem permissão para aceder a esta página.');
+        if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name == 'active') && ($user->membership->insurance->status->name == 'active'))) {
+            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
         }
 
         return view('pages.setup.addressShow', ['user' => $user]);
@@ -63,8 +64,12 @@ class SetupController extends Controller
     {
         $user = auth()->user();
 
-        if (!$user->hasRole('client') || ($user->membership && $user->membership->status->name == 'active')) {
-            return redirect()->route('dashboard.index')->with('error', 'Não tem permissão para aceder a esta página.');
+        if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name == 'active') && ($user->membership->insurance->status->name == 'active'))) {
+            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
+        }
+
+        if(!$user->addresses || $user->addresses->count() <= 0){
+            return redirect()->route('setup.addressShow');
         }
 
         return view('pages.setup.membershipShow', ['user' => $user]);
@@ -74,34 +79,63 @@ class SetupController extends Controller
     {
         $user = auth()->user();
 
-        if (!$user->hasRole('client') || ($user->membership && $user->membership->status->name == 'active')) {
-            return redirect()->route('dashboard.index')->with('error', 'Não tem permissão para aceder a esta página.');
+        if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name == 'active') && ($user->membership->insurance->status->name == 'active'))) {
+            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
         }
 
-        // Verifica se o usuário já tem uma associação
-        if (!$user->membership) {
+        if(!$user->addresses || $user->addresses->count() <= 0){
+            return redirect()->route('setup.addressShow');
+        } else if (!$user->membership) {
             return redirect()->route('setup.membershipShow');
         }
 
         $trainingTypes = TrainingType::all();
+        $userTrainingTypes = $user->membership->trainingTypes->pluck('id')->toArray() ?? [];
 
-        return view('pages.setup.trainingTypesShow', ['user' => $user, 'trainingTypes' => $trainingTypes]);
+        return view('pages.setup.trainingTypesShow', ['user' => $user, 'trainingTypes' => $trainingTypes, 'userTrainingTypes' => $userTrainingTypes]);
     }
+
 
     public function insuranceShow()
     {
         $user = auth()->user();
 
-        if (!$user->hasRole('client') || ($user->membership && $user->membership->status->name == 'active')) {
-            return redirect()->route('dashboard.index')->with('error', 'Não tem permissão para aceder a esta página.');
+        if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name == 'active') && ($user->membership->insurance->status->name == 'active'))) {
+            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
         }
 
-        // Verifica se o usuário já tem uma associação
-        if (!$user->membership) {
+        if(!$user->addresses || $user->addresses->count() <= 0){
+            return redirect()->route('setup.addressShow');
+        } else if (!$user->membership) {
             return redirect()->route('setup.membershipShow');
+        } else if(!$user->membership->trainingTypes) {
+            return redirect()->route('setup.trainingTypesShow');
         }
 
         return view('pages.setup.insuranceShow', ['user' => $user]);
+    }
+
+    public function awaitingShow()
+    {
+        $user = auth()->user();
+
+        if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name == 'active') && ($user->membership->insurance->status->name == 'active'))) {
+            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
+        }
+
+        if(!$user->addresses || $user->addresses->count() <= 0){
+            return redirect()->route('setup.addressShow');
+        } else if (!$user->membership) {
+            return redirect()->route('setup.membershipShow');
+        } else if(!$user->membership->trainingTypes) {
+            return redirect()->route('setup.trainingTypesShow');
+        } else if(!$user->membership->insurance){
+            return redirect()->route('setup.insuranceShow');
+        } else if (($user->membership && $user->membership->status->name == 'pending_payment') && ($user->membership->insurance->status->name == 'pending_payment')){
+            return redirect()->route('setup.paymentShow');
+        }
+
+        return view('pages.setup.awaitingShow', ['user' => $user]);
     }
 
     public function paymentShow()
@@ -109,13 +143,27 @@ class SetupController extends Controller
         $user = auth()->user();
 
         if (!$user->hasRole('client') || ($user->membership && $user->membership->status->name == 'active')) {
-            return redirect()->route('dashboard.index')->with('error', 'Não tem permissão para aceder a esta página.');
+            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
         }
 
-        // Verifica se o pagamento não foi realizado
-        if ($user->membership->status->name != 'pending_payment' || $user->insurance->status->name != 'pending_payment') {
+        if ($user->membership->status->name != 'pending_payment' && $user->insurance->status->name != 'pending_payment') {
             return redirect()->route('setup');
         }
+
+        if (!$user->hasRole('client') || ($user->membership && $user->membership->status->name == 'active')) {
+            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
+        }
+
+        if(!$user->addresses || $user->addresses->count() <= 0){
+            return redirect()->route('setup.addressShow');
+        } else if (!$user->membership) {
+            return redirect()->route('setup.membershipShow');
+        } else if(!$user->membership->trainingTypes) {
+            return redirect()->route('setup.trainingTypesShow');
+        } else if(!$user->membership->insurance){
+            return redirect()->route('setup.insuranceShow');
+        }
+
 
         return view('pages.setup.paymentShow',  ['user' => $user]);
     }
@@ -176,4 +224,20 @@ class SetupController extends Controller
 
         return redirect()->route('setup.membershipShow');
     }
+    public function storeTrainingTypes(Request $request)
+    {
+        $user = auth()->user();
+
+        if (!$user->membership) {
+            return redirect()->route('setup.membershipShow')->with('error', 'Você precisa primeiro criar uma matrícula.');
+        }
+
+        $trainingTypeIds = $request->input('trainingTypes', []);
+
+        $user->membership->trainingTypes()->sync($trainingTypeIds);
+
+        return redirect()->route('setup.insuranceShow')->with('success', 'Modalidades selecionadas com sucesso.');
+    }
+
+
 }

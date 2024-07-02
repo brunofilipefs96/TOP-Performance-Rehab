@@ -49,13 +49,15 @@
                     <div class="flex items-center mt-2">
                         <input type="radio" id="insurance_type_gym" name="insurance_type" value="Ginásio"
                                class="form-radio text-blue-500 dark:text-lime-400 h-4 w-4 dark:bg-gray-600 dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50 dark:checked:bg-lime-400 focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 checked:bg-blue-500"
-                               {{ old('insurance_type') == 'Ginásio' ? 'checked' : '' }} required>
+                               {{ old('insurance_type', $user->membership->insurance->insurance_type ?? '') == 'Ginásio' ? 'checked' : '' }}
+                               {{ $user->membership->insurance ? 'disabled' : '' }} required>
                         <label for="insurance_type_gym" class="ml-2 dark:text-gray-200 text-gray-800">Ginásio</label>
                     </div>
                     <div class="flex items-center">
                         <input type="radio" id="insurance_type_personal" name="insurance_type" value="Pessoal"
                                class="form-radio text-blue-500 dark:text-lime-400 h-4 w-4 dark:bg-gray-600 dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50 dark:checked:bg-lime-400 focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 checked:bg-blue-500"
-                               {{ old('insurance_type') == 'Pessoal' ? 'checked' : '' }} required>
+                               {{ old('insurance_type', $user->membership->insurance->insurance_type ?? '') == 'Pessoal' ? 'checked' : '' }}
+                               {{ $user->membership->insurance ? 'disabled' : '' }} required>
                         <label for="insurance_type_personal" class="ml-2 dark:text-gray-200 text-gray-800">Pessoal</label>
                     </div>
                     @error('insurance_type')
@@ -65,10 +67,12 @@
                     @enderror
                 </div>
 
-                <div class="mb-4" id="date_fields" style="display: none;">
+                <div class="mb-4" id="date_fields" style="display: {{ old('insurance_type', $user->membership->insurance->insurance_type ?? '') == 'Pessoal' ? 'block' : 'none' }};">
                     <div class="mb-4">
                         <label for="start_date" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Data de Início</label>
-                        <input type="date" id="start_date" name="start_date" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white" value="{{ old('start_date') }}">
+                        <input type="date" id="start_date" name="start_date" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white"
+                               value="{{ old('start_date', $user->membership->insurance->start_date ?? '') }}"
+                            {{ $user->membership->insurance ? 'disabled' : '' }}>
                         @error('start_date')
                         <span class="text-red-500 text-sm mt-2" role="alert">
                             <strong>{{ $message }}</strong>
@@ -78,7 +82,9 @@
 
                     <div class="mb-4">
                         <label for="end_date" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Data de Término</label>
-                        <input type="date" id="end_date" name="end_date" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white" value="{{ old('end_date') }}">
+                        <input type="date" id="end_date" name="end_date" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white"
+                               value="{{ old('end_date', $user->membership->insurance->end_date ?? '') }}"
+                            {{ $user->membership->insurance ? 'disabled' : '' }}>
                         @error('end_date')
                         <span class="text-red-500 text-sm mt-2" role="alert">
                             <strong>{{ $message }}</strong>
@@ -94,15 +100,18 @@
                         Voltar
                     </a>
 
-                    <div class="flex gap-2">
+                    <div class="flex gap-2 items-center">
                         @if(!$user->membership->insurance)
-                            <button type="submit"
+                            <p id="insurance_message" class="mt-1 text-sm text-red-500">
+                                {{ __("Você precisa selecionar um tipo de seguro antes de continuar.") }}
+                            </p>
+                            <button id="insurance_submit_button" type="submit" style="display: none;"
                                     class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm w-full justify-center max-w-[150px]">
                                 Avançar
                                 <i class="fa-solid fa-arrow-right w-4 h-4 ml-2"></i>
                             </button>
                         @else
-                            <a href="{{ route('setup.paymentShow') }}"
+                            <a href="{{ route('setup.awaitingShow') }}"
                                class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm w-full justify-center max-w-[150px]">
                                 Avançar
                                 <i class="fa-solid fa-arrow-right w-4 h-4 ml-2"></i>
@@ -122,8 +131,8 @@
         const dateFields = document.getElementById('date_fields');
         const startDateField = document.getElementById('start_date');
         const endDateField = document.getElementById('end_date');
-        const submitButton = document.getElementById('submit-button');
-        const warningMessage = document.getElementById('warning-message');
+        const insuranceSubmitButton = document.getElementById('insurance_submit_button');
+        const insuranceMessage = document.getElementById('insurance_message');
 
         function toggleDateFields() {
             if (insuranceTypePersonal.checked) {
@@ -131,8 +140,12 @@
                 const today = new Date();
                 const startDate = today.toISOString().split('T')[0];
                 const endDate = new Date(today.setFullYear(today.getFullYear() + 1)).toISOString().split('T')[0];
-                startDateField.value = startDate;
-                endDateField.value = endDate;
+                if (!startDateField.value) {
+                    startDateField.value = startDate;
+                }
+                if (!endDateField.value) {
+                    endDateField.value = endDate;
+                }
             } else {
                 dateFields.style.display = 'none';
                 startDateField.value = '';
@@ -142,22 +155,18 @@
 
         function toggleSubmitButton() {
             if (insuranceTypePersonal.checked || insuranceTypeGym.checked) {
-                submitButton.classList.remove('hidden');
-                warningMessage.classList.add('hidden');
+                insuranceSubmitButton.style.display = 'block';
+                insuranceMessage.style.display = 'none';
             } else {
-                submitButton.classList.add('hidden');
-                warningMessage.classList.remove('hidden');
+                insuranceSubmitButton.style.display = 'none';
+                insuranceMessage.style.display = 'block';
             }
         }
 
-        insuranceTypePersonal.addEventListener('change', function () {
-            toggleDateFields();
-            toggleSubmitButton();
-        });
-        insuranceTypeGym.addEventListener('change', function () {
-            toggleDateFields();
-            toggleSubmitButton();
-        });
+        insuranceTypePersonal.addEventListener('change', toggleDateFields);
+        insuranceTypePersonal.addEventListener('change', toggleSubmitButton);
+        insuranceTypeGym.addEventListener('change', toggleDateFields);
+        insuranceTypeGym.addEventListener('change', toggleSubmitButton);
 
         // Initialize the state on page load
         toggleDateFields();

@@ -62,6 +62,9 @@
                             @elseif($insurance->status->name == 'frozen')
                                 <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Congelado</p>
                                 <span class="h-3 w-3 bg-blue-500 rounded-full inline-block"></span>
+                            @elseif($insurance->status->name == 'pending_payment')
+                                <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Pagamento em espera</p>
+                                <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
                             @endif
                         @endif
                     </div>
@@ -70,28 +73,31 @@
                         @can('update', $insurance)
                             @if($insurance->status && ($insurance->status->name == 'pending' || $insurance->status->name == 'frozen'))
                                 <div class="flex justify-center">
-                                    <form
-                                        action="{{ route('insurances.update', ['insurance' => $insurance->id]) }}"
-                                        method="POST">
-                                        @csrf
-                                        @method('PATCH')
-                                        <input type="hidden" name="status_name" value="active">
-                                        <button type="submit"
-                                                class="inline-block bg-green-500 mt-4 mr-1 py-2 px-6 rounded-md shadow-sm hover:bg-green-700 text-white">
-                                            Ativar
-                                        </button>
-                                    </form>
-                                    <form
-                                        action="{{ route('insurances.update', ['insurance' => $insurance->id]) }}"
-                                        method="POST">
-                                        @csrf
-                                        @method('PATCH')
-                                        <input type="hidden" name="status_name" value="rejected">
-                                        <button type="submit"
-                                                class="inline-block bg-red-500 mt-4 py-2 px-5 rounded-md shadow-sm hover:bg-red-700 text-white">
-                                            Rejeitar
-                                        </button>
-                                    </form>
+                                    @if($insurance->insurance_type == 'Pessoal')
+                                        <form
+                                            action="{{ route('insurances.update', ['insurance' => $insurance->id]) }}"
+                                            method="POST">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="hidden" name="status_name" value="active">
+                                            <button type="submit"
+                                                    class="inline-block bg-green-500 mt-4 mr-1 py-2 px-6 rounded-md shadow-sm hover:bg-green-700 text-white">
+                                                Aceitar
+                                            </button>
+                                        </form>
+                                    @elseif($insurance->insurance_type == 'Ginásio')
+                                        <form
+                                            action="{{ route('insurances.update', ['insurance' => $insurance->id]) }}"
+                                            method="POST">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="hidden" name="status_name" value="pending_payment">
+                                            <button type="submit"
+                                                    class="inline-block bg-yellow-500 mt-4 mr-1 py-2 px-6 rounded-md shadow-sm hover:bg-yellow-700 text-white">
+                                                Aceitar
+                                            </button>
+                                        </form>
+                                    @endif
                                 </div>
                             @endif
                             @if($insurance->status && ($insurance->status->name == 'active' || $insurance->status->name == 'pending'))

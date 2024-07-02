@@ -35,6 +35,9 @@
                         @elseif($membership->status->name == 'frozen')
                             <p class="dark:text-gray-400 text-gray-700 mr-2 align-middle">Estado: Congelado</p>
                             <span class="h-3 w-3 bg-blue-500 rounded-full inline-block"></span>
+                        @elseif($membership->status->name == 'pending_payment')
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Pagamento em espera</p>
+                            <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
                         @endif
                     </div>
                     <div class="flex justify-end items-center mt-4 gap-2">

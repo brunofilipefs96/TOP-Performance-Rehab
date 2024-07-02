@@ -39,7 +39,7 @@ class ComposerStaticInitda9b7a1dc1dd923105198c572cc7df8d
         'a1cfe24d14977df6878b9bf804af2d1c' => __DIR__ . '/..' . '/nunomaduro/collision/src/Adapters/Phpunit/Autoload.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
         '320163ac6b93aebe3dc25b60a0533d56' => __DIR__ . '/..' . '/spatie/laravel-ignition/src/helpers.php',
-        'c23e8f96f2281c042292a30d2b903c29' => __DIR__ . '/../..' . '/bootstrap/helpers.php',
+        'b4e3f29b106af37a2bb239f73cdf68c7' => __DIR__ . '/../..' . '/app/helpers.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -576,6 +576,7 @@ class ComposerStaticInitda9b7a1dc1dd923105198c572cc7df8d
         'App\\Http\\Controllers\\TrainingController' => __DIR__ . '/../..' . '/app/Http/Controllers/TrainingController.php',
         'App\\Http\\Controllers\\TrainingTypeController' => __DIR__ . '/../..' . '/app/Http/Controllers/TrainingTypeController.php',
         'App\\Http\\Controllers\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserController.php',
+        'App\\Http\\Middleware\\CheckGymSettings' => __DIR__ . '/../..' . '/app/Http/Middleware/CheckGymSettings.php',
         'App\\Http\\Requests\\Auth\\LoginRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Auth/LoginRequest.php',
         'App\\Http\\Requests\\ProfileUpdateRequest' => __DIR__ . '/../..' . '/app/Http/Requests/ProfileUpdateRequest.php',
         'App\\Http\\Requests\\StoreAddressRequest' => __DIR__ . '/../..' . '/app/Http/Requests/StoreAddressRequest.php',
@@ -781,6 +782,7 @@ class ComposerStaticInitda9b7a1dc1dd923105198c572cc7df8d
         'Database\\Seeders\\RoomSeeder' => __DIR__ . '/../..' . '/database/seeders/RoomSeeder.php',
         'Database\\Seeders\\SaleSeeder' => __DIR__ . '/../..' . '/database/seeders/SaleSeeder.php',
         'Database\\Seeders\\ServiceSeeder' => __DIR__ . '/../..' . '/database/seeders/ServiceSeeder.php',
+        'Database\\Seeders\\SettingsTableSeeder' => __DIR__ . '/../..' . '/database/seeders/SettingsTableSeeder.php',
         'Database\\Seeders\\StatusSeeder' => __DIR__ . '/../..' . '/database/seeders/StatusSeeder.php',
         'Database\\Seeders\\SurveySeeder' => __DIR__ . '/../..' . '/database/seeders/SurveySeeder.php',
         'Database\\Seeders\\TrainingSeeder' => __DIR__ . '/../..' . '/database/seeders/TrainingSeeder.php',

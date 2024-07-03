@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FreeTraining;
 use App\Models\Room;
 use App\Models\Training;
 use App\Http\Requests\StoreTrainingRequest;
@@ -20,40 +21,44 @@ class TrainingController extends Controller
     {
         $this->authorize('viewAny', Training::class);
 
+        $type = $request->input('type', 'accompanied'); // Default to 'accompanied'
         $currentWeek = Carbon::now()->startOfWeek();
         $selectedWeek = $request->get('week') ? Carbon::parse($request->get('week'))->startOfWeek() : $currentWeek;
 
-        if (!(auth()->user()->hasRole('admin') || auth()->user()->hasRole('personal_trainer')) && $selectedWeek->lt($currentWeek)) {
-            $selectedWeek = $currentWeek;
+        if ($type === 'free') {
+            $trainings = FreeTraining::whereBetween('start_date', [$selectedWeek, $selectedWeek->copy()->endOfWeek()])
+                ->orderBy('start_date', 'asc')
+                ->get()
+                ->groupBy(function ($training) {
+                    return Carbon::parse($training->start_date)->format('Y-m-d');
+                });
+        } else {
+            $trainings = Training::whereBetween('start_date', [$selectedWeek, $selectedWeek->copy()->endOfWeek()])
+                ->orderBy('start_date', 'asc')
+                ->get()
+                ->groupBy(function ($training) {
+                    return Carbon::parse($training->start_date)->format('Y-m-d');
+                });
         }
-
-        $trainings = Training::whereBetween('start_date', [$selectedWeek, $selectedWeek->copy()->endOfWeek()])
-            ->orderBy('start_date', 'asc')
-            ->get()
-            ->groupBy(function ($training) {
-                return Carbon::parse($training->start_date)->format('Y-m-d');
-            });
 
         $daysOfWeek = [];
         for ($date = $selectedWeek->copy(); $date->lte($selectedWeek->copy()->endOfWeek()); $date->addDay()) {
-            $daysOfWeek[] = $date->format('Y-m-d');
+            if ($date->dayOfWeek !== Carbon::SUNDAY) {
+                $daysOfWeek[] = $date->format('Y-m-d');
+            }
         }
 
-        $showMembershipModal = false;
-        if (auth()->user()->hasRole('client') && (!auth()->user()->membership || auth()->user()->membership->status->name !== 'active') && !session()->has('trainings_membership_modal_shown')) {
-            session(['trainings_membership_modal_shown' => true]);
-            $showMembershipModal = true;
-        }
+        $showMembershipModal = auth()->user()->hasRole('client') && (!auth()->user()->membership || auth()->user()->membership->status->name !== 'active');
 
         return view('pages.trainings.index', [
             'trainings' => $trainings,
             'currentWeek' => $currentWeek,
             'selectedWeek' => $selectedWeek,
             'daysOfWeek' => $daysOfWeek,
+            'type' => $type,
             'showMembershipModal' => $showMembershipModal,
         ]);
     }
-
 
     public function create()
     {
@@ -122,7 +127,6 @@ class TrainingController extends Controller
         return redirect()->route('trainings.index')->with('success', 'Treino criado com sucesso.');
     }
 
-
     public function show(Training $training)
     {
         $this->authorize('view', $training);
@@ -165,7 +169,6 @@ class TrainingController extends Controller
         return redirect()->route('trainings.index')->with('success', 'Treino atualizado com sucesso.');
     }
 
-
     public function destroy(Training $training)
     {
         $this->authorize('delete', $training);
@@ -178,7 +181,7 @@ class TrainingController extends Controller
         $this->authorize('enroll', $training);
         $user = auth()->user();
 
-        if (!$user->membership || $user->membership->status->name !== 'active') {
+        if ($user->hasRole('client') && (!$user->membership || $user->membership->status->name !== 'active')) {
             return redirect()->route('trainings.index')->with('error', 'Você precisa de uma matrícula ativa para se inscrever neste treino.');
         }
 
@@ -227,8 +230,6 @@ class TrainingController extends Controller
             return redirect()->route('trainings.index')->with('error', 'Não é possível cancelar a inscrição após o início do treino.');
         }
     }
-
-
 
     public function markPresence(Request $request, Training $training)
     {

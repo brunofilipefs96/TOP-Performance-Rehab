@@ -54,15 +54,15 @@ class StoreTrainingRequest extends FormRequest
                 }
             }
 
-            $startOfDay = Carbon::createFromFormat('Y-m-d H:i', $this->start_date . ' 06:00');
-            $endOfDay = Carbon::createFromFormat('Y-m-d H:i', $this->start_date . ' 23:59');
+            $horarioInicio = Carbon::createFromFormat('Y-m-d H:i', $this->start_date . ' ' . setting('horario_inicio', '06:00'));
+            $horarioFim = Carbon::createFromFormat('Y-m-d H:i', $this->start_date . ' ' . setting('horario_fim', '23:59'));
 
-            if ($startDate->lt($startOfDay) || $startDate->gt($endOfDay)) {
-                $validator->errors()->add('start_time', 'A hora de início deve estar entre 06:00 e 23:59.');
+            if ($startDate->lt($horarioInicio) || $startDate->gt($horarioFim)) {
+                $validator->errors()->add('start_time', 'A hora de início deve estar entre ' . setting('horario_inicio', '06:00') . ' e ' . setting('horario_fim', '23:59') . '.');
             }
 
-            if ($endDate->gt($endOfDay)) {
-                $validator->errors()->add('end_time', 'O treino deve terminar antes das 23:59.');
+            if ($endDate->gt($horarioFim)) {
+                $validator->errors()->add('end_time', 'O treino deve terminar antes das ' . setting('horario_fim', '23:59') . '.');
             }
 
             if ($this->has('repeat') && $this->repeat) {
@@ -90,12 +90,12 @@ class StoreTrainingRequest extends FormRequest
                 }
             }
 
-            if ($duration < 20) {
-                $validator->errors()->add('duration', 'A duração do treino deve ser de pelo menos 20 minutos.');
+            if ($duration < 30) {
+                $validator->errors()->add('duration', 'A duração do treino deve ser de pelo menos 30 minutos.');
             }
 
-            if ($duration > 120) {
-                $validator->errors()->add('duration', 'A duração do treino não pode exceder 2 horas.');
+            if ($duration > 90) {
+                $validator->errors()->add('duration', 'A duração do treino não pode exceder 90 minutos.');
             }
         });
     }

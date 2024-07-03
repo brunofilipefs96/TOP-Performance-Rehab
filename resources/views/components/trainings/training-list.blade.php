@@ -1,4 +1,9 @@
-@php use Carbon\Carbon; @endphp
+@php
+    use Carbon\Carbon;
+    $horarioInicio = Carbon::createFromFormat('H:i', setting('horario_inicio', '06:00'));
+    $horarioFim = Carbon::createFromFormat('H:i', setting('horario_fim', '23:59'));
+@endphp
+
 <div class="container mx-auto mt-5">
     <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Lista de Treinos</h1>
 

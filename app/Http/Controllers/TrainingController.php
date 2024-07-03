@@ -75,6 +75,13 @@ class TrainingController extends Controller
         $duration = (int) $validatedData['duration'];
         $endDate = $startDate->copy()->addMinutes($duration);
 
+        $horarioInicio = Carbon::createFromFormat('H:i', setting('horario_inicio', '06:00'));
+        $horarioFim = Carbon::createFromFormat('H:i', setting('horario_fim', '23:59'));
+
+        if ($startDate->lt($horarioInicio) || $endDate->gt($horarioFim)) {
+            return redirect()->back()->withErrors(['error' => 'O treino deve estar dentro do horário permitido.']);
+        }
+
         if ($request->has('repeat') && $request->repeat) {
             $repeatUntil = Carbon::parse($request->repeat_until);
             $daysOfWeek = collect($request->days_of_week)->map(fn($day) => (int)$day)->all();
@@ -115,6 +122,7 @@ class TrainingController extends Controller
         return redirect()->route('trainings.index')->with('success', 'Treino criado com sucesso.');
     }
 
+
     public function show(Training $training)
     {
         $this->authorize('view', $training);
@@ -142,6 +150,13 @@ class TrainingController extends Controller
         $duration = (int) $validatedData['duration'];
         $endDate = $startDate->copy()->addMinutes($duration);
 
+        $horarioInicio = Carbon::createFromFormat('H:i', setting('horario_inicio', '06:00'));
+        $horarioFim = Carbon::createFromFormat('H:i', setting('horario_fim', '23:59'));
+
+        if ($startDate->lt($horarioInicio) || $endDate->gt($horarioFim)) {
+            return redirect()->back()->withErrors(['error' => 'O treino deve estar dentro do horário permitido.']);
+        }
+
         $validatedData['start_date'] = $startDate->toDateTimeString();
         $validatedData['end_date'] = $endDate->toDateTimeString();
 
@@ -149,6 +164,7 @@ class TrainingController extends Controller
 
         return redirect()->route('trainings.index')->with('success', 'Treino atualizado com sucesso.');
     }
+
 
     public function destroy(Training $training)
     {

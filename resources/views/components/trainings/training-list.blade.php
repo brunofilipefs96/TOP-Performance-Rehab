@@ -11,13 +11,13 @@
             <div class="mb-10 flex justify-between items-center">
                 <a href="{{ route('trainings.create') }}">
                     <button type="button"
-                            class="bg-blue-500 text-white px-2 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-xs sm:text-sm">
+                            class="bg-blue-500 text-white px-2 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-bold flex items-center text-xs sm:text-sm">
                         <i class="fa-solid fa-plus w-4 h-4 mr-1 sm:mr-2"></i>
                         Adicionar Treino
                     </button>
                 </a>
                 <button type="button" onclick="openMultiDeleteModal()"
-                        class="bg-red-600 text-white flex items-center px-2 py-2 rounded-md hover:bg-red-500 dark:bg-red-500 dark:hover:text-gray-800 font-semibold text-xs sm:text-sm">
+                        class="bg-red-600 text-white flex items-center px-2 py-2 rounded-md hover:bg-red-500 dark:bg-red-500 dark:hover:text-gray-800 font-bold text-xs sm:text-sm">
                     <i class="fa-solid fa-trash-can w-4 h-4 mr-1 sm:mr-2"></i>
                     Remover Vários Treinos
                 </button>
@@ -65,9 +65,9 @@
                                 $trainingStartDateTime = Carbon::parse($training->start_date);
                                 $isTrainingStarted = $currentDateTime->gte($trainingStartDateTime);
                                 $hasActiveMembership = auth()->user()->membership && auth()->user()->membership->status->name === 'active';
-                                $totalInscritos = $training->users()->count();
-                                $remainingSpots = $training->max_students - $totalInscritos;
-                                $hasMarkedAllPresences = $training->users()->wherePivotNotNull('presence')->count() == $totalInscritos;
+                                $totalSubscribes = $training->users()->count();
+                                $remainingSpots = $training->max_students - $totalSubscribes;
+                                $hasMarkedAllPresences = $training->users()->wherePivotNotNull('presence')->count() == $totalSubscribes;
                             @endphp
                             <div
                                 class="training-card relative dark:bg-gray-800 bg-gray-300 rounded-lg overflow-hidden shadow-md text-white select-none transform transition-transform duration-300 hover:scale-105"

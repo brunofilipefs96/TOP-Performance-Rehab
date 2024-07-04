@@ -9,10 +9,10 @@
                 </div>
             </div>
             <div>
-                <h3 class="text-xl font-semibold mb-4 pr-20">Horário de Funcionamento</h3>
-                <ul class="space-y-2 text-gray-400 text-start">
-                    <li>Segunda-feira a sábado -------------- 10 AM - 05 PM</li>
-                    <li>Domingo ----------------------------- Fechado</li>
+                <h3 class="text-xl text-center font-bold mb-4">Horário de Funcionamento</h3>
+                <ul class="space-y-2 text-gray-400 ">
+                    <li>Seg a sáb --------- {{ setting('horario_inicio') }} às {{ setting('horario_fim') }} </li>
+                    <li>Dom --------------------- Fechado</li>
                 </ul>
             </div>
             <div>
@@ -26,17 +26,18 @@
                 <p class="text-gray-400 mb-4">
                     <strong>E-mail:</strong> info@sitename.com
                 </p>
-                <div class="flex justify-center space-x-4">
-                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-linkedin"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-google-plus"></i></a>
+                <div class="flex justify-center space-x-4 text-xl">
+                    <a href="#" class="text-gray-400 dark:hover:text-lime-400 hover:text-blue-500"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="text-gray-400 dark:hover:text-lime-400 hover:text-blue-500"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-gray-400 dark:hover:text-lime-400 hover:text-blue-500"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" class="text-gray-400 dark:hover:text-lime-400 hover:text-blue-500"><i class="fab fa-google-plus"></i></a>
                 </div>
             </div>
         </div>
         <div class="mt-8 pt-4">
             <div class="max-w-screen-xl mx-auto flex justify-center items-center text-gray-400 text-sm">
-                <p>2024 © Ginásio TOP Performance & Rehab</p>
+                <p>2024 © Ginásio TOP Performance & Rehab Developed by Team 1</p>
+                <h1>Developed by Team One</h1>
             </div>
         </div>
     </div>

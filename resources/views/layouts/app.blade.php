@@ -35,7 +35,9 @@
                 </main>
             </div>
         </div>
+    <div class="bg-gray-800 text-white p-4">
         @include('layouts.client-footer')
+    </div>
     @else
         <div class="flex-1 flex flex-col">
             @include('layouts.navigation')

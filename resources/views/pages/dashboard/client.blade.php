@@ -1,6 +1,8 @@
 <x-app-layout>
     <div class="container mx-auto pt-5 mb-10">
-        <h1 class="text-2xl font-bold mb-4 dark:text-white text-gray-800">Novidades para si!</h1>
+            <span class="text-3xl font-bold mb-4 dark:text-white text-gray-800">Bem vindo, <span  class="text-blue-500 dark:text-lime-500" >{{ Auth::user()->full_name }}</span>!</span>
+        <h1 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Temos produtos novos para si.</h1>
+
         <hr class="mb-10 border-gray-400 dark:border-gray-300">
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             @foreach ($products as $product)

@@ -53,6 +53,7 @@ class SetupController extends Controller
             //return redirect()->route('setup.paymentShow');
         }
 
+
         if($user->membership->status->name == 'rejected' || $user->membership->insurance->status->name == 'rejected') {
             return redirect()->route('awaitingShow');
         }
@@ -79,10 +80,6 @@ class SetupController extends Controller
             return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
         }
 
-        if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name == 'active') && ($user->membership->insurance->status->name == 'active'))) {
-            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
-        }
-
         if(!$user->addresses || $user->addresses->count() <= 0){
             return redirect()->route('setup.addressShow');
         }
@@ -98,9 +95,6 @@ class SetupController extends Controller
             return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
         }
 
-        if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name == 'active') && ($user->membership->insurance->status->name == 'active'))) {
-            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
-        }
 
         if(!$user->addresses || $user->addresses->count() <= 0){
             return redirect()->route('setup.addressShow');
@@ -118,10 +112,6 @@ class SetupController extends Controller
     public function insuranceShow()
     {
         $user = auth()->user();
-
-        if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name == 'active') && ($user->membership->insurance->status->name == 'active'))) {
-            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
-        }
 
         if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name == 'active') && ($user->membership->insurance->status->name == 'active'))) {
             return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
@@ -154,8 +144,11 @@ class SetupController extends Controller
             return redirect()->route('setup.trainingTypesShow');
         } else if(!$user->membership->insurance){
             return redirect()->route('setup.insuranceShow');
+        } else if (($user->membership && $user->membership->status->name == 'pending_payment') && ($user->membership->insurance->status->name == 'pending_payment')){
+            return redirect()->route('setup.paymentShow');
         }
 
+        }
 
         return view('pages.setup.awaitingShow', ['user' => $user]);
     }
@@ -166,6 +159,9 @@ class SetupController extends Controller
 
         if (!$user->hasRole('client') || ($user->membership && $user->membership->status->name == 'active')) {
             return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
+        }
+
+        if ($user->membership->status->name != 'pending_payment' && $user->insurance->status->name != 'pending_payment') {
         }
 
         if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name == 'active') && ($user->membership->insurance->status->name == 'active'))) {
@@ -263,6 +259,7 @@ class SetupController extends Controller
 
         return redirect()->route('setup.insuranceShow')->with('success', 'Modalidades selecionadas com sucesso.');
     }
+
 
     public function updateTrainingTypes(Request $request)
     {

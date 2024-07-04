@@ -142,8 +142,15 @@ class SaleController extends Controller
                     }
                 }
 
+                // Obter a URL do recibo
+                $charges = $paymentIntent->charges->data;
+                $receiptUrl = null;
+                if (count($charges) > 0) {
+                    $receiptUrl = $charges[0]->receipt_url;
+                }
+
                 // Enviar o e-mail de confirmação de pagamento
-                Mail::to($sale->user->email)->send(new PaymentConfirmation($sale));
+                Mail::to($sale->user->email)->send(new PaymentConfirmation($sale, $receiptUrl));
                 Log::info('Payment confirmation email sent to: ' . $sale->user->email);
             } else {
                 Log::error('Sale not found for Payment Intent ID: ' . $paymentIntent->id);
@@ -152,7 +159,6 @@ class SaleController extends Controller
 
         return response()->json(['status' => 'success']);
     }
-
     public function destroy(Sale $sale)
     {
         //

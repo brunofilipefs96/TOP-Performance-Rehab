@@ -15,10 +15,12 @@ class PaymentConfirmation extends Mailable
     use Queueable, SerializesModels;
 
     public $sale;
+    public $receiptUrl;
 
-    public function __construct(Sale $sale)
+    public function __construct(Sale $sale, $receiptUrl)
     {
         $this->sale = $sale;
+        $this->receiptUrl = $receiptUrl;
     }
 
     public function build()

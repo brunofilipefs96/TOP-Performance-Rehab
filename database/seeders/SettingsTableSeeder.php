@@ -16,10 +16,10 @@ class SettingsTableSeeder extends Seeder
         $settings = [
             ['key' => 'taxa_inscricao', 'value' => '50'],
             ['key' => 'taxa_seguro', 'value' => '20'],
-            ['key' => 'capacidade_maxima', 'value' => '100'],
-            ['key' => 'percentagem_aulas_livres', 'value' => '10'],
+            ['key' => 'capacidade_maxima', 'value' => '20'],
+            ['key' => 'percentagem_aulas_livres', 'value' => '40'],
             ['key' => 'horario_inicio', 'value' => '06:00'],
-            ['key' => 'horario_fim', 'value' => '22:00'],
+            ['key' => 'horario_fim', 'value' => '23:59'],
         ];
 
         foreach ($settings as $setting) {

@@ -82,7 +82,7 @@
                                     </x-dropdown-link>
                                 </div>
                             </div>
-
+                        <!--
                         @elseif(Auth::user()->hasRole('client'))
                             <x-nav-link :href="route('products.index')" :activeRoutes="['products.index']"
                                         class="group px-5 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
@@ -103,6 +103,7 @@
                                     class="absolute bottom-1 transform translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all">Treinos</span>
                             </x-nav-link>
                         @endif
+                        -->
 
                         @if(Auth::user()->hasRole('admin'))
                             <!-- Dropdown for Services, Memberships, Insurances, and Sales -->
@@ -138,6 +139,14 @@
                                     </x-dropdown-link>
                                 </div>
                             </div>
+
+                            <!-- Settings Icon -->
+                            <x-nav-link :href="route('settings.index')" :activeRoutes="['settings.index']"
+                                        class="group px-5 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                                <i class="fa-solid fa-cog text-xl transition-transform group-hover:-translate-y-2 group-hover:scale-75"></i>
+                                <span
+                                    class="absolute bottom-1 transform translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all">Definições</span>
+                            </x-nav-link>
                         @endif
                     @endif
 
@@ -247,7 +256,7 @@
                 @if(Auth::user()->hasRole('admin'))
                     <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')"
                                            class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                        {{ __('Users') }}
+                        {{ __('Utilizadores') }}
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('products.index')"
                                            :active="request()->routeIs('products.index')"
@@ -352,8 +361,15 @@
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')"
                                        class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                    {{ __('Profile') }}
+                    {{ __('Perfil') }}
                 </x-responsive-nav-link>
+
+                @if(Auth::user()->hasRole('admin'))
+                    <x-responsive-nav-link :href="route('settings.index')"
+                                           class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
+                        {{ __('Definições') }}
+                    </x-responsive-nav-link>
+                @endif
 
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">

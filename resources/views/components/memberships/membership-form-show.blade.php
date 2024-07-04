@@ -160,7 +160,7 @@
                                         <input type="hidden" name="status_name" value="pending_payment">
                                         <button type="submit"
                                                 class="inline-block bg-green-500 mt-4 mr-1 py-2 px-6 rounded-md shadow-sm hover:bg-green-700 text-white">
-                                            Ativar
+                                            Aceitar
                                         </button>
                                     </form>
                                     <form

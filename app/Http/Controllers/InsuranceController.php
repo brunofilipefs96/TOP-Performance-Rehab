@@ -46,7 +46,7 @@ class InsuranceController extends Controller
         ]);
 
         //return view('pages.insurances.show', ['insurance' => $insurance] )->with('success', 'Insurance Created!');
-        return redirect()->route('setup.paymentShow')->with('success', 'Insurance Created!');
+        return redirect()->route('setup.awaitingShow')->with('success', 'Insurance Created!');
     }
 
 

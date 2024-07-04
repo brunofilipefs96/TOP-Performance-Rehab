@@ -1,5 +1,5 @@
 <footer class="text-center text-sm text-gray-400 dark:text-white-70 dark:bg-gray-800 bg-gray-50">
-    <div class="dark:text-white text-gray-400">
+    <div class="dark:text-white text-gray-400 pt-6">
         <div class="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
                 <h3 class="text-xl font-semibold mb-4">Apoio ao Cliente </h3>

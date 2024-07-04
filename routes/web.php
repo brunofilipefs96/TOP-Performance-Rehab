@@ -79,6 +79,7 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified'])->group(function
     Route::post('/setup/process', [SetupController::class, 'processSetup'])->name('setup.process');
 
 
+
     // Rotas para TrainingController
     Route::get('trainings', [TrainingController::class, 'index'])->name('trainings.index');
     Route::get('trainings/create', [TrainingController::class, 'create'])->name('trainings.create');
@@ -87,6 +88,7 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified'])->group(function
     Route::get('trainings/{training}/edit', [TrainingController::class, 'edit'])->name('trainings.edit');
     Route::put('trainings/{training}', [TrainingController::class, 'update'])->name('trainings.update');
     Route::delete('trainings/{training}', [TrainingController::class, 'destroy'])->name('trainings.destroy');
+
     Route::post('trainings/{training}/enroll', [TrainingController::class, 'enroll'])->name('trainings.enroll');
     Route::post('trainings/{training}/cancel', [TrainingController::class, 'cancel'])->name('trainings.cancel');
     Route::post('trainings/{training}/mark-presence', [TrainingController::class, 'markPresence'])->name('trainings.markPresence');

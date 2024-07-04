@@ -140,7 +140,7 @@
             <section class="py-20 text-center bg-gray-100 dark:bg-gray-800 rounded-2xl shadow-2xl">
                 <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Sobre nós</h2>
                 <p class="mb-8 text-gray-700 dark:text-gray-300">Descrição sobre o ginásio, suas instalações e missão.</p>
-                <img src="path/to/image.jpg" alt="Imagem do ginásio" class="mx-auto">
+                <img src="https://www.sorocaba.premiergym.com.br/img/servicos/capa/full-e4864124e4435ce0db29b8f573d13217.jpg" alt="Imagem do ginásio" class="mx-auto">
             </section>
 
             <!-- Map Section -->

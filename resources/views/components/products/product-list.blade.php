@@ -1,25 +1,37 @@
 <div class="container mx-auto mt-5">
     <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Lista de Produtos</h1>
-    @can('create', App\Models\Product::class)
         <div class="mb-10 flex justify-between items-center">
-            <a href="{{ url('products/create') }}">
-                <button type="button"
-                        class="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm">
-                    <i class="fa-solid fa-plus w-4 h-4 mr-2"></i>
-                    Adicionar Produto
-                </button>
-            </a>
-
+            @can('create', App\Models\Product::class)
+                <a href="{{ url('products/create') }}">
+                    <button type="button"
+                            class="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm">
+                        <i class="fa-solid fa-plus w-4 h-4 mr-2"></i>
+                        Adicionar Produto
+                    </button>
+                </a>
+            @endcan
             <div class="relative w-1/3">
-                <i class="fa-solid fa-magnifying-glass absolute w-5 h-5 left-3 top-1/2 transform -translate-y-1/2 text-black dark:text-white"></i>
-                <input type="text" id="search" placeholder="Pesquisar produtos..."
-                       class="w-full p-2 pl-10 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-light-gray dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
+                <form action="{{ route('products.index') }}" method="GET">
+                    <button type="submit" class="absolute w-6 h-6 left-3 top-1/2 transform -translate-y-1/2 text-black dark:text-white"><i class="fa-solid fa-magnifying-glass "></i></button>
+                    <input type="text" name="search" id="search" placeholder="Pesquisar produtos..."
+                           class="w-full p-2 pl-10 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-light-gray dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
+                </form>
             </div>
         </div>
-    @endcan
     <hr class="mb-10 border-gray-400 dark:border-gray-300">
+        @if(count($products) <= 0)
+            <div class="min-h-screen flex flex-col items-center">
+                <h1 class="dark:text-gray-400 text-gray-800 text-2xl mb-6"><i class="fa-solid fa-circle-exclamation"></i> Desculpe, não encontramos nenhum produto com este nome</h1>
+                <a href="{{ route ('products.index') }}">
+                    <button type="button"
+                            class="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm">
+                        Voltar a lista de produtos
+                    </button>
+                </a>
+            </div>
+        @endif
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 ">
         @foreach ($products as $product)
             <div
                 class="product-card dark:bg-gray-800 bg-gray-500 rounded-lg overflow-hidden shadow-md text-white select-none transform transition-transform duration-300 hover:scale-105 flex flex-col justify-between"
@@ -127,24 +139,24 @@
         document.getElementById(`delete-form-${productDeleted}`).submit();
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById('search');
-
-        if (searchInput) {
-            searchInput.addEventListener('input', filterProducts);
-        }
-
-        function filterProducts() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const productCards = document.querySelectorAll('.product-card');
-            productCards.forEach(card => {
-                const name = card.getAttribute('data-name').toLowerCase();
-                if (name.includes(searchTerm)) {
-                    card.classList.remove('hidden');
-                } else {
-                    card.classList.add('hidden');
-                }
-            });
-        }
-    });
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     const searchInput = document.getElementById('search');
+    //
+    //     if (searchInput) {
+    //         searchInput.addEventListener('input', filterProducts);
+    //     }
+    //
+    //     function filterProducts() {
+    //         const searchTerm = searchInput.value.toLowerCase();
+    //         const productCards = document.querySelectorAll('.product-card');
+    //         productCards.forEach(card => {
+    //             const name = card.getAttribute('data-name').toLowerCase();
+    //             if (name.includes(searchTerm)) {
+    //                 card.classList.remove('hidden');
+    //             } else {
+    //                 card.classList.add('hidden');
+    //             }
+    //         });
+    //     }
+    // });
 </script>

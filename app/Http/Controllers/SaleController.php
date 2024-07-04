@@ -102,6 +102,23 @@ class SaleController extends Controller
                 $sale->status_id = 6; // 6 represents 'paid'
                 $sale->save();
 
+                // Check if sale has no products or packs associated
+                if ($sale->products()->count() == 0 && $sale->packs()->count() == 0) {
+                    $membership = Membership::where('user_id', $sale->user_id)->first();
+                    if ($membership) {
+                        $membership->status_id = 2; // 2 represents 'active'
+                        $membership->save();
+
+                        // Update insurance status
+                        $insurance = $membership->insurance;
+                        if ($insurance) {
+                            $insurance->status_id = 2; // 2 represents 'active'
+                            $insurance->save();
+                        }
+                    }
+                }
+
+                // Process packs if any
                 foreach ($sale->packs as $pack) {
                     $membership = Membership::where('user_id', $sale->user_id)->first();
                     if ($membership && $membership->status->name === 'active') {

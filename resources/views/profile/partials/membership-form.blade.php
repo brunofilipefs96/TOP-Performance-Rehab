@@ -20,6 +20,9 @@
                     @elseif($user->membership->status->name == 'frozen')
                         <span class="inline-block w-3 h-3 bg-blue-500 rounded-full" title="Congelada"></span>
                         <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Congelada</span>
+                    @elseif($user->membership->status->name == 'pending_payment')
+                        <span class="inline-block w-3 h-3 bg-yellow-500 rounded-full" title="Pagamento em espera"></span>
+                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Pagamento em espera</span>
                     @endif
                 </div>
             @endif
@@ -32,8 +35,9 @@
                 </a>
             </div>
         @else
+
             <div class="flex items-center mt-5">
-                <span class="mr-2 text-gray-500 dark:text-gray-400">Estado:</span>
+                <span class="mr-2 text-gray-500 dark:text-gray-200">Estado:</span>
                 <span class="inline-block w-3 h-3 bg-red-500 rounded-full text-gray-500 dark:text-gray-400" title="Sem Matrícula"></span>
                 <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Sem Matrícula</span>
             </div>
@@ -46,7 +50,7 @@
                 </div>
             @else
                 <div class="flex items-center mt-6">
-                    <a href="{{ route('memberships.create') }}">
+                    <a href="{{ route('setup') }}">
                         <button type="button" class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150">
                             Realizar Matrícula
                         </button>

@@ -1,3 +1,9 @@
+@php
+    use Carbon\Carbon;
+    $horarioInicio = setting('horario_inicio', '06:00');
+    $horarioFim = setting('horario_fim', '23:59');
+@endphp
+
 <div class="container mx-auto mt-10 pt-5 glass">
     <div class="flex justify-center">
         <div class="w-full max-w-lg dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm bg-gray-300 relative">
@@ -92,6 +98,7 @@
                         @error('start_time')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Horário permitido: {{ $horarioInicio }} - {{ $horarioFim }}</span>
                     </div>
                     <div class="mb-4">
                         <label for="duration" class="block dark:text-white text-gray-800">Duração</label>
@@ -164,17 +171,24 @@
             const duration = parseInt(durationInput.value);
             const endTime = new Date(startTime.getTime() + duration * 60000);
 
+            const horarioInicio = new Date(startDateInput.value + 'T' + '{{ $horarioInicio }}');
+            const horarioFim = new Date(startDateInput.value + 'T' + '{{ $horarioFim }}');
+
             if (startTime < now) {
                 event.preventDefault();
                 errorMsg.innerText = 'A hora de início deve ser superior à hora atual.';
                 return false;
-            } else if ((endTime - startTime) / (1000 * 60) < 20) {
+            } else if ((endTime - startTime) / (1000 * 60) < 30) {
                 event.preventDefault();
-                errorMsg.innerText = 'A duração do treino deve ser de pelo menos 20 minutos.';
+                errorMsg.innerText = 'A duração do treino deve ser de pelo menos 30 minutos.';
                 return false;
-            } else if ((endTime - startTime) / (1000 * 60) > 120) {
+            } else if ((endTime - startTime) / (1000 * 60) > 90) {
                 event.preventDefault();
-                errorMsg.innerText = 'A duração do treino não pode exceder 2 horas.';
+                errorMsg.innerText = 'A duração do treino não pode exceder 90 minutos.';
+                return false;
+            } else if (startTime < horarioInicio || startTime > horarioFim || endTime > horarioFim) {
+                event.preventDefault();
+                errorMsg.innerText = 'O treino deve estar entre ' + '{{ $horarioInicio }}' + ' e ' + '{{ $horarioFim }}' + '.';
                 return false;
             } else {
                 errorMsg.innerText = '';

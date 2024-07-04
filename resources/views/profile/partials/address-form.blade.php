@@ -8,7 +8,7 @@
     @if ($user->addresses && $user->addresses->count() > 0)
         <div>
             <x-input-label for="address" :value="__('Minhas Moradas')" class="mt-5 mb-1"/>
-            <select id="address" name="address" class="w-1/2 dark:border-gray-300 dark:border-gray-700 dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm" onchange="updateAddressFields()">
+            <select id="address" name="address" class="w-1/2 dark:border-gray-700 dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm" onchange="updateAddressFields()">
                 @foreach($user->addresses as $address)
                     <option value="{{ $address->id }}" @if($loop->first) selected @endif>{{ $address->name }}</option>
                 @endforeach

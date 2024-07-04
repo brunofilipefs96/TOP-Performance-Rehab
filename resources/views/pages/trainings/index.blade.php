@@ -8,28 +8,29 @@
                 Tipo de Treino:
             </label>
             <select id="trainingTypeSelector" class="w-auto dark:border-gray-700 dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm" style="padding-right: 1.5rem;" onchange="changeTrainingType()">
-                <option value="accompanied" {{ $type === 'accompanied' ? 'selected' : '' }}>Acompanhado</option>
-                <option value="free" {{ $type === 'free' ? 'selected' : '' }}>Livre</option>
+                <option value="accompanied" {{ request()->routeIs('trainings.index') ? 'selected' : '' }}>Acompanhado</option>
+                <option value="free" {{ request()->routeIs('free_trainings.index') ? 'selected' : '' }}>Livre</option>
             </select>
         </div>
 
         <!-- Include the appropriate component based on the selected type -->
-        @if($type === 'accompanied')
+        @if(request()->routeIs('trainings.index'))
             @component('components.trainings.training-list', [
                 'trainings' => $trainings,
                 'currentWeek' => $currentWeek,
                 'selectedWeek' => $selectedWeek,
                 'daysOfWeek' => $daysOfWeek,
-                'type' => $type,
+                'type' => 'accompanied',
                 'showMembershipModal' => $showMembershipModal,
             ])
             @endcomponent
         @else
             @component('components.trainings.free-training-list', [
-                'trainings' => $trainings,
+                'freeTrainings' => $freeTrainings,
                 'currentWeek' => $currentWeek,
                 'selectedWeek' => $selectedWeek,
                 'daysOfWeek' => $daysOfWeek,
+                'selectedDay' => $selectedDay,
                 'showMembershipModal' => $showMembershipModal,
             ])
             @endcomponent
@@ -40,6 +41,6 @@
 <script>
     function changeTrainingType() {
         const type = document.getElementById('trainingTypeSelector').value;
-        window.location.href = `{{ url('trainings') }}?type=${type}`;
+        window.location.href = type === 'free' ? '{{ route('free_trainings.index') }}' : '{{ route('trainings.index') }}';
     }
 </script>

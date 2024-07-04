@@ -9,11 +9,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreTrainingRequest extends FormRequest
 {
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules()
     {
         return [
@@ -43,8 +38,13 @@ class StoreTrainingRequest extends FormRequest
             $endDate = $startDate->copy()->addMinutes($duration);
             $now = Carbon::now('Europe/Lisbon');
 
+            if ($startDate->isSunday()) {
+                $validator->errors()->add('start_date', 'Os treinos não podem ser agendados aos domingos.');
+            }
+
             $this->validatePersonalTrainerAvailability($validator, $startDate, $endDate);
             $this->validateRoomCapacity($validator, $startDate, $endDate);
+            $this->validateGymCapacity($validator, $startDate, $endDate, $this->max_students);
 
             if (Carbon::today()->eq(Carbon::parse($this->start_date))) {
                 if ($startDate->lt($now)) {
@@ -54,14 +54,17 @@ class StoreTrainingRequest extends FormRequest
                 }
             }
 
-            $horarioInicio = Carbon::createFromFormat('Y-m-d H:i', $this->start_date . ' ' . setting('horario_inicio', '06:00'));
-            $horarioFim = Carbon::createFromFormat('Y-m-d H:i', $this->start_date . ' ' . setting('horario_fim', '23:59'));
+            $horarioInicio = setting('horario_inicio', '06:00');
+            $horarioFim = setting('horario_fim', '23:59');
 
-            if ($startDate->lt($horarioInicio) || $startDate->gt($horarioFim)) {
+            $startTime = $startDate->format('H:i');
+            $endTime = $endDate->format('H:i');
+
+            if ($startTime < $horarioInicio || $startTime > $horarioFim) {
                 $validator->errors()->add('start_time', 'A hora de início deve estar entre ' . setting('horario_inicio', '06:00') . ' e ' . setting('horario_fim', '23:59') . '.');
             }
 
-            if ($endDate->gt($horarioFim)) {
+            if ($endTime > $horarioFim) {
                 $validator->errors()->add('end_time', 'O treino deve terminar antes das ' . setting('horario_fim', '23:59') . '.');
             }
 
@@ -146,6 +149,32 @@ class StoreTrainingRequest extends FormRequest
 
         if ($conflictingTrainings->isNotEmpty()) {
             $validator->errors()->add('personal_trainer_id', 'O Personal Trainer selecionado já possui um treino marcado no horário selecionado.');
+        }
+    }
+
+    protected function validateGymCapacity($validator, $startDate, $endDate, $maxStudents)
+    {
+        $totalCapacity = setting('capacidade_maxima');
+        $freeTrainingPercentage = setting('percentagem_aulas_livres');
+        $freeTrainingCapacity = ceil($totalCapacity * ($freeTrainingPercentage / 100));
+        $maxRegularTrainingCapacity = $totalCapacity - $freeTrainingCapacity;
+
+        $regularTrainingOccupancy = Training::where(function ($query) use ($startDate, $endDate) {
+            $query->whereBetween('start_date', [$startDate, $endDate])
+                ->orWhereBetween('end_date', [$startDate, $endDate])
+                ->orWhere(function ($query) use ($startDate, $endDate) {
+                    $query->where('start_date', '<', $startDate)
+                        ->where('end_date', '>', $endDate);
+                });
+        })->sum('max_students');
+
+        if ($regularTrainingOccupancy + $maxStudents > $maxRegularTrainingCapacity) {
+            $availableCapacity = $maxRegularTrainingCapacity - $regularTrainingOccupancy;
+            if ($availableCapacity <= 0) {
+                $validator->errors()->add('max_students', 'A capacidade do ginásio para treinos acompanhados no horário selecionado está lotada.');
+            } else {
+                $validator->errors()->add('max_students', "A capacidade máxima atual do ginásio para este horário é {$availableCapacity}. Tente agendar noutro horário ou com menos alunos.");
+            }
         }
     }
 }

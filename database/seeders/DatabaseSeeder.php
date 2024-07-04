@@ -16,7 +16,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        //User::factory(10)->create();
+        $this->call(SettingsTableSeeder::class);
+
         $this->call(RoleSeeder::class);
 
         //Admin Account
@@ -86,16 +87,12 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('atec123'),
         ])->roles()->sync([4]);
 
-        //$this->call(AddressSeeder::class);
         $this->call(ProductSeeder::class);
         $this->call(RoomSeeder::class);
         $this->call(StatusSeeder::class);
-        /*$this->call(MembershipSeeder::class);
-        $this->call(InsuranceSeeder::class);*/
         $this->call(ServiceSeeder::class);
         $this->call(TrainingTypeSeeder::class);
         $this->call(PackSeeder::class);
         $this->call(SurveySeeder::class);
-        $this->call(SettingsTableSeeder::class);
     }
 }

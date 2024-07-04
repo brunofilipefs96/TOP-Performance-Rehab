@@ -138,9 +138,6 @@
                                 <label class="flex items-center dark:text-gray-200 text-gray-800">
                                     <input type="checkbox" name="days_of_week[]" value="6" class="form-checkbox h-5 w-5 text-blue-500 rounded dark:text-lime-500 mr-2"> Sáb
                                 </label>
-                                <label class="flex items-center dark:text-gray-200 text-gray-800">
-                                    <input type="checkbox" name="days_of_week[]" value="0" class="form-checkbox h-5 w-5 text-blue-500 rounded dark:text-lime-500 mr-2"> Dom
-                                </label>
                             </div>
                         </div>
                         <div class="mb-4">

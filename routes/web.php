@@ -72,9 +72,11 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified'])->group(function
     Route::get('/setup/membership', [SetupController::class, 'membershipShow'])->name('setup.membershipShow');
     Route::get('/setup/training-types', [SetupController::class, 'trainingTypesShow'])->name('setup.trainingTypesShow');
     Route::post('/setup/training-types', [SetupController::class, 'storeTrainingTypes'])->name('setup.storeTrainingTypes');
+    Route::put('/setup/training-types', [SetupController::class, 'updateTrainingTypes'])->name('setup.updateTrainingTypes');
     Route::get('/setup/insurance', [SetupController::class, 'insuranceShow'])->name('setup.insuranceShow');
     Route::get('/setup/awaiting', [SetupController::class, 'awaitingShow'])->name('setup.awaitingShow');
     Route::get('/setup/payment', [SetupController::class, 'paymentShow'])->name('setup.paymentShow');
+    Route::post('/setup/process', [SetupController::class, 'processSetup'])->name('setup.process');
 
 
     // Rotas para TrainingController

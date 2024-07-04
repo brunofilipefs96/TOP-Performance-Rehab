@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\FreeTraining;
-use App\Models\Room;
-use App\Models\TrainingType;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class FreeTrainingController extends Controller
 {
@@ -16,10 +14,33 @@ class FreeTrainingController extends Controller
 
     public function index(Request $request)
     {
-        $this->generateFreeTrainings();
-
+        $user = auth()->user();
         $currentWeek = Carbon::now()->startOfWeek();
-        $selectedWeek = $request->get('week') ? Carbon::parse($request->get('week'))->startOfWeek() : $currentWeek;
+        $selectedWeek = $request->query('week') ? Carbon::parse($request->query('week'))->startOfWeek() : $currentWeek;
+        $selectedDay = $request->query('day') ? Carbon::parse($request->query('day')) : null;
+
+        if ($user->hasRole('client')) {
+            if ($selectedWeek->lt($currentWeek)) {
+                $selectedWeek = $currentWeek;
+            } elseif ($selectedWeek->gt($currentWeek->copy()->addWeek())) {
+                $selectedWeek = $currentWeek->copy()->addWeek();
+            }
+        }
+
+        if ($selectedDay === null) {
+            if ($selectedWeek->eq($currentWeek)) {
+                $selectedDay = Carbon::now();
+            } else {
+                $selectedDay = $selectedWeek->copy()->startOfWeek(); // Aqui garantimos que o dia selecionado é segunda-feira
+            }
+        }
+
+        if ($selectedDay->dayOfWeek == Carbon::SUNDAY) {
+            $selectedDay = $selectedDay->addDay();
+        }
+
+        Session::put('selected_week', $selectedWeek);
+        Session::put('selected_day', $selectedDay);
 
         $freeTrainings = FreeTraining::whereBetween('start_date', [$selectedWeek, $selectedWeek->copy()->endOfWeek()])
             ->orderBy('start_date', 'asc')
@@ -29,21 +50,50 @@ class FreeTrainingController extends Controller
             });
 
         $daysOfWeek = [];
-        for ($date = $selectedWeek->copy(); $date->lte($selectedWeek->copy()->endOfWeek()); $date->addDay()) {
-            if ($date->dayOfWeek !== Carbon::SUNDAY) {
-                $daysOfWeek[] = $date->format('Y-m-d');
-            }
+        for ($date = $selectedWeek->copy()->startOfWeek(); $date->lte($selectedWeek->copy()->endOfWeek()); $date->addDay()) {
+            $daysOfWeek[] = $date->format('Y-m-d');
         }
 
-        $showMembershipModal = auth()->user()->hasRole('client') && (!auth()->user()->membership || auth()->user()->membership->status->name !== 'active');
+        $showMembershipModal = false;
+        if ($user->hasRole('client') && (!auth()->user()->membership || auth()->user()->membership->status->name !== 'active') && !session()->has('free_trainings_membership_modal_shown')) {
+            session(['free_trainings_membership_modal_shown' => true]);
+            $showMembershipModal = true;
+        }
 
-        return view('pages.free_trainings.index', [
+        return view('pages.trainings.index', [
             'freeTrainings' => $freeTrainings,
             'currentWeek' => $currentWeek,
             'selectedWeek' => $selectedWeek,
             'daysOfWeek' => $daysOfWeek,
+            'selectedDay' => $selectedDay,
             'showMembershipModal' => $showMembershipModal,
         ]);
+    }
+
+    public function changeWeek(Request $request)
+    {
+        $direction = $request->input('direction');
+        $selectedWeek = Session::get('selected_week', Carbon::now()->startOfWeek());
+
+        if ($direction === 'previous') {
+            $selectedWeek = $selectedWeek->subWeek();
+        } elseif ($direction === 'next') {
+            $selectedWeek = $selectedWeek->addWeek();
+        }
+
+        // Definindo a segunda-feira da semana selecionada como o dia selecionado
+        $selectedDay = $selectedWeek->copy()->startOfWeek();
+
+        Session::put('selected_week', $selectedWeek);
+        Session::put('selected_day', $selectedDay);
+        return redirect()->route('free_trainings.index', ['week' => $selectedWeek->format('Y-m-d')]);
+    }
+
+    public function selectDay(Request $request, $day)
+    {
+        $selectedDay = Carbon::parse($day);
+        Session::put('selected_day', $selectedDay);
+        return redirect()->route('free_trainings.index', ['day' => $selectedDay->format('Y-m-d'), 'week' => $selectedDay->startOfWeek()->format('Y-m-d')]);
     }
 
     public function enroll(Request $request, FreeTraining $freeTraining)
@@ -71,41 +121,5 @@ class FreeTrainingController extends Controller
         $user = auth()->user();
         $freeTraining->users()->detach($user->id);
         return redirect()->route('free_trainings.index')->with('success', 'Inscrição em treino livre cancelada com sucesso.');
-    }
-
-    private function generateFreeTrainings()
-    {
-        $totalCapacity = setting('total_gym_capacity');
-        $freeTrainingPercentage = setting('free_training_percentage');
-        $freeTrainingCapacity = ceil($totalCapacity * ($freeTrainingPercentage / 100));
-
-        $currentWeek = Carbon::now()->startOfWeek();
-        $nextWeek = $currentWeek->copy()->addWeek();
-
-        for ($date = $currentWeek->copy(); $date->lte($nextWeek->copy()->endOfWeek()); $date->addDay()) {
-            if ($date->dayOfWeek !== Carbon::SUNDAY) {
-                $this->createDailyFreeTrainings($date, $freeTrainingCapacity);
-            }
-        }
-    }
-
-    private function createDailyFreeTrainings(Carbon $date, $capacity)
-    {
-        $horarioInicio = Carbon::createFromFormat('H:i', setting('horario_inicio', '06:00'));
-        $horarioFim = Carbon::createFromFormat('H:i', setting('horario_fim', '23:59'));
-
-        $interval = 30;
-
-        for ($time = $horarioInicio->copy(); $time->lt($horarioFim); $time->addMinutes($interval)) {
-            $startDate = $date->copy()->setTimeFromTimeString($time->format('H:i'));
-            $endDate = $startDate->copy()->addMinutes($interval);
-
-            FreeTraining::firstOrCreate([
-                'name' => 'Treino Livre',
-                'max_students' => $capacity,
-                'start_date' => $startDate,
-                'end_date' => $endDate,
-            ]);
-        }
     }
 }

@@ -148,20 +148,26 @@
                                     @endcan
                                     @if (auth()->check() && auth()->user()->cannot('update', $training) && auth()->user()->cannot('delete', $training) && $training->personal_trainer_id !== auth()->user()->id)
                                         @if ($userPresence && !$userPresenceFalse && !$isTrainingStarted)
-                                            <button type="button"
-                                                    class="bg-red-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-400 text-sm"
-                                                    onclick="confirmCancel({{ $training->id }})">
-                                                <i class="fa-solid fa-x w-4 h-4 mr-2"></i>
-                                                Cancelar Inscrição
-                                            </button>
+                                            <form id="cancel-form-{{ $training->id }}" action="{{ route('trainings.cancel', $training->id) }}" method="POST" class="inline text-sm">
+                                                @csrf
+                                                <button type="button"
+                                                        class="bg-red-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-400 text-sm"
+                                                        onclick="confirmCancel({{ $training->id }})">
+                                                    <i class="fa-solid fa-x w-4 h-4 mr-2"></i>
+                                                    Cancelar Inscrição
+                                                </button>
+                                            </form>
                                         @elseif(!$userPresenceFalse && !$isTrainingStarted)
                                             @if ($remainingSpots > 0 && $currentDateTime->lt($trainingStartDateTime) && $hasActiveMembership)
-                                                <button type="button"
-                                                        class="dark:bg-lime-400 bg-blue-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-green-400 text-sm"
-                                                        onclick="confirmEnroll({{ $training->id }})">
-                                                    <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
-                                                    Inscrever-me
-                                                </button>
+                                                <form id="enroll-form-{{ $training->id }}" action="{{ route('trainings.enroll', $training->id) }}" method="POST" class="inline text-sm">
+                                                    @csrf
+                                                    <button type="button"
+                                                            class="dark:bg-lime-400 bg-blue-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-green-400 text-sm"
+                                                            onclick="confirmEnroll({{ $training->id }})">
+                                                        <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
+                                                        Inscrever-me
+                                                    </button>
+                                                </form>
                                             @endif
                                         @endif
                                     @endif
@@ -207,7 +213,7 @@
             </button>
             <form id="confirmation-form" method="POST" class="inline">
                 @csrf
-                @method('DELETE')
+                <input type="hidden" name="_method" value="DELETE">
                 <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500">Confirmar
                 </button>
             </form>
@@ -219,7 +225,7 @@
     let packDeleted = 0;
 
     function confirmDelete(id) {
-        openModal('Pretende eliminar?', 'Não poderá reverter isso!', `/trainings/${id}`);
+        openModal('Pretende eliminar?', 'Não poderá reverter isso!', `/trainings/${id}`, 'DELETE');
     }
 
     function cancelAction() {
@@ -250,17 +256,19 @@
     }
 
     function confirmEnroll(id) {
-        openModal('Pretende inscrever-se?', '', `/trainings/${id}/enroll`);
+        openModal('Pretende inscrever-se?', '', `/trainings/${id}/enroll`, 'POST');
     }
 
     function confirmCancel(id) {
-        openModal('Pretende cancelar a inscrição?', '', `/trainings/${id}/cancel`);
+        openModal('Pretende cancelar a inscrição?', '', `/trainings/${id}/cancel`, 'POST');
     }
 
-    function openModal(title, message, actionUrl) {
+    function openModal(title, message, actionUrl, method) {
         document.getElementById('confirmation-title').innerText = title;
         document.getElementById('confirmation-message').innerText = message;
-        document.getElementById('confirmation-form').action = actionUrl;
+        const confirmationForm = document.getElementById('confirmation-form');
+        confirmationForm.action = actionUrl;
+        confirmationForm.querySelector('input[name="_method"]').value = method;
         document.getElementById('confirmation-modal').classList.remove('hidden');
     }
 

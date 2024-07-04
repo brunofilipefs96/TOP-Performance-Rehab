@@ -26,6 +26,8 @@ class TrainingController extends Controller
         $selectedWeek = $request->get('week') ? Carbon::parse($request->get('week'))->startOfWeek() : $currentWeek;
 
         if ($type === 'free') {
+            $this->generateFreeTrainings();
+
             $trainings = FreeTraining::whereBetween('start_date', [$selectedWeek, $selectedWeek->copy()->endOfWeek()])
                 ->orderBy('start_date', 'asc')
                 ->get()
@@ -65,7 +67,7 @@ class TrainingController extends Controller
         $this->authorize('create', Training::class);
         $rooms = Room::all();
         $trainingTypes = TrainingType::all();
-        $personalTrainers = User::all()->filter(function($user) {
+        $personalTrainers = User::all()->filter(function ($user) {
             return $user->hasRole('personal_trainer');
         });
 
@@ -77,14 +79,20 @@ class TrainingController extends Controller
         $validatedData = $request->validated();
 
         $startDate = Carbon::createFromFormat('Y-m-d H:i', $validatedData['start_date'] . ' ' . $validatedData['start_time']);
-        $duration = (int) $validatedData['duration'];
+        $duration = (int)$validatedData['duration'];
         $endDate = $startDate->copy()->addMinutes($duration);
 
-        $horarioInicio = Carbon::createFromFormat('H:i', setting('horario_inicio', '06:00'));
-        $horarioFim = Carbon::createFromFormat('H:i', setting('horario_fim', '23:59'));
+        $startTime = $startDate->format('H:i');
+        $endTime = $endDate->format('H:i');
+        $horarioInicio = setting('horario_inicio', '06:00');
+        $horarioFim = setting('horario_fim', '23:59');
 
-        if ($startDate->lt($horarioInicio) || $endDate->gt($horarioFim)) {
+        if ($startTime < $horarioInicio || $endTime > $horarioFim) {
             return redirect()->back()->withErrors(['error' => 'O treino deve estar dentro do horário permitido.']);
+        }
+
+        if ($startDate->lt(Carbon::now())) {
+            return redirect()->back()->withErrors(['error' => 'Não é possível criar um treino no passado.']);
         }
 
         if ($request->has('repeat') && $request->repeat) {
@@ -93,6 +101,7 @@ class TrainingController extends Controller
 
             while ($startDate->lte($repeatUntil)) {
                 if (in_array($startDate->dayOfWeek, $daysOfWeek)) {
+                    // Verificação de repetição para data e hora atuais
                     if (Carbon::today()->eq($startDate->copy()->startOfDay()) && $startDate->lt(Carbon::now())) {
                         $startDate = $startDate->copy()->addDay();
                         $endDate = $startDate->copy()->addMinutes($duration);
@@ -139,7 +148,7 @@ class TrainingController extends Controller
         $this->authorize('update', $training);
         $rooms = Room::all();
         $trainingTypes = TrainingType::all();
-        $personalTrainers = User::all()->filter(function($user) {
+        $personalTrainers = User::all()->filter(function ($user) {
             return $user->hasRole('personal_trainer');
         });
 
@@ -151,14 +160,20 @@ class TrainingController extends Controller
         $validatedData = $request->validated();
 
         $startDate = Carbon::createFromFormat('Y-m-d H:i', $validatedData['start_date'] . ' ' . $validatedData['start_time']);
-        $duration = (int) $validatedData['duration'];
+        $duration = (int)$validatedData['duration'];
         $endDate = $startDate->copy()->addMinutes($duration);
 
-        $horarioInicio = Carbon::createFromFormat('H:i', setting('horario_inicio', '06:00'));
-        $horarioFim = Carbon::createFromFormat('H:i', setting('horario_fim', '23:59'));
+        $startTime = $startDate->format('H:i');
+        $endTime = $endDate->format('H:i');
+        $horarioInicio = setting('horario_inicio', '06:00');
+        $horarioFim = setting('horario_fim', '23:59');
 
-        if ($startDate->lt($horarioInicio) || $endDate->gt($horarioFim)) {
+        if ($startTime < $horarioInicio || $endTime > $horarioFim) {
             return redirect()->back()->withErrors(['error' => 'O treino deve estar dentro do horário permitido.']);
+        }
+
+        if ($training->users()->count() > 0) {
+            return redirect()->route('trainings.index')->with('error', 'Não é possível editar um treino com alunos inscritos.');
         }
 
         $validatedData['start_date'] = $startDate->toDateTimeString();
@@ -172,8 +187,14 @@ class TrainingController extends Controller
     public function destroy(Training $training)
     {
         $this->authorize('delete', $training);
+
+        // Verifica se há alunos inscritos no treino
+        if ($training->users()->count() > 0) {
+            return redirect()->route('trainings.index')->with('error', 'Não é possível eliminar um treino com alunos inscritos.');
+        }
+
         $training->delete();
-        return redirect()->route('trainings.index')->with('success', 'Training deleted successfully.');
+        return redirect()->route('trainings.index')->with('success', 'Treino eliminado com sucesso.');
     }
 
     public function enroll(Request $request, Training $training)
@@ -263,6 +284,10 @@ class TrainingController extends Controller
             $trainings = Training::whereIn('id', $trainingIds)->get();
 
             foreach ($trainings as $training) {
+                if ($training->users()->count() > 0) {
+                    return redirect()->route('trainings.index')->with('error', 'Não é possível remover um treino com alunos inscritos.');
+                }
+
                 if ($user->hasRole('admin') || $training->personal_trainer_id == $user->id) {
                     $training->delete();
                 } else {
@@ -272,5 +297,41 @@ class TrainingController extends Controller
         }
 
         return redirect()->route('trainings.index')->with('success', 'Treinos removidos com sucesso!');
+    }
+
+    private function generateFreeTrainings()
+    {
+        $totalCapacity = setting('capacidade_maxima');
+        $freeTrainingPercentage = setting('percentagem_aulas_livres');
+        $freeTrainingCapacity = ceil($totalCapacity * ($freeTrainingPercentage / 100));
+
+        $currentWeek = Carbon::now()->startOfWeek();
+        $nextWeek = $currentWeek->copy()->addWeek();
+
+        for ($date = $currentWeek->copy(); $date->lte($nextWeek->copy()->endOfWeek()); $date->addDay()) {
+            if ($date->dayOfWeek !== Carbon::SUNDAY) {
+                $this->createDailyFreeTrainings($date, $freeTrainingCapacity);
+            }
+        }
+    }
+
+    private function createDailyFreeTrainings(Carbon $date, $capacity)
+    {
+        $horarioInicio = Carbon::createFromFormat('H:i', setting('horario_inicio', '06:00'));
+        $horarioFim = Carbon::createFromFormat('H:i', setting('horario_fim', '23:59'));
+
+        $interval = 30;
+
+        for ($time = $horarioInicio->copy(); $time->lt($horarioFim); $time->addMinutes($interval)) {
+            $startDate = $date->copy()->setTimeFromTimeString($time->format('H:i'));
+            $endDate = $startDate->copy()->addMinutes($interval);
+
+            FreeTraining::firstOrCreate([
+                'name' => 'Treino Livre',
+                'max_students' => $capacity,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+            ]);
+        }
     }
 }

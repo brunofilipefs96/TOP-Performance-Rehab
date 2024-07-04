@@ -2,6 +2,8 @@
     use Carbon\Carbon;
     $horarioInicio = Carbon::createFromFormat('H:i', setting('horario_inicio', '06:00'));
     $horarioFim = Carbon::createFromFormat('H:i', setting('horario_fim', '23:59'));
+    $currentDateTime = Carbon::now();
+    $hasActiveMembership = auth()->user()->membership && auth()->user()->membership->status->name === 'active';
 @endphp
 
 <div class="container mx-auto mt-5">
@@ -9,118 +11,107 @@
 
     <div class="flex justify-between items-center mb-5">
         @if ($selectedWeek->gt($currentWeek) || auth()->user()->hasRole('admin'))
-            <a href="#" onclick="navigateToWeek('{{ $selectedWeek->copy()->subWeek()->format('Y-m-d') }}')"
-               class="bg-gray-300 text-gray-800 px-2 py-2 rounded-md hover:bg-gray-400 flex items-center text-xs sm:text-sm">
-                <i class="fa-solid fa-backward"></i>
-            </a>
+            <form method="POST" action="{{ route('free_trainings.changeWeek') }}">
+                @csrf
+                <input type="hidden" name="direction" value="previous">
+                <button type="submit" class="bg-gray-300 text-gray-800 px-2 py-2 rounded-md hover:bg-gray-400 flex items-center text-xs sm:text-sm">
+                    <i class="fa-solid fa-backward"></i>
+                </button>
+            </form>
         @endif
-        <span
-            class="text-lg font-bold dark:text-white text-gray-800 text-center truncate flex-grow flex justify-center items-center text-xs sm:text-sm">
+        <span class="text-lg font-bold dark:text-white text-gray-800 text-center truncate flex-grow flex justify-center items-center text-xs sm:text-sm">
             <i class="fa-solid fa-calendar-day mr-2"></i>{{ $selectedWeek->startOfWeek()->format('d/m/Y') }} - {{ $selectedWeek->endOfWeek()->format('d/m/Y') }}
         </span>
-        <a href="#" onclick="navigateToWeek('{{ $selectedWeek->copy()->addWeek()->format('Y-m-d') }}')"
-           class="bg-gray-300 text-gray-800 px-2 py-2 rounded-md hover:bg-gray-400 flex items-center text-xs sm:text-sm">
-            <i class="fa-solid fa-forward"></i>
-        </a>
+        @if ($selectedWeek->lt($currentWeek->copy()->addWeek()) || !auth()->user()->hasRole('client'))
+            <form method="POST" action="{{ route('free_trainings.changeWeek') }}">
+                @csrf
+                <input type="hidden" name="direction" value="next">
+                <button type="submit" class="bg-gray-300 text-gray-800 px-2 py-2 rounded-md hover:bg-gray-400 flex items-center text-xs sm:text-sm">
+                    <i class="fa-solid fa-forward"></i>
+                </button>
+            </form>
+        @endif
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-        @foreach ($daysOfWeek as $day)
+    <div class="flex justify-center mb-6 flex-wrap">
+        @foreach (['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'] as $index => $day)
             @php
-                $formattedDay = Carbon::parse($day)->locale('pt')->isoFormat('dddd');
-                $formattedDate = Carbon::parse($day)->format('d/m/Y');
-                $dayOfWeek = ucwords($formattedDay) . ' - ' . $formattedDate;
+                $date = \Carbon\Carbon::parse($selectedWeek)->startOfWeek()->addDays($index)->format('Y-m-d');
+                $isActive = \Carbon\Carbon::parse($selectedDay)->isSameDay(\Carbon\Carbon::parse($date));
             @endphp
-            <div class="border border-gray-200 bg-gray-200 dark:bg-gray-700 dark:border-gray-700 rounded-lg">
-                <div class="bg-gray-300 dark:bg-gray-800 p-4 text-gray-700 dark:text-gray-200 font-semibold">
-                    {{ $dayOfWeek }}
-                </div>
-                <div class="p-4 space-y-4">
-                    @if (isset($freeTrainings[$day]))
-                        @foreach ($freeTrainings[$day] as $freeTraining)
-                            @php
-                                $userPresence = $freeTraining->users()->where('user_id', auth()->id())->exists();
-                                $userPresenceFalse = $freeTraining->users()->where('user_id', auth()->id())->wherePivot('presence', false)->exists();
-                                $currentDateTime = Carbon::now();
-                                $freeTrainingStartDateTime = Carbon::parse($freeTraining->start_date);
-                                $isFreeTrainingStarted = $currentDateTime->gte($freeTrainingStartDateTime);
-                                $hasActiveMembership = auth()->user()->membership && auth()->user()->membership->status->name === 'active';
-                                $totalInscritos = $freeTraining->users()->count();
-                                $remainingSpots = $freeTraining->max_students - $totalInscritos;
-                                $hasMarkedAllPresences = $freeTraining->users()->wherePivotNotNull('presence')->count() == $totalInscritos;
-                            @endphp
-                            <div
-                                class="free-training-card relative dark:bg-gray-800 bg-gray-300 rounded-lg overflow-hidden shadow-md text-white select-none transform transition-transform duration-300 hover:scale-105"
-                                data-id="{{ $freeTraining->id }}" data-date="{{ $freeTraining->start_date }}"
-                                data-start-time="{{ $freeTraining->start_time }}">
-                                <a href="{{ route('free_trainings.show', $freeTraining->id) }}"
-                                   class="block p-4 dark:bg-gray-800 bg-gray-300">
-                                    @if ($userPresence && !$userPresenceFalse)
-                                        <div class="ribbon"><span>Inscrito</span></div>
-                                    @endif
-                                    <h3 class="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-100">{{ $freeTraining->name }}</h3>
-                                    <div class="dark:text-gray-400 text-gray-600 mb-2 flex items-center text-sm">
-                                        <i class="fa-solid fa-clock w-4 h-4 mr-2"></i>
-                                        <span>{{ Carbon::parse($freeTraining->start_date)->format('H:i') }}</span>
-                                    </div>
-                                    <div class="dark:text-gray-400 text-gray-600 mb-2 flex items-center text-sm">
-                                        <i class="fa-solid fa-hourglass-half w-4 h-4 mr-2"></i>
-                                        <span>{{ Carbon::parse($freeTraining->start_date)->diffInMinutes(Carbon::parse($freeTraining->end_date)) }} min.</span>
-                                    </div>
-                                    <div class="dark:text-gray-400 text-gray-600 mb-5 flex items-center text-sm">
-                                        <i class="fa-solid fa-square-check w-4 h-4 mr-2"></i>
-                                        Inscrições: {{ $totalInscritos }}/{{ $freeTraining->max_students }}
-                                        @if ($remainingSpots > 0)
-                                            <span class="inline-block w-3 h-3 bg-green-500 rounded-full ml-2"
-                                                  title="Vagas disponíveis"></span>
-                                        @else
-                                            <span class="inline-block w-3 h-3 bg-red-500 rounded-full ml-2"
-                                                  title="Cheio"></span>
-                                        @endif
-                                    </div>
-                                    @if ($isFreeTrainingStarted)
-                                        <div class="dark:text-gray-400 text-gray-600 mb-2 flex items-center text-sm">
-                                            <i class="fa-solid fa-info-circle w-4 h-4 mr-2"></i>
-                                            Treino a Decorrer/Finalizado
-                                        </div>
-                                    @endif
-                                    @if ($userPresence && $userPresenceFalse)
-                                        <p class="text-red-500 mb-5 text-sm">
-                                            <i class="fa-solid fa-ban mr-1"></i>
-                                            Cancelou a inscrição com menos de 12 horas de antecedência. Não pode voltar
-                                            a inscrever-se e o treino não será reembolsado.
-                                        </p>
-                                    @endif
-                                </a>
-                                <div class="flex flex-wrap justify-end items-center gap-2 p-4">
-                                    @if (auth()->check() && auth()->user()->cannot('update', $freeTraining) && auth()->user()->cannot('delete', $freeTraining))
-                                        @if ($userPresence && !$userPresenceFalse && !$isFreeTrainingStarted)
-                                            <button type="button"
-                                                    class="bg-red-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-400 text-sm"
-                                                    onclick="confirmCancel({{ $freeTraining->id }})">
-                                                <i class="fa-solid fa-x w-4 h-4 mr-2"></i>
-                                                Cancelar Inscrição
-                                            </button>
-                                        @elseif(!$userPresenceFalse && !$isFreeTrainingStarted)
-                                            @if ($remainingSpots > 0 && $currentDateTime->lt($freeTrainingStartDateTime) && $hasActiveMembership)
-                                                <button type="button"
-                                                        class="dark:bg-lime-400 bg-blue-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-green-400 text-sm"
-                                                        onclick="confirmEnroll({{ $freeTraining->id }})">
-                                                    <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
-                                                    Inscrever-me
-                                                </button>
-                                            @endif
-                                        @endif
-                                    @endif
-                                </div>
-                            </div>
-                        @endforeach
-                    @else
-                        <p class="text-gray-500 dark:text-gray-400">Nenhum treino disponível.</p>
-                    @endif
-                </div>
-            </div>
+            <a href="{{ route('free_trainings.selectDay', $date) }}" class="mx-1 px-2 py-1 rounded-md text-xs sm:text-sm {{ $isActive ? 'bg-blue-500 text-white dark:bg-lime-500' : 'bg-gray-300 text-gray-800' }}">
+                {{ $day }}<br>{{ \Carbon\Carbon::parse($date)->format('d/m') }}
+            </a>
         @endforeach
+    </div>
+
+    <div class="border border-gray-200 bg-gray-200 dark:bg-gray-700 dark:border-gray-700 p-4 rounded-lg">
+        <h3 class="bg-gray-300 dark:bg-gray-900 p-4 text-gray-700 dark:text-gray-200 font-semibold rounded-t-lg">
+            Treinos para {{ \Carbon\Carbon::parse($selectedDay)->locale('pt')->isoFormat('dddd, D MMMM YYYY') }}
+        </h3>
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
+            <thead class="bg-gray-50 dark:bg-gray-800">
+            <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    Hora
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    Treino
+                </th>
+            </tr>
+            </thead>
+            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-600">
+            @for ($hour = $horarioInicio->hour; $hour <= $horarioFim->hour; $hour++)
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-200">
+                        {{ str_pad($hour, 2, '0', STR_PAD_LEFT) }}:00
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
+                        @if(isset($freeTrainings[$selectedDay->format('Y-m-d')]))
+                            @foreach ($freeTrainings[$selectedDay->format('Y-m-d')] as $freeTraining)
+                                @php
+                                    $startDateTime = Carbon::parse($freeTraining->start_date);
+                                    $endDateTime = Carbon::parse($freeTraining->end_date);
+                                    $isFreeTrainingStarted = $currentDateTime->gte($startDateTime);
+                                    $userPresence = $freeTraining->users()->where('user_id', auth()->id())->exists();
+                                @endphp
+                                @if ($startDateTime->hour == $hour)
+                                    <div class="mb-2 p-2 bg-white dark:bg-gray-700 rounded shadow">
+                                        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-100">{{ $freeTraining->name }}</h3>
+                                        <p class="text-gray-600 dark:text-gray-400">
+                                            <i class="fa-solid fa-clock"></i> {{ $startDateTime->format('H:i') }} - {{ $endDateTime->format('H:i') }} ({{ $startDateTime->diffInMinutes($endDateTime) }} min)
+                                        </p>
+                                        <p class="text-gray-600 dark:text-gray-400">
+                                            <i class="fa-solid fa-square-check"></i> Inscrições: {{ $freeTraining->users()->count() }}/{{ $freeTraining->max_students }}
+                                        </p>
+                                        @if (!$isFreeTrainingStarted)
+                                            @if ($userPresence)
+                                                <form id="cancel-form-{{ $freeTraining->id }}" action="{{ route('free_trainings.cancel', $freeTraining->id) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="mt-1 bg-red-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-400 text-xs">
+                                                        <i class="fa-solid fa-x w-4 h-4 mr-2"></i> Cancelar Inscrição
+                                                    </button>
+                                                </form>
+                                            @elseif($freeTraining->users()->count() < $freeTraining->max_students && $currentDateTime->lt($startDateTime) && $hasActiveMembership)
+                                                <form method="POST" action="{{ route('free_trainings.enroll', $freeTraining->id) }}">
+                                                    @csrf
+                                                    <button type="submit" class="mt-1 bg-blue-500 text-white dark:bg-lime-500 dark:hover:bg-lime-400 rounded px-2 py-1 text-xs">
+                                                        <i class="fa-solid fa-check w-4 h-4 mr-2"></i> Inscrever-me
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        @else
+                                            <p class="text-gray-500 dark:text-gray-400">Treino a Decorrer/Finalizado</p>
+                                        @endif
+                                    </div>
+                                @endif
+                            @endforeach
+                        @endif
+                    </td>
+                </tr>
+            @endfor
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -142,24 +133,19 @@
         <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800" id="confirmation-title">Pretende eliminar?</h2>
         <p class="mb-4 text-red-500 dark:text-red-300" id="confirmation-message">Não poderá reverter isso!</p>
         <div class="flex justify-end gap-4">
-            <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400"
-                    onclick="cancelAction()">Cancelar
-            </button>
+            <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400" onclick="cancelAction()">Cancelar</button>
             <form id="confirmation-form" method="POST" class="inline">
                 @csrf
-                @method('DELETE')
-                <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500">Confirmar
-                </button>
+                <input type="hidden" name="_method" value="POST">
+                <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500">Confirmar</button>
             </form>
         </div>
     </div>
 </div>
 
 <script>
-    let packDeleted = 0;
-
     function confirmDelete(id) {
-        openModal('Pretende eliminar?', 'Não poderá reverter isso!', `/free-trainings/${id}`);
+        openModal('Pretende eliminar?', 'Não poderá reverter isso!', `/trainings/${id}`, 'DELETE');
     }
 
     function cancelAction() {
@@ -170,19 +156,6 @@
         document.getElementById('membership-modal').classList.add('hidden');
     }
 
-    function filterPacks() {
-        const searchTerm = document.getElementById('search').value.toLowerCase();
-        const packCards = document.querySelectorAll('.pack-card');
-        packCards.forEach(card => {
-            const name = card.getAttribute('data-name').toLowerCase();
-            if (name.includes(searchTerm)) {
-                card.classList.remove('hidden');
-            } else {
-                card.classList.add('hidden');
-            }
-        });
-    }
-
     function navigateToWeek(weekDate) {
         const url = new URL(window.location.href);
         url.searchParams.set('week', weekDate);
@@ -190,27 +163,24 @@
     }
 
     function confirmEnroll(id) {
-        openModal('Pretende inscrever-se?', '', `/free-trainings/${id}/enroll`);
+        openModal('Pretende inscrever-se?', '', `/free-trainings/${id}/enroll`, 'POST');
     }
 
     function confirmCancel(id) {
-        openModal('Pretende cancelar a inscrição?', '', `/free-trainings/${id}/cancel`);
+        openModal('Pretende cancelar a inscrição?', '', `/free-trainings/${id}/cancel`, 'POST');
     }
 
-    function openModal(title, message, actionUrl) {
+    function openModal(title, message, actionUrl, method) {
         document.getElementById('confirmation-title').innerText = title;
         document.getElementById('confirmation-message').innerText = message;
-        document.getElementById('confirmation-form').action = actionUrl;
+        const confirmationForm = document.getElementById('confirmation-form');
+        confirmationForm.action = actionUrl;
+        confirmationForm.querySelector('input[name="_method"]').value = method;
         document.getElementById('confirmation-modal').classList.remove('hidden');
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById('search');
-        if (searchInput) {
-            searchInput.addEventListener('input', filterPacks);
-        }
-
-        @if($showMembershipModal)
+        @if($showMembershipModal && !session('free_trainings_membership_modal_shown'))
         document.getElementById('membership-modal').classList.remove('hidden');
         @endif
     });

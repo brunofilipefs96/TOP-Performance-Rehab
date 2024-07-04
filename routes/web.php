@@ -95,6 +95,8 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified'])->group(function
     Route::post('free-trainings/{freeTraining}/enroll', [FreeTrainingController::class, 'enroll'])->name('free_trainings.enroll');
     Route::post('free-trainings/{freeTraining}/cancel', [FreeTrainingController::class, 'cancel'])->name('free_trainings.cancel');
     Route::post('/dashboard/change-week', [DashboardController::class, 'changeWeek'])->name('dashboard.changeWeek');
+    Route::post('/free-trainings/change-week', [FreeTrainingController::class, 'changeWeek'])->name('free_trainings.changeWeek');
+    Route::get('/free-trainings/select-day/{day}', [FreeTrainingController::class, 'selectDay'])->name('free_trainings.selectDay');
 
     Route::get('cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('cart/add-product', [CartController::class, 'addProductToCart'])->name('cart.addProduct');

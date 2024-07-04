@@ -20,6 +20,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Middleware\CheckGymSettings;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Mail\TestEmail;
+use Illuminate\Support\Facades\Mail;
 
 Route::get('/', function () {
     if (auth()->check()) {
@@ -121,6 +123,11 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified'])->group(function
 });
 
 Route::post('/webhook/stripe', [SaleController::class, 'handleWebhook'])->name('webhook.stripe');
+
+Route::get('/send-test-email', function () {
+    Mail::to('seu_email@mailtrap.io')->send(new TestEmail());
+    return 'Test email sent!';
+});
 
 
 require __DIR__.'/auth.php';

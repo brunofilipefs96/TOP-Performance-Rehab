@@ -80,7 +80,7 @@
 
                     <!-- New section for questions and answers -->
                     <div class="mb-4">
-                        <h2 class="mb-2 text-xl text-gray-900 dark:text-gray-200">Detalhes das Perguntas</h2>
+                        <h2 class="mb-2 text-xl text-gray-900 dark:text-gray-200">Observações</h2>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 @foreach ($membership->user->entries as $entry)

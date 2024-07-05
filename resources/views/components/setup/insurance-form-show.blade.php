@@ -37,15 +37,10 @@
                 </h2>
             </header>
 
-            <div class="mb-4">
-                <label for="name" class="block text-gray-800 dark:text-white">Nome</label>
-                <input type="text" value="{{ Auth::user()->full_name }}" disabled class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
-            </div>
-
             <form method="POST" action="{{ route('insurances.store') }}" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-4">
-                    <label class="block text-sm font-medium dark:text-gray-200 text-gray-800">Tipo de Seguro</label>
+                    <label class="block text-sm font-medium dark:text-gray-200 text-gray-800 mt-6">Tipo de Seguro</label>
                     <div class="flex items-center mt-2">
                         <input type="radio" id="insurance_type_gym" name="insurance_type" value="Ginásio"
                                class="form-radio text-blue-500 dark:text-lime-400 h-4 w-4 dark:bg-gray-600 dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50 dark:checked:bg-lime-400 focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 checked:bg-blue-500"

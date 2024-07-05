@@ -1,9 +1,27 @@
 <x-app-layout>
     <div class="container mx-auto pt-5 mb-10">
-            <span class="text-3xl font-bold mb-4 dark:text-white text-gray-800">Bem vindo, <span  class="text-blue-500 dark:text-lime-500" >{{ Auth::user()->full_name }}</span>!</span>
-        <h1 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Temos produtos novos para si.</h1>
+        <span class="text-3xl font-bold mb-2 dark:text-white text-gray-800">Bem vindo, <span  class="text-blue-500 dark:text-lime-500" >{{ Auth::user()->full_name }}</span>!</span>
+        <hr class="mb-6 border-gray-400 dark:border-gray-300 mt-6">
 
-        <hr class="mb-10 border-gray-400 dark:border-gray-300">
+        <!-- Verificação de matrícula -->
+        @if(!Auth::user()->membership)
+            <div class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 p-4 mb-6" role="alert">
+                <p class="font-bold">Ainda não se matriculou no nosso ginásio</p>
+                <p>Gostaria de se juntar a nós e começar sua jornada fitness? Clique no botão abaixo para se matricular agora!</p>
+                <a href="{{ route('setup') }}" class="mt-4 inline-block text-white dark:bg-lime-500 bg-blue-500 px-3 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400">Matricular-se</a>
+            </div>
+        @endif
+
+        <!-- Verificação de packs associados -->
+        @if(Auth::user()->membership && Auth::user()->membership->status_id == 2 && Auth::user()->membership->packs->isEmpty())
+            <div class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 p-4 mb-6" role="alert">
+                <p class="font-bold">Adquira Packs para Participar nas Aulas</p>
+                <p>Para usufruir das nossas aulas e se inscrever, adquira um dos nossos packs de aulas. Clique no botão abaixo para ver os packs disponíveis!</p>
+                <a href="{{ route('packs.index') }}" class="mt-4 inline-block text-white dark:bg-lime-500 bg-blue-500 px-3 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400">Ver Packs</a>
+            </div>
+        @endif
+
+        <h1 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Temos produtos novos para si.</h1>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             @foreach ($products as $product)
                 <div

@@ -80,7 +80,7 @@
                         <li class="flex w-full justify-between text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
                             <a href="{{ route('setup') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
                                 <i class="fa-regular fa-address-card text-xl transition-transform group-hover:-translate-y-1"></i>
-                                <span class="text-md ml-2">Mátricula</span>
+                                <span class="text-md ml-2">Matrícula</span>
                             </a>
                         </li>
                 </ul>
@@ -133,8 +133,9 @@
                     <ul class="space-y-4 p-4">
                         <li><a href="{{ route('dashboard') }}" class="block text-gray-800 dark:text-gray-200">Dashboard</a></li>
                         <li><a href="{{ route('profile.edit') }}" class="block text-gray-800 dark:text-gray-200">Perfil</a></li>
-                        <li><a href="{{ route('products.index') }}" class="block text-gray-800 dark:text-gray-200">Produtos</a></li>
+                        <li><a href="{{ route('setup') }}" class="block text-gray-800 dark:text-gray-200">Matrícula</a></li>
                         <li><a href="{{ route('packs.index') }}" class="block text-gray-800 dark:text-gray-200">Packs</a></li>
+                        <li><a href="{{ route('products.index') }}" class="block text-gray-800 dark:text-gray-200">Produtos</a></li>
                         <li><a href="{{ route('sales.index') }}" class="block text-gray-800 dark:text-gray-200">Minhas Encomendas</a></li>
                         <li><a href="{{ route('calendar') }}" class="block text-gray-800 dark:text-gray-200">Agenda</a></li>
                         <li><a href="{{ route('trainings.index') }}" class="block text-gray-800 dark:text-gray-200">Treinos</a></li>

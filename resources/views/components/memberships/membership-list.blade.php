@@ -19,24 +19,24 @@
             <div class="membership-card bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none"
                  data-name="{{ $membership->user->full_name }}" data-nif="{{ $membership->user->nif }}" data-status="{{ $membership->status->name }}">
                 <div class="p-4 dark:bg-gray-800 bg-gray-400">
-                    <h3 class="text-xl font-semibold mb-2">{{ $membership->user->full_name }}
-                        Nº {{ $membership->id }}</h3>
+                    <h3 class="text-xl font-semibold mb-2">{{ $membership->user->firstLastName() }}</h3>
+                    <p class="dark:text-gray-400 text-gray-700 mb-2">ID Cliente: {{ $membership->user->id }}</p>
                     <p class="dark:text-gray-400 text-gray-700 mb-2">Nif: {{ $membership->user->nif }}</p>
                     <div class="flex items-center mb-2">
                         @if($membership->status->name == 'active')
-                            <p class="dark:text-gray-400 text-gray-700 mr-2 align-middle">Estado: Ativo</p>
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Ativo</p>
                             <span class="h-3 w-3 bg-green-500 rounded-full inline-block"></span>
                         @elseif($membership->status->name == 'pending')
-                            <p class="dark:text-gray-400 text-gray-700 mr-2 align-middle">Estado: Pendente</p>
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Pendente</p>
                             <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
                         @elseif($membership->status->name == 'rejected')
-                            <p class="dark:text-gray-400 text-gray-700 mr-2 align-middle">Estado: Rejeitado</p>
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Rejeitado</p>
                             <span class="h-3 w-3 bg-red-500 rounded-full inline-block"></span>
                         @elseif($membership->status->name == 'frozen')
-                            <p class="dark:text-gray-400 text-gray-700 mr-2 align-middle">Estado: Congelado</p>
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Congelado</p>
                             <span class="h-3 w-3 bg-blue-500 rounded-full inline-block"></span>
                         @elseif($membership->status->name == 'pending_payment')
-                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Pagamento em espera</p>
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Aguardar Pagamento</p>
                             <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
                         @endif
                     </div>

@@ -50,7 +50,10 @@ class SetupController extends Controller
 
         if ($user->membership->status->name == 'pending_payment' && $user->insurance->status->name == 'pending_payment') {
             return redirect()->route('setup.awaitingShow');
-            //return redirect()->route('setup.paymentShow');
+        }
+
+        if ($user->membership->status->name == 'pending_payment' && $user->insurance->status->name == 'active') {
+            return redirect()->route('setup.awaitingShow');
         }
 
 
@@ -146,8 +149,6 @@ class SetupController extends Controller
             return redirect()->route('setup.insuranceShow');
         } else if (($user->membership && $user->membership->status->name == 'pending_payment') && ($user->membership->insurance->status->name == 'pending_payment')){
             return redirect()->route('setup.paymentShow');
-        }
-
         }
 
         return view('pages.setup.awaitingShow', ['user' => $user]);
@@ -306,33 +307,50 @@ class SetupController extends Controller
             $total += setting('taxa_seguro');
         }
 
-        // Criação do PaymentIntent no Stripe
+        // Inicialização do Stripe
         Stripe::setApiKey(env('STRIPE_SECRET'));
         $stripe = new StripeClient(env('STRIPE_SECRET'));
 
+        try {
+            // Criação do método de pagamento
+            $paymentMethod = $stripe->paymentMethods->create([
+                'type' => 'multibanco',
+                'billing_details' => [
+                    'email' => $user->email,
+                ],
+            ]);
 
+            // Criação do PaymentIntent no Stripe
+            $paymentIntent = $stripe->paymentIntents->create([
+                'amount' => $total * 100,
+                'currency' => 'eur',
+                'payment_method_types' => ['multibanco'],
+                'payment_method' => $paymentMethod->id,
+                'confirmation_method' => 'automatic',
+                'confirm' => true,
+            ]);
 
-        $paymentIntent = PaymentIntent::create([
-            'amount' => $total * 100,
-            'currency' => 'eur',
-            'payment_method_types' => ['multibanco'],
-            'confirmation_method' => 'automatic',
-        ]);
+            // Registro da venda
+            $sale = Sale::create([
+                'user_id' => $user->id,
+                'address_id' => $addressId,
+                'status_id' => 5,
+                'total' => $total,
+                'payment_method' => 'multibanco',
+                'nif' => $nif,
+            ]);
 
-        // Registro da venda
-        $sale = Sale::create([
-            'user_id' => $user->id,
-            'address_id' => $addressId,
-            'status_id' => 5,
-            'total' => $total,
-            'payment_method' => 'multibanco',
-            'nif' => $nif,
-        ]);
+            $sale->payment_intent_id = $paymentIntent->id;
+            $sale->save();
 
-        $sale->payment_intent_id = $paymentIntent->id;
-        $sale->save();
+            return redirect()->route('sales.show', ['sale' => $sale->id]);
 
-        return redirect()->route('sales.show', ['sale' => $sale->id]);
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Ocorreu um erro ao processar o pagamento: ' . $e->getMessage()])->withInput();
+        }
     }
+
+
+
 
 }

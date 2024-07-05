@@ -31,7 +31,7 @@ class FreeTrainingController extends Controller
             if ($selectedWeek->eq($currentWeek)) {
                 $selectedDay = Carbon::now();
             } else {
-                $selectedDay = $selectedWeek->copy()->startOfWeek(); // Aqui garantimos que o dia selecionado é segunda-feira
+                $selectedDay = $selectedWeek->copy()->startOfWeek();
             }
         }
 
@@ -81,7 +81,6 @@ class FreeTrainingController extends Controller
             $selectedWeek = $selectedWeek->addWeek();
         }
 
-        // Definindo a segunda-feira da semana selecionada como o dia selecionado
         $selectedDay = $selectedWeek->copy()->startOfWeek();
 
         Session::put('selected_week', $selectedWeek);

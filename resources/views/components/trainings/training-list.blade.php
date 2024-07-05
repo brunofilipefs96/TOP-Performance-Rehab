@@ -97,7 +97,7 @@
                                     </div>
                                     <div class="dark:text-gray-400 text-gray-600 mb-5 flex items-center text-sm">
                                         <i class="fa-solid fa-square-check w-4 h-4 mr-2"></i>
-                                        Inscrições: {{ $totalInscritos }}/{{ $training->max_students }}
+                                        Inscrições: {{ $totalSubscribes }}/{{ $training->max_students }}
                                         @if ($remainingSpots > 0)
                                             <span class="inline-block w-3 h-3 bg-green-500 rounded-full ml-2"
                                                   title="Vagas disponíveis"></span>

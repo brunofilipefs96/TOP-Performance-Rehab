@@ -77,6 +77,12 @@
                             <span class="text-md ml-2">Carrinho</span>
                         </a>
                     </li>
+                        <li class="flex w-full justify-between text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
+                            <a href="{{ route('setup') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                <i class="fa-regular fa-address-card text-xl transition-transform group-hover:-translate-y-1"></i>
+                                <span class="text-md ml-2">Mátricula</span>
+                            </a>
+                        </li>
                 </ul>
                 <div class="mt-auto mb-6">
                     <li class="flex w-full justify-between text-gray-400 cursor-pointer items-center dark:hover:text-lime-400 hover:text-blue-600">

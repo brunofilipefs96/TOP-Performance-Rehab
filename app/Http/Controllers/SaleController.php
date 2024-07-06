@@ -7,6 +7,7 @@ use App\Models\Sale;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Stripe\Charge;
 use Stripe\Event;
 use Stripe\PaymentIntent;
@@ -28,6 +29,10 @@ class SaleController extends Controller
 
         $query = Sale::query();
 
+        if (!Auth::user()->hasRole('admin')) {
+            $query->where('user_id', Auth::id());
+        }
+
         if ($status !== 'all') {
             $query->whereHas('status', function ($query) use ($status) {
                 $query->where('name', $status);
@@ -40,10 +45,14 @@ class SaleController extends Controller
 
         $query->orderBy('created_at', 'desc');
 
-        $sales = $query->paginate(12);
+        $sales = $query->paginate(12)->appends([
+            'status' => $status,
+            'nif' => $nif
+        ]);
 
         return view('pages.sales.index', ['sales' => $sales, 'status' => $status, 'nif' => $nif]);
     }
+
 
     public function show(Sale $sale)
     {

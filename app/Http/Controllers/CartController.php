@@ -18,6 +18,12 @@ class CartController extends Controller
 {
     public function index()
     {
+        $user = Auth::user();
+
+        if ($user->hasRole('admin')) {
+            return redirect()->route('products.index');
+        }
+
         $cart = session()->get('cart', []);
         $packCart = session()->get('packCart', []);
         $warnings = [];

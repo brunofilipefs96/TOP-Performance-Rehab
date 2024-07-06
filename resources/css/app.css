@@ -116,7 +116,6 @@
     background: #777;
 }
 
-/* Wizard CSS Start */
 .progress-steps {
     align-items: center;
     display: flex;
@@ -195,14 +194,13 @@
 
 .icon-wrapper {
     position: absolute;
-    left: 50%; /* Ajustado para a esquerda */
+    left: 50%;
     transform: translate(-50%, -50%);
     font-size: 35px;
     color: #ff5400;
     z-index: 10;
 }
 
-/* Dark Mode */
 .dark .step .number {
     background-color: #3d3d3d;
 }
@@ -210,18 +208,17 @@
 .dark .step.complete .number,
 .dark .step.complete .spacer,
 .dark .step.active .number {
-    background-color: #84cc16; /* Lime color */
+    background-color: #84cc16;
 }
 
 .dark .spacer.half .half-filled {
-    background-color: #84cc16; /* Lime color */
+    background-color: #84cc16;
 }
 
 .dark .spacer.half::after {
-    background-color: #3d3d3d; /* Dark gray color */
+    background-color: #3d3d3d;
 }
 
-/* Light Mode */
 .step .number {
     background-color: #555555;
 }
@@ -229,15 +226,15 @@
 .step.complete .number,
 .step.complete .spacer,
 .step.active .number {
-    background-color: #3b82f6; /* Blue color */
+    background-color: #3b82f6;
 }
 
 .spacer.half .half-filled {
-    background-color: #3b82f6; /* Blue color */
+    background-color: #3b82f6;
 }
 
 .spacer.half::after {
-    background-color: gray; /* Light gray color */
+    background-color: gray;
 }
 
 .fixed-button {
@@ -255,7 +252,6 @@
     background-color: rgba(0, 0, 0, 0.8);
     color: #fff;
 }
-/* Wizard CSS End */
 
 
 

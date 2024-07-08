@@ -21,6 +21,16 @@ class SetupController extends Controller
     {
         $user = auth()->user();
 
+        foreach ($user->sales as $sale){
+            if ($sale->products()->count() == 0 && $sale->packs()->count() == 0) {
+                if($user->membership->status->name == 'pending_payment') {
+                    return redirect('sales/'.$sale->id);
+                }else {
+                    return redirect('memberships/'.$user->membership->id);
+                }
+            }
+        }
+
         if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name == 'active') && ($user->membership->insurance->status->name == 'active'))) {
             return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
         }
@@ -60,6 +70,11 @@ class SetupController extends Controller
         if($user->membership->status->name == 'rejected' || $user->membership->insurance->status->name == 'rejected') {
             return redirect()->route('awaitingShow');
         }
+
+        if($user->membership->status->name == 'active' || $user->membership->status->name == 'frozen'){
+            return redirect()->route('membership.show');
+        }
+
 
         return redirect()->route('dashboard')->with('success', 'Processo de inscrição completo.');
     }

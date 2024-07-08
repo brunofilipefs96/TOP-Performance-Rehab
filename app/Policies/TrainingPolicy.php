@@ -57,7 +57,7 @@ class TrainingPolicy
      */
     public function delete(User $user, Training $training): bool
     {
-        return $user->hasRole('personal_trainer');
+        return $user->hasRole('admin') || $user->id === $training->personal_trainer_id;
     }
 
     /**
@@ -65,7 +65,7 @@ class TrainingPolicy
      */
     public function restore(User $user, Training $training): bool
     {
-        return $user->hasRole('personal_trainer');
+        return $user->hasRole('admin') || $user->id === $training->personal_trainer_id;
     }
 
     /**
@@ -73,7 +73,7 @@ class TrainingPolicy
      */
     public function forceDelete(User $user, Training $training): bool
     {
-        return $user->hasRole('personal_trainer');
+        return $user->hasRole('admin') || $user->id === $training->personal_trainer_id;
     }
 
     /**

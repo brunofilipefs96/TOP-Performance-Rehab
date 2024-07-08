@@ -6,6 +6,7 @@ use App\Models\Address;
 use App\Models\Sale;
 use App\Models\Setting;
 use App\Models\TrainingType;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,11 +22,11 @@ class SetupController extends Controller
     {
         $user = auth()->user();
 
-        foreach ($user->sales as $sale){
+        foreach ($user->sales as $sale) {
             if ($sale->products()->count() == 0 && $sale->packs()->count() == 0) {
-                if($user->membership->status->name == 'pending_payment') {
+                if ($user->membership->status->name == 'pending_payment') {
                     return redirect('sales/'.$sale->id);
-                }else {
+                } else {
                     return redirect('memberships/'.$user->membership->id);
                 }
             }
@@ -66,7 +67,6 @@ class SetupController extends Controller
             return redirect()->route('setup.awaitingShow');
         }
 
-
         if($user->membership->status->name == 'rejected' || $user->membership->insurance->status->name == 'rejected') {
             return redirect()->route('awaitingShow');
         }
@@ -74,7 +74,6 @@ class SetupController extends Controller
         if($user->membership->status->name == 'active' || $user->membership->status->name == 'frozen'){
             return redirect()->route('membership.show');
         }
-
 
         return redirect()->route('dashboard')->with('success', 'Processo de inscrição completo.');
     }
@@ -113,7 +112,6 @@ class SetupController extends Controller
             return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
         }
 
-
         if(!$user->addresses || $user->addresses->count() <= 0){
             return redirect()->route('setup.addressShow');
         } else if (!$user->membership) {
@@ -125,7 +123,6 @@ class SetupController extends Controller
 
         return view('pages.setup.trainingTypesShow', ['user' => $user, 'trainingTypes' => $trainingTypes, 'userTrainingTypes' => $userTrainingTypes]);
     }
-
 
     public function insuranceShow()
     {
@@ -261,6 +258,7 @@ class SetupController extends Controller
 
         return redirect()->route('setup.membershipShow');
     }
+
     public function storeTrainingTypes(Request $request)
     {
         $user = auth()->user();
@@ -275,7 +273,6 @@ class SetupController extends Controller
 
         return redirect()->route('setup.insuranceShow')->with('success', 'Modalidades selecionadas com sucesso.');
     }
-
 
     public function updateTrainingTypes(Request $request)
     {
@@ -316,18 +313,15 @@ class SetupController extends Controller
 
         $nif = $request->input('nif_option') === 'personal' ? $user->nif : '999999990';
 
-        // Calcula o total conforme as taxas de inscrição e seguro
         $total = setting('taxa_inscricao');
         if ($membership->insurance->insurance_type == 'Ginásio') {
             $total += setting('taxa_seguro');
         }
 
-        // Inicialização do Stripe
         Stripe::setApiKey(env('STRIPE_SECRET'));
         $stripe = new StripeClient(env('STRIPE_SECRET'));
 
         try {
-            // Criação do método de pagamento
             $paymentMethod = $stripe->paymentMethods->create([
                 'type' => 'multibanco',
                 'billing_details' => [
@@ -335,7 +329,6 @@ class SetupController extends Controller
                 ],
             ]);
 
-            // Criação do PaymentIntent no Stripe
             $paymentIntent = $stripe->paymentIntents->create([
                 'amount' => $total * 100,
                 'currency' => 'eur',
@@ -345,7 +338,14 @@ class SetupController extends Controller
                 'confirm' => true,
             ]);
 
-            // Registro da venda
+            $existingSale = Sale::where('user_id', $user->id)
+                ->where('created_at', '>=', Carbon::now()->subMinutes(1))
+                ->first();
+
+            if ($existingSale) {
+                return redirect()->back()->with('error', 'Você já processou um pagamento recentemente. Por favor, aguarde um momento.');
+            }
+
             $sale = Sale::create([
                 'user_id' => $user->id,
                 'address_id' => $addressId,
@@ -364,8 +364,4 @@ class SetupController extends Controller
             return redirect()->back()->withErrors(['error' => 'Ocorreu um erro ao processar o pagamento: ' . $e->getMessage()])->withInput();
         }
     }
-
-
-
-
 }

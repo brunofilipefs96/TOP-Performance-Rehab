@@ -83,6 +83,9 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified'])->group(function
 
 
     // Rotas para TrainingController
+    Route::get('trainings/multi-delete', [TrainingController::class, 'showMultiDelete'])->name('trainings.showMultiDelete');
+    Route::delete('trainings/multi-delete', [TrainingController::class, 'multiDelete'])->name('trainings.multiDelete');
+
     Route::get('trainings', [TrainingController::class, 'index'])->name('trainings.index');
     Route::get('trainings/create', [TrainingController::class, 'create'])->name('trainings.create');
     Route::post('trainings', [TrainingController::class, 'store'])->name('trainings.store');
@@ -94,7 +97,6 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified'])->group(function
     Route::post('trainings/{training}/enroll', [TrainingController::class, 'enroll'])->name('trainings.enroll');
     Route::post('trainings/{training}/cancel', [TrainingController::class, 'cancel'])->name('trainings.cancel');
     Route::post('trainings/{training}/mark-presence', [TrainingController::class, 'markPresence'])->name('trainings.markPresence');
-    Route::delete('trainings/multiDelete', [TrainingController::class, 'multiDelete'])->name('trainings.multiDelete');
 
     // Rotas para FreeTrainingController
     Route::get('free-trainings', [FreeTrainingController::class, 'index'])->name('free_trainings.index');

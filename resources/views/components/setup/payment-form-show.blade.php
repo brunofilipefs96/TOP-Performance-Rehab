@@ -34,7 +34,7 @@
             <div class="text-center mb-10">
                 <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Checkout</h1>
             </div>
-            <form action="{{ route('setup.process') }}" method="POST">
+            <form id="payment-form" action="{{ route('setup.process') }}" method="POST">
                 @csrf
 
                 <div class="mb-4">
@@ -69,15 +69,17 @@
                 @endif
 
                 <div class="flex justify-end mt-6">
-                    <button type="submit" class="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700">Finalizar Compra</button>
+                    <button type="submit" id="payment-button" class="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700">Finalizar Compra</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-
-
-
-
-
+<script>
+    document.getElementById('payment-form').addEventListener('submit', function (e) {
+        const paymentButton = document.getElementById('payment-button');
+        paymentButton.disabled = true;
+        paymentButton.innerHTML = 'Processando...';
+    });
+</script>

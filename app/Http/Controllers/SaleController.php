@@ -120,15 +120,15 @@ class SaleController extends Controller
                 $sale->save();
                 Log::info('Sale status updated to paid');
 
-                // Check if sale has no products or packs associated
                 if ($sale->products()->count() == 0 && $sale->packs()->count() == 0) {
                     $membership = Membership::where('user_id', $sale->user_id)->first();
                     if ($membership) {
                         $membership->status_id = 2;
+                        $membership->start_date = Carbon::now();
+                        $membership->end_date = Carbon::now()->addYear();
                         $membership->save();
-                        Log::info('Membership status updated to active');
+                        Log::info('Membership status updated to active with start and end dates');
 
-                        // Update insurance status
                         $insurance = $membership->insurance;
                         if ($insurance) {
                             $insurance->status_id = 2;
@@ -138,7 +138,6 @@ class SaleController extends Controller
                     }
                 }
 
-                // Process packs if any
                 foreach ($sale->packs as $pack) {
                     $membership = Membership::where('user_id', $sale->user_id)->first();
                     if ($membership && $membership->status->name === 'active') {
@@ -151,14 +150,12 @@ class SaleController extends Controller
                     }
                 }
 
-                // Obter a URL do recibo
                 $charges = $paymentIntent->charges->data;
                 $receiptUrl = null;
                 if (count($charges) > 0) {
                     $receiptUrl = $charges[0]->receipt_url;
                 }
 
-                // Enviar o e-mail de confirmação de pagamento
                 Mail::to($sale->user->email)->send(new PaymentConfirmation($sale, $receiptUrl));
                 Log::info('Payment confirmation email sent to: ' . $sale->user->email);
             } else {

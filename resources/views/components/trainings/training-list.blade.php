@@ -59,11 +59,13 @@
                         Adicionar Treino
                     </button>
                 </a>
-                <button type="button" onclick="openMultiDeleteModal()"
-                        class="bg-red-600 text-white flex items-center px-2 py-2 rounded-md hover:bg-red-500 dark:bg-red-500 dark:hover:text-gray-800 font-bold text-xs sm:text-sm">
-                    <i class="fa-solid fa-trash-can w-4 h-4 mr-1 sm:mr-2"></i>
-                    Remover Vários Treinos
-                </button>
+                <a href="{{ route('trainings.showMultiDelete') }}">
+                    <button type="button"
+                            class="bg-red-600 text-white flex items-center px-2 py-2 rounded-md hover:bg-red-500 dark:bg-red-500 dark:hover:text-gray-800 font-bold text-xs sm:text-sm">
+                        <i class="fa-solid fa-trash-can w-4 h-4 mr-1 sm:mr-2"></i>
+                        Remover Vários Treinos
+                    </button>
+                </a>
             </div>
         @endif
     @endcan
@@ -191,7 +193,7 @@
                                             </form>
                                         @endif
                                     @endcan
-                                    @if (auth()->check() && auth()->user()->cannot('update', $training) && auth()->user()->cannot('delete', $training) && $training->personal_trainer_id !== auth()->user()->id)
+                                    @if (auth()->check() && auth()->user()->hasRole('client') && auth()->user()->cannot('update', $training) && auth()->user()->cannot('delete', $training) && $training->personal_trainer_id !== auth()->user()->id)
                                         @if ($userPresence && !$userPresenceFalse && !$isTrainingStarted)
                                             <form id="cancel-form-{{ $training->id }}" action="{{ route('trainings.cancel', $training->id) }}" method="POST" class="inline text-sm">
                                                 @csrf

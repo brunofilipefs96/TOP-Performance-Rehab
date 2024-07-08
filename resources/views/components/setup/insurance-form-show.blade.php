@@ -112,7 +112,7 @@
                                 Avançar
                                 <i class="fa-solid fa-arrow-right w-4 h-4 ml-2"></i>
                             </a>
-                            @elseif($user->membership->insurance->status->name == 'pending_payment' && $user->membership->stratus->name == 'pending_payment')
+                            @elseif($user->membership->insurance->status->name == 'pending_payment' && $user->membership->status->name == 'pending_payment')
                             <a href="{{ route('setup.paymentShow') }}"
                                class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm w-full justify-center max-w-[150px]">
                                 Avançar

@@ -201,12 +201,27 @@ class TrainingController extends Controller
         $this->authorize('delete', $training);
 
         if ($training->users()->count() > 0) {
-            return redirect()->route('trainings.index')->with('error', 'Não é possível eliminar um treino com alunos inscritos.');
+            foreach ($training->users as $user) {
+                $today = Carbon::today();
+                $membershipPack = $user->membership->packs()
+                    ->where('expiry_date', '>=', $today)
+                    ->where('has_personal_trainer', true)
+                    ->orderBy('expiry_date', 'asc')
+                    ->first();
+
+                if ($membershipPack) {
+                    $membershipPack->pivot->quantity_remaining += 1;
+                    $membershipPack->pivot->save();
+                }
+
+                $training->users()->detach($user->id);
+            }
         }
 
         $training->delete();
         return redirect()->route('trainings.index')->with('success', 'Treino eliminado com sucesso.');
     }
+
 
     public function enroll(Request $request, Training $training)
     {

@@ -55,13 +55,9 @@ class TrainingPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Training $training): Response
+    public function delete(User $user, Training $training): bool
     {
-        if ($this->canModifyTraining($user, $training)) {
-            return Response::allow();
-        }
-
-        return Response::deny('Não pode apagar este treino.');
+        return $user->hasRole('personal_trainer');
     }
 
     /**
@@ -69,7 +65,7 @@ class TrainingPolicy
      */
     public function restore(User $user, Training $training): bool
     {
-        return $user->id === $training->personal_trainer_id || $user->hasRole('admin');
+        return $user->hasRole('personal_trainer');
     }
 
     /**
@@ -77,7 +73,7 @@ class TrainingPolicy
      */
     public function forceDelete(User $user, Training $training): bool
     {
-        return $user->id === $training->personal_trainer_id || $user->hasRole('admin');
+        return $user->hasRole('personal_trainer');
     }
 
     /**

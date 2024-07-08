@@ -177,9 +177,6 @@ class SetupController extends Controller
             return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
         }
 
-        if ($user->membership->status->name != 'pending_payment' && $user->insurance->status->name != 'pending_payment') {
-        }
-
         if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name == 'active') && ($user->membership->insurance->status->name == 'active'))) {
             return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
         }

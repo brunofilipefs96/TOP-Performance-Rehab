@@ -17,16 +17,27 @@
 
         @if ($hasActiveMembership)
             @php
-                $availablePack = $membership->packs()
+                $today = Carbon::today();
+                $availablePacks = $membership->packs()
                     ->where('quantity_remaining', '>', 0)
+                    ->where('expiry_date', '>=', $today)
+                    ->where('has_personal_trainer', true)
                     ->orderBy('expiry_date', 'asc')
-                    ->first();
+                    ->get();
+                $earliestExpiringPack = $availablePacks->first();
             @endphp
 
-            @if ($availablePack)
+            @if ($availablePacks->isNotEmpty())
                 <div class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 p-4 mb-6" role="alert">
-                    <p class="font-bold">Você tem aulas disponíveis!</p>
-                    <p>Ainda possui {{ $availablePack->pivot->quantity_remaining }} aulas restantes no pack que expira em {{ Carbon::parse($availablePack->pivot->expiry_date)->format('d/m/Y') }}.</p>
+                    <p class="font-bold mb-1">Possui Packs de aulas para utilizar:</p>
+                    <ul class="list-disc list-inside">
+                        @foreach ($availablePacks as $pack)
+                            <li class="ml-6">
+                                {{ $pack->name }}: {{ $pack->pivot->quantity_remaining }} aulas restantes, expira em {{ Carbon::parse($pack->pivot->expiry_date)->format('d/m/Y') }}.
+                            </li>
+                        @endforeach
+                    </ul>
+                    <p class="mt-2">O pack que será utilizado é o que expira mais brevemente.</p>
                 </div>
             @else
                 <div class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 p-4 mb-6" role="alert">

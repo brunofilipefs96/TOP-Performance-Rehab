@@ -200,7 +200,6 @@ class TrainingController extends Controller
     {
         $this->authorize('delete', $training);
 
-        // Verifica se há alunos inscritos no treino
         if ($training->users()->count() > 0) {
             return redirect()->route('trainings.index')->with('error', 'Não é possível eliminar um treino com alunos inscritos.');
         }
@@ -240,11 +239,12 @@ class TrainingController extends Controller
         $membershipPack = $user->membership->packs()
             ->where('quantity_remaining', '>', 0)
             ->where('expiry_date', '>=', $today)
+            ->where('has_personal_trainer', true)
             ->orderBy('expiry_date', 'asc')
             ->first();
 
         if (!$membershipPack) {
-            return redirect()->route('trainings.index')->with('error', 'Não possui nenhum pack para se inscrever.');
+            return redirect()->route('trainings.index')->with('error', 'Não possui nenhum pack de aulas acompanhadas disponível para se inscrever.');
         }
 
         if ($training->users()->count() < $training->max_students) {
@@ -274,6 +274,7 @@ class TrainingController extends Controller
             $today = Carbon::today();
             $membershipPack = $user->membership->packs()
                 ->where('expiry_date', '>=', $today)
+                ->where('has_personal_trainer', true)
                 ->orderBy('expiry_date', 'asc')
                 ->first();
             if ($membershipPack) {

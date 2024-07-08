@@ -16,7 +16,7 @@
         @if(Auth::user()->membership && Auth::user()->membership->status_id == 2 && Auth::user()->membership->packs->isEmpty())
             <div class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 p-4 mb-6" role="alert">
                 <p class="font-bold">Adquira Packs para Participar nas Aulas</p>
-                <p>Para usufruir das nossas aulas e se inscrever, adquira um dos nossos packs de aulas. Clique no botão abaixo para ver os packs disponíveis!</p>
+                <p>Para usufruir das nossas aulas e inscrever-se, adquira um dos nossos packs de aulas. Clique no botão abaixo para ver os packs disponíveis para si!</p>
                 <a href="{{ route('packs.index') }}" class="mt-4 inline-block text-white dark:bg-lime-500 bg-blue-500 px-3 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400">Ver Packs</a>
             </div>
         @endif

@@ -8,4 +8,4 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 
-Schedule::command('generate:free-trainings')->sundays()->at('00:00');
+#Schedule::command('generate:free-trainings')->sundays()->at('00:00');

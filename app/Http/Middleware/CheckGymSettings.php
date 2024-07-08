@@ -23,8 +23,10 @@ class CheckGymSettings
             'taxa_seguro',
             'capacidade_maxima',
             'percentagem_aulas_livres',
-            'horario_inicio',
-            'horario_fim',
+            'horario_inicio_semanal',
+            'horario_fim_semanal',
+            'horario_inicio_sabado',
+            'horario_fim_sabado',
         ];
 
         foreach ($requiredSettings as $setting) {

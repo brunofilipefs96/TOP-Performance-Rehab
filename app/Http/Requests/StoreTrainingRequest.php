@@ -37,9 +37,34 @@ class StoreTrainingRequest extends FormRequest
             $duration = (int) $this->duration;
             $endDate = $startDate->copy()->addMinutes($duration);
             $now = Carbon::now('Europe/Lisbon');
+            $dayOfWeek = $startDate->dayOfWeek;
 
             if ($startDate->isSunday()) {
                 $validator->errors()->add('start_date', 'Os treinos não podem ser agendados aos domingos.');
+            }
+
+            $horarioInicioSemanal = setting('horario_inicio_semanal', '06:00');
+            $horarioFimSemanal = setting('horario_fim_semanal', '23:59');
+            $horarioInicioSabado = setting('horario_inicio_sabado', '08:00');
+            $horarioFimSabado = setting('horario_fim_sabado', '18:00');
+
+            $startTime = $startDate->format('H:i');
+            $endTime = $endDate->format('H:i');
+
+            if ($dayOfWeek >= Carbon::MONDAY && $dayOfWeek <= Carbon::FRIDAY) {
+                if ($startTime < $horarioInicioSemanal || $startTime > $horarioFimSemanal) {
+                    $validator->errors()->add('start_time', 'A hora de início deve estar entre ' . $horarioInicioSemanal . ' e ' . $horarioFimSemanal . ' nos dias de semana.');
+                }
+                if ($endTime > $horarioFimSemanal) {
+                    $validator->errors()->add('end_time', 'O treino deve terminar antes das ' . $horarioFimSemanal . ' nos dias de semana.');
+                }
+            } elseif ($dayOfWeek == Carbon::SATURDAY) {
+                if ($startTime < $horarioInicioSabado || $startTime > $horarioFimSabado) {
+                    $validator->errors()->add('start_time', 'A hora de início deve estar entre ' . $horarioInicioSabado . ' e ' . $horarioFimSabado . ' no sábado.');
+                }
+                if ($endTime > $horarioFimSabado) {
+                    $validator->errors()->add('end_time', 'O treino deve terminar antes das ' . $horarioFimSabado . ' no sábado.');
+                }
             }
 
             $this->validatePersonalTrainerAvailability($validator, $startDate, $endDate);
@@ -52,20 +77,6 @@ class StoreTrainingRequest extends FormRequest
                         $validator->errors()->add('start_time', 'A hora de início deve ser posterior à hora atual para o dia de hoje.');
                     }
                 }
-            }
-
-            $horarioInicio = setting('horario_inicio', '06:00');
-            $horarioFim = setting('horario_fim', '23:59');
-
-            $startTime = $startDate->format('H:i');
-            $endTime = $endDate->format('H:i');
-
-            if ($startTime < $horarioInicio || $startTime > $horarioFim) {
-                $validator->errors()->add('start_time', 'A hora de início deve estar entre ' . setting('horario_inicio', '06:00') . ' e ' . setting('horario_fim', '23:59') . '.');
-            }
-
-            if ($endTime > $horarioFim) {
-                $validator->errors()->add('end_time', 'O treino deve terminar antes das ' . setting('horario_fim', '23:59') . '.');
             }
 
             if ($this->has('repeat') && $this->repeat) {

@@ -84,11 +84,23 @@ class TrainingController extends Controller
 
         $startTime = $startDate->format('H:i');
         $endTime = $endDate->format('H:i');
-        $horarioInicio = setting('horario_inicio', '06:00');
-        $horarioFim = setting('horario_fim', '23:59');
+        $dayOfWeek = $startDate->dayOfWeek;
 
-        if ($startTime < $horarioInicio || $endTime > $horarioFim) {
-            return redirect()->back()->withErrors(['error' => 'O treino deve estar dentro do horário permitido.']);
+        $horarioInicioSemanal = setting('horario_inicio_semanal', '06:00');
+        $horarioFimSemanal = setting('horario_fim_semanal', '23:59');
+        $horarioInicioSabado = setting('horario_inicio_sabado', '08:00');
+        $horarioFimSabado = setting('horario_fim_sabado', '18:00');
+
+        if ($dayOfWeek >= Carbon::MONDAY && $dayOfWeek <= Carbon::FRIDAY) {
+            if ($startTime < $horarioInicioSemanal || $endTime > $horarioFimSemanal) {
+                return redirect()->back()->withErrors(['error' => 'O treino deve estar dentro do horário permitido nos dias de semana.']);
+            }
+        } elseif ($dayOfWeek == Carbon::SATURDAY) {
+            if ($startTime < $horarioInicioSabado || $endTime > $horarioFimSabado) {
+                return redirect()->back()->withErrors(['error' => 'O treino deve estar dentro do horário permitido no sábado.']);
+            }
+        } else {
+            return redirect()->back()->withErrors(['error' => 'O ginásio está fechado aos domingos.']);
         }
 
         if ($startDate->lt(Carbon::now())) {
@@ -101,7 +113,6 @@ class TrainingController extends Controller
 
             while ($startDate->lte($repeatUntil)) {
                 if (in_array($startDate->dayOfWeek, $daysOfWeek)) {
-                    // Verificação de repetição para data e hora atuais
                     if (Carbon::today()->eq($startDate->copy()->startOfDay()) && $startDate->lt(Carbon::now())) {
                         $startDate = $startDate->copy()->addDay();
                         $endDate = $startDate->copy()->addMinutes($duration);
@@ -135,6 +146,7 @@ class TrainingController extends Controller
 
         return redirect()->route('trainings.index')->with('success', 'Treino criado com sucesso.');
     }
+
 
     public function show(Training $training)
     {
@@ -203,7 +215,7 @@ class TrainingController extends Controller
         $user = auth()->user();
 
         if ($user->hasRole('client') && (!$user->membership || $user->membership->status->name !== 'active')) {
-            return redirect()->route('trainings.index')->with('error', 'Você precisa de uma matrícula ativa para se inscrever neste treino.');
+            return redirect()->route('trainings.index')->with('error', 'Necessita de ter uma matrícula ativa para se inscrever neste treino.');
         }
 
         if ($training->users()->where('user_id', $user->id)->exists()) {
@@ -221,11 +233,26 @@ class TrainingController extends Controller
             })->exists();
 
         if ($overlappingTrainings) {
-            return redirect()->route('trainings.index')->with('error', 'Já está inscrito em outro treino nesse horário.');
+            return redirect()->route('trainings.index')->with('error', 'Já está inscrito noutro treino nesse horário.');
+        }
+
+        $today = Carbon::today();
+        $membershipPack = $user->membership->packs()
+            ->where('quantity_remaining', '>', 0)
+            ->where('expiry_date', '>=', $today)
+            ->orderBy('expiry_date', 'asc')
+            ->first();
+
+        if (!$membershipPack) {
+            return redirect()->route('trainings.index')->with('error', 'Não possui nenhum pack para se inscrever.');
         }
 
         if ($training->users()->count() < $training->max_students) {
             $training->users()->attach($user->id);
+
+            $membershipPack->pivot->quantity_remaining -= 1;
+            $membershipPack->pivot->save();
+
             return redirect()->route('trainings.index')->with('success', 'Inscreveu-se com sucesso.');
         } else {
             return redirect()->route('trainings.index')->with('error', 'O treino está cheio.');
@@ -243,6 +270,17 @@ class TrainingController extends Controller
 
         if ($differenceInHours > 12) {
             $training->users()->detach($user->id);
+
+            $today = Carbon::today();
+            $membershipPack = $user->membership->packs()
+                ->where('expiry_date', '>=', $today)
+                ->orderBy('expiry_date', 'asc')
+                ->first();
+            if ($membershipPack) {
+                $membershipPack->pivot->quantity_remaining += 1;
+                $membershipPack->pivot->save();
+            }
+
             return redirect()->route('trainings.index')->with('success', 'Inscrição cancelada com sucesso. Você não será cobrado.');
         } elseif ($differenceInHours <= 12 && $differenceInHours > 0) {
             $training->users()->updateExistingPivot($user->id, ['presence' => false]);

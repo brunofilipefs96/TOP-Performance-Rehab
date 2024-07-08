@@ -89,7 +89,7 @@
     <main>
         <div class="text-center mt-10">
             <h1 class="text-4xl font-bold text-gray-800 dark:text-lime-400 mb-10">Página Indisponível</h1>
-            <p class="text-lg text-gray-800 dark:text-gray-200">A página que está tentando aceder neste momento não se encontra disponível.</p>
+            <p class="text-lg text-gray-800 dark:text-gray-200">A página que está a tentar aceder neste momento não se encontra disponível.</p>
             <p class="text-lg text-gray-800 dark:text-gray-200">Por favor, entre em contato com o administrador para mais informações.</p>
         </div>
     </main>

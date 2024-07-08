@@ -1,10 +1,42 @@
 @php
     use Carbon\Carbon;
-    $horarioInicio = Carbon::createFromFormat('H:i', setting('horario_inicio', '06:00'));
-    $horarioFim = Carbon::createFromFormat('H:i', setting('horario_fim', '23:59'));
+    $horarioInicioSemana = setting('horario_inicio_semana', '06:00');
+    $horarioFimSemana = setting('horario_fim_semana', '23:59');
+    $horarioInicioSabado = setting('horario_inicio_sabado', '08:00');
+    $horarioFimSabado = setting('horario_fim_sabado', '20:00');
 @endphp
 
 <div class="container mx-auto mt-5">
+
+    @if (auth()->check() && auth()->user()->hasRole('client'))
+        @php
+            $user = auth()->user();
+            $membership = $user->membership;
+            $hasActiveMembership = $membership && $membership->status->name === 'active';
+        @endphp
+
+        @if ($hasActiveMembership)
+            @php
+                $availablePack = $membership->packs()
+                    ->where('quantity_remaining', '>', 0)
+                    ->orderBy('expiry_date', 'asc')
+                    ->first();
+            @endphp
+
+            @if ($availablePack)
+                <div class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 p-4 mb-6" role="alert">
+                    <p class="font-bold">Você tem aulas disponíveis!</p>
+                    <p>Ainda possui {{ $availablePack->pivot->quantity_remaining }} aulas restantes no pack que expira em {{ Carbon::parse($availablePack->pivot->expiry_date)->format('d/m/Y') }}.</p>
+                </div>
+            @else
+                <div class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 p-4 mb-6" role="alert">
+                    <p class="font-bold">Adquira Packs para Participar nas Aulas</p>
+                    <p>Para usufruir das nossas aulas e inscrever-se, adquira um dos nossos packs de aulas. Clique no botão abaixo para ver os packs que temos disponíveis para si!</p>
+                    <a href="{{ route('packs.index') }}" class="mt-4 inline-block text-white dark:bg-lime-500 bg-blue-500 px-3 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400">Ver Packs</a>
+                </div>
+            @endif
+        @endif
+    @endif
 
     @can('create', App\Models\Training::class)
         @if ($type === 'accompanied')
@@ -50,6 +82,9 @@
                 $formattedDay = Carbon::parse($day)->locale('pt')->isoFormat('dddd');
                 $formattedDate = Carbon::parse($day)->format('d/m/Y');
                 $dayOfWeek = ucwords($formattedDay) . ' - ' . $formattedDate;
+                $dayOfWeekNumber = Carbon::parse($day)->dayOfWeek;
+                $horarioInicio = $dayOfWeekNumber === Carbon::SATURDAY ? $horarioInicioSabado : $horarioInicioSemana;
+                $horarioFim = $dayOfWeekNumber === Carbon::SATURDAY ? $horarioFimSabado : $horarioFimSemana;
             @endphp
             <div class="border border-gray-200 bg-gray-200 dark:bg-gray-700 dark:border-gray-700 rounded-lg">
                 <div class="bg-gray-300 dark:bg-gray-800 p-4 text-gray-700 dark:text-gray-200 font-semibold">
@@ -64,7 +99,6 @@
                                 $currentDateTime = Carbon::now();
                                 $trainingStartDateTime = Carbon::parse($training->start_date);
                                 $isTrainingStarted = $currentDateTime->gte($trainingStartDateTime);
-                                $hasActiveMembership = auth()->user()->membership && auth()->user()->membership->status->name === 'active';
                                 $totalSubscribes = $training->users()->count();
                                 $remainingSpots = $training->max_students - $totalSubscribes;
                                 $hasMarkedAllPresences = $training->users()->wherePivotNotNull('presence')->count() == $totalSubscribes;
@@ -158,7 +192,7 @@
                                                 </button>
                                             </form>
                                         @elseif(!$userPresenceFalse && !$isTrainingStarted)
-                                            @if ($remainingSpots > 0 && $currentDateTime->lt($trainingStartDateTime) && $hasActiveMembership)
+                                            @if ($remainingSpots > 0 && $currentDateTime->lt($trainingStartDateTime))
                                                 <form id="enroll-form-{{ $training->id }}" action="{{ route('trainings.enroll', $training->id) }}" method="POST" class="inline text-sm">
                                                     @csrf
                                                     <button type="button"

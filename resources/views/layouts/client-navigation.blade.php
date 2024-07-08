@@ -4,7 +4,7 @@
 
 <div x-data="{ open: false }" @keydown.window.escape="open = false" class="relative h-full">
     <div class="flex h-full min-h-screen">
-        <div class="w-64 dark:bg-gray-800 bg-gray-600 shadow h-full flex-col justify-between hidden sm:flex">
+        <div class="w-64 dark:bg-gray-800 bg-gray-400 shadow h-full flex-col justify-between hidden sm:flex">
             <div class="px-8">
                 <div class="h-40 w-full flex items-center mt-8 mb-16">
                     <div class="w-full flex flex-col items-center">
@@ -18,8 +18,8 @@
                         @if($user->image && file_exists(public_path('storage/' . $user->image)))
                             <img src="{{ asset('storage/' . $user->image) }}" alt="{{ $user->firstLastName() }}" class="h-32 w-32 object-cover rounded-full border-2 border-gray-300">
                         @else
-                            <div class="h-32 w-32 bg-gray-300 dark:bg-gray-600 flex items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600">
-                                <i class="fa-solid fa-user text-4xl text-gray-800 dark:text-white"></i>
+                            <div class="h-32 w-32 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white flex items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600">
+                                <i class="fa-solid fa-user text-4xl"></i>
                                 <a class="cursor-pointer"><i class="fa-solid fa-circle-plus text-2xl"></i></a>
                             </div>
                         @endif
@@ -29,55 +29,55 @@
                     </div>
                 </div>
                 <ul class="flex-1">
-                    <li class="flex w-full justify-between text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
+                    <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
                         <a href="{{ route('dashboard') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
                             <i class="fa-solid fa-chart-line text-xl transition-transform group-hover:-translate-y-2 group-hover:scale-75"></i>
                             <span class="text-md ml-2">Dashboard</span>
                         </a>
                     </li>
-                    <li class="flex w-full justify-between text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
+                    <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
                         <a href="{{ route('profile.edit') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
                             <i class="fa-solid fa-user text-xl transition-transform group-hover:-translate-y-2 group-hover:scale-75"></i>
                             <span class="text-md ml-2">Perfil</span>
                         </a>
                     </li>
-                    <li class="flex w-full justify-between text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
+                    <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
                         <a href="{{ route('products.index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
                             <i class="fa-solid fa-basket-shopping text-xl transition-transform group-hover:-translate-y-1"></i>
                             <span class="text-md ml-2">Produtos</span>
                         </a>
                     </li>
-                    <li class="flex w-full justify-between text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
+                    <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
                         <a href="{{ route('packs.index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
                             <i class="fa-solid fa-box text-xl transition-transform group-hover:-translate-y-1"></i>
                             <span class="text-md ml-2">Packs</span>
                         </a>
                     </li>
-                    <li class="flex w-full justify-between text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
+                    <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
                         <a href="{{ route('sales.index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
                             <i class="fa-solid fa-receipt text-xl transition-transform group-hover:-translate-y-1"></i>
                             <span class="text-md ml-2">Minhas Encomendas</span>
                         </a>
                     </li>
-                    <li class="flex w-full justify-between text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
+                    <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
                         <a href="{{ route('trainings.index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
                             <i class="fa-solid fa-dumbbell text-xl transition-transform group-hover:-translate-y-1"></i>
                             <span class="text-md ml-2">Treinos</span>
                         </a>
                     </li>
-                    <li class="flex w-full justify-between text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
+                    <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
                         <a href="{{ route('calendar') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
                             <i class="fa-solid fa-calendar-days text-xl transition-transform group-hover:-translate-y-1"></i>
                             <span class="text-md ml-2">Agenda</span>
                         </a>
                     </li>
-                    <li class="flex w-full justify-between text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
+                    <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
                         <a href="{{ route('cart.index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
                             <i class="fa-solid fa-cart-shopping text-xl transition-transform group-hover:-translate-y-1"></i>
                             <span class="text-md ml-2">Carrinho</span>
                         </a>
                     </li>
-                        <li class="flex w-full justify-between text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
+                        <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
                             <a href="{{ route('setup') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
                                 <i class="fa-regular fa-address-card text-xl transition-transform group-hover:-translate-y-1"></i>
                                 <span class="text-md ml-2">Matrícula</span>
@@ -85,7 +85,7 @@
                         </li>
                 </ul>
                 <div class="mt-auto mb-6">
-                    <li class="flex w-full justify-between text-gray-400 cursor-pointer items-center dark:hover:text-lime-400 hover:text-blue-600">
+                    <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center dark:hover:text-lime-400 hover:text-blue-600">
                         <form method="POST" action="{{ route('logout') }}" class="w-full">
                             @csrf
                             <a href="javascript:void(0)" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white" onclick="event.preventDefault(); this.closest('form').submit();">
@@ -97,7 +97,7 @@
                 </div>
                 <div class="flex justify-center">
                     <button id="theme-toggle-client" type="button"
-                            class="theme-toggle-btn w-12 text-gray-300 dark:text-gray-400 hover:bg-gray-700 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-700 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
+                            class="theme-toggle-btn w-12 text-gray-800 dark:text-gray-400 hover:bg-gray-700 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-700 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
                         <svg id="theme-toggle-dark-icon-client" class="theme-toggle-dark-icon hidden w-5 h-5 mx-auto" fill="currentColor" viewBox="0 0 20 20"
                              xmlns="http://www.w3.org/2000/svg">
                             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>

@@ -32,7 +32,7 @@
     <div class="flex justify-center">
         <div class="w-full max-w-2xl bg-gray-300 dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm relative">
             <div class="text-center mb-10">
-                <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Checkout</h1>
+                <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Pagamento</h1>
             </div>
             <form id="payment-form" action="{{ route('setup.process') }}" method="POST">
                 @csrf

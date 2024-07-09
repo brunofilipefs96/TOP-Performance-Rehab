@@ -33,8 +33,8 @@
         <div class="w-full max-w-4xl bg-gray-300 dark:bg-gray-800 p-6 rounded-2xl shadow-sm relative">
             <div class="flex flex-col items-center">
                 <div class="w-full">
-                    <div>
-                        <h1 class="mb-8 text-3xl text-gray-900 dark:text-lime-400">Modalidades</h1>
+                    <div class="text-center mb-10">
+                        <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Modalidades</h1>
                     </div>
 
                     @if($user->membership->trainingTypes->count() == 0)

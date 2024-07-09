@@ -31,11 +31,9 @@
     </div>
     <div class="flex justify-center">
         <div class="w-full max-w-2xl bg-gray-300 dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm relative">
-            <header>
-                <h2 class="text-xl font-medium text-gray-900 dark:text-gray-100">
-                    {{ __('Adicionar Membership') }}
-                </h2>
-            </header>
+            <div class="text-center mb-10">
+                <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Matrícula</h1>
+            </div>
 
             <div class="mb-4">
                 <label for="name" class="block text-gray-800 dark:text-white">Nome</label>

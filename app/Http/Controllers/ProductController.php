@@ -21,9 +21,7 @@ class ProductController extends Controller
         $this->authorize('viewAny', Product::class);
         $search = request('search');
         if($search){
-            $products = Product::where([
-                ['name', 'like', '%'.$search.'%']
-            ])->paginate(12);
+            $products = Product::whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%'])->paginate(12);
             return view('pages.products.index', ['products' => $products]);
         }
         $products = Product::orderBy('id', 'desc')->paginate(12);

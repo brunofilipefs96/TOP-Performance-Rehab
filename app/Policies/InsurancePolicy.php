@@ -21,7 +21,7 @@ class InsurancePolicy
      */
     public function view(User $user, Insurance $insurance): bool
     {
-        return $user->id === $insurance->user_id || $user->hasRole('admin');
+        return $user->id == $insurance->membership->user_id || $user->hasRole('admin');
     }
 
     /**

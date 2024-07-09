@@ -54,8 +54,10 @@ class EvaluationController extends Controller
     {
         $this->authorize('viewAny', Evaluation::class);
 
-        $evaluations = $membership->evaluations()->orderBy('created_at', 'desc')->paginate(12);
-
-        return view('pages.evaluations.list', ['evaluations' => $evaluations, 'membership' => $membership]);
+        if($membership->status->name == 'active') {
+            $evaluations = $membership->evaluations()->orderBy('created_at', 'desc')->paginate(12);
+            return view('pages.evaluations.list', ['evaluations' => $evaluations, 'membership' => $membership]);
+        }
+        return redirect('memberships/'.$membership->id);
     }
 }

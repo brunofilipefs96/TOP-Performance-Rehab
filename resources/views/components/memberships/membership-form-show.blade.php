@@ -56,24 +56,34 @@
                                class="mt-1 block w-full p-2 border border-white dark:border-gray-500 text-gray-800 dark:text-gray-200 dark:bg-gray-500 rounded-md shadow-sm">
                     </div>
 
-                    <div class="mb-4">
+                    <div class="mb-5">
                         <label for="address_postal_code" class="block text-gray-900 dark:text-gray-200">Código-Postal</label>
                         <input type="text" id="address_postal_code" value="{{ $membership->address->postal_code }}"
                                disabled
                                class="mt-1 block w-full p-2 border border-white dark:border-gray-500 text-gray-800 dark:text-gray-200 dark:bg-gray-500 rounded-md shadow-sm">
                     </div>
 
-                    <div class="flex items-center mt-6 mb-4">
+                    <div>
+                        <h1 class="mb-2 text-2xl text-gray-900 dark:text-gray-200">Documentos</h1>
+                    </div>
+
+                    <div class="flex items-center mt-1 mb-6">
                         @foreach ($membership->user->entries as $entry)
                             @if ($entry->survey_id == 1)
                                 <a href="{{ url('entries/'.$entry->id) }}">
                                     <button type="button"
                                             class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150">
-                                        Ver Formulário
+                                        Ficha de Anamnese
                                     </button>
                                 </a>
                             @endif
                         @endforeach
+                        <a href="{{ url('insurances/'.$membership->insurance->id) }}" class="pl-2">
+                            <button type="button"
+                                    class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150">
+                                Seguro
+                            </button>
+                        </a>
                     </div>
 
                     <!-- New section for questions and answers -->
@@ -113,39 +123,47 @@
 
                     <div class="flex items-center mb-2">
                         @if($membership->status->name == 'active')
-                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Ativo</p>
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle text-lg">Estado: Ativo</p>
                             <span class="h-3 w-3 bg-green-500 rounded-full inline-block"></span>
                         @elseif($membership->status->name == 'pending')
-                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Pendente</p>
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle text-lg">Estado: Pendente</p>
                             <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
                         @elseif($membership->status->name == 'rejected')
-                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Rejeitado</p>
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle text-lg">Estado: Rejeitado</p>
                             <span class="h-3 w-3 bg-red-500 rounded-full inline-block"></span>
                         @elseif($membership->status->name == 'frozen')
-                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Congelado</p>
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle text-lg">Estado: Congelado</p>
                             <span class="h-3 w-3 bg-blue-500 rounded-full inline-block"></span>
                         @elseif($membership->status->name == 'pending_payment')
-                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Pagamento em espera</p>
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle text-lg">Estado: Pagamento em espera</p>
                             <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
                         @endif
                     </div>
-
                     @if($membership->status->name == 'active')
                         {{-- Active --}}
                         <div class="mb-4">
-                            <label for="total_trainings_supervised" class="block text-gray-900 dark:text-gray-200">Treinos disponíveis com Personal
-                                Trainer</label>
-                            <input type="text" value="{{ $membership->total_trainings_supervised }}" disabled
-                                   class="mt-1 block w-full p-2 border border-white dark:border-gray-500 text-gray-800 dark:text-gray-200 dark:bg-gray-500 rounded-md shadow-sm">
+                            <label for="start_date" class="block text-gray-900 dark:text-gray-200">Data de Início</label>
+                            <input type="text" id="start_date"
+                                   value="{{ \Carbon\Carbon::parse($membership->start_date)->format('d/m/Y') }}"
+                                   disabled
+                                   class="mt-1 block w-full p-2 border border-white dark:border-gray-500 text-gray-800 dark:text-gray-200 rounded-md shadow-sm dark:bg-gray-500">
                         </div>
                         <div class="mb-4">
-                            <label for="total_trainings_individual" class="block text-gray-900 dark:text-gray-200">Treinos disponíveis
-                                Individuais</label>
-                            <input type="text" value="{{ $membership->total_trainings_individual }}" disabled
-                                   class="mt-1 block w-full p-2 border border-white dark:border-gray-500 text-gray-800 dark:text-gray-200 dark:bg-gray-500 rounded-md shadow-sm">
+                            <label for="end_date" class="block text-gray-900 dark:text-gray-200">Data de Fim</label>
+                            <input type="text" id="end_date"
+                                   value="{{ \Carbon\Carbon::parse($membership->end_date)->format('d/m/Y') }}"
+                                   disabled
+                                   class="mt-1 block w-full p-2 border border-white dark:border-gray-500 text-gray-800 dark:text-gray-200 rounded-md shadow-sm dark:bg-gray-500">
                         </div>
                     @endif
+
                     <div class="flex justify-end mb-2">
+                        @if($membership->status->name == 'active')
+                            <a href="{{ route('memberships.evaluations.list', ['membership' => $membership->id]) }}"
+                               class="inline-block border-tg dark:hover:bg-lime-300 bg-blue-500 dark:text-lime-800 mt-4 py-2 px-6 rounded-md shadow-sm hover:bg-blue-700 dark:bg-lime-400 text-white">
+                                Avaliações
+                            </a>
+                        @endif
                         @can('update' , $membership)
                             @if($membership->status->name == 'pending' || $membership->status->name == 'frozen')
                                 {{-- Pending --}}
@@ -176,12 +194,6 @@
                             @endif
                             @if($membership->status->name == 'active' || $membership->status->name == 'pending')
                                 <div class="flex items-center">
-                                    @if($membership->status->name == 'active')
-                                        <a href="{{ route('memberships.evaluations.list', ['membership' => $membership->id]) }}"
-                                           class="inline-block border-tg dark:hover:bg-lime-300 bg-blue-500 dark:text-lime-800 mt-4 py-2 px-6 rounded-md shadow-sm hover:bg-blue-700 dark:bg-lime-400 text-white">
-                                            Avaliações
-                                        </a>
-                                    @endif
                                     <form
                                         action="{{ route('memberships.update', ['membership' => $membership->id]) }}"
                                         method="POST">
@@ -203,7 +215,7 @@
                                     Voltar
                                 </a>
                             @else
-                                <a href="{{ route('profile.edit') }}"
+                                <a href="{{ route('dashboard') }}"
                                    class="inline-block bg-gray-500 ml-1 mt-4 py-2 px-6 rounded-md shadow-sm hover:bg-gray-700 text-white">
                                     Voltar
                                 </a>

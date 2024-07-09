@@ -13,7 +13,7 @@ class EvaluationPolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return $user->hasRole('admin') || $user->hasRole('personal_trainer') || $user->membership->status_id == 2;
     }
 
     /**
@@ -21,7 +21,7 @@ class EvaluationPolicy
      */
     public function view(User $user, Evaluation $evaluation): bool
     {
-        //
+        return $user->hasRole('admin') || $user->hasRole('personal_trainer') || $user->id == $evaluation->membership->user_id;
     }
 
     /**
@@ -29,7 +29,7 @@ class EvaluationPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->hasRole('admin') || $user->hasRole('personal_trainer');
     }
 
     /**
@@ -37,7 +37,7 @@ class EvaluationPolicy
      */
     public function update(User $user, Evaluation $evaluation): bool
     {
-        //
+        return $user->hasRole('admin') || $user->hasRole('personal_trainer');
     }
 
     /**
@@ -45,7 +45,7 @@ class EvaluationPolicy
      */
     public function delete(User $user, Evaluation $evaluation): bool
     {
-        //
+        return $user->hasRole('admin') || $user->hasRole('personal_trainer');
     }
 
     /**
@@ -53,7 +53,7 @@ class EvaluationPolicy
      */
     public function restore(User $user, Evaluation $evaluation): bool
     {
-        //
+        return $user->hasRole('admin') || $user->hasRole('personal_trainer');
     }
 
     /**
@@ -61,6 +61,6 @@ class EvaluationPolicy
      */
     public function forceDelete(User $user, Evaluation $evaluation): bool
     {
-        //
+        return $user->hasRole('admin') || $user->hasRole('personal_trainer');
     }
 }

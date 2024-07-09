@@ -31,11 +31,9 @@
     </div>
     <div class="flex justify-center">
         <div class="w-full max-w-2xl bg-gray-300 dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm relative">
-            <header>
-                <h2 class="text-xl font-medium text-gray-900 dark:text-gray-100">
-                    {{ __('Adicionar Seguro') }}
-                </h2>
-            </header>
+            <div class="text-center mb-10">
+                <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Seguro</h1>
+            </div>
 
             <form method="POST" action="{{ route('insurances.store') }}" enctype="multipart/form-data">
                 @csrf
@@ -45,7 +43,7 @@
                         <input type="radio" id="insurance_type_gym" name="insurance_type" value="Ginásio"
                                class="form-radio text-blue-500 dark:text-lime-400 h-4 w-4 dark:bg-gray-600 dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50 dark:checked:bg-lime-400 focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 checked:bg-blue-500"
                                {{ old('insurance_type', $user->membership->insurance->insurance_type ?? '') == 'Ginásio' ? 'checked' : '' }}
-                               {{ $user->membership->insurance ? 'disabled' : '' }} required>
+                               {{ $user->membership->insurance ? 'disabled' : '' }} required checked>
                         <label for="insurance_type_gym" class="ml-2 dark:text-gray-200 text-gray-800">Ginásio</label>
                     </div>
                     <div class="flex items-center">
@@ -62,11 +60,15 @@
                     @enderror
                 </div>
 
+                <div id="insurance_message" class="mb-4 text-gray-800 dark:text-gray-200" style="display: none;">
+                    O seguro de ginásio tem um custo de: {{ setting('taxa_seguro') }}€
+                </div>
+
                 <div class="mb-4" id="date_fields" style="display: {{ old('insurance_type', $user->membership->insurance->insurance_type ?? '') == 'Pessoal' ? 'block' : 'none' }};">
                     <div class="mb-4">
                         <label for="start_date" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Data de Início</label>
                         <input type="date" id="start_date" name="start_date" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white"
-                               value="{{ old('start_date', $user->membership->insurance->start_date ?? '') }}"
+                               value="{{ old('start_date', optional($user->membership->insurance)->start_date ? \Carbon\Carbon::parse($user->membership->insurance->start_date)->format('Y-m-d') : '') }}"
                             {{ $user->membership->insurance ? 'disabled' : '' }}>
                         @error('start_date')
                         <span class="text-red-500 text-sm mt-2" role="alert">
@@ -78,7 +80,7 @@
                     <div class="mb-4">
                         <label for="end_date" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Data de Término</label>
                         <input type="date" id="end_date" name="end_date" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white"
-                               value="{{ old('end_date', $user->membership->insurance->end_date ?? '') }}"
+                               value="{{ old('end_date', optional($user->membership->insurance)->end_date ? \Carbon\Carbon::parse($user->membership->insurance->end_date)->format('Y-m-d') : '') }}"
                             {{ $user->membership->insurance ? 'disabled' : '' }}>
                         @error('end_date')
                         <span class="text-red-500 text-sm mt-2" role="alert">
@@ -97,22 +99,18 @@
 
                     <div class="flex gap-2 items-center">
                         @if(!$user->membership->insurance)
-                            <p id="insurance_message" class="mt-1 text-sm text-red-500">
-                                {{ __("Você precisa selecionar um tipo de seguro antes de continuar.") }}
-                            </p>
                             <button id="insurance_submit_button" type="submit" style="display: none;"
                                     class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm w-full justify-center max-w-[150px]">
                                 Avançar
                                 <i class="fa-solid fa-arrow-right w-4 h-4 ml-2"></i>
                             </button>
-
                         @elseif($user->membership->insurance->status->name == 'pending' || $user->membership->status->name == 'pending')
                             <a href="{{ route('setup.awaitingShow') }}"
                                class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm w-full justify-center max-w-[150px]">
                                 Avançar
                                 <i class="fa-solid fa-arrow-right w-4 h-4 ml-2"></i>
                             </a>
-                            @elseif($user->membership->insurance->status->name == 'pending_payment' && $user->membership->stratus->name == 'pending_payment')
+                        @elseif($user->membership->insurance->status->name == 'pending_payment' && $user->membership->status->name == 'pending_payment')
                             <a href="{{ route('setup.paymentShow') }}"
                                class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm w-full justify-center max-w-[150px]">
                                 Avançar
@@ -136,19 +134,23 @@
         const insuranceSubmitButton = document.getElementById('insurance_submit_button');
         const insuranceMessage = document.getElementById('insurance_message');
 
+        function formatDateToISO(date) {
+            return date.toISOString().split('T')[0];
+        }
+
         function toggleDateFields() {
-            if (insuranceTypePersonal.checked) {
+            if (insuranceTypePersonal && insuranceTypePersonal.checked) {
                 dateFields.style.display = 'block';
                 const today = new Date();
-                const startDate = today.toISOString().split('T')[0];
-                const endDate = new Date(today.setFullYear(today.getFullYear() + 1)).toISOString().split('T')[0];
+                const startDate = formatDateToISO(today);
+                const endDate = formatDateToISO(new Date(today.setFullYear(today.getFullYear() + 1)));
                 if (!startDateField.value) {
                     startDateField.value = startDate;
                 }
                 if (!endDateField.value) {
                     endDateField.value = endDate;
                 }
-            } else {
+            } else if (dateFields) {
                 dateFields.style.display = 'none';
                 startDateField.value = '';
                 endDateField.value = '';
@@ -156,22 +158,38 @@
         }
 
         function toggleSubmitButton() {
-            if (insuranceTypePersonal.checked || insuranceTypeGym.checked) {
-                insuranceSubmitButton.style.display = 'block';
-                insuranceMessage.style.display = 'none';
-            } else {
-                insuranceSubmitButton.style.display = 'none';
-                insuranceMessage.style.display = 'block';
+            if (insuranceSubmitButton) {
+                if ((insuranceTypePersonal && insuranceTypePersonal.checked) || (insuranceTypeGym && insuranceTypeGym.checked)) {
+                    insuranceSubmitButton.style.display = 'block';
+                } else {
+                    insuranceSubmitButton.style.display = 'none';
+                }
             }
         }
 
-        insuranceTypePersonal.addEventListener('change', toggleDateFields);
-        insuranceTypePersonal.addEventListener('change', toggleSubmitButton);
-        insuranceTypeGym.addEventListener('change', toggleDateFields);
-        insuranceTypeGym.addEventListener('change', toggleSubmitButton);
+        function toggleInsuranceMessage() {
+            if (insuranceMessage) {
+                if (insuranceTypeGym && insuranceTypeGym.checked) {
+                    insuranceMessage.style.display = 'block';
+                } else {
+                    insuranceMessage.style.display = 'none';
+                }
+            }
+        }
 
-        // Initialize the state on page load
+        if (insuranceTypePersonal) {
+            insuranceTypePersonal.addEventListener('change', toggleDateFields);
+            insuranceTypePersonal.addEventListener('change', toggleSubmitButton);
+        }
+
+        if (insuranceTypeGym) {
+            insuranceTypeGym.addEventListener('change', toggleDateFields);
+            insuranceTypeGym.addEventListener('change', toggleSubmitButton);
+            insuranceTypeGym.addEventListener('change', toggleInsuranceMessage);
+        }
+
         toggleDateFields();
         toggleSubmitButton();
+        toggleInsuranceMessage();
     });
 </script>

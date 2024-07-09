@@ -43,7 +43,7 @@ class Membership extends Model
 
     public function evaluations()
     {
-        return $this->belongsToMany(Evaluation::class);
+        return $this->hasMany(Evaluation::class);
     }
 
     public function status()

@@ -201,12 +201,27 @@ class TrainingController extends Controller
         $this->authorize('delete', $training);
 
         if ($training->users()->count() > 0) {
-            return redirect()->route('trainings.index')->with('error', 'Não é possível eliminar um treino com alunos inscritos.');
+            foreach ($training->users as $user) {
+                $today = Carbon::today();
+                $membershipPack = $user->membership->packs()
+                    ->where('expiry_date', '>=', $today)
+                    ->where('has_personal_trainer', true)
+                    ->orderBy('expiry_date', 'asc')
+                    ->first();
+
+                if ($membershipPack) {
+                    $membershipPack->pivot->quantity_remaining += 1;
+                    $membershipPack->pivot->save();
+                }
+
+                $training->users()->detach($user->id);
+            }
         }
 
         $training->delete();
         return redirect()->route('trainings.index')->with('success', 'Treino eliminado com sucesso.');
     }
+
 
     public function enroll(Request $request, Training $training)
     {
@@ -311,66 +326,72 @@ class TrainingController extends Controller
             ->with('success', 'Presenças marcadas com sucesso.');
     }
 
+    public function showMultiDelete(Request $request)
+    {
+        $this->authorize('viewAny', Training::class);
+
+        $user = auth()->user();
+        $isPersonalTrainer = $user->roles->contains('name', 'personal_trainer');
+        $isAdmin = $user->roles->contains('name', 'admin');
+
+        $query = Training::where('start_date', '>', Carbon::now())->orderBy('start_date', 'asc');
+
+        if ($isAdmin) {
+            $personalTrainers = User::whereHas('roles', function($query) {
+                $query->where('name', 'personal_trainer');
+            })->get();
+        } else {
+            $query->where('personal_trainer_id', $user->id);
+            $personalTrainers = collect();
+        }
+
+        if ($request->has('training_type_id') && $request->training_type_id != '') {
+            $query->where('training_type_id', $request->training_type_id);
+        }
+
+        if ($isAdmin && $request->has('personal_trainer_id') && $request->personal_trainer_id != '') {
+            $query->where('personal_trainer_id', $request->personal_trainer_id);
+        }
+
+        $trainings = $query->paginate(12);
+        $trainingTypes = TrainingType::all();
+
+        return view('pages.trainings.multi-delete', compact('trainings', 'personalTrainers', 'trainingTypes'));
+    }
+
+
+
+
     public function multiDelete(Request $request)
     {
         $trainingIds = $request->input('trainings', []);
 
         $this->authorize('multiDelete', [Training::class, $trainingIds]);
 
-        $user = auth()->user();
-
         if (!empty($trainingIds)) {
             $trainings = Training::whereIn('id', $trainingIds)->get();
 
             foreach ($trainings as $training) {
-                if ($training->users()->count() > 0) {
-                    return redirect()->route('trainings.index')->with('error', 'Não é possível remover um treino com alunos inscritos.');
-                }
+                foreach ($training->users as $user) {
+                    $today = Carbon::today();
+                    $membershipPack = $user->membership->packs()
+                        ->where('expiry_date', '>=', $today)
+                        ->where('has_personal_trainer', true)
+                        ->orderBy('expiry_date', 'asc')
+                        ->first();
 
-                if ($user->hasRole('admin') || $training->personal_trainer_id == $user->id) {
-                    $training->delete();
-                } else {
-                    return redirect()->route('trainings.index')->with('error', 'Você não tem permissão para remover um ou mais treinos dos treinos selecionados.');
+                    if ($membershipPack) {
+                        $membershipPack->pivot->quantity_remaining += 1;
+                        $membershipPack->pivot->save();
+                    }
+
+                    $training->users()->detach($user->id);
                 }
+                $training->delete();
             }
         }
 
         return redirect()->route('trainings.index')->with('success', 'Treinos removidos com sucesso!');
     }
 
-    private function generateFreeTrainings()
-    {
-        $totalCapacity = setting('capacidade_maxima');
-        $freeTrainingPercentage = setting('percentagem_aulas_livres');
-        $freeTrainingCapacity = ceil($totalCapacity * ($freeTrainingPercentage / 100));
-
-        $currentWeek = Carbon::now()->startOfWeek();
-        $nextWeek = $currentWeek->copy()->addWeek();
-
-        for ($date = $currentWeek->copy(); $date->lte($nextWeek->copy()->endOfWeek()); $date->addDay()) {
-            if ($date->dayOfWeek !== Carbon::SUNDAY) {
-                $this->createDailyFreeTrainings($date, $freeTrainingCapacity);
-            }
-        }
-    }
-
-    private function createDailyFreeTrainings(Carbon $date, $capacity)
-    {
-        $horarioInicio = Carbon::createFromFormat('H:i', setting('horario_inicio', '06:00'));
-        $horarioFim = Carbon::createFromFormat('H:i', setting('horario_fim', '23:59'));
-
-        $interval = 30;
-
-        for ($time = $horarioInicio->copy(); $time->lt($horarioFim); $time->addMinutes($interval)) {
-            $startDate = $date->copy()->setTimeFromTimeString($time->format('H:i'));
-            $endDate = $startDate->copy()->addMinutes($interval);
-
-            FreeTraining::firstOrCreate([
-                'name' => 'Treino Livre',
-                'max_students' => $capacity,
-                'start_date' => $startDate,
-                'end_date' => $endDate,
-            ]);
-        }
-    }
 }

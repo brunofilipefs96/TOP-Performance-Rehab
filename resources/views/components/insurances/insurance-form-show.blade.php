@@ -81,7 +81,7 @@
                                             @method('PATCH')
                                             <input type="hidden" name="status_name" value="active">
                                             <button type="submit"
-                                                    class="inline-block bg-green-500 mt-4 mr-1 py-2 px-6 rounded-md shadow-sm hover:bg-green-400 text-white">
+                                                    class="inline-block bg-green-500 mt-4 mr-1 py-2 px-6 rounded-md shadow-sm hover:bg-green-700 text-white">
                                                 Aceitar
                                             </button>
                                         </form>

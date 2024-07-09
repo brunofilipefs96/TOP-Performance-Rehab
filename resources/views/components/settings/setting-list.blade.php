@@ -146,7 +146,7 @@
                     <input type="text"
                            id="horario_fim_sabado"
                            name="horario_fim_sabado"
-                           class="time-input mt-1 block w-full dark:border-gray-300 dark:border-gray-700 dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm"
+                           class="time-input mt-1 block w-full dark:border-gray-300  dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm"
                            value="{{ old('horario_fim_sabado', $settings['horario_fim_sabado'] ?? '') }}"
                            aria-describedby="horarioFimSabadoHelp">
                     @error('horario_fim_sabado')

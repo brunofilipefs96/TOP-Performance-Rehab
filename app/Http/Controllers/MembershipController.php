@@ -44,14 +44,17 @@ class MembershipController extends Controller
      */
     public function store(StoreMembershipRequest $request)
     {
-        $membership = Membership::create([
-            'user_id' => auth()->id(),
-            'address_id' => $request->address_id,
-        ]);
+        $user = auth()->user();
 
-        //return redirect()->route('memberships.show', ['membership' => $membership])->with('success', 'Membership Created!');
-        return redirect()->route('setup.trainingTypesShow')->with('success', 'Membership Created!');
+        if ($user->hasRole('client') && !$user->membership) {
+            $membership = Membership::create([
+                'user_id' => $user->id,
+                'address_id' => $request->address_id,
+            ]);
+            return redirect()->route('setup.trainingTypesShow')->with('success', 'Matrícula criada com sucesso!');
+        }
 
+        return redirect()->route('setup.trainingTypesShow')->with('error', 'Já possui uma matrícula.');
     }
 
     /**

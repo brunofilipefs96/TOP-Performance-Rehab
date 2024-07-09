@@ -50,7 +50,7 @@
                         </span>
                         @enderror
                         <div class="mt-4 text-gray-600 dark:text-gray-400">
-                            Se quiser fazer alguma alteração da morada, vá ao perfil alterar.
+                            Se desejar fazer alguma alteração na sua morada, desloque-se até à área do seu perfil.
                         </div>
                     </div>
                     <div id="existing_address_fields" class="mt-4">

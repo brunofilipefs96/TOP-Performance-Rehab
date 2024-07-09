@@ -36,6 +36,9 @@
     </div>
     <div class="flex justify-center mt-8">
         <div class="w-full max-w-2xl bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-5 rounded-lg shadow-md">
+            <div class="text-center mb-10">
+                <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Processo de Avaliação</h1>
+            </div>
             <div class="flex items-center mb-2">
                 @if($user->membership->status->name == 'pending')
                     <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado da Matricula: </p>
@@ -107,7 +110,7 @@
                 <p class="text-center text-lg">
                     Por favor, entre em contacto com o administrador para mais informações.
                 </p>
-                <p class="text-center text-lg mt-4">Telefone: +91 345-677-554, +22 333-444-555</p>
+                <p class="text-center text-lg mt-4">Telemóvel: {{setting('telemovel', '910000000')}}, Email: {{setting('email', 'ginasiotop@email.pt')}}</p>
             @endif
         </div>
     </div>

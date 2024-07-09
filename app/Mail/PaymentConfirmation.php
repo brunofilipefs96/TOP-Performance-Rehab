@@ -14,7 +14,7 @@ class PaymentConfirmation extends Mailable
     public $receiptUrl;
     public $isEnrollmentFee;
 
-    public function __construct($sale, $receiptUrl, $isEnrollmentFee = false)
+    public function __construct($sale, $receiptUrl = null, $isEnrollmentFee = false)
     {
         $this->sale = $sale;
         $this->receiptUrl = $receiptUrl;

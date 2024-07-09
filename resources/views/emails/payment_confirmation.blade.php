@@ -99,7 +99,7 @@
             </ul>
         @endif
         <p><strong>Total: €{{ number_format($sale->total, 2) }}</strong></p>
-        @if(isset($receiptUrl))
+        @if(isset($receiptUrl) && $receiptUrl)
             <div class="receipt">
                 <p>O seu recibo de pagamento está disponível no link abaixo:</p>
                 <a href="{{ $receiptUrl }}" class="btn" target="_blank">Ver Recibo</a>

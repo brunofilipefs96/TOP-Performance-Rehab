@@ -102,7 +102,7 @@ class SaleController extends Controller
         $event = null;
 
         try {
-            $event = Event::constructFrom($payload);
+            $event = \Stripe\Event::constructFrom($payload);
             Log::info('Stripe event constructed successfully');
         } catch (\UnexpectedValueException $e) {
             Log::error('Invalid payload');
@@ -150,10 +150,25 @@ class SaleController extends Controller
                     }
                 }
 
-                $charges = $paymentIntent->charges->data;
+                $paymentStatus = $paymentIntent->status;
+                $paymentReference = null;
+                $paymentEntity = null;
+                $amount = $paymentIntent->amount / 100;
+                $paymentVoucherUrl = null;
                 $receiptUrl = null;
-                if (count($charges) > 0) {
-                    $receiptUrl = $charges[0]->receipt_url;
+
+                if ($paymentStatus !== 'succeeded') {
+                    if (isset($paymentIntent->next_action->multibanco_display_details)) {
+                        $paymentReference = $paymentIntent->next_action->multibanco_display_details->reference;
+                        $paymentEntity = $paymentIntent->next_action->multibanco_display_details->entity;
+                        $paymentVoucherUrl = $paymentIntent->next_action->multibanco_display_details->hosted_voucher_url;
+                    }
+                } else {
+                    $chargeId = $paymentIntent->latest_charge;
+                    if ($chargeId) {
+                        $charge = \Stripe\Charge::retrieve($chargeId);
+                        $receiptUrl = $charge->receipt_url ?? null;
+                    }
                 }
 
                 try {
@@ -170,6 +185,7 @@ class SaleController extends Controller
 
         return response()->json(['status' => 'success']);
     }
+
 
 
     public function destroy(Sale $sale)

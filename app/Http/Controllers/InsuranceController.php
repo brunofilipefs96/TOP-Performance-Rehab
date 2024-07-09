@@ -19,7 +19,32 @@ class InsuranceController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Insurance::class);
-        $insurances = Insurance::orderBy('id', 'desc')->paginate(12);
+
+        $search = request('search');
+        $filter = request('filter', 'all'); // Default to 'all' if filter is not provided
+
+        $query = Insurance::query();
+
+        if ($search) {
+            $search = strtolower($search);
+            $query->where(function($q) use ($search) {
+                $q->whereHas('membership.user', function($q) use ($search) {
+                    $q->whereRaw('LOWER(full_name) LIKE ?', ['%' . $search . '%'])
+                        ->orWhereRaw('LOWER(nif) LIKE ?', ['%' . $search . '%']);
+                })->orWhereHas('status', function($q) use ($search) {
+                    $q->whereRaw('LOWER(name) LIKE ?', ['%' . $search . '%']);
+                });
+            });
+        }
+
+        if ($filter && $filter !== 'all') {
+            $query->whereHas('status', function ($q) use ($filter) {
+                $q->whereRaw('LOWER(name) = ?', [strtolower($filter)]);
+            });
+        }
+
+        $insurances = $query->orderBy('id', 'desc')->paginate(12);
+
         return view('pages.insurances.index', ['insurances' => $insurances]);
     }
 

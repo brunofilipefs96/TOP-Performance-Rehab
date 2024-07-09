@@ -1,82 +1,82 @@
 <div class="container mx-auto mt-5">
     <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Lista de Seguros</h1>
     <div class="mb-10 flex justify-between items-center">
-        <input type="text" id="search" placeholder="Pesquisar seguros por nome, NIF ou Estado..."
-               class="w-1/3 p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-light-gray dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
+        <div class="relative w-1/3">
+            <form action="{{ route('insurances.index') }}" method="GET">
+                <button type="submit" class="absolute w-6 h-6 left-3 top-1/2 transform -translate-y-1/2 text-black dark:text-white">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                <input type="text" name="search" id="search" placeholder="Pesquisar seguros por nome, NIF ou Estado..."
+                       class="w-full p-2 pl-10 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-light-gray dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
+            </form>
+        </div>
         <div class="ml-4">
-            <select id="filter" class="bg-white text-black px-4 py-2 rounded-md border border-gray-300 dark:bg-gray-600 dark:text-white">
-                <option value="all">Todos</option>
-                <option value="active">Ativos</option>
-                <option value="pending">Pendentes</option>
-                <option value="inactive">Inativos</option>
-                <option value="frozen">Congelados</option>
-                <option value="pending_payment">Aguardar Pagamento</option>
-            </select>
+            <form action="{{ route('insurances.index') }}" method="GET" id="filter-form">
+                <select name="filter" id="filter" class="bg-white text-black px-4 py-2 rounded-md border border-gray-300 dark:bg-gray-600 dark:text-white" onchange="document.getElementById('filter-form').submit();">
+                    <option value="all">Todos</option>
+                    <option value="active">Ativos</option>
+                    <option value="pending">Pendentes</option>
+                    <option value="inactive">Inativos</option>
+                    <option value="frozen">Congelados</option>
+                    <option value="pending_payment">Aguardar Pagamento</option>
+                </select>
+            </form>
         </div>
     </div>
-    <hr class="mt-10 mb-10 border-gray-800 dark:border-white">
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        @foreach ($insurances as $insurance)
-            <div class="insurance-card bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none"
-                 data-name="{{ $insurance->membership->user->full_name }}" data-nif="{{ $insurance->membership->user->nif }}" data-status="{{ $insurance->status->name }}">
-                <div class="p-4 dark:bg-gray-800 bg-gray-400">
-                    <h3 class="text-xl font-semibold mb-2">{{ $insurance->membership->user->firstLastName() }}</h3>
-                    <p class="dark:text-gray-400 text-gray-700 mb-2">ID Cliente: {{ $insurance->membership->user->id }}</p>
-                    <p class="dark:text-gray-400 text-gray-700 mb-2">Nif: {{ $insurance->membership->user->nif }}</p>
-                    <div class="flex items-center mb-2">
+    <hr class="mb-5 border-gray-400 dark:border-gray-300">
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-gray-300 dark:bg-gray-800 rounded-2xl shadow-md text-gray-900 dark:text-gray-200">
+            <thead>
+            <tr>
+                <th class="p-4 text-left">ID</th>
+                <th class="p-4 text-left">Nome</th>
+                <th class="p-4 text-left">NIF</th>
+                <th class="p-4 text-left">Estado</th>
+                <th class="p-4 text-center">Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach($insurances as $insurance)
+                <tr class="insurance-card"
+                    data-name="{{ $insurance->membership->user->full_name }}"
+                    data-nif="{{ $insurance->membership->user->nif }}"
+                    data-status="{{ $insurance->status->name }}">
+                    <td class="p-4">{{ $insurance->id }}</td>
+                    <td class="p-4">{{ $insurance->membership->user->full_name }}</td>
+                    <td class="p-4">{{ $insurance->membership->user->nif }}</td>
+                    <td class="p-4">
                         @if($insurance->status->name == 'active')
-                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Ativo</p>
-                            <span class="h-3 w-3 bg-green-500 rounded-full inline-block"></span>
+                            <span class="text-green-500">Ativo</span>
                         @elseif($insurance->status->name == 'pending')
-                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Pendente</p>
-                            <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
+                            <span class="text-yellow-500">Pendente</span>
                         @elseif($insurance->status->name == 'inactive')
-                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Inativo</p>
-                            <span class="h-3 w-3 bg-red-500 rounded-full inline-block"></span>
+                            <span class="text-red-500">Inativo</span>
                         @elseif($insurance->status->name == 'frozen')
-                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Congelado</p>
-                            <span class="h-3 w-3 bg-blue-500 rounded-full inline-block"></span>
+                            <span class="text-blue-500">Congelado</span>
                         @elseif($insurance->status->name == 'pending_payment')
-                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Aguardar Pagamento</p>
-                            <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
+                            <span class="text-yellow-500">Aguardar Pagamento</span>
                         @endif
-                    </div>
-                    <div class="flex justify-end items-center mt-4 gap-2">
+                    </td>
+                    <td class="p-4 flex space-x-2 justify-center">
                         <a href="{{ url('insurances/' . $insurance->id) }}"
-                           class="bg-blue-400 dark:text-white px-2 py-1 rounded-md hover:bg-blue-300 dark:bg-gray-400 dark:hover:bg-gray-300">Mostrar</a>
+                           class="bg-blue-500 dark:bg-lime-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:hover:bg-lime-400">Mostrar</a>
                         @can('delete', $insurance)
-                            <form id="delete-form-{{$insurance->id}}"
-                                  action="{{ url('insurances/' . $insurance->id) }}" method="POST" class="inline">
+                            <form id="delete-form-{{ $insurance->id }}"
+                                  action="{{ url('insurances/' . $insurance->id) }}" method="POST" class="inline-block">
                                 @csrf
                                 @method('DELETE')
                                 <button type="button"
-                                        class="bg-red-600 text-white px-2 py-1 rounded-md hover:bg-red-500"
+                                        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-400"
                                         id="delete-button" onclick="confirmarEliminacao({{ $insurance->id }})">Eliminar
                                 </button>
                             </form>
-
-                            <div id="confirmation-modal"
-                                 class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden">
-                                <div class="bg-gray-300 p-6 rounded-md shadow-md w-96 dark:bg-gray-900">
-                                    <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Pretende eliminar?</h2>
-                                    <p class="mb-4 dark:text-red-300 text-red-500">Não poderá reverter isso!</p>
-                                    <div class="flex justify-end gap-4">
-                                        <button id="cancel-button"
-                                                class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400">
-                                            Cancelar
-                                        </button>
-                                        <button id="confirm-button"
-                                                class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-300">
-                                            Eliminar
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
                         @endcan
-                    </div>
-                </div>
-            </div>
-        @endforeach
+                    </td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
     </div>
 
     <div class="flex justify-center mt-4 mb-3">
@@ -85,6 +85,16 @@
 </div>
 
 <script>
+    function submitFilterForm() {
+        document.getElementById('filter-form').submit();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const filter = urlParams.get('filter') || 'all';
+        document.getElementById('filter').value = filter;
+    });
+
     let insuranceDeleted = 0;
 
     function confirmarEliminacao(id) {
@@ -97,7 +107,7 @@
     });
 
     document.getElementById('confirm-button').addEventListener('click', function () {
-        document.getElementById(`delete-form-${insuranceDeleted}`).submit();
+        document.getElementById('delete-form-' + insuranceDeleted).submit();
     });
 
     function filterPacks() {

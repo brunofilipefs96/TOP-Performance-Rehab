@@ -32,6 +32,10 @@ class SetupController extends Controller
             }
         }
 
+        if(($user->membership && $user->membership->status->name == 'active') || ($user->membership && $user->membership->status->name == 'frozen')){
+            return redirect('memberships/'. $user->membership->id);
+        }
+
         if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name == 'active') && ($user->membership->insurance->status->name == 'active'))) {
             return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
         }
@@ -69,10 +73,6 @@ class SetupController extends Controller
 
         if($user->membership->status->name == 'rejected' || $user->membership->insurance->status->name == 'rejected') {
             return redirect()->route('awaitingShow');
-        }
-
-        if($user->membership->status->name == 'active' || $user->membership->status->name == 'frozen'){
-            return redirect()->route('membership.show');
         }
 
         return redirect()->route('dashboard')->with('success', 'Processo de inscrição completo.');

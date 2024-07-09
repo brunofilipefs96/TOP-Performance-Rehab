@@ -4,17 +4,19 @@
 
     <!-- Informações do cliente -->
     <div class="mb-4">
-        <h2 class="text-xl dark:text-white text-gray-800">Nome: {{ $membership->user->name }}</h2>
+        <h2 class="text-xl dark:text-white text-gray-800">Nome: {{ $membership->user->full_name }}</h2>
         <h3 class="text-lg dark:text-white text-gray-800">NIF: {{ $membership->user->nif }}</h3>
     </div>
 
     <div class="flex justify-between mb-4">
         <a href="{{ route('memberships.show', ['membership' => $membership->id]) }}" class="bg-gray-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500">
-            Voltar para Membership
+            Voltar para Matrícula
         </a>
-        <a href="{{ route('memberships.evaluations.create', ['membership' => $membership->id]) }}" class="bg-blue-500 py-2 px-4 rounded-md shadow-sm hover:bg-blue-700 text-white dark:bg-lime-400 dark:hover:bg-lime-300">
-            Adicionar Avaliação
-        </a>
+        @can('create', App\Models\Evaluation::class)
+            <a href="{{ route('memberships.evaluations.create', ['membership' => $membership->id]) }}" class="bg-blue-500 py-2 px-4 rounded-md shadow-sm hover:bg-blue-700 text-white dark:bg-lime-400 dark:hover:bg-lime-300">
+                Adicionar Avaliação
+            </a>
+        @endcan
     </div>
 
     <div class="table-container">

@@ -23,7 +23,32 @@ class MembershipController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Membership::class);
-        $memberships = Membership::orderBy('id', 'desc')->paginate(12);
+
+        $search = request('search');
+        $filter = request('filter', 'all'); // Default to 'all' if filter is not provided
+
+        $query = Membership::query();
+
+        if ($search) {
+            $search = strtolower($search);
+            $query->where(function($q) use ($search) {
+                $q->whereHas('user', function($q) use ($search) {
+                    $q->whereRaw('LOWER(full_name) LIKE ?', ['%' . $search . '%'])
+                        ->orWhereRaw('LOWER(nif) LIKE ?', ['%' . $search . '%']);
+                })->orWhereHas('status', function($q) use ($search) {
+                    $q->whereRaw('LOWER(name) LIKE ?', ['%' . $search . '%']);
+                });
+            });
+        }
+
+        if ($filter && $filter !== 'all') {
+            $query->whereHas('status', function ($q) use ($filter) {
+                $q->whereRaw('LOWER(name) = ?', [strtolower($filter)]);
+            });
+        }
+
+        $memberships = $query->orderBy('id', 'desc')->paginate(12);
+
         return view('pages.memberships.index', ['memberships' => $memberships]);
     }
 
@@ -88,7 +113,7 @@ class MembershipController extends Controller
 
         if($membership->status->name == 'active') {
             $membership->start_date = now();
-            $membership->end_date = now()->addMonth();
+            $membership->end_date = now()->addYear();
         }
 
         $membership->save();

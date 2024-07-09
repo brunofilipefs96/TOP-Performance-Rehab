@@ -104,7 +104,7 @@
                                             @method('PATCH')
                                             <input type="hidden" name="status_name" value="pending_payment">
                                             <button type="submit"
-                                                    class="inline-block bg-green-500 mt-4 mr-1 py-2 px-6 rounded-md shadow-sm hover:bg-yellow-700 text-white">
+                                                    class="inline-block bg-green-500 mt-4 mr-1 py-2 px-6 rounded-md shadow-sm hover:bg-green-700 text-white">
                                                 Aceitar
                                             </button>
                                         </form>
@@ -132,7 +132,7 @@
                                     Voltar
                                 </a>
                             @else
-                                <a href="{{ route('profile.edit') }}"
+                                <a href="{{ route('dashboard') }}"
                                    class="inline-block bg-gray-500 ml-1 mt-4 py-2 px-6 rounded-md shadow-sm hover:bg-gray-700 text-white">
                                     Voltar
                                 </a>

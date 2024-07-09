@@ -14,6 +14,8 @@ use Stripe\PaymentIntent;
 use Stripe\PaymentMethod;
 use Stripe\Stripe;
 use Stripe\StripeClient;
+use App\Mail\PaymentReferenceMail;
+use Illuminate\Support\Facades\Mail;
 
 class CartController extends Controller
 {
@@ -313,6 +315,15 @@ class CartController extends Controller
 
         $sale->payment_intent_id = $paymentIntent->id;
         $sale->save();
+
+        if (isset($paymentIntent->next_action->multibanco_display_details)) {
+            $paymentReference = $paymentIntent->next_action->multibanco_display_details->reference;
+            $paymentEntity = $paymentIntent->next_action->multibanco_display_details->entity;
+            $amount = $total;
+
+            // Enviar o e-mail com a referência Multibanco
+            Mail::to($user->email)->send(new PaymentReferenceMail($sale, $paymentReference, $paymentEntity, $amount));
+        }
 
         session()->forget('cart');
         session()->forget('packCart');

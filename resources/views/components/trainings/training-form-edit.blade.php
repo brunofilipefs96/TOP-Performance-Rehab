@@ -1,3 +1,11 @@
+@php
+    use Carbon\Carbon;
+    $horarioInicioSemanal = setting('horario_inicio_semanal', '06:00');
+    $horarioFimSemanal = setting('horario_fim_semanal', '23:59');
+    $horarioInicioSabado = setting('horario_inicio_sabado', '08:00');
+    $horarioFimSabado = setting('horario_fim_sabado', '18:00');
+@endphp
+
 <div class="container mx-auto mt-10 pt-5 glass">
     <div class="flex justify-center">
         <div class="w-full max-w-lg dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm bg-gray-300 relative">
@@ -11,7 +19,7 @@
             </div>
             @if ($trainingTypes->isEmpty() || $rooms->isEmpty() || $personalTrainers->isEmpty())
                 <div class="mb-4 dark:text-white text-gray-800">
-                    <p class="mb-2">Para editar um treino, você precisa adicionar pelo menos um tipo de treino, uma sala e um personal trainer.</p>
+                    <p class="mb-2">Para editar um treino, precisa de adicionar pelo menos um tipo de treino, uma sala e um personal trainer.</p>
                     @if ($trainingTypes->isEmpty())
                         <a href="{{ route('training_types.create') }}" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-300 dark:hover:text-gray-800">Adicionar Tipo de Treino</a>
                     @endif
@@ -92,6 +100,7 @@
                         @error('start_time')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Horário permitido: {{ $horarioInicioSemanal }} - {{ $horarioFimSemanal }} (Seg-Sex) / {{ $horarioInicioSabado }} - {{ $horarioFimSabado }} (Sáb)</span>
                     </div>
                     <div class="mb-4">
                         <label for="duration" class="block dark:text-white text-gray-800">Duração</label>
@@ -164,17 +173,32 @@
             const duration = parseInt(durationInput.value);
             const endTime = new Date(startTime.getTime() + duration * 60000);
 
+            const horarioInicioSemanal = new Date(startDateInput.value + 'T' + '{{ $horarioInicioSemanal }}');
+            const horarioFimSemanal = new Date(startDateInput.value + 'T' + '{{ $horarioFimSemanal }}');
+            const horarioInicioSabado = new Date(startDateInput.value + 'T' + '{{ $horarioInicioSabado }}');
+            const horarioFimSabado = new Date(startDateInput.value + 'T' + '{{ $horarioFimSabado }}');
+
+            const dayOfWeek = startDate.getDay();
+
             if (startTime < now) {
                 event.preventDefault();
                 errorMsg.innerText = 'A hora de início deve ser superior à hora atual.';
                 return false;
-            } else if ((endTime - startTime) / (1000 * 60) < 20) {
+            } else if ((endTime - startTime) / (1000 * 60) < 30) {
                 event.preventDefault();
-                errorMsg.innerText = 'A duração do treino deve ser de pelo menos 20 minutos.';
+                errorMsg.innerText = 'A duração do treino deve ser de pelo menos 30 minutos.';
                 return false;
-            } else if ((endTime - startTime) / (1000 * 60) > 120) {
+            } else if ((endTime - startTime) / (1000 * 60) > 90) {
                 event.preventDefault();
-                errorMsg.innerText = 'A duração do treino não pode exceder 2 horas.';
+                errorMsg.innerText = 'A duração do treino não pode exceder 90 minutos.';
+                return false;
+            } else if ((dayOfWeek >= 1 && dayOfWeek <= 5) && (startTime < horarioInicioSemanal || startTime > horarioFimSemanal || endTime > horarioFimSemanal)) {
+                event.preventDefault();
+                errorMsg.innerText = 'O treino deve estar entre ' + '{{ $horarioInicioSemanal }}' + ' e ' + '{{ $horarioFimSemanal }}' + ' nos dias de semana.';
+                return false;
+            } else if (dayOfWeek == 6 && (startTime < horarioInicioSabado || startTime > horarioFimSabado || endTime > horarioFimSabado)) {
+                event.preventDefault();
+                errorMsg.innerText = 'O treino deve estar entre ' + '{{ $horarioInicioSabado }}' + ' e ' + '{{ $horarioFimSabado }}' + ' no sábado.';
                 return false;
             } else {
                 errorMsg.innerText = '';

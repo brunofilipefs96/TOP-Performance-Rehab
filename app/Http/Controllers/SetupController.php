@@ -3,17 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Models\Address;
+use App\Models\Sale;
+use App\Models\Setting;
 use App\Models\TrainingType;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Stripe\PaymentIntent;
+use Stripe\PaymentMethod;
+use Stripe\Stripe;
+use Stripe\StripeClient;
 
 class SetupController extends Controller
 {
     public function setup()
     {
         $user = auth()->user();
+
+        foreach ($user->sales as $sale) {
+            if ($sale->products()->count() == 0 && $sale->packs()->count() == 0) {
+                if ($user->membership->status->name == 'pending_payment') {
+                    return redirect('sales/'.$sale->id);
+                } else {
+                    return redirect('memberships/'.$user->membership->id);
+                }
+            }
+        }
 
         if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name == 'active') && ($user->membership->insurance->status->name == 'active'))) {
             return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
@@ -43,7 +60,19 @@ class SetupController extends Controller
         }
 
         if ($user->membership->status->name == 'pending_payment' && $user->insurance->status->name == 'pending_payment') {
-            return redirect()->route('setup.paymentShow');
+            return redirect()->route('setup.awaitingShow');
+        }
+
+        if ($user->membership->status->name == 'pending_payment' && $user->insurance->status->name == 'active') {
+            return redirect()->route('setup.awaitingShow');
+        }
+
+        if($user->membership->status->name == 'rejected' || $user->membership->insurance->status->name == 'rejected') {
+            return redirect()->route('awaitingShow');
+        }
+
+        if($user->membership->status->name == 'active' || $user->membership->status->name == 'frozen'){
+            return redirect()->route('membership.show');
         }
 
         return redirect()->route('dashboard')->with('success', 'Processo de inscrição completo.');
@@ -95,7 +124,6 @@ class SetupController extends Controller
         return view('pages.setup.trainingTypesShow', ['user' => $user, 'trainingTypes' => $trainingTypes, 'userTrainingTypes' => $userTrainingTypes]);
     }
 
-
     public function insuranceShow()
     {
         $user = auth()->user();
@@ -146,7 +174,11 @@ class SetupController extends Controller
             return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
         }
 
-        if ($user->membership->status->name != 'pending_payment' && $user->insurance->status->name != 'pending_payment') {
+        if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name == 'active') && ($user->membership->insurance->status->name == 'active'))) {
+            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
+        }
+
+        if ($user->membership && $user->membership->status->name != 'pending_payment' && $user->insurance && $user->insurance->status->name != 'pending_payment') {
             return redirect()->route('setup');
         }
 
@@ -163,7 +195,6 @@ class SetupController extends Controller
         } else if(!$user->membership->insurance){
             return redirect()->route('setup.insuranceShow');
         }
-
 
         return view('pages.setup.paymentShow',  ['user' => $user]);
     }
@@ -224,6 +255,7 @@ class SetupController extends Controller
 
         return redirect()->route('setup.membershipShow');
     }
+
     public function storeTrainingTypes(Request $request)
     {
         $user = auth()->user();
@@ -239,5 +271,94 @@ class SetupController extends Controller
         return redirect()->route('setup.insuranceShow')->with('success', 'Modalidades selecionadas com sucesso.');
     }
 
+    public function updateTrainingTypes(Request $request)
+    {
+        $user = auth()->user();
 
+        if (!$user->membership) {
+            return redirect()->route('setup.membershipShow')->with('error', 'Você precisa primeiro criar uma matrícula.');
+        }
+
+        $trainingTypeIds = $request->input('trainingTypes', []);
+
+        $currentTrainingTypes = $user->membership->trainingTypes->pluck('id')->toArray();
+        if ($currentTrainingTypes != $trainingTypeIds) {
+            $user->membership->trainingTypes()->sync($trainingTypeIds);
+            return redirect()->route('setup.insuranceShow')->with('success', 'Modalidades atualizadas com sucesso.');
+        }
+
+        return redirect()->route('setup.insuranceShow');
+    }
+
+    public function processSetup(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'nif_option' => 'required|in:personal,final',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $user = auth()->user();
+        $membership = $user->membership;
+        $addressId = $membership->address_id;
+
+        if (!$addressId) {
+            return redirect()->back()->withErrors(['address' => 'Endereço não encontrado para esta associação.'])->withInput();
+        }
+
+        $nif = $request->input('nif_option') === 'personal' ? $user->nif : '999999990';
+
+        $total = setting('taxa_inscricao');
+        if ($membership->insurance->insurance_type == 'Ginásio') {
+            $total += setting('taxa_seguro');
+        }
+
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+        $stripe = new StripeClient(env('STRIPE_SECRET'));
+
+        try {
+            $paymentMethod = $stripe->paymentMethods->create([
+                'type' => 'multibanco',
+                'billing_details' => [
+                    'email' => $user->email,
+                ],
+            ]);
+
+            $paymentIntent = $stripe->paymentIntents->create([
+                'amount' => $total * 100,
+                'currency' => 'eur',
+                'payment_method_types' => ['multibanco'],
+                'payment_method' => $paymentMethod->id,
+                'confirmation_method' => 'automatic',
+                'confirm' => true,
+            ]);
+
+            $existingSale = Sale::where('user_id', $user->id)
+                ->where('created_at', '>=', Carbon::now()->subMinutes(1))
+                ->first();
+
+            if ($existingSale) {
+                return redirect()->back()->with('error', 'Você já processou um pagamento recentemente. Por favor, aguarde um momento.');
+            }
+
+            $sale = Sale::create([
+                'user_id' => $user->id,
+                'address_id' => $addressId,
+                'status_id' => 5,
+                'total' => $total,
+                'payment_method' => 'multibanco',
+                'nif' => $nif,
+            ]);
+
+            $sale->payment_intent_id = $paymentIntent->id;
+            $sale->save();
+
+            return redirect()->route('sales.show', ['sale' => $sale->id]);
+
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Ocorreu um erro ao processar o pagamento: ' . $e->getMessage()])->withInput();
+        }
+    }
 }

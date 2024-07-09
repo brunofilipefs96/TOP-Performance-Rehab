@@ -76,11 +76,9 @@
                         @endforeach
                     </div>
 
-
-
                     <!-- New section for questions and answers -->
                     <div class="mb-4">
-                        <h2 class="mb-2 text-xl text-gray-900 dark:text-gray-200">Detalhes das Perguntas</h2>
+                        <h2 class="mb-2 text-xl text-gray-900 dark:text-gray-200">Observações</h2>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 @foreach ($membership->user->entries as $entry)
@@ -160,7 +158,7 @@
                                         <input type="hidden" name="status_name" value="pending_payment">
                                         <button type="submit"
                                                 class="inline-block bg-green-500 mt-4 mr-1 py-2 px-6 rounded-md shadow-sm hover:bg-green-700 text-white">
-                                            Ativar
+                                            Aceitar
                                         </button>
                                     </form>
                                     <form
@@ -177,17 +175,25 @@
                                 </div>
                             @endif
                             @if($membership->status->name == 'active' || $membership->status->name == 'pending')
-                                <form
-                                    action="{{ route('memberships.update', ['membership' => $membership->id]) }}"
-                                    method="POST">
-                                    @csrf
-                                    @method('PATCH')
-                                    <input type="hidden" name="status_name" value="frozen">
-                                    <button type="submit"
-                                            class="inline-block bg-blue-500 ml-1 mt-4 py-2 px-6 rounded-md shadow-sm hover:bg-blue-700 text-white">
-                                        Congelar
-                                    </button>
-                                </form>
+                                <div class="flex items-center">
+                                    @if($membership->status->name == 'active')
+                                        <a href="{{ route('memberships.evaluations.list', ['membership' => $membership->id]) }}"
+                                           class="inline-block border-tg dark:hover:bg-lime-300 bg-blue-500 dark:text-lime-800 mt-4 py-2 px-6 rounded-md shadow-sm hover:bg-blue-700 dark:bg-lime-400 text-white">
+                                            Avaliações
+                                        </a>
+                                    @endif
+                                    <form
+                                        action="{{ route('memberships.update', ['membership' => $membership->id]) }}"
+                                        method="POST">
+                                        @csrf
+                                        @method('PATCH')
+                                        <input type="hidden" name="status_name" value="frozen">
+                                        <button type="submit"
+                                                class="inline-block bg-blue-500 ml-1 mt-4 py-2 px-6 rounded-md shadow-sm hover:bg-blue-700 text-white">
+                                            Congelar
+                                        </button>
+                                    </form>
+                                </div>
                             @endif
                         @endcan
                         <div class="flex justify-end">

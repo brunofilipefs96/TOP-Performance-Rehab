@@ -39,9 +39,9 @@ class Evaluation extends Model
         'date',
     ];
 
-    public function memberships()
+    public function membership()
     {
-        return $this->belongsToMany(Membership::class);
+        return $this->belongsTo(Membership::class);
     }
 
 }

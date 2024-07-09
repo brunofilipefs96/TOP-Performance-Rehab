@@ -15,13 +15,15 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased text-gray-100 dark:bg-gray-900">
-<div class="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col">
+<div class="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col relative">
     @if(auth()->user()->hasRole('client'))
-        <div class="flex flex-1">
-            @include('layouts.client-navigation')
+        <div class="flex ">
+            <div class="">
+                @include('layouts.client-navigation')
+            </div>
             <div class="flex-1 flex flex-col">
                 <!-- Page Content -->
-                <main class="p-4 flex-1">
+                <main class="p-4 flex-1 min-h-screen">
                     {{ $slot }}
                     <div id="success-modal"
                          class="fixed top-20 right-5 flex items-center justify-center bg-opacity-75 hidden">
@@ -31,11 +33,11 @@
                         </div>
                     </div>
                 </main>
-                <footer class="bg-gray-800 text-white p-4">
-                    @include('layouts.client-footer')
-                </footer>
             </div>
         </div>
+    <div class="bg-gray-800 text-white p-4">
+        @include('layouts.client-footer')
+    </div>
     @else
         <div class="flex-1 flex flex-col">
             @include('layouts.navigation')

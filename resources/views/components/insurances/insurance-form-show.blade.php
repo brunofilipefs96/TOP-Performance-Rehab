@@ -85,6 +85,17 @@
                                                 Aceitar
                                             </button>
                                         </form>
+                                        <form
+                                            action="{{ route('insurances.update', ['insurance' => $insurance->id]) }}"
+                                            method="POST">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="hidden" name="status_name" value="rejected">
+                                            <button type="submit"
+                                                    class="inline-block bg-red-500 mt-4 py-2 px-6 rounded-md shadow-sm hover:bg-red-700 text-white">
+                                                Rejeitar
+                                            </button>
+                                        </form>
                                     @elseif($insurance->insurance_type == 'Ginásio')
                                         <form
                                             action="{{ route('insurances.update', ['insurance' => $insurance->id]) }}"
@@ -93,7 +104,7 @@
                                             @method('PATCH')
                                             <input type="hidden" name="status_name" value="pending_payment">
                                             <button type="submit"
-                                                    class="inline-block bg-yellow-500 mt-4 mr-1 py-2 px-6 rounded-md shadow-sm hover:bg-yellow-700 text-white">
+                                                    class="inline-block bg-green-500 mt-4 mr-1 py-2 px-6 rounded-md shadow-sm hover:bg-yellow-700 text-white">
                                                 Aceitar
                                             </button>
                                         </form>

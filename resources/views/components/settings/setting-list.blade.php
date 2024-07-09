@@ -97,14 +97,14 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="horario_inicio" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Horário de Início</label>
+                    <label for="horario_inicio_semanal" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Horário de Início (Seg-Sex)</label>
                     <input type="text"
-                           id="horario_inicio"
-                           name="horario_inicio"
+                           id="horario_inicio_semanal"
+                           name="horario_inicio_semanal"
                            class="time-input mt-1 block w-full dark:border-gray-300 dark:border-gray-700 dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm"
-                           value="{{ old('horario_inicio', $settings['horario_inicio'] ?? '') }}"
-                           aria-describedby="horarioInicioHelp">
-                    @error('horario_inicio')
+                           value="{{ old('horario_inicio_semanal', $settings['horario_inicio_semanal'] ?? '') }}"
+                           aria-describedby="horarioInicioSemanalHelp">
+                    @error('horario_inicio_semanal')
                     <span class="text-red-500 text-sm mt-2" role="alert">
                         <strong>{{ $message }}</strong>
                     </span>
@@ -112,14 +112,44 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="horario_fim" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Horário de Fim</label>
+                    <label for="horario_fim_semanal" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Horário de Fim (Seg-Sex)</label>
                     <input type="text"
-                           id="horario_fim"
-                           name="horario_fim"
+                           id="horario_fim_semanal"
+                           name="horario_fim_semanal"
                            class="time-input mt-1 block w-full dark:border-gray-300 dark:border-gray-700 dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm"
-                           value="{{ old('horario_fim', $settings['horario_fim'] ?? '') }}"
-                           aria-describedby="horarioFimHelp">
-                    @error('horario_fim')
+                           value="{{ old('horario_fim_semanal', $settings['horario_fim_semanal'] ?? '') }}"
+                           aria-describedby="horarioFimSemanalHelp">
+                    @error('horario_fim_semanal')
+                    <span class="text-red-500 text-sm mt-2" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label for="horario_inicio_sabado" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Horário de Início (Sábado)</label>
+                    <input type="text"
+                           id="horario_inicio_sabado"
+                           name="horario_inicio_sabado"
+                           class="time-input mt-1 block w-full dark:border-gray-300 dark:border-gray-700 dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm"
+                           value="{{ old('horario_inicio_sabado', $settings['horario_inicio_sabado'] ?? '') }}"
+                           aria-describedby="horarioInicioSabadoHelp">
+                    @error('horario_inicio_sabado')
+                    <span class="text-red-500 text-sm mt-2" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label for="horario_fim_sabado" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Horário de Fim (Sábado)</label>
+                    <input type="text"
+                           id="horario_fim_sabado"
+                           name="horario_fim_sabado"
+                           class="time-input mt-1 block w-full dark:border-gray-300 dark:border-gray-700 dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm"
+                           value="{{ old('horario_fim_sabado', $settings['horario_fim_sabado'] ?? '') }}"
+                           aria-describedby="horarioFimSabadoHelp">
+                    @error('horario_fim_sabado')
                     <span class="text-red-500 text-sm mt-2" role="alert">
                         <strong>{{ $message }}</strong>
                     </span>

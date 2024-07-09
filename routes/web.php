@@ -4,6 +4,8 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EntryController;
+use App\Http\Controllers\EvaluationController;
+use App\Http\Controllers\FreeTrainingController;
 use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\PackController;
@@ -19,6 +21,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Middleware\CheckGymSettings;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Mail\TestEmail;
+use Illuminate\Support\Facades\Mail;
 
 Route::get('/', function () {
     if (auth()->check()) {
@@ -65,24 +69,48 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified'])->group(function
     Route::put('/profile/insurance/{insurance}', [InsuranceController::class, 'update'])->name('insurance.update');
     Route::delete('/profile/insurance/{insurance}', [InsuranceController::class, 'destroy'])->name('insurance.destroy');
 
+    Route::get('/memberships/{membership}/evaluations/create', [EvaluationController::class, 'create'])->name('memberships.evaluations.create');
+    Route::post('/memberships/{membership}/evaluations', [EvaluationController::class, 'store'])->name('memberships.evaluations.store');
+    Route::get('/memberships/{membership}/evaluations/{evaluation}', [EvaluationController::class, 'show'])->name('memberships.evaluations.show');
+    Route::delete('/memberships/{membership}/evaluations/{evaluation}', [EvaluationController::class, 'destroy'])->name('memberships.evaluations.destroy');
+    Route::get('/memberships/{membership}/evaluations', [EvaluationController::class, 'listForMembership'])->name('memberships.evaluations.list');
+
+    // Rotas para Setup
     Route::get('/setup', [SetupController::class, 'setup'])->name('setup');
     Route::get('/setup/address', [SetupController::class, 'addressShow'])->name('setup.addressShow');
     Route::post('/setup/address/store', [SetupController::class, 'storeAddress'])->name('setup.address.store');
     Route::get('/setup/membership', [SetupController::class, 'membershipShow'])->name('setup.membershipShow');
     Route::get('/setup/training-types', [SetupController::class, 'trainingTypesShow'])->name('setup.trainingTypesShow');
     Route::post('/setup/training-types', [SetupController::class, 'storeTrainingTypes'])->name('setup.storeTrainingTypes');
+    Route::put('/setup/training-types', [SetupController::class, 'updateTrainingTypes'])->name('setup.updateTrainingTypes');
     Route::get('/setup/insurance', [SetupController::class, 'insuranceShow'])->name('setup.insuranceShow');
     Route::get('/setup/awaiting', [SetupController::class, 'awaitingShow'])->name('setup.awaitingShow');
     Route::get('/setup/payment', [SetupController::class, 'paymentShow'])->name('setup.paymentShow');
+    Route::post('/setup/process', [SetupController::class, 'processSetup'])->name('setup.process');
 
+    // Rotas para TrainingController
+    Route::get('trainings/multi-delete', [TrainingController::class, 'showMultiDelete'])->name('trainings.showMultiDelete');
+    Route::delete('trainings/multi-delete', [TrainingController::class, 'multiDelete'])->name('trainings.multiDelete');
+
+    Route::get('trainings', [TrainingController::class, 'index'])->name('trainings.index');
+    Route::get('trainings/create', [TrainingController::class, 'create'])->name('trainings.create');
+    Route::post('trainings', [TrainingController::class, 'store'])->name('trainings.store');
+    Route::get('trainings/{training}', [TrainingController::class, 'show'])->name('trainings.show');
+    Route::get('trainings/{training}/edit', [TrainingController::class, 'edit'])->name('trainings.edit');
+    Route::put('trainings/{training}', [TrainingController::class, 'update'])->name('trainings.update');
+    Route::delete('trainings/{training}', [TrainingController::class, 'destroy'])->name('trainings.destroy');
 
     Route::post('trainings/{training}/enroll', [TrainingController::class, 'enroll'])->name('trainings.enroll');
     Route::post('trainings/{training}/cancel', [TrainingController::class, 'cancel'])->name('trainings.cancel');
-    Route::post('/trainings/{training}/mark-presence', [TrainingController::class, 'markPresence'])->name('trainings.markPresence');
-    Route::delete('/trainings/multiDelete', [TrainingController::class, 'multiDelete'])->name('trainings.multiDelete');
-    Route::resource('trainings', TrainingController::class);
+    Route::post('trainings/{training}/mark-presence', [TrainingController::class, 'markPresence'])->name('trainings.markPresence');
 
+    // Rotas para FreeTrainingController
+    Route::get('free-trainings', [FreeTrainingController::class, 'index'])->name('free_trainings.index');
+    Route::post('free-trainings/{freeTraining}/enroll', [FreeTrainingController::class, 'enroll'])->name('free_trainings.enroll');
+    Route::post('free-trainings/{freeTraining}/cancel', [FreeTrainingController::class, 'cancel'])->name('free_trainings.cancel');
     Route::post('/dashboard/change-week', [DashboardController::class, 'changeWeek'])->name('dashboard.changeWeek');
+    Route::post('/free-trainings/change-week', [FreeTrainingController::class, 'changeWeek'])->name('free_trainings.changeWeek');
+    Route::get('/free-trainings/select-day/{day}', [FreeTrainingController::class, 'selectDay'])->name('free_trainings.selectDay');
 
     Route::get('cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('cart/add-product', [CartController::class, 'addProductToCart'])->name('cart.addProduct');

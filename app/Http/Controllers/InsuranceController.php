@@ -37,16 +37,22 @@ class InsuranceController extends Controller
      */
     public function store(StoreInsuranceRequest $request)
     {
-        $insurance = Insurance::create([
-            'membership_id' => auth()->user()->membership->id,
-            'status_id' => Status::where('name', 'pending')->firstOrFail()->id,
-            'insurance_type' => $request->insurance_type,
-            'start_date' => $request->start_date ?? now(),
-            'end_date' => $request->end_date ?? now()->addYear(),
-        ]);
+        $user = auth()->user();
+        $membership = $user->membership;
 
-        //return view('pages.insurances.show', ['insurance' => $insurance] )->with('success', 'Insurance Created!');
-        return redirect()->route('setup.paymentShow')->with('success', 'Insurance Created!');
+        if ($membership && !$membership->insurance) {
+            $insurance = Insurance::create([
+                'membership_id' => $membership->id,
+                'status_id' => Status::where('name', 'pending')->firstOrFail()->id,
+                'insurance_type' => $request->insurance_type,
+                'start_date' => $request->start_date ?? now(),
+                'end_date' => $request->end_date ?? now()->addYear(),
+            ]);
+
+            return redirect()->route('setup.awaitingShow')->with('success', 'Insurance Created!');
+        }
+
+        return redirect()->route('setup.awaitingShow')->with('error', 'Já possui um seguro.');
     }
 
 

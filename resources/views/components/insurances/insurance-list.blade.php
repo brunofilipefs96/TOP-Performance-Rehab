@@ -19,24 +19,24 @@
             <div class="insurance-card bg-gray-800 rounded-lg overflow-hidden shadow-md text-white select-none"
                  data-name="{{ $insurance->membership->user->full_name }}" data-nif="{{ $insurance->membership->user->nif }}" data-status="{{ $insurance->status->name }}">
                 <div class="p-4 dark:bg-gray-800 bg-gray-400">
-                    <h3 class="text-xl font-semibold mb-2">{{ $insurance->membership->user->full_name }}
-                        Nº {{ $insurance->membership->id }}</h3>
+                    <h3 class="text-xl font-semibold mb-2">{{ $insurance->membership->user->firstLastName() }}</h3>
+                    <p class="dark:text-gray-400 text-gray-700 mb-2">ID Cliente: {{ $insurance->membership->user->id }}</p>
                     <p class="dark:text-gray-400 text-gray-700 mb-2">Nif: {{ $insurance->membership->user->nif }}</p>
                     <div class="flex items-center mb-2">
                         @if($insurance->status->name == 'active')
-                            <p class="dark:text-gray-400 text-gray-700 mr-2 align-middle">Estado: Ativo</p>
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Ativo</p>
                             <span class="h-3 w-3 bg-green-500 rounded-full inline-block"></span>
                         @elseif($insurance->status->name == 'pending')
-                            <p class="dark:text-gray-400 text-gray-700 mr-2 align-middle">Estado: Pendente</p>
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Pendente</p>
                             <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
                         @elseif($insurance->status->name == 'inactive')
-                            <p class="dark:text-gray-400 text-gray-700 mr-2 align-middle">Estado: Inativo</p>
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Inativo</p>
                             <span class="h-3 w-3 bg-red-500 rounded-full inline-block"></span>
                         @elseif($insurance->status->name == 'frozen')
-                            <p class="dark:text-gray-400 text-gray-700 mr-2 align-middle">Estado: Congelado</p>
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Congelado</p>
                             <span class="h-3 w-3 bg-blue-500 rounded-full inline-block"></span>
                         @elseif($insurance->status->name == 'pending_payment')
-                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Pagamento em espera</p>
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Aguardar Pagamento</p>
                             <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
                         @endif
                     </div>

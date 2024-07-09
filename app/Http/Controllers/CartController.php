@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Address;
 use App\Models\Sale;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Pack;
@@ -18,6 +19,12 @@ class CartController extends Controller
 {
     public function index()
     {
+        $user = Auth::user();
+
+        if ($user->hasRole('admin')) {
+            return redirect()->route('products.index');
+        }
+
         $cart = session()->get('cart', []);
         $packCart = session()->get('packCart', []);
         $warnings = [];
@@ -160,6 +167,13 @@ class CartController extends Controller
         return view('pages.cart.checkout', ['addresses' => $addresses, 'cart' => $cart, 'packCart' => $packCart]);
     }
 
+    private function hasRecentSale($userId)
+    {
+        return Sale::where('user_id', $userId)
+            ->where('created_at', '>=', Carbon::now()->subMinutes(1))
+            ->exists();
+    }
+
     public function processCheckout(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -203,6 +217,13 @@ class CartController extends Controller
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $user = auth()->user();
+
+        // Verifica se o usuário já tem uma venda processada recentemente
+        if ($this->hasRecentSale($user->id)) {
+            return redirect()->back()->with('error', 'Você já processou um pagamento recentemente. Por favor, aguarde um momento.');
         }
 
         if ($request->input('new_address') === 'on') {
@@ -298,5 +319,6 @@ class CartController extends Controller
 
         return redirect()->route('sales.show', ['sale' => $sale->id]);
     }
+
 
 }

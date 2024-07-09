@@ -1,3 +1,11 @@
+@php
+    use Carbon\Carbon;
+    $horarioInicioSemanal = setting('horario_inicio_semanal', '06:00');
+    $horarioFimSemanal = setting('horario_fim_semanal', '23:59');
+    $horarioInicioSabado = setting('horario_inicio_sabado', '08:00');
+    $horarioFimSabado = setting('horario_fim_sabado', '18:00');
+@endphp
+
 <div class="container mx-auto mt-10 pt-5 glass">
     <div class="flex justify-center">
         <div class="w-full max-w-lg dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm bg-gray-300 relative">
@@ -11,7 +19,7 @@
             </div>
             @if ($trainingTypes->isEmpty() || $rooms->isEmpty() || $personalTrainers->isEmpty())
                 <div class="mb-4 dark:text-white text-gray-800">
-                    <p class="mb-2">Para criar um treino, você precisa adicionar pelo menos um tipo de treino, uma sala e um personal trainer.</p>
+                    <p class="mb-2">Para criar um treino, precisa de adicionar pelo menos um tipo de treino, uma sala e um personal trainer.</p>
                     @if ($trainingTypes->isEmpty())
                         <a href="{{ route('training_types.create') }}" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-300 dark:hover:text-gray-800">Adicionar Tipo de Treino</a>
                     @endif
@@ -71,7 +79,7 @@
                             </select>
                         @else
                             <input type="hidden" name="personal_trainer_id" id="personal_trainer_id" value="{{ auth()->user()->id }}">
-                            <input type="text" value="{{ auth()->user()->firstLastName() }}" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-200 dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50" readonly>
+                            <input type="text" value="{{ auth()->user()->firstLastName() }}" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500 dark:bg-gray-600 dark:text-white" readonly>
                         @endif
                         @error('personal_trainer_id')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -90,6 +98,7 @@
                         @error('start_time')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Horário permitido: {{ $horarioInicioSemanal }} - {{ $horarioFimSemanal }} (Seg-Sex) / {{ $horarioInicioSabado }} - {{ $horarioFimSabado }} (Sáb)</span>
                     </div>
                     <div class="mb-4">
                         <label for="duration" class="block dark:text-white text-gray-800">Duração</label>
@@ -131,9 +140,6 @@
                                 <label class="flex items-center dark:text-gray-200 text-gray-800">
                                     <input type="checkbox" name="days_of_week[]" value="6" class="form-checkbox h-5 w-5 text-blue-500 rounded dark:text-lime-500 mr-2"> Sáb
                                 </label>
-                                <label class="flex items-center dark:text-gray-200 text-gray-800">
-                                    <input type="checkbox" name="days_of_week[]" value="0" class="form-checkbox h-5 w-5 text-blue-500 rounded dark:text-lime-500 mr-2"> Dom
-                                </label>
                             </div>
                         </div>
                         <div class="mb-4">
@@ -164,6 +170,28 @@
                 repeatOptions.style.display = 'block';
             } else {
                 repeatOptions.style.display = 'none';
+            }
+        });
+
+        const trainingForm = document.getElementById('trainingForm');
+        trainingForm.addEventListener('submit', function (event) {
+            const startTimeInput = document.getElementById('start_time');
+            const startDateInput = document.getElementById('start_date');
+            const horarioInicioSemanal = '{{ $horarioInicioSemanal }}';
+            const horarioFimSemanal = '{{ $horarioFimSemanal }}';
+            const horarioInicioSabado = '{{ $horarioInicioSabado }}';
+            const horarioFimSabado = '{{ $horarioFimSabado }}';
+
+            const startTime = startTimeInput.value;
+            const startDate = new Date(startDateInput.value);
+            const dayOfWeek = startDate.getDay();
+
+            if ((dayOfWeek >= 1 && dayOfWeek <= 5) && (startTime < horarioInicioSemanal || startTime > horarioFimSemanal)) {
+                event.preventDefault();
+                alert('A hora de início deve estar entre ' + horarioInicioSemanal + ' e ' + horarioFimSemanal + ' nos dias de semana.');
+            } else if (dayOfWeek == 6 && (startTime < horarioInicioSabado || startTime > horarioFimSabado)) {
+                event.preventDefault();
+                alert('A hora de início deve estar entre ' + horarioInicioSabado + ' e ' + horarioFimSabado + ' no sábado.');
             }
         });
     });

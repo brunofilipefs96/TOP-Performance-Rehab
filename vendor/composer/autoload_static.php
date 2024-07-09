@@ -39,6 +39,7 @@ class ComposerStaticInitda9b7a1dc1dd923105198c572cc7df8d
         'a1cfe24d14977df6878b9bf804af2d1c' => __DIR__ . '/..' . '/nunomaduro/collision/src/Adapters/Phpunit/Autoload.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
         '320163ac6b93aebe3dc25b60a0533d56' => __DIR__ . '/..' . '/spatie/laravel-ignition/src/helpers.php',
+        'c23e8f96f2281c042292a30d2b903c29' => __DIR__ . '/../..' . '/bootstrap/helpers.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -569,6 +570,7 @@ class ComposerStaticInitda9b7a1dc1dd923105198c572cc7df8d
         'App\\Http\\Controllers\\RoomController' => __DIR__ . '/../..' . '/app/Http/Controllers/RoomController.php',
         'App\\Http\\Controllers\\SaleController' => __DIR__ . '/../..' . '/app/Http/Controllers/SaleController.php',
         'App\\Http\\Controllers\\ServiceController' => __DIR__ . '/../..' . '/app/Http/Controllers/ServiceController.php',
+        'App\\Http\\Controllers\\SettingController' => __DIR__ . '/../..' . '/app/Http/Controllers/SettingController.php',
         'App\\Http\\Controllers\\SetupController' => __DIR__ . '/../..' . '/app/Http/Controllers/SetupController.php',
         'App\\Http\\Controllers\\StatusController' => __DIR__ . '/../..' . '/app/Http/Controllers/StatusController.php',
         'App\\Http\\Controllers\\TrainingController' => __DIR__ . '/../..' . '/app/Http/Controllers/TrainingController.php',
@@ -612,6 +614,7 @@ class ComposerStaticInitda9b7a1dc1dd923105198c572cc7df8d
         'App\\Models\\Room' => __DIR__ . '/../..' . '/app/Models/Room.php',
         'App\\Models\\Sale' => __DIR__ . '/../..' . '/app/Models/Sale.php',
         'App\\Models\\Service' => __DIR__ . '/../..' . '/app/Models/Service.php',
+        'App\\Models\\Setting' => __DIR__ . '/../..' . '/app/Models/Setting.php',
         'App\\Models\\Status' => __DIR__ . '/../..' . '/app/Models/Status.php',
         'App\\Models\\Training' => __DIR__ . '/../..' . '/app/Models/Training.php',
         'App\\Models\\TrainingType' => __DIR__ . '/../..' . '/app/Models/TrainingType.php',

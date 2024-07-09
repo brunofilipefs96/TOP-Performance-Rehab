@@ -11,10 +11,12 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\TrainingTypeController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\CheckGymSettings;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 
@@ -27,23 +29,22 @@ Route::get('/', function () {
     }
 });
 
-/*
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-*/
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware(['auth'])->group(function () {
+    Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::put('settings', [SettingController::class, 'update'])->name('settings.update');
+    Route::view('unavailable', 'unavailable')->name('unavailable');
+});
 
-Route::middleware('auth')->group(function () {
+
+Route::middleware(['auth', CheckGymSettings::class, 'verified'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('/users', UserController::class)->only(['index', 'show', 'destroy']);
-
-
     Route::resource('/products', ProductController::class);
     Route::resource('/rooms', RoomController::class);
     Route::resource('/training-types', TrainingTypeController::class);
@@ -101,7 +102,6 @@ Route::middleware('auth')->group(function () {
     })->name('faq.index');
 
     Route::get('/calendar', [DashboardController::class, 'showCalendar'])->name('calendar');
-
 });
 
 Route::post('/webhook/stripe', [SaleController::class, 'handleWebhook'])->name('webhook.stripe');

@@ -5,62 +5,57 @@ namespace App\Http\Controllers;
 use App\Models\Evaluation;
 use App\Http\Requests\StoreEvaluationRequest;
 use App\Http\Requests\UpdateEvaluationRequest;
+use App\Models\Membership;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class EvaluationController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function create(Membership $membership)
     {
-        //
+        $this->authorize('create', Evaluation::class);
+        return view('pages.evaluations.create', ['membership' => $membership]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(StoreEvaluationRequest $request, Membership $membership)
     {
-        //
+        $this->authorize('create', Evaluation::class);
+
+        $validatedData = $request->validated();
+
+        $evaluation = new Evaluation($validatedData);
+        $evaluation->save();
+
+        $membership->evaluations()->attach($evaluation->id);
+
+        return redirect()->route('memberships.evaluations.list', ['membership' => $membership->id])
+            ->with('success', 'Avaliação adicionada com sucesso!');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreEvaluationRequest $request)
+    public function show(Membership $membership, Evaluation $evaluation)
     {
-        //
+        $this->authorize('view', $evaluation);
+        return view('pages.evaluations.show', ['evaluation' => $evaluation, 'membership' => $membership]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Evaluation $evaluation)
+
+    public function destroy(Membership $membership, Evaluation $evaluation)
     {
-        //
+        $this->authorize('delete', $evaluation);
+        $evaluation->delete();
+        return redirect()->route('memberships.evaluations.list', ['membership' => $evaluation->membership_id])->with('success', 'Avaliação eliminada com sucesso!');
+
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Evaluation $evaluation)
+    public function listForMembership(Membership $membership)
     {
-        //
-    }
+        $this->authorize('viewAny', Evaluation::class);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateEvaluationRequest $request, Evaluation $evaluation)
-    {
-        //
-    }
+        $evaluations = $membership->evaluations()->orderBy('created_at', 'desc')->paginate(12);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Evaluation $evaluation)
-    {
-        //
+        return view('pages.evaluations.list', ['evaluations' => $evaluations, 'membership' => $membership]);
     }
 }

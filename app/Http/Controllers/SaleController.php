@@ -98,6 +98,9 @@ class SaleController extends Controller
     {
         Log::info('Webhook received');
 
+        // Defina a chave da API do Stripe
+        \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+
         $payload = $request->all();
         $event = null;
 
@@ -112,6 +115,8 @@ class SaleController extends Controller
         if ($event->type === 'payment_intent.succeeded') {
             Log::info('Payment Intent Succeeded');
             $paymentIntent = $event->data->object;
+            Log::info('Payment Intent Object: ' . json_encode($paymentIntent));
+
             $sale = Sale::where('payment_intent_id', $paymentIntent->id)->first();
 
             if ($sale) {
@@ -185,9 +190,6 @@ class SaleController extends Controller
 
         return response()->json(['status' => 'success']);
     }
-
-
-
     public function destroy(Sale $sale)
     {
         //

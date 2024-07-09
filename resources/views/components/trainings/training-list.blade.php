@@ -28,7 +28,7 @@
             @endphp
 
             @if ($availablePacks->isNotEmpty())
-                <div class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 p-4 mb-6" role="alert">
+                <div class="bg-gray-300 dark:bg-gray-700 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 dark:text-gray-200 p-4 mb-6" role="alert">
                     <p class="font-bold mb-1">Possui Packs de aulas para utilizar:</p>
                     <ul class="list-disc list-inside">
                         @foreach ($availablePacks as $pack)
@@ -40,7 +40,7 @@
                     <p class="mt-2">O pack que será utilizado é o que expira mais brevemente.</p>
                 </div>
             @else
-                <div class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 p-4 mb-6" role="alert">
+                <div class="bg-gray-300 dark:bg-gray-700 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 dark:text-gray-200 p-4 mb-6" role="alert">
                     <p class="font-bold">Adquira Packs para Participar nas Aulas</p>
                     <p>Para usufruir das nossas aulas e inscrever-se, adquira um dos nossos packs de aulas. Clique no botão abaixo para ver os packs que temos disponíveis para si!</p>
                     <a href="{{ route('packs.index') }}" class="mt-4 inline-block text-white dark:bg-lime-500 bg-blue-500 px-3 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400">Ver Packs</a>
@@ -199,7 +199,7 @@
                                                 @csrf
                                                 <button type="button"
                                                         class="bg-red-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-400 text-sm"
-                                                        onclick="confirmCancel({{ $training->id }})">
+                                                        onclick="confirmCancel({{ $training->id }}, this)">
                                                     <i class="fa-solid fa-x w-4 h-4 mr-2"></i>
                                                     Cancelar Inscrição
                                                 </button>
@@ -210,7 +210,7 @@
                                                     @csrf
                                                     <button type="button"
                                                             class="dark:bg-lime-400 bg-blue-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-green-400 text-sm"
-                                                            onclick="confirmEnroll({{ $training->id }})">
+                                                            onclick="confirmEnroll({{ $training->id }}, this)">
                                                         <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
                                                         Inscrever-me
                                                     </button>
@@ -258,7 +258,7 @@
             <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400"
                     onclick="cancelAction()">Cancelar
             </button>
-            <form id="confirmation-form" method="POST" class="inline">
+            <form id="confirmation-form" method="POST" class="inline" onsubmit="disableConfirmButton(this)">
                 @csrf
                 <input type="hidden" name="_method" value="DELETE">
                 <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500">Confirmar
@@ -302,12 +302,18 @@
         window.location.href = url.toString();
     }
 
-    function confirmEnroll(id) {
+    function confirmEnroll(id, button) {
         openModal('Pretende inscrever-se?', '', `/trainings/${id}/enroll`, 'POST');
     }
 
-    function confirmCancel(id) {
+    function confirmCancel(id, button) {
         openModal('Pretende cancelar a inscrição?', '', `/trainings/${id}/cancel`, 'POST');
+    }
+
+    function disableConfirmButton(form) {
+        const button = form.querySelector('button[type="submit"]');
+        button.disabled = true;
+        button.innerHTML = '<i class="fa-solid fa-spinner fa-spin w-4 h-4 mr-2"></i> Processando...';
     }
 
     function openModal(title, message, actionUrl, method) {

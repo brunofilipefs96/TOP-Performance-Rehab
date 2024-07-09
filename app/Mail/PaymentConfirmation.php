@@ -3,12 +3,8 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use App\Models\Sale;
 
 class PaymentConfirmation extends Mailable
 {
@@ -16,16 +12,23 @@ class PaymentConfirmation extends Mailable
 
     public $sale;
     public $receiptUrl;
+    public $isEnrollmentFee;
 
-    public function __construct(Sale $sale, $receiptUrl)
+    public function __construct($sale, $receiptUrl, $isEnrollmentFee = false)
     {
         $this->sale = $sale;
         $this->receiptUrl = $receiptUrl;
+        $this->isEnrollmentFee = $isEnrollmentFee;
     }
 
     public function build()
     {
-        return $this->subject('Payment Confirmation')
-            ->view('emails.payment_confirmation');
+        return $this->subject('Confirmação de Pagamento')
+            ->view('emails.payment_confirmation')
+            ->with([
+                'sale' => $this->sale,
+                'receiptUrl' => $this->receiptUrl,
+                'isEnrollmentFee' => $this->isEnrollmentFee,
+            ]);
     }
 }

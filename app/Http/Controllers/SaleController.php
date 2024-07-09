@@ -156,8 +156,13 @@ class SaleController extends Controller
                     $receiptUrl = $charges[0]->receipt_url;
                 }
 
-                Mail::to($sale->user->email)->send(new PaymentConfirmation($sale, $receiptUrl));
-                Log::info('Payment confirmation email sent to: ' . $sale->user->email);
+                try {
+                    $isEnrollmentFee = ($sale->products()->count() <= 0 && $sale->packs()->count() <= 0);
+                    Mail::to($sale->user->email)->send(new PaymentConfirmation($sale, $receiptUrl, $isEnrollmentFee));
+                    Log::info('Payment confirmation email sent to: ' . $sale->user->email);
+                } catch (\Exception $e) {
+                    Log::error('Failed to send payment confirmation email: ' . $e->getMessage());
+                }
             } else {
                 Log::error('Sale not found for Payment Intent ID: ' . $paymentIntent->id);
             }
@@ -165,6 +170,7 @@ class SaleController extends Controller
 
         return response()->json(['status' => 'success']);
     }
+
     public function destroy(Sale $sale)
     {
         //

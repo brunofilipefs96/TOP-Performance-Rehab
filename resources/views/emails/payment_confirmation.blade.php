@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Payment Confirmation</title>
+    <title>Confirmação de Pagamento</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -82,30 +82,32 @@
 <body>
 <div class="container">
     <div class="header">
-        <h1>Payment Confirmation</h1>
+        <h1>Confirmação de Pagamento</h1>
     </div>
     <div class="content">
-        <p>Dear {{ $sale->user->name }},</p>
-        <p>Your payment has been successfully processed. Thank you for your purchase!</p>
-        <p>Order Details:</p>
-        <ul class="order-details">
-            @foreach ($sale->products as $product)
-                <li>{{ $product->name }} - Quantity: {{ $product->pivot->quantity }}</li>
-            @endforeach
-            @foreach ($sale->packs as $pack)
-                <li>{{ $pack->name }} - Quantity: {{ $pack->pivot->quantity }}</li>
-            @endforeach
-        </ul>
+        <p>Caro(a) {{ $sale->user->name }},</p>
+        <p>O seu pagamento foi processado com sucesso. Obrigado pela sua compra!</p>
+        @if(!$isEnrollmentFee)
+            <p>Detalhes da Encomenda:</p>
+            <ul class="order-details">
+                @foreach ($sale->products as $product)
+                    <li>{{ $product->name }} - Quantidade: {{ $product->pivot->quantity }}</li>
+                @endforeach
+                @foreach ($sale->packs as $pack)
+                    <li>{{ $pack->name }} - Quantidade: {{ $pack->pivot->quantity }}</li>
+                @endforeach
+            </ul>
+        @endif
         <p><strong>Total: €{{ number_format($sale->total, 2) }}</strong></p>
         @if(isset($receiptUrl))
             <div class="receipt">
-                <p>Your payment receipt is available at the link below:</p>
-                <a href="{{ $receiptUrl }}" class="btn" target="_blank">View Receipt</a>
+                <p>O seu recibo de pagamento está disponível no link abaixo:</p>
+                <a href="{{ $receiptUrl }}" class="btn" target="_blank">Ver Recibo</a>
             </div>
         @endif
     </div>
     <div class="footer">
-        <p>&copy; {{ date('Y') }} Your Company. All rights reserved.</p>
+        <p>&copy; {{ date('Y') }} Sua Empresa. Todos os direitos reservados.</p>
     </div>
 </div>
 </body>

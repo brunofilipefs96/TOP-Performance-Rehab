@@ -11,7 +11,8 @@
             <div>
                 <h3 class="text-xl text-center font-bold mb-4">Horário de Funcionamento</h3>
                 <ul class="space-y-2 text-center">
-                    <li>Seg a sáb --------- {{ setting('horario_inicio') }} às {{ setting('horario_fim') }} </li>
+                    <li>Seg a sex --------- {{ setting('horario_inicio_semanal') }} às {{ setting('horario_fim_semanal') }} </li>
+                    <li>Sáb --------------------- {{ setting('horario_inicio_sabado') }} às {{ setting('horario_fim__sabado') }} </li>
                     <li>Dom --------------------- Fechado</li>
 
                 </ul>

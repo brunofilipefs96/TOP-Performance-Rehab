@@ -20,14 +20,30 @@ class ProductController extends Controller
     {
         $this->authorize('viewAny', Product::class);
         $search = request('search');
+        $message = "Desculpe, não encontramos produtos relacionados a sua busca!";
         if($search){
-            $products = Product::whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%'])->paginate(12);
-            return view('pages.products.index', ['products' => $products]);
+            $search = strtolower($search);
+            $search = ucfirst($search);
+            $products = Product::where([
+                ['name', 'like', '%'.$search.'%']
+            ])->paginate(12);
+            if($products->count() <= 0) {
+                return view('pages.products.index', ['products' => $products, 'message' => $message]);
+            }
+            return view('pages.products.index', ['products' => $products, 'message' => $message]);
         }
-        $products = Product::orderBy('id', 'desc')->paginate(12);
-        return view('pages.products.index', ['products' => $products]);
-    }
 
+
+        $products = Product::orderBy('id', 'desc')->paginate(12);
+        if($products->count() < 0) {
+            $message = "Ok!";
+            return view('pages.products.index', ['products' => $products, 'message' => $message]);
+        } else {
+            $message = "Desculpe, não temos produtos disponiveis no momento, favor retornar mais tarde";
+            return view('pages.products.index', ['products' => $products, 'message' => $message]);
+
+        }
+    }
 
     /**
      * Show the form for creating a new resource.

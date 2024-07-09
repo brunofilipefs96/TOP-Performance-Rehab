@@ -21,11 +21,11 @@
     <hr class="mb-10 border-gray-400 dark:border-gray-300">
         @if(count($products) <= 0)
             <div class="min-h-screen flex flex-col items-center">
-                <h1 class="dark:text-gray-400 text-gray-800 text-2xl mb-6"><i class="fa-solid fa-circle-exclamation"></i> Desculpe, não encontramos nenhum produto com este nome</h1>
+                <h1 class="dark:text-gray-400 text-gray-800 text-2xl mb-6"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</h1>
                 <a href="{{ route ('products.index') }}">
                     <button type="button"
                             class="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm">
-                        Voltar a lista de produtos
+                        Voltar
                     </button>
                 </a>
             </div>

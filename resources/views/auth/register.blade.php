@@ -3,8 +3,10 @@
         <div class="max-w-4xl w-full bg-white dark:bg-gray-900 shadow-lg rounded-lg p-8">
             <div class="flex justify-between items-center">
                 <h1 class="font-bold text-2xl">
-                    <span class="text-black dark:text-white">Ginásio</span>
-                    <span class="text-blue-500 dark:text-lime-500">TOP</span>
+                    <a href="{{ url("/") }} ">
+                        <span class="text-black dark:text-white">Ginásio</span>
+                        <span class="text-blue-500 dark:text-lime-500">TOP</span>
+                    </a>
                 </h1>
                 <button id="theme-toggle" type="button"
                         class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">

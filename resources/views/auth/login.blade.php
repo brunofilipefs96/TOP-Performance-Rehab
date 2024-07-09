@@ -4,8 +4,11 @@
 
             <div class="flex justify-between items-center">
                 <h1 class="font-bold text-2xl">
-                    <span class="text-black dark:text-white">Ginásio</span>
-                    <span class="text-blue-500 dark:text-lime-500">TOP</span>
+                    <a href="{{ url("/") }}">
+                        <span class="text-black dark:text-white">Ginásio</span>
+                        <span class="text-blue-500 dark:text-lime-500">TOP</span>
+                    </a>
+
                 </h1>
                 <button id="theme-toggle" type="button"
                         class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
@@ -37,7 +40,7 @@
                 <div>
                     <!-- Email Address -->
                     <div>
-                        <x-input-label for="email" :value="__('Email')" />
+                        <x-input-label for="email" :value="__('E-mail')" />
                         <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
                         <x-input-error :messages="$errors->get('email')" class="mt-2" />
                     </div>
@@ -55,13 +58,13 @@
                         <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Lembrar Password') }}</span>
                     </label>
                 </div>
-                <div class="flex items-center justify-between mt-4">
+                <div class="flex flex-col-reverse sm:flex-row items-center sm:justify-between mt-4 ">
                     @if (Route::has('password.request'))
-                        <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-lime-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
+                        <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-lime-500 dark:focus:ring-offset-gray-800 content-center" href="{{ route('password.request') }}">
                             {{ __('Esqueceu-se da sua Password?') }}
                         </a>
                     @endif
-                    <x-primary-button class="ms-3 dark:bg-lime-400 hover:dark:bg-lime-300 bg-blue-500 hover:bg-blue-400 focus:ring-lime-500 focus:ring-2 focus:ring-offset-2">
+                    <x-primary-button class="ms-3 dark:bg-lime-400 hover:dark:bg-lime-300 bg-blue-500 hover:bg-blue-400 focus:ring-lime-500 focus:ring-2 focus:ring-offset-2 mb-3 sm:mb-0">
                         {{ __('Entrar') }}
                     </x-primary-button>
                 </div>

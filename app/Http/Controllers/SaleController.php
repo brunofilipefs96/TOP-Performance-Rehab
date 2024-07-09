@@ -98,11 +98,14 @@ class SaleController extends Controller
     {
         Log::info('Webhook received');
 
+        // Defina a chave da API do Stripe
+        \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+
         $payload = $request->all();
         $event = null;
 
         try {
-            $event = Event::constructFrom($payload);
+            $event = \Stripe\Event::constructFrom($payload);
             Log::info('Stripe event constructed successfully');
         } catch (\UnexpectedValueException $e) {
             Log::error('Invalid payload');
@@ -112,6 +115,8 @@ class SaleController extends Controller
         if ($event->type === 'payment_intent.succeeded') {
             Log::info('Payment Intent Succeeded');
             $paymentIntent = $event->data->object;
+            Log::info('Payment Intent Object: ' . json_encode($paymentIntent));
+
             $sale = Sale::where('payment_intent_id', $paymentIntent->id)->first();
 
             if ($sale) {
@@ -150,14 +155,34 @@ class SaleController extends Controller
                     }
                 }
 
-                $charges = $paymentIntent->charges->data;
+                $paymentStatus = $paymentIntent->status;
+                $paymentReference = null;
+                $paymentEntity = null;
+                $amount = $paymentIntent->amount / 100;
+                $paymentVoucherUrl = null;
                 $receiptUrl = null;
-                if (count($charges) > 0) {
-                    $receiptUrl = $charges[0]->receipt_url;
+
+                if ($paymentStatus !== 'succeeded') {
+                    if (isset($paymentIntent->next_action->multibanco_display_details)) {
+                        $paymentReference = $paymentIntent->next_action->multibanco_display_details->reference;
+                        $paymentEntity = $paymentIntent->next_action->multibanco_display_details->entity;
+                        $paymentVoucherUrl = $paymentIntent->next_action->multibanco_display_details->hosted_voucher_url;
+                    }
+                } else {
+                    $chargeId = $paymentIntent->latest_charge;
+                    if ($chargeId) {
+                        $charge = \Stripe\Charge::retrieve($chargeId);
+                        $receiptUrl = $charge->receipt_url ?? null;
+                    }
                 }
 
-                Mail::to($sale->user->email)->send(new PaymentConfirmation($sale, $receiptUrl));
-                Log::info('Payment confirmation email sent to: ' . $sale->user->email);
+                try {
+                    $isEnrollmentFee = ($sale->products()->count() == 0 && $sale->packs()->count() == 0);
+                    Mail::to($sale->user->email)->send(new PaymentConfirmation($sale, $receiptUrl, $isEnrollmentFee));
+                    Log::info('Payment confirmation email sent to: ' . $sale->user->email);
+                } catch (\Exception $e) {
+                    Log::error('Failed to send payment confirmation email: ' . $e->getMessage());
+                }
             } else {
                 Log::error('Sale not found for Payment Intent ID: ' . $paymentIntent->id);
             }

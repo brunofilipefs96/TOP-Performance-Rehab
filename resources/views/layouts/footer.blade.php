@@ -11,7 +11,8 @@
             <div>
                 <h3 class="text-xl text-center font-bold mb-4">Horário de Funcionamento</h3>
                 <ul class="space-y-2 text-gray-400 ">
-                    <li>Seg a sáb --------- {{ setting('horario_inicio') }} às {{ setting('horario_fim') }} </li>
+                    <li>Seg a sex --------- {{ setting('horario_inicio_semanal') }} às {{ setting('horario_fim_semanal') }} </li>
+                    <li>Sáb --------------------- {{ setting('horario_inicio_sabado') }} às {{ setting('horario_fim__sabado') }} </li>
                     <li>Dom --------------------- Fechado</li>
                 </ul>
             </div>
@@ -35,8 +36,8 @@
             </div>
         </div>
         <div class="mt-8 pt-4">
-            <div class="max-w-screen-xl mx-auto flex justify-center items-center text-gray-400 text-sm">
-                <p>2024 © Ginásio TOP Performance & Rehab Developed by Team 1</p>
+            <div class="max-w-screen-xl mx-auto flex flex-col justify-center items-center dark:text-gray-400 text-white text-sm">
+                <p>2024 © Ginásio TOP Performance & Rehab</p>
                 <h1>Developed by Team One</h1>
             </div>
         </div>

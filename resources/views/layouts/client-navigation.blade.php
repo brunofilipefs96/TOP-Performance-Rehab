@@ -71,18 +71,31 @@
                             <span class="text-md ml-2">Agenda</span>
                         </a>
                     </li>
+                    @if(Auth::check() && !Auth::user()->hasRole('admin'))
+                        @php
+                            $cart = session()->get('cart', []);
+                            $packCart = session()->get('packCart', []);
+                            $cartCount = count($cart) + count($packCart);
+                        @endphp
+                        <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
+                            <a href="{{ route('cart.index') }}" class="flex mr-3 items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                <i class="fa-solid fa-cart-shopping text-xl transition-transform group-hover:-translate-y-1"></i>
+                                <span class="text-md ml-2">Carrinho</span>
+                            </a>
+                            @if($cartCount > 0)
+                                <span
+                                    class="mb-3 inline-flex items-center justify-center w-5 h-5 p-2 text-sm font-bold leading-none text-red-100 transform -translate-x-2 translate-y-2 bg-red-600 rounded-full">{{ $cartCount }}</span>
+                            @endif
+                        </li>
+
+                    @endif
                     <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
-                        <a href="{{ route('cart.index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                            <i class="fa-solid fa-cart-shopping text-xl transition-transform group-hover:-translate-y-1"></i>
-                            <span class="text-md ml-2">Carrinho</span>
+                        <a href="{{ route('setup') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                            <i class="fa-regular fa-address-card text-xl transition-transform group-hover:-translate-y-1"></i>
+                            <span class="text-md ml-2">Matrícula</span>
                         </a>
                     </li>
-                        <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
-                            <a href="{{ route('setup') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                                <i class="fa-regular fa-address-card text-xl transition-transform group-hover:-translate-y-1"></i>
-                                <span class="text-md ml-2">Matrícula</span>
-                            </a>
-                        </li>
+
                 </ul>
                 <div class="mt-auto mb-6">
                     <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center dark:hover:text-lime-400 hover:text-blue-600">
@@ -139,7 +152,23 @@
                         <li><a href="{{ route('sales.index') }}" class="block text-gray-800 dark:text-gray-200">Minhas Encomendas</a></li>
                         <li><a href="{{ route('calendar') }}" class="block text-gray-800 dark:text-gray-200">Agenda</a></li>
                         <li><a href="{{ route('trainings.index') }}" class="block text-gray-800 dark:text-gray-200">Treinos</a></li>
-                        <li><a href="{{ route('cart.index') }}" class="block text-gray-800 dark:text-gray-200">Carrinho</a></li>
+                        @if(Auth::check() && !Auth::user()->hasRole('admin'))
+                            @php
+                                $cart = session()->get('cart', []);
+                                $packCart = session()->get('packCart', []);
+                                $cartCount = count($cart) + count($packCart);
+                            @endphp
+                            <li class="flex w-full justify-start text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
+                                <a href="{{ route('cart.index') }}" class="flex mr-3 items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                    <i class="fa-solid fa-cart-shopping text-xl transition-transform group-hover:-translate-y-1"></i>
+                                    <span class="text-md ml-2">Carrinho</span>
+                                </a>
+                                @if($cartCount > 0)
+                                    <span
+                                        class="mb-3 ml-2 inline-flex items-center justify-center w-5 h-5 p-2 text-sm font-bold leading-none text-red-100 transform -translate-x-2 translate-y-2 bg-red-600 rounded-full">{{ $cartCount }}</span>
+                                @endif
+                            </li>
+                        @endif
                         <li>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf

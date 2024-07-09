@@ -157,7 +157,7 @@ class SaleController extends Controller
                 }
 
                 try {
-                    $isEnrollmentFee = ($sale->products()->count() <= 0 && $sale->packs()->count() <= 0);
+                    $isEnrollmentFee = ($sale->products()->count() == 0 && $sale->packs()->count() == 0);
                     Mail::to($sale->user->email)->send(new PaymentConfirmation($sale, $receiptUrl, $isEnrollmentFee));
                     Log::info('Payment confirmation email sent to: ' . $sale->user->email);
                 } catch (\Exception $e) {
@@ -170,6 +170,7 @@ class SaleController extends Controller
 
         return response()->json(['status' => 'success']);
     }
+
 
     public function destroy(Sale $sale)
     {

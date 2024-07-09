@@ -93,6 +93,10 @@
         .btn:hover {
             background-color: #45a049;
         }
+        a{
+            text-decoration: none;
+            color: white;
+        }
     </style>
 </head>
 <body>

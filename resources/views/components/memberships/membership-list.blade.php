@@ -12,7 +12,7 @@
         </div>
         <div class="ml-4">
             <form action="{{ route('memberships.index') }}" method="GET" id="filter-form">
-                <select name="filter" id="filter" class="bg-white text-black px-4 py-2 rounded-md border border-gray-300 dark:bg-gray-600 dark:text-white" onchange="document.getElementById('filter-form').submit();">
+                <select name="filter" id="filter" class="bg-white text-black px-4 py-2 rounded-md border border-gray-300 dark:bg-gray-600 dark:text-white" onchange="submitFilterForm()">
                     <option value="all">Todos</option>
                     <option value="active">Ativos</option>
                     <option value="pending">Pendentes</option>
@@ -85,6 +85,16 @@
 </div>
 
 <script>
+    function submitFilterForm() {
+        document.getElementById('filter-form').submit();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const filter = urlParams.get('filter') || 'all';
+        document.getElementById('filter').value = filter;
+    });
+
     let membershipDeleted = 0;
 
     function confirmarEliminacao(id) {

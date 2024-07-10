@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\FreeTrainingController;
+use App\Http\Controllers\GymClosureController;
 use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\PackController;
@@ -37,6 +38,9 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
     Route::put('settings', [SettingController::class, 'update'])->name('settings.update');
+    Route::get('/settings/closures', [GymClosureController::class, 'index'])->name('settings.closures');
+    Route::post('/settings/closures', [GymClosureController::class, 'store'])->name('settings.closures.store');
+    Route::delete('/settings/closures/{gymClosure}', [GymClosureController::class, 'destroy'])->name('settings.closures.destroy');
     Route::view('unavailable', 'unavailable')->name('unavailable');
 });
 

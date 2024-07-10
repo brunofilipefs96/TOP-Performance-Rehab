@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(SettingsTableSeeder::class);
+        $this->call(GymClosureSeeder::class);
 
         $this->call(RoleSeeder::class);
 

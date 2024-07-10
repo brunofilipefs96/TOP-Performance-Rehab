@@ -127,6 +127,10 @@ class MembershipController extends Controller
     public function destroy(Membership $membership)
     {
         $this->authorize('delete', $membership);
+        $entry = $membership->user->entries->first();
+        $entry->delete();
+        $insurance = $membership->insurance;
+        $insurance->delete();
         $membership->delete();
         return redirect()->route('memberships.index')->with('success', 'Membership Deleted!');
     }

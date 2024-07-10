@@ -15,7 +15,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased dark:text-white/50 dark:bg-gray-800 select-none">
-<div class="container mx-auto mt-10 pt-5 glass">
+<div class="container mx-auto mt-10 mb-10 pt-5 glass">
     <div class="flex justify-center">
         <div class="w-full max-w-lg dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm bg-gray-300 relative">
             <div class="absolute top-4 left-4">
@@ -40,7 +40,7 @@
                     <input type="text"
                            id="taxa_inscricao"
                            name="taxa_inscricao"
-                           class="mt-1 block w-full dark:border-gray-300 dark:border-gray-700 dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm"
+                           class="mt-1 block w-full dark:border-gray-300 dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm"
                            value="{{ old('taxa_inscricao', $settings['taxa_inscricao'] ?? '') }}"
                            aria-describedby="taxaInscricaoHelp">
                     @error('taxa_inscricao')
@@ -158,7 +158,7 @@
 
                 <div class="mb-4">
                     <label for="fechamentos" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Datas de Fecho</label>
-                    <a href="{{ route('settings.closures') }}" class="mt-2 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300 text-sm block text-center">Clique aqui para definir as Datas de Fecho do ginásio</a>
+                    <a href="{{ route('settings.closures') }}" class="mt-2 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300 text-sm block text-center">Clique aqui para definir as Datas em que o Ginásio está Encerrado</a>
                 </div>
 
                 <div class="flex justify-end gap-2 mt-10">

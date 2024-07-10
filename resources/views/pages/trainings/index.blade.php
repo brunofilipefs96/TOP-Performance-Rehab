@@ -22,6 +22,7 @@
                 'daysOfWeek' => $daysOfWeek,
                 'type' => 'accompanied',
                 'showMembershipModal' => $showMembershipModal,
+                'closures' => $closures,
             ])
             @endcomponent
         @else

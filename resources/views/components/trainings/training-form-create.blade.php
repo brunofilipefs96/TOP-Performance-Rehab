@@ -6,7 +6,7 @@
     $horarioFimSabado = setting('horario_fim_sabado', '18:00');
 @endphp
 
-<div class="container mx-auto mt-10 pt-5 glass">
+<div class="container mx-auto mt-10 mb-10 pt-5 glass">
     <div class="flex justify-center">
         <div class="w-full max-w-lg dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm bg-gray-300 relative">
             <div class="absolute top-4 left-4">
@@ -91,6 +91,7 @@
                         @error('start_date')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
+                        <span id="start_date_error" class="text-red-500 text-sm"></span>
                     </div>
                     <div class="mb-4">
                         <label for="start_time" class="block dark:text-white text-gray-800">Hora de Início</label>
@@ -99,6 +100,7 @@
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                         <span class="text-sm text-gray-600 dark:text-gray-400">Horário permitido: {{ $horarioInicioSemanal }} - {{ $horarioFimSemanal }} (Seg-Sex) / {{ $horarioInicioSabado }} - {{ $horarioFimSabado }} (Sáb)</span>
+                        <span id="start_time_error" class="text-red-500 text-sm"></span>
                     </div>
                     <div class="mb-4">
                         <label for="duration" class="block dark:text-white text-gray-800">Duração</label>
@@ -112,6 +114,7 @@
                         @error('duration')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
+                        <span id="duration_error" class="text-red-500 text-sm"></span>
                     </div>
 
                     <div class="mb-4 flex items-center">
@@ -148,6 +151,7 @@
                             @error('repeat_until')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
+                            <span id="repeat_until_error" class="text-red-500 text-sm"></span>
                         </div>
                     </div>
 
@@ -174,9 +178,16 @@
         });
 
         const trainingForm = document.getElementById('trainingForm');
+        const closedDates = @json($closures); // Passar os dias fechados do backend para o frontend
+
         trainingForm.addEventListener('submit', function (event) {
             const startTimeInput = document.getElementById('start_time');
             const startDateInput = document.getElementById('start_date');
+            const durationInput = document.getElementById('duration');
+            const startDateError = document.getElementById('start_date_error');
+            const startTimeError = document.getElementById('start_time_error');
+            const durationError = document.getElementById('duration_error');
+
             const horarioInicioSemanal = '{{ $horarioInicioSemanal }}';
             const horarioFimSemanal = '{{ $horarioFimSemanal }}';
             const horarioInicioSabado = '{{ $horarioInicioSabado }}';
@@ -184,14 +195,43 @@
 
             const startTime = startTimeInput.value;
             const startDate = new Date(startDateInput.value);
-            const dayOfWeek = startDate.getDay();
+            const duration = parseInt(durationInput.value);
+            const endTime = new Date(startDate);
+            endTime.setMinutes(startDate.getMinutes() + duration);
 
-            if ((dayOfWeek >= 1 && dayOfWeek <= 5) && (startTime < horarioInicioSemanal || startTime > horarioFimSemanal)) {
+            const dayOfWeek = startDate.getDay();
+            const selectedDate = startDateInput.value;
+            let isValid = true;
+
+            if (closedDates.includes(selectedDate)) {
+                startDateError.innerText = 'O ginásio está fechado nesta data.';
+                isValid = false;
+            } else {
+                startDateError.innerText = '';
+            }
+
+            if ((dayOfWeek >= 1 && dayOfWeek <= 5) && (startTime < horarioInicioSemanal || startTime > horarioFimSemanal || endTime > horarioFimSemanal)) {
+                startTimeError.innerText = 'A hora de início deve estar entre ' + horarioInicioSemanal + ' e ' + horarioFimSemanal + ' nos dias de semana.';
+                isValid = false;
+            } else if (dayOfWeek == 6 && (startTime < horarioInicioSabado || startTime > horarioFimSabado || endTime > horarioFimSabado)) {
+                startTimeError.innerText = 'A hora de início deve estar entre ' + horarioInicioSabado + ' e ' + horarioFimSabado + ' no sábado.';
+                isValid = false;
+            } else {
+                startTimeError.innerText = '';
+            }
+
+            if (duration < 30) {
+                durationError.innerText = 'A duração do treino deve ser de pelo menos 30 minutos.';
+                isValid = false;
+            } else if (duration > 90) {
+                durationError.innerText = 'A duração do treino não pode exceder 90 minutos.';
+                isValid = false;
+            } else {
+                durationError.innerText = '';
+            }
+
+            if (!isValid) {
                 event.preventDefault();
-                alert('A hora de início deve estar entre ' + horarioInicioSemanal + ' e ' + horarioFimSemanal + ' nos dias de semana.');
-            } else if (dayOfWeek == 6 && (startTime < horarioInicioSabado || startTime > horarioFimSabado)) {
-                event.preventDefault();
-                alert('A hora de início deve estar entre ' + horarioInicioSabado + ' e ' + horarioFimSabado + ' no sábado.');
             }
         });
     });

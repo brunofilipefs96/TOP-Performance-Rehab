@@ -1,4 +1,4 @@
-<div class="container mx-auto mt-10">
+<div class="container mx-auto mt-10 mb-10">
     <div class="relative flex justify-center">
         <div class="absolute top-0 left-0">
             <a href="/settings" class="inline-block bg-gray-500 py-1 px-2 mt-4 ml-4 rounded-md shadow-sm hover:bg-gray-700 text-white">
@@ -7,7 +7,7 @@
         </div>
         <div class="w-full max-w-7xl bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm">
             <div class="text-center mb-10">
-                <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Definições do Ginásio - Fechamentos</h1>
+                <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Datas de Fecho</h1>
             </div>
             <div class="text-center mb-4">
                 <p class="text-gray-600 dark:text-gray-300">Nesta página, pode definir os dias em que o ginásio estará fechado, incluindo domingos e feriados.</p>
@@ -18,7 +18,7 @@
                     @foreach (range(1, 12) as $month)
                         @php
                             $firstDayOfMonth = new DateTime(date('Y') . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-01');
-                            $dayOfWeek = $firstDayOfMonth->format('N'); // 1 (for Monday) through 7 (for Sunday)
+                            $dayOfWeek = $firstDayOfMonth->format('N');
                             $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, date('Y'));
                             $monthName = [
                                 1 => 'Janeiro', 2 => 'Fevereiro', 3 => 'Março', 4 => 'Abril',

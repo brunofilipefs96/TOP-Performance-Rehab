@@ -17,7 +17,7 @@ class Training extends Model
         'max_students',
         'start_date',
         'end_date',
-        'personal_trainer_id'
+        'personal_trainer_id',
     ];
 
     public function room()

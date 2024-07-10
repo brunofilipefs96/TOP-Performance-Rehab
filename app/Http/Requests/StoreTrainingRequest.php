@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Room;
 use App\Models\Training;
+use App\Models\GymClosure;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -39,8 +40,9 @@ class StoreTrainingRequest extends FormRequest
             $now = Carbon::now('Europe/Lisbon');
             $dayOfWeek = $startDate->dayOfWeek;
 
-            if ($startDate->isSunday()) {
-                $validator->errors()->add('start_date', 'Os treinos não podem ser agendados aos domingos.');
+            $closureDates = GymClosure::pluck('closure_date')->toArray();
+            if (in_array($startDate->toDateString(), $closureDates)) {
+                $validator->errors()->add('start_date', 'Os treinos não podem ser agendados em dias que o ginásio está fechado.');
             }
 
             $horarioInicioSemanal = setting('horario_inicio_semanal', '06:00');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FreeTraining;
+use App\Models\GymClosure;
 use App\Models\Room;
 use App\Models\Training;
 use App\Http\Requests\StoreTrainingRequest;
@@ -50,6 +51,8 @@ class TrainingController extends Controller
             }
         }
 
+        $closures = GymClosure::pluck('closure_date')->toArray();
+
         $showMembershipModal = auth()->user()->hasRole('client') && (!auth()->user()->membership || auth()->user()->membership->status->name !== 'active');
 
         return view('pages.trainings.index', [
@@ -59,8 +62,10 @@ class TrainingController extends Controller
             'daysOfWeek' => $daysOfWeek,
             'type' => $type,
             'showMembershipModal' => $showMembershipModal,
+            'closures' => $closures,
         ]);
     }
+
 
     public function create()
     {
@@ -71,7 +76,9 @@ class TrainingController extends Controller
             return $user->hasRole('personal_trainer');
         });
 
-        return view('pages.trainings.create', compact('rooms', 'trainingTypes', 'personalTrainers'));
+        $closures = GymClosure::pluck('closure_date')->toArray();
+
+        return view('pages.trainings.create', compact('rooms', 'trainingTypes', 'personalTrainers', 'closures'));
     }
 
     public function store(StoreTrainingRequest $request)
@@ -164,7 +171,9 @@ class TrainingController extends Controller
             return $user->hasRole('personal_trainer');
         });
 
-        return view('pages.trainings.edit', compact('training', 'rooms', 'trainingTypes', 'personalTrainers'));
+        $closures = GymClosure::pluck('closure_date')->toArray();
+
+        return view('pages.trainings.edit', compact('training', 'rooms', 'trainingTypes', 'personalTrainers', 'closures'));
     }
 
     public function update(UpdateTrainingRequest $request, Training $training)

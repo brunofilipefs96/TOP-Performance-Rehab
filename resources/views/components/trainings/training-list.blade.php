@@ -6,7 +6,7 @@
     $horarioFimSabado = setting('horario_fim_sabado', '20:00');
 @endphp
 
-<div class="container mx-auto mt-5">
+<div class="container mx-auto mt-5 mb-10">
 
     @if (auth()->check() && auth()->user()->hasRole('client'))
         @php
@@ -98,138 +98,143 @@
                 $dayOfWeekNumber = Carbon::parse($day)->dayOfWeek;
                 $horarioInicio = $dayOfWeekNumber === Carbon::SATURDAY ? $horarioInicioSabado : $horarioInicioSemana;
                 $horarioFim = $dayOfWeekNumber === Carbon::SATURDAY ? $horarioFimSabado : $horarioFimSemana;
+                $isClosed = in_array($day, $closures);
             @endphp
             <div class="border border-gray-200 bg-gray-200 dark:bg-gray-700 dark:border-gray-700 rounded-lg">
                 <div class="bg-gray-300 dark:bg-gray-800 p-4 text-gray-700 dark:text-gray-200 font-semibold">
                     {{ $dayOfWeek }}
                 </div>
                 <div class="p-4 space-y-4">
-                    @if (isset($trainings[$day]))
-                        @foreach ($trainings[$day] as $training)
-                            @php
-                                $userPresence = $training->users()->where('user_id', auth()->id())->exists();
-                                $userPresenceFalse = $training->users()->where('user_id', auth()->id())->wherePivot('presence', false)->exists();
-                                $currentDateTime = Carbon::now();
-                                $trainingStartDateTime = Carbon::parse($training->start_date);
-                                $isTrainingStarted = $currentDateTime->gte($trainingStartDateTime);
-                                $totalSubscribes = $training->users()->count();
-                                $remainingSpots = $training->max_students - $totalSubscribes;
-                                $hasMarkedAllPresences = $training->users()->wherePivotNotNull('presence')->count() == $totalSubscribes;
-                            @endphp
-                            <div
-                                class="training-card relative dark:bg-gray-800 bg-gray-300 rounded-lg overflow-hidden shadow-md text-white select-none transform transition-transform duration-300 hover:scale-105"
-                                data-id="{{ $training->id }}" data-date="{{ $training->start_date }}"
-                                data-start-time="{{ $training->start_time }}">
-                                <a href="{{ route('trainings.show', $training->id) }}"
-                                   class="block p-4 dark:bg-gray-800 bg-gray-300">
-                                    @if ($userPresence && !$userPresenceFalse)
-                                        <div class="ribbon"><span>Inscrito</span></div>
-                                    @endif
-                                    <h3 class="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-100">{{ $training->trainingType->name }}</h3>
-                                    <div class="dark:text-gray-400 text-gray-600 mb-2 flex items-center text-sm">
-                                        <i class="fa-solid fa-user w-4 h-4 mr-2"></i>
-                                        <span>{{ $training->personalTrainer->firstLastName() }}</span>
-                                    </div>
-                                    <div class="dark:text-gray-400 text-gray-600 mb-2 flex items-center text-sm">
-                                        <i class="fa-solid fa-location-dot w-4 h-4 mr-2"></i>
-                                        <span>{{ $training->room->name }}</span>
-                                    </div>
-                                    <div class="dark:text-gray-400 text-gray-600 mb-2 flex items-center text-sm">
-                                        <i class="fa-solid fa-clock w-4 h-4 mr-2"></i>
-                                        <span>{{ Carbon::parse($training->start_date)->format('H:i') }}</span>
-                                    </div>
-                                    <div class="dark:text-gray-400 text-gray-600 mb-2 flex items-center text-sm">
-                                        <i class="fa-solid fa-hourglass-half w-4 h-4 mr-2"></i>
-                                        <span>{{ Carbon::parse($training->start_date)->diffInMinutes(Carbon::parse($training->end_date)) }} min.</span>
-                                    </div>
-                                    <div class="dark:text-gray-400 text-gray-600 mb-5 flex items-center text-sm">
-                                        <i class="fa-solid fa-square-check w-4 h-4 mr-2"></i>
-                                        Inscrições: {{ $totalSubscribes }}/{{ $training->max_students }}
-                                        @if ($remainingSpots > 0)
-                                            <span class="inline-block w-3 h-3 bg-green-500 rounded-full ml-2"
-                                                  title="Vagas disponíveis"></span>
-                                        @else
-                                            <span class="inline-block w-3 h-3 bg-red-500 rounded-full ml-2"
-                                                  title="Cheio"></span>
+                    @if ($isClosed)
+                        <p class="text-gray-500 dark:text-gray-400">O ginásio encontra-se encerrado neste dia.</p>
+                    @else
+                        @if (isset($trainings[$day]))
+                            @foreach ($trainings[$day] as $training)
+                                @php
+                                    $userPresence = $training->users()->where('user_id', auth()->id())->exists();
+                                    $userPresenceFalse = $training->users()->where('user_id', auth()->id())->wherePivot('presence', false)->exists();
+                                    $currentDateTime = Carbon::now();
+                                    $trainingStartDateTime = Carbon::parse($training->start_date);
+                                    $isTrainingStarted = $currentDateTime->gte($trainingStartDateTime);
+                                    $totalSubscribes = $training->users()->count();
+                                    $remainingSpots = $training->max_students - $totalSubscribes;
+                                    $hasMarkedAllPresences = $training->users()->wherePivotNotNull('presence')->count() == $totalSubscribes;
+                                @endphp
+                                <div
+                                    class="training-card relative dark:bg-gray-800 bg-gray-300 rounded-lg overflow-hidden shadow-md text-white select-none transform transition-transform duration-300 hover:scale-105"
+                                    data-id="{{ $training->id }}" data-date="{{ $training->start_date }}"
+                                    data-start-time="{{ $training->start_time }}">
+                                    <a href="{{ route('trainings.show', $training->id) }}"
+                                       class="block p-4 dark:bg-gray-800 bg-gray-300">
+                                        @if ($userPresence && !$userPresenceFalse)
+                                            <div class="ribbon"><span>Inscrito</span></div>
                                         @endif
-                                    </div>
-                                    @if ($isTrainingStarted)
+                                        <h3 class="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-100">{{ $training->trainingType->name }}</h3>
                                         <div class="dark:text-gray-400 text-gray-600 mb-2 flex items-center text-sm">
-                                            <i class="fa-solid fa-info-circle w-4 h-4 mr-2"></i>
-                                            Treino a Decorrer/Finalizado
+                                            <i class="fa-solid fa-user w-4 h-4 mr-2"></i>
+                                            <span>{{ $training->personalTrainer->firstLastName() }}</span>
                                         </div>
-                                    @endif
-                                    @if ($userPresence && $userPresenceFalse)
-                                        <p class="text-red-500 mb-5 text-sm">
-                                            <i class="fa-solid fa-ban mr-1"></i>
-                                            Cancelou a inscrição com menos de 12 horas de antecedência. Não pode voltar
-                                            a inscrever-se e o treino não será reembolsado.
-                                        </p>
-                                    @endif
-                                </a>
-                                <div class="flex flex-wrap justify-end items-center gap-2 p-4">
-                                    @can('update', $training)
-                                        @if(!$isTrainingStarted)
-                                            <a href="{{ route('trainings.edit', $training->id) }}"
-                                               class="bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400 text-sm">
-                                                <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
-                                                Editar
-                                            </a>
+                                        <div class="dark:text-gray-400 text-gray-600 mb-2 flex items-center text-sm">
+                                            <i class="fa-solid fa-location-dot w-4 h-4 mr-2"></i>
+                                            <span>{{ $training->room->name }}</span>
+                                        </div>
+                                        <div class="dark:text-gray-400 text-gray-600 mb-2 flex items-center text-sm">
+                                            <i class="fa-solid fa-clock w-4 h-4 mr-2"></i>
+                                            <span>{{ Carbon::parse($training->start_date)->format('H:i') }}</span>
+                                        </div>
+                                        <div class="dark:text-gray-400 text-gray-600 mb-2 flex items-center text-sm">
+                                            <i class="fa-solid fa-hourglass-half w-4 h-4 mr-2"></i>
+                                            <span>{{ Carbon::parse($training->start_date)->diffInMinutes(Carbon::parse($training->end_date)) }} min.</span>
+                                        </div>
+                                        <div class="dark:text-gray-400 text-gray-600 mb-5 flex items-center text-sm">
+                                            <i class="fa-solid fa-square-check w-4 h-4 mr-2"></i>
+                                            Inscrições: {{ $totalSubscribes }}/{{ $training->max_students }}
+                                            @if ($remainingSpots > 0)
+                                                <span class="inline-block w-3 h-3 bg-green-500 rounded-full ml-2"
+                                                      title="Vagas disponíveis"></span>
+                                            @else
+                                                <span class="inline-block w-3 h-3 bg-red-500 rounded-full ml-2"
+                                                      title="Cheio"></span>
+                                            @endif
+                                        </div>
+                                        @if ($isTrainingStarted)
+                                            <div class="dark:text-gray-400 text-gray-600 mb-2 flex items-center text-sm">
+                                                <i class="fa-solid fa-info-circle w-4 h-4 mr-2"></i>
+                                                Treino a Decorrer/Finalizado
+                                            </div>
                                         @endif
-                                    @endcan
-                                    @can('delete', $training)
-                                        @if(!$isTrainingStarted)
-                                            <form id="delete-form-{{ $training->id }}"
-                                                  action="{{ route('trainings.destroy', $training->id) }}" method="POST"
-                                                  class="inline text-sm">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button"
-                                                        class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500"
-                                                        onclick="confirmDelete({{ $training->id }})">
-                                                    <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
-                                                    Eliminar
-                                                </button>
-                                            </form>
+                                        @if ($userPresence && $userPresenceFalse)
+                                            <p class="text-red-500 mb-5 text-sm">
+                                                <i class="fa-solid fa-ban mr-1"></i>
+                                                Cancelou a inscrição com menos de 12 horas de antecedência. Não pode voltar
+                                                a inscrever-se e o treino não será reembolsado.
+                                            </p>
                                         @endif
-                                    @endcan
-                                    @if (auth()->check() && auth()->user()->hasRole('client') && auth()->user()->cannot('update', $training) && auth()->user()->cannot('delete', $training) && $training->personal_trainer_id !== auth()->user()->id)
-                                        @if ($userPresence && !$userPresenceFalse && !$isTrainingStarted)
-                                            <form id="cancel-form-{{ $training->id }}" action="{{ route('trainings.cancel', $training->id) }}" method="POST" class="inline text-sm">
-                                                @csrf
-                                                <button type="button"
-                                                        class="bg-red-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-400 text-sm"
-                                                        onclick="confirmCancel({{ $training->id }}, this)">
-                                                    <i class="fa-solid fa-x w-4 h-4 mr-2"></i>
-                                                    Cancelar Inscrição
-                                                </button>
-                                            </form>
-                                        @elseif(!$userPresenceFalse && !$isTrainingStarted)
-                                            @if ($remainingSpots > 0 && $currentDateTime->lt($trainingStartDateTime))
-                                                <form id="enroll-form-{{ $training->id }}" action="{{ route('trainings.enroll', $training->id) }}" method="POST" class="inline text-sm">
+                                    </a>
+                                    <div class="flex flex-wrap justify-end items-center gap-2 p-4">
+                                        @can('update', $training)
+                                            @if(!$isTrainingStarted)
+                                                <a href="{{ route('trainings.edit', $training->id) }}"
+                                                   class="bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400 text-sm">
+                                                    <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
+                                                    Editar
+                                                </a>
+                                            @endif
+                                        @endcan
+                                        @can('delete', $training)
+                                            @if(!$isTrainingStarted)
+                                                <form id="delete-form-{{ $training->id }}"
+                                                      action="{{ route('trainings.destroy', $training->id) }}" method="POST"
+                                                      class="inline text-sm">
                                                     @csrf
+                                                    @method('DELETE')
                                                     <button type="button"
-                                                            class="dark:bg-lime-400 bg-blue-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-green-400 text-sm"
-                                                            onclick="confirmEnroll({{ $training->id }}, this)">
-                                                        <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
-                                                        Inscrever-me
+                                                            class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500"
+                                                            onclick="confirmDelete({{ $training->id }})">
+                                                        <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
+                                                        Eliminar
                                                     </button>
                                                 </form>
                                             @endif
+                                        @endcan
+                                        @if (auth()->check() && auth()->user()->hasRole('client') && auth()->user()->cannot('update', $training) && auth()->user()->cannot('delete', $training) && $training->personal_trainer_id !== auth()->user()->id)
+                                            @if ($userPresence && !$userPresenceFalse && !$isTrainingStarted)
+                                                <form id="cancel-form-{{ $training->id }}" action="{{ route('trainings.cancel', $training->id) }}" method="POST" class="inline text-sm">
+                                                    @csrf
+                                                    <button type="button"
+                                                            class="bg-red-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-400 text-sm"
+                                                            onclick="confirmCancel({{ $training->id }}, this)">
+                                                        <i class="fa-solid fa-x w-4 h-4 mr-2"></i>
+                                                        Cancelar Inscrição
+                                                    </button>
+                                                </form>
+                                            @elseif(!$userPresenceFalse && !$isTrainingStarted)
+                                                @if ($remainingSpots > 0 && $currentDateTime->lt($trainingStartDateTime))
+                                                    <form id="enroll-form-{{ $training->id }}" action="{{ route('trainings.enroll', $training->id) }}" method="POST" class="inline text-sm">
+                                                        @csrf
+                                                        <button type="button"
+                                                                class="dark:bg-lime-400 bg-blue-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-green-400 text-sm"
+                                                                onclick="confirmEnroll({{ $training->id }}, this)">
+                                                            <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
+                                                            Inscrever-me
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            @endif
                                         @endif
-                                    @endif
-                                    @if (auth()->check() && (auth()->user()->id === $training->personal_trainer_id || auth()->user()->hasRole('admin')) && $isTrainingStarted && !$hasMarkedAllPresences)
-                                        <a href="{{ route('trainings.show', $training->id) }}"
-                                           class="absolute bottom-2 right-2 bg-yellow-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-yellow-400 text-sm">
-                                            <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
-                                            Marcar Presenças
-                                        </a>
-                                    @endif
+                                        @if (auth()->check() && (auth()->user()->id === $training->personal_trainer_id || auth()->user()->hasRole('admin')) && $isTrainingStarted && !$hasMarkedAllPresences)
+                                            <a href="{{ route('trainings.show', $training->id) }}"
+                                               class="absolute bottom-2 right-2 bg-yellow-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-yellow-400 text-sm">
+                                                <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
+                                                Marcar Presenças
+                                            </a>
+                                        @endif
+                                    </div>
                                 </div>
-                            </div>
-                        @endforeach
-                    @else
-                        <p class="text-gray-500 dark:text-gray-400">Nenhum treino disponível.</p>
+                            @endforeach
+                        @else
+                            <p class="text-gray-500 dark:text-gray-400">Nenhum treino disponível.</p>
+                        @endif
                     @endif
                 </div>
             </div>

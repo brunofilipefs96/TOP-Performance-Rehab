@@ -4,9 +4,10 @@
     $horarioFimSemanal = setting('horario_fim_semanal', '23:59');
     $horarioInicioSabado = setting('horario_inicio_sabado', '08:00');
     $horarioFimSabado = setting('horario_fim_sabado', '18:00');
+    $duracao = Carbon::parse($training->start_date)->diffInMinutes(Carbon::parse($training->end_date));
 @endphp
 
-<div class="container mx-auto mt-10 pt-5 glass">
+<div class="container mx-auto mt-10 mb-10 pt-5 glass">
     <div class="flex justify-center">
         <div class="w-full max-w-lg dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm bg-gray-300 relative">
             <div class="absolute top-4 left-4">
@@ -93,6 +94,7 @@
                         @error('start_date')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
+                        <span id="start_date_error" class="text-red-500 text-sm"></span>
                     </div>
                     <div class="mb-4">
                         <label for="start_time" class="block dark:text-white text-gray-800">Hora de Início</label>
@@ -101,19 +103,21 @@
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                         <span class="text-sm text-gray-600 dark:text-gray-400">Horário permitido: {{ $horarioInicioSemanal }} - {{ $horarioFimSemanal }} (Seg-Sex) / {{ $horarioInicioSabado }} - {{ $horarioFimSabado }} (Sáb)</span>
+                        <span id="start_time_error" class="text-red-500 text-sm"></span>
                     </div>
                     <div class="mb-4">
                         <label for="duration" class="block dark:text-white text-gray-800">Duração</label>
                         <select name="duration" id="duration" required class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-200 dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
-                            <option value="30" {{ old('duration', $training->duration) == 30 ? 'selected' : '' }}>30 minutos</option>
-                            <option value="45" {{ old('duration', $training->duration) == 45 ? 'selected' : '' }}>45 minutos</option>
-                            <option value="60" {{ old('duration', $training->duration) == 60 ? 'selected' : '' }}>60 minutos</option>
-                            <option value="75" {{ old('duration', $training->duration) == 75 ? 'selected' : '' }}>75 minutos</option>
-                            <option value="90" {{ old('duration', $training->duration) == 90 ? 'selected' : '' }}>90 minutos</option>
+                            <option value="30" {{ $duracao == 30 ? 'selected' : '' }}>30 minutos</option>
+                            <option value="45" {{ $duracao == 45 ? 'selected' : '' }}>45 minutos</option>
+                            <option value="60" {{ $duracao == 60 ? 'selected' : '' }}>60 minutos</option>
+                            <option value="75" {{ $duracao == 75 ? 'selected' : '' }}>75 minutos</option>
+                            <option value="90" {{ $duracao == 90 ? 'selected' : '' }}>90 minutos</option>
                         </select>
                         @error('duration')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
+                        <span id="duration_error" class="text-red-500 text-sm"></span>
                     </div>
                     <div class="flex justify-end gap-2 mt-10">
                         <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300 text-sm" onclick="confirmarAtualizacao()">Atualizar</button>
@@ -163,13 +167,17 @@
         const startDateInput = document.getElementById('start_date');
         const startTimeInput = document.getElementById('start_time');
         const durationInput = document.getElementById('duration');
+        const startDateError = document.getElementById('start_date_error');
+        const startTimeError = document.getElementById('start_time_error');
+        const durationError = document.getElementById('duration_error');
+
+        const closedDates = @json($closures); // Passar os dias fechados do backend para o frontend
+
         const form = document.getElementById('update-form');
-        const errorMsg = document.getElementById('time-error-msg');
 
         form.addEventListener('submit', function (event) {
             const startDate = new Date(startDateInput.value);
             const startTime = new Date(startDateInput.value + 'T' + startTimeInput.value);
-            const now = new Date();
             const duration = parseInt(durationInput.value);
             const endTime = new Date(startTime.getTime() + duration * 60000);
 
@@ -179,29 +187,38 @@
             const horarioFimSabado = new Date(startDateInput.value + 'T' + '{{ $horarioFimSabado }}');
 
             const dayOfWeek = startDate.getDay();
+            const selectedDate = startDateInput.value;
+            let isValid = true;
 
-            if (startTime < now) {
-                event.preventDefault();
-                errorMsg.innerText = 'A hora de início deve ser superior à hora atual.';
-                return false;
-            } else if ((endTime - startTime) / (1000 * 60) < 30) {
-                event.preventDefault();
-                errorMsg.innerText = 'A duração do treino deve ser de pelo menos 30 minutos.';
-                return false;
-            } else if ((endTime - startTime) / (1000 * 60) > 90) {
-                event.preventDefault();
-                errorMsg.innerText = 'A duração do treino não pode exceder 90 minutos.';
-                return false;
-            } else if ((dayOfWeek >= 1 && dayOfWeek <= 5) && (startTime < horarioInicioSemanal || startTime > horarioFimSemanal || endTime > horarioFimSemanal)) {
-                event.preventDefault();
-                errorMsg.innerText = 'O treino deve estar entre ' + '{{ $horarioInicioSemanal }}' + ' e ' + '{{ $horarioFimSemanal }}' + ' nos dias de semana.';
-                return false;
-            } else if (dayOfWeek == 6 && (startTime < horarioInicioSabado || startTime > horarioFimSabado || endTime > horarioFimSabado)) {
-                event.preventDefault();
-                errorMsg.innerText = 'O treino deve estar entre ' + '{{ $horarioInicioSabado }}' + ' e ' + '{{ $horarioFimSabado }}' + ' no sábado.';
-                return false;
+            if (closedDates.includes(selectedDate)) {
+                startDateError.innerText = 'O ginásio está fechado nesta data.';
+                isValid = false;
             } else {
-                errorMsg.innerText = '';
+                startDateError.innerText = '';
+            }
+
+            if ((dayOfWeek >= 1 && dayOfWeek <= 5) && (startTime < horarioInicioSemanal || startTime > horarioFimSemanal || endTime > horarioFimSemanal)) {
+                startTimeError.innerText = 'A hora de início deve estar entre ' + '{{ $horarioInicioSemanal }}' + ' e ' + '{{ $horarioFimSemanal }}' + ' nos dias de semana.';
+                isValid = false;
+            } else if (dayOfWeek == 6 && (startTime < horarioInicioSabado || startTime > horarioFimSabado || endTime > horarioFimSabado)) {
+                startTimeError.innerText = 'A hora de início deve estar entre ' + '{{ $horarioInicioSabado }}' + ' e ' + '{{ $horarioFimSabado }}' + ' no sábado.';
+                isValid = false;
+            } else {
+                startTimeError.innerText = '';
+            }
+
+            if (duration < 30) {
+                durationError.innerText = 'A duração do treino deve ser de pelo menos 30 minutos.';
+                isValid = false;
+            } else if (duration > 90) {
+                durationError.innerText = 'A duração do treino não pode exceder 90 minutos.';
+                isValid = false;
+            } else {
+                durationError.innerText = '';
+            }
+
+            if (!isValid) {
+                event.preventDefault();
             }
         });
     });

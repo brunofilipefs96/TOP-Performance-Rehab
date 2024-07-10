@@ -21,9 +21,12 @@ function applyTheme(theme) {
 
 var themeToggleBtn = document.getElementById("theme-toggle");
 
-themeToggleBtn.addEventListener("click", function () {
-    var currentTheme = document.documentElement.classList.contains("dark") ? "dark" : "light";
-    var newTheme = currentTheme === "dark" ? "light" : "dark";
-    applyTheme(newTheme);
-    localStorage.setItem("color-theme", newTheme);
-});
+if(themeToggleBtn){
+    themeToggleBtn.addEventListener("click", function () {
+        var currentTheme = document.documentElement.classList.contains("dark") ? "dark" : "light";
+        var newTheme = currentTheme === "dark" ? "light" : "dark";
+        applyTheme(newTheme);
+        localStorage.setItem("color-theme", newTheme);
+    });
+}
+

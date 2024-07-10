@@ -39,6 +39,7 @@ class ComposerStaticInitda9b7a1dc1dd923105198c572cc7df8d
         'a1cfe24d14977df6878b9bf804af2d1c' => __DIR__ . '/..' . '/nunomaduro/collision/src/Adapters/Phpunit/Autoload.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
         '320163ac6b93aebe3dc25b60a0533d56' => __DIR__ . '/..' . '/spatie/laravel-ignition/src/helpers.php',
+        'c23e8f96f2281c042292a30d2b903c29' => __DIR__ . '/../..' . '/bootstrap/helpers.php',
         'b4e3f29b106af37a2bb239f73cdf68c7' => __DIR__ . '/../..' . '/app/helpers.php',
     );
 
@@ -546,6 +547,7 @@ class ComposerStaticInitda9b7a1dc1dd923105198c572cc7df8d
     );
 
     public static $classMap = array (
+        'App\\Console\\Commands\\GenerateFreeTrainings' => __DIR__ . '/../..' . '/app/Console/Commands/GenerateFreeTrainings.php',
         'App\\Http\\Controllers\\AddressController' => __DIR__ . '/../..' . '/app/Http/Controllers/AddressController.php',
         'App\\Http\\Controllers\\Auth\\AuthenticatedSessionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/AuthenticatedSessionController.php',
         'App\\Http\\Controllers\\Auth\\ConfirmablePasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ConfirmablePasswordController.php',
@@ -562,6 +564,7 @@ class ComposerStaticInitda9b7a1dc1dd923105198c572cc7df8d
         'App\\Http\\Controllers\\EntryController' => __DIR__ . '/../..' . '/app/Http/Controllers/EntryController.php',
         'App\\Http\\Controllers\\EvaluationController' => __DIR__ . '/../..' . '/app/Http/Controllers/EvaluationController.php',
         'App\\Http\\Controllers\\FreeTrainingController' => __DIR__ . '/../..' . '/app/Http/Controllers/FreeTrainingController.php',
+        'App\\Http\\Controllers\\GymClosureController' => __DIR__ . '/../..' . '/app/Http/Controllers/GymClosureController.php',
         'App\\Http\\Controllers\\InsuranceController' => __DIR__ . '/../..' . '/app/Http/Controllers/InsuranceController.php',
         'App\\Http\\Controllers\\MembershipController' => __DIR__ . '/../..' . '/app/Http/Controllers/MembershipController.php',
         'App\\Http\\Controllers\\PackController' => __DIR__ . '/../..' . '/app/Http/Controllers/PackController.php',
@@ -608,9 +611,12 @@ class ComposerStaticInitda9b7a1dc1dd923105198c572cc7df8d
         'App\\Http\\Requests\\UpdateStatusRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateStatusRequest.php',
         'App\\Http\\Requests\\UpdateTrainingRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateTrainingRequest.php',
         'App\\Http\\Requests\\UpdateTrainingTypeRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateTrainingTypeRequest.php',
+        'App\\Mail\\PaymentConfirmation' => __DIR__ . '/../..' . '/app/Mail/PaymentConfirmation.php',
+        'App\\Mail\\PaymentReferenceMail' => __DIR__ . '/../..' . '/app/Mail/PaymentReferenceMail.php',
         'App\\Models\\Address' => __DIR__ . '/../..' . '/app/Models/Address.php',
         'App\\Models\\Evaluation' => __DIR__ . '/../..' . '/app/Models/Evaluation.php',
         'App\\Models\\FreeTraining' => __DIR__ . '/../..' . '/app/Models/FreeTraining.php',
+        'App\\Models\\GymClosure' => __DIR__ . '/../..' . '/app/Models/GymClosure.php',
         'App\\Models\\Insurance' => __DIR__ . '/../..' . '/app/Models/Insurance.php',
         'App\\Models\\Membership' => __DIR__ . '/../..' . '/app/Models/Membership.php',
         'App\\Models\\Pack' => __DIR__ . '/../..' . '/app/Models/Pack.php',
@@ -781,6 +787,7 @@ class ComposerStaticInitda9b7a1dc1dd923105198c572cc7df8d
         'Database\\Seeders\\DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeders/DatabaseSeeder.php',
         'Database\\Seeders\\EvaluationSeeder' => __DIR__ . '/../..' . '/database/seeders/EvaluationSeeder.php',
         'Database\\Seeders\\FreeTrainingSeeder' => __DIR__ . '/../..' . '/database/seeders/FreeTrainingSeeder.php',
+        'Database\\Seeders\\GymClosureSeeder' => __DIR__ . '/../..' . '/database/seeders/GymClosureSeeder.php',
         'Database\\Seeders\\InsuranceSeeder' => __DIR__ . '/../..' . '/database/seeders/InsuranceSeeder.php',
         'Database\\Seeders\\MembershipSeeder' => __DIR__ . '/../..' . '/database/seeders/MembershipSeeder.php',
         'Database\\Seeders\\PackSeeder' => __DIR__ . '/../..' . '/database/seeders/PackSeeder.php',

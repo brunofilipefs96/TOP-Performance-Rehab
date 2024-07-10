@@ -253,6 +253,18 @@
     color: #fff;
 }
 
-
+.day-circle {
+    width: 1.5rem; /* Ajusta o tamanho do círculo */
+    height: 1.5rem; /* Ajusta o tamanho do círculo */
+    line-height: 1.5rem; /* Centraliza o texto */
+}
+.day-name, .empty-cell, .day-circle {
+    width: 1.5rem;
+    height: 1.5rem;
+    line-height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 

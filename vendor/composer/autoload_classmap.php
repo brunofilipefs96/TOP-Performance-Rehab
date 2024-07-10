@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Console\\Commands\\GenerateFreeTrainings' => $baseDir . '/app/Console/Commands/GenerateFreeTrainings.php',
     'App\\Http\\Controllers\\AddressController' => $baseDir . '/app/Http/Controllers/AddressController.php',
     'App\\Http\\Controllers\\Auth\\AuthenticatedSessionController' => $baseDir . '/app/Http/Controllers/Auth/AuthenticatedSessionController.php',
     'App\\Http\\Controllers\\Auth\\ConfirmablePasswordController' => $baseDir . '/app/Http/Controllers/Auth/ConfirmablePasswordController.php',
@@ -22,6 +23,7 @@ return array(
     'App\\Http\\Controllers\\EntryController' => $baseDir . '/app/Http/Controllers/EntryController.php',
     'App\\Http\\Controllers\\EvaluationController' => $baseDir . '/app/Http/Controllers/EvaluationController.php',
     'App\\Http\\Controllers\\FreeTrainingController' => $baseDir . '/app/Http/Controllers/FreeTrainingController.php',
+    'App\\Http\\Controllers\\GymClosureController' => $baseDir . '/app/Http/Controllers/GymClosureController.php',
     'App\\Http\\Controllers\\InsuranceController' => $baseDir . '/app/Http/Controllers/InsuranceController.php',
     'App\\Http\\Controllers\\MembershipController' => $baseDir . '/app/Http/Controllers/MembershipController.php',
     'App\\Http\\Controllers\\PackController' => $baseDir . '/app/Http/Controllers/PackController.php',
@@ -68,9 +70,12 @@ return array(
     'App\\Http\\Requests\\UpdateStatusRequest' => $baseDir . '/app/Http/Requests/UpdateStatusRequest.php',
     'App\\Http\\Requests\\UpdateTrainingRequest' => $baseDir . '/app/Http/Requests/UpdateTrainingRequest.php',
     'App\\Http\\Requests\\UpdateTrainingTypeRequest' => $baseDir . '/app/Http/Requests/UpdateTrainingTypeRequest.php',
+    'App\\Mail\\PaymentConfirmation' => $baseDir . '/app/Mail/PaymentConfirmation.php',
+    'App\\Mail\\PaymentReferenceMail' => $baseDir . '/app/Mail/PaymentReferenceMail.php',
     'App\\Models\\Address' => $baseDir . '/app/Models/Address.php',
     'App\\Models\\Evaluation' => $baseDir . '/app/Models/Evaluation.php',
     'App\\Models\\FreeTraining' => $baseDir . '/app/Models/FreeTraining.php',
+    'App\\Models\\GymClosure' => $baseDir . '/app/Models/GymClosure.php',
     'App\\Models\\Insurance' => $baseDir . '/app/Models/Insurance.php',
     'App\\Models\\Membership' => $baseDir . '/app/Models/Membership.php',
     'App\\Models\\Pack' => $baseDir . '/app/Models/Pack.php',
@@ -241,6 +246,7 @@ return array(
     'Database\\Seeders\\DatabaseSeeder' => $baseDir . '/database/seeders/DatabaseSeeder.php',
     'Database\\Seeders\\EvaluationSeeder' => $baseDir . '/database/seeders/EvaluationSeeder.php',
     'Database\\Seeders\\FreeTrainingSeeder' => $baseDir . '/database/seeders/FreeTrainingSeeder.php',
+    'Database\\Seeders\\GymClosureSeeder' => $baseDir . '/database/seeders/GymClosureSeeder.php',
     'Database\\Seeders\\InsuranceSeeder' => $baseDir . '/database/seeders/InsuranceSeeder.php',
     'Database\\Seeders\\MembershipSeeder' => $baseDir . '/database/seeders/MembershipSeeder.php',
     'Database\\Seeders\\PackSeeder' => $baseDir . '/database/seeders/PackSeeder.php',

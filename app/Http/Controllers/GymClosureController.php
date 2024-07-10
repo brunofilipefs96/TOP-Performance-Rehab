@@ -9,25 +9,22 @@ class GymClosureController extends Controller
 {
     public function index()
     {
-        $closures = GymClosure::all();
+        $closures = GymClosure::all()->pluck('closure_date')->toArray();
         return view('pages.settings.closures', compact('closures'));
     }
 
-    public function store(Request $request)
+    public function update(Request $request)
     {
         $request->validate([
-            'closure_date' => 'required|date',
+            'closure_dates' => 'required|array',
+            'closure_dates.*' => 'date',
         ]);
 
-        GymClosure::create($request->all());
+        GymClosure::truncate();
+        foreach ($request->closure_dates as $date) {
+            GymClosure::create(['closure_date' => $date]);
+        }
 
-        return redirect()->route('pages.settings.closures')->with('success', 'Datas de fecho adicionadas com sucesso.');
-    }
-
-    public function destroy(GymClosure $gymClosure)
-    {
-        $gymClosure->delete();
-
-        return redirect()->route('pages.settings.closures')->with('success', 'Datas de fecho removidas com sucesso.');
+        return redirect()->route('settings.closures')->with('success', 'Datas de Fecho do ginásio atualizadas com sucesso.');
     }
 }

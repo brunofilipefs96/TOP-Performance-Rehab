@@ -19,7 +19,7 @@
     <div class="flex justify-center">
         <div class="w-full max-w-lg dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm bg-gray-300 relative">
             <div class="absolute top-4 left-4">
-                <a href="{{ url()->previous() }}" class="inline-block bg-gray-500 py-1 px-2 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                <a href="/dashboard" class="inline-block bg-gray-500 py-1 px-2 rounded-md shadow-sm hover:bg-gray-700 text-white">
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
             </div>
@@ -146,7 +146,7 @@
                     <input type="text"
                            id="horario_fim_sabado"
                            name="horario_fim_sabado"
-                           class="time-input mt-1 block w-full dark:border-gray-300  dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm"
+                           class="time-input mt-1 block w-full dark:border-gray-300 dark:border-gray-700 dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm"
                            value="{{ old('horario_fim_sabado', $settings['horario_fim_sabado'] ?? '') }}"
                            aria-describedby="horarioFimSabadoHelp">
                     @error('horario_fim_sabado')
@@ -154,6 +154,11 @@
                         <strong>{{ $message }}</strong>
                     </span>
                     @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label for="fechamentos" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Datas de Fecho</label>
+                    <a href="{{ route('settings.closures') }}" class="mt-2 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300 text-sm block text-center">Clique aqui para definir as Datas de Fecho do ginásio</a>
                 </div>
 
                 <div class="flex justify-end gap-2 mt-10">

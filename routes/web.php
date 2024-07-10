@@ -39,8 +39,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
     Route::put('settings', [SettingController::class, 'update'])->name('settings.update');
     Route::get('/settings/closures', [GymClosureController::class, 'index'])->name('settings.closures');
-    Route::post('/settings/closures', [GymClosureController::class, 'store'])->name('settings.closures.store');
-    Route::delete('/settings/closures/{gymClosure}', [GymClosureController::class, 'destroy'])->name('settings.closures.destroy');
+    Route::post('/settings/closures/update', [GymClosureController::class, 'update'])->name('settings.closures.update');
     Route::view('unavailable', 'unavailable')->name('unavailable');
 });
 

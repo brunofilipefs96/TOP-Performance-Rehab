@@ -68,7 +68,7 @@
                                 @method('DELETE')
                                 <button type="button"
                                         class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-400"
-                                        id="delete-button" onclick="confirmarEliminacao({{ $membership->id }})">Eliminar
+                                        id="delete-button" onclick="confirmDelete({{ $membership->id }})">Eliminar
                                 </button>
                             </form>
                         @endcan
@@ -81,6 +81,18 @@
 
     <div class="flex justify-center mt-4 mb-3">
         {{ $memberships->links() }}
+    </div>
+</div>
+
+<!-- Modal de confirmação de eliminação -->
+<div id="confirmation-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
+    <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
+        <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800" id="confirmation-title">Pretende eliminar?</h2>
+        <p class="mb-4 text-red-500 dark:text-red-300" id="confirmation-message">Não poderá reverter isso!</p>
+        <div class="flex justify-end gap-4">
+            <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400" onclick="cancelAction()">Cancelar</button>
+            <button type="button" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500" onclick="confirmAction()">Confirmar</button>
+        </div>
     </div>
 </div>
 
@@ -97,18 +109,18 @@
 
     let membershipDeleted = 0;
 
-    function confirmarEliminacao(id) {
+    function confirmDelete(id) {
         document.getElementById('confirmation-modal').classList.remove('hidden');
         membershipDeleted = id;
     }
 
-    document.getElementById('cancel-button').addEventListener('click', function () {
+    function cancelAction() {
         document.getElementById('confirmation-modal').classList.add('hidden');
-    });
+    }
 
-    document.getElementById('confirm-button').addEventListener('click', function () {
+    function confirmAction() {
         document.getElementById('delete-form-' + membershipDeleted).submit();
-    });
+    }
 
     function filterPacks() {
         const searchTerm = document.getElementById('search').value.toLowerCase();

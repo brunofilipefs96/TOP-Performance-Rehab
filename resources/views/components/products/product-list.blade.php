@@ -138,25 +138,4 @@
     function confirmAction() {
         document.getElementById(`delete-form-${productDeleted}`).submit();
     }
-
-    // document.addEventListener('DOMContentLoaded', function () {
-    //     const searchInput = document.getElementById('search');
-    //
-    //     if (searchInput) {
-    //         searchInput.addEventListener('input', filterProducts);
-    //     }
-    //
-    //     function filterProducts() {
-    //         const searchTerm = searchInput.value.toLowerCase();
-    //         const productCards = document.querySelectorAll('.product-card');
-    //         productCards.forEach(card => {
-    //             const name = card.getAttribute('data-name').toLowerCase();
-    //             if (name.includes(searchTerm)) {
-    //                 card.classList.remove('hidden');
-    //             } else {
-    //                 card.classList.add('hidden');
-    //             }
-    //         });
-    //     }
-    // });
 </script>

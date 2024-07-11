@@ -108,12 +108,16 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified'])->group(function
     Route::post('trainings/{training}/mark-presence', [TrainingController::class, 'markPresence'])->name('trainings.markPresence');
 
     // Rotas para FreeTrainingController
-    Route::get('free-trainings', [FreeTrainingController::class, 'index'])->name('free_trainings.index');
-    Route::post('free-trainings/{freeTraining}/enroll', [FreeTrainingController::class, 'enroll'])->name('free_trainings.enroll');
-    Route::post('free-trainings/{freeTraining}/cancel', [FreeTrainingController::class, 'cancel'])->name('free_trainings.cancel');
+
     Route::post('/dashboard/change-week', [DashboardController::class, 'changeWeek'])->name('dashboard.changeWeek');
-    Route::post('/free-trainings/change-week', [FreeTrainingController::class, 'changeWeek'])->name('free_trainings.changeWeek');
-    Route::get('/free-trainings/select-day/{day}', [FreeTrainingController::class, 'selectDay'])->name('free_trainings.selectDay');
+    Route::post('/free-trainings/change-week', [FreeTrainingController::class, 'changeWeek'])->name('free-trainings.changeWeek');
+    Route::get('/free-trainings/select-day/{day}', [FreeTrainingController::class, 'selectDay'])->name('free-trainings.selectDay');
+    Route::resource('free-trainings', FreeTrainingController::class)->except(['edit', 'update']);
+
+    Route::post('free-trainings/{freeTraining}/enroll', [FreeTrainingController::class, 'enroll'])->name('free-trainings.enroll');
+    Route::post('free-trainings/{freeTraining}/cancel', [FreeTrainingController::class, 'cancel'])->name('free-trainings.cancel');
+    Route::post('free-trainings/{freeTraining}/mark-presence', [FreeTrainingController::class, 'markPresence'])->name('free-trainings.markPresence');
+
 
     Route::get('cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('cart/add-product', [CartController::class, 'addProductToCart'])->name('cart.addProduct');

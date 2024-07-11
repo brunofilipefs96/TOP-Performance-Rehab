@@ -28,7 +28,6 @@ class SettingController extends Controller
             'taxa_inscricao' => 'required|numeric',
             'taxa_seguro' => 'required|numeric',
             'capacidade_maxima' => 'required|integer',
-            'percentagem_aulas_livres' => 'required|numeric|min:0|max:100',
             'horario_inicio_semanal' => 'required|date_format:H:i',
             'horario_fim_semanal' => 'required|date_format:H:i',
             'horario_inicio_sabado' => 'required|date_format:H:i',
@@ -44,7 +43,7 @@ class SettingController extends Controller
 
         $data = $request->all();
         foreach ($data as $key => $value) {
-            if (in_array($key, ['taxa_inscricao', 'taxa_seguro', 'capacidade_maxima', 'percentagem_aulas_livres', 'horario_inicio_semanal', 'horario_fim_semanal', 'horario_inicio_sabado', 'horario_fim_sabado'])) {
+            if (in_array($key, ['taxa_inscricao', 'taxa_seguro', 'capacidade_maxima', 'horario_inicio_semanal', 'horario_fim_semanal', 'horario_inicio_sabado', 'horario_fim_sabado'])) {
                 Setting::updateOrCreate(['key' => $key], ['value' => $value]);
             }
         }

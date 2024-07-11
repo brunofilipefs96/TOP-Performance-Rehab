@@ -53,7 +53,11 @@ class TrainingController extends Controller
 
         $closures = GymClosure::pluck('closure_date')->toArray();
 
-        $showMembershipModal = auth()->user()->hasRole('client') && (!auth()->user()->membership || auth()->user()->membership->status->name !== 'active');
+        $showMembershipModal = false;
+        if (auth()->user()->hasRole('client') && (!auth()->user()->membership || auth()->user()->membership->status->name !== 'active') && !session()->has('trainings_membership_modal_shown')) {
+            session(['trainings_membership_modal_shown' => true]);
+            $showMembershipModal = true;
+        }
 
         return view('pages.trainings.index', [
             'trainings' => $trainings,
@@ -154,7 +158,6 @@ class TrainingController extends Controller
         return redirect()->route('trainings.index')->with('success', 'Treino criado com sucesso.');
     }
 
-
     public function show(Training $training)
     {
         $this->authorize('view', $training);
@@ -205,6 +208,7 @@ class TrainingController extends Controller
         return redirect()->route('trainings.index')->with('success', 'Treino atualizado com sucesso.');
     }
 
+
     public function destroy(Training $training)
     {
         $this->authorize('delete', $training);
@@ -230,7 +234,6 @@ class TrainingController extends Controller
         $training->delete();
         return redirect()->route('trainings.index')->with('success', 'Treino eliminado com sucesso.');
     }
-
 
     public function enroll(Request $request, Training $training)
     {
@@ -368,9 +371,6 @@ class TrainingController extends Controller
         return view('pages.trainings.multi-delete', compact('trainings', 'personalTrainers', 'trainingTypes'));
     }
 
-
-
-
     public function multiDelete(Request $request)
     {
         $trainingIds = $request->input('trainings', []);
@@ -402,5 +402,4 @@ class TrainingController extends Controller
 
         return redirect()->route('trainings.index')->with('success', 'Treinos removidos com sucesso!');
     }
-
 }

@@ -22,7 +22,6 @@ class CheckGymSettings
             'taxa_inscricao',
             'taxa_seguro',
             'capacidade_maxima',
-            'percentagem_aulas_livres',
             'horario_inicio_semanal',
             'horario_fim_semanal',
             'horario_inicio_sabado',

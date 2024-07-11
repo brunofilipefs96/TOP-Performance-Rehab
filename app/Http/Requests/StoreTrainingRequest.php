@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Room;
 use App\Models\Training;
+use App\Models\FreeTraining;
 use App\Models\GymClosure;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
@@ -35,11 +36,12 @@ class StoreTrainingRequest extends FormRequest
                 return;
             }
 
-            $duration = (int) $this->duration;
+            $duration = (int)$this->duration;
             $endDate = $startDate->copy()->addMinutes($duration);
             $now = Carbon::now('Europe/Lisbon');
             $dayOfWeek = $startDate->dayOfWeek;
 
+            // Verificação de dias fechados
             $closureDates = GymClosure::pluck('closure_date')->toArray();
             if (in_array($startDate->toDateString(), $closureDates)) {
                 $validator->errors()->add('start_date', 'Os treinos não podem ser agendados em dias que o ginásio está fechado.');
@@ -168,9 +170,6 @@ class StoreTrainingRequest extends FormRequest
     protected function validateGymCapacity($validator, $startDate, $endDate, $maxStudents)
     {
         $totalCapacity = setting('capacidade_maxima');
-        $freeTrainingPercentage = setting('percentagem_aulas_livres');
-        $freeTrainingCapacity = ceil($totalCapacity * ($freeTrainingPercentage / 100));
-        $maxRegularTrainingCapacity = $totalCapacity - $freeTrainingCapacity;
 
         $regularTrainingOccupancy = Training::where(function ($query) use ($startDate, $endDate) {
             $query->whereBetween('start_date', [$startDate, $endDate])
@@ -181,10 +180,21 @@ class StoreTrainingRequest extends FormRequest
                 });
         })->sum('max_students');
 
-        if ($regularTrainingOccupancy + $maxStudents > $maxRegularTrainingCapacity) {
-            $availableCapacity = $maxRegularTrainingCapacity - $regularTrainingOccupancy;
+        $freeTrainingOccupancy = FreeTraining::where(function ($query) use ($startDate, $endDate) {
+            $query->whereBetween('start_date', [$startDate, $endDate])
+                ->orWhereBetween('end_date', [$startDate, $endDate])
+                ->orWhere(function ($query) use ($startDate, $endDate) {
+                    $query->where('start_date', '<', $startDate)
+                        ->where('end_date', '>', $endDate);
+                });
+        })->sum('max_students');
+
+        $occupiedCapacity = $regularTrainingOccupancy + $freeTrainingOccupancy;
+        $availableCapacity = $totalCapacity - $occupiedCapacity;
+
+        if ($occupiedCapacity + $maxStudents > $totalCapacity) {
             if ($availableCapacity <= 0) {
-                $validator->errors()->add('max_students', 'A capacidade do ginásio para treinos acompanhados no horário selecionado está lotada.');
+                $validator->errors()->add('max_students', 'A capacidade do ginásio para o horário selecionado está lotada.');
             } else {
                 $validator->errors()->add('max_students', "A capacidade máxima atual do ginásio para este horário é {$availableCapacity}. Tente agendar noutro horário ou com menos alunos.");
             }

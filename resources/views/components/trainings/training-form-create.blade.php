@@ -55,7 +55,7 @@
                         <label for="room_id" class="block dark:text-white text-gray-800">Sala</label>
                         <select name="room_id" id="room_id" required class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-200 dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
                             @foreach ($rooms as $room)
-                                <option value="{{ $room->id }}" {{ old('room_id') == $room->id ? 'selected' : '' }}>{{ $room->name }}</option>
+                                <option value="{{ $room->id }}" data-capacity="{{ $room->capacity }}" {{ old('room_id') == $room->id ? 'selected' : '' }}>{{ $room->name }} - Capacidade: {{ $room->capacity }}</option>
                             @endforeach
                         </select>
                         @error('room_id')
@@ -178,7 +178,7 @@
         });
 
         const trainingForm = document.getElementById('trainingForm');
-        const closedDates = @json($closures); // Passar os dias fechados do backend para o frontend
+        const closedDates = @json($closures);
 
         trainingForm.addEventListener('submit', function (event) {
             const startTimeInput = document.getElementById('start_time');
@@ -187,6 +187,17 @@
             const startDateError = document.getElementById('start_date_error');
             const startTimeError = document.getElementById('start_time_error');
             const durationError = document.getElementById('duration_error');
+            const roomSelect = document.getElementById('room_id');
+            const maxStudentsInput = document.getElementById('max_students');
+
+            const selectedRoom = roomSelect.options[roomSelect.selectedIndex];
+            const roomCapacity = parseInt(selectedRoom.getAttribute('data-capacity'));
+
+            if (parseInt(maxStudentsInput.value) > roomCapacity) {
+                startDateError.innerText = 'O número máximo de alunos não pode exceder a capacidade da sala.';
+                event.preventDefault();
+                return;
+            }
 
             const horarioInicioSemanal = '{{ $horarioInicioSemanal }}';
             const horarioFimSemanal = '{{ $horarioFimSemanal }}';

@@ -6,14 +6,13 @@
     <div class="flex h-full min-h-screen">
         <div class="w-64 dark:bg-gray-800 bg-gray-400 shadow h-full flex-col justify-between hidden sm:flex">
             <div class="px-8">
-                <div class="h-40 w-full flex items-center mt-8 mb-16">
+                <div class="h-40 w-full flex items-center mt-12 mb-16">
                     <div class="w-full flex flex-col items-center">
-                        <h1 class="font-bold text-2xl mb-4 mt-8">
+                        <h1 class="font-bold text-3xl mb-4 mt-8">
                             <a href="{{ route('dashboard') }}">
                             <span class="text-black dark:text-white">Ginásio</span>
                             <span class="text-blue-500 dark:text-lime-500">TOP</span>
                             </a>
-
                         </h1>
                         @if($user->image && file_exists(public_path('storage/' . $user->image)))
                             <img src="{{ asset('storage/' . $user->image) }}" alt="{{ $user->firstLastName() }}" class="h-32 w-32 object-cover rounded-full border-2 border-gray-300">
@@ -29,47 +28,63 @@
                     </div>
                 </div>
                 <ul class="flex-1">
-                    <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
-                        <a href="{{ route('dashboard') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                            <i class="fa-solid fa-chart-line text-xl transition-transform group-hover:-translate-y-2 group-hover:scale-75"></i>
-                            <span class="text-md ml-2">Dashboard</span>
-                        </a>
+                    <li>
+                        <x-nav-link :href="route('dashboard')" :activeRoutes="['dashboard']"
+                                    class="mb-4 px-0 pt-0 text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-600 dark:focus:text-lime-400 relative">
+                            <i class="fa-solid fa-chart-line text-xl"></i>
+                            <span class="text-base ml-2">Dashboard</span>
+                        </x-nav-link>
                     </li>
-                    <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
-                        <a href="{{ route('profile.edit') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                            <i class="fa-solid fa-user text-xl transition-transform group-hover:-translate-y-2 group-hover:scale-75"></i>
-                            <span class="text-md ml-2">Perfil</span>
-                        </a>
+                    <li>
+                        <x-nav-link :href="route('calendar')" :activeRoutes="['calendar']"
+                                    class="mb-4 px-0 pt-0 text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                            <i class="fa-solid fa-calendar-days text-xl"></i>
+                            <span class="text-base ml-2">Agenda</span>
+                        </x-nav-link>
                     </li>
-                    <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
-                        <a href="{{ route('products.index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                            <i class="fa-solid fa-basket-shopping text-xl transition-transform group-hover:-translate-y-1"></i>
-                            <span class="text-md ml-2">Produtos</span>
-                        </a>
+                    @if (!$user->membership || $user->membership->status->name == 'pending')
+                        <li>
+                            <x-nav-link :href="route('setup')" :activeRoutes="['setup.address', 'setup.membership', 'setup.training-types', 'setup.insurance', 'setup.awaiting', 'setup.payment']"
+                                        class="mb-4 px-0 pt-0 text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                                <i class="fa-regular fa-address-card text-xl"></i>
+                                <span class="text-base ml-2">Matrícula</span>
+                            </x-nav-link>
+                        </li>
+                    @endif
+                    <li>
+                        <x-nav-link :href="route('trainings.index')" :activeRoutes="['trainings.index']"
+                                    class="mb-4 px-0 pt-0 text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                            <i class="fa-solid fa-dumbbell text-xl"></i>
+                            <span class="text-base ml-2">Treinos</span>
+                        </x-nav-link>
                     </li>
-                    <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
-                        <a href="{{ route('packs.index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                            <i class="fa-solid fa-box text-xl transition-transform group-hover:-translate-y-1"></i>
-                            <span class="text-md ml-2">Packs</span>
-                        </a>
+                    <li>
+                        <x-nav-link :href="route('packs.index')" :activeRoutes="['packs.index']"
+                                    class="mb-4 px-0 pt-0 text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                            <i class="fa-solid fa-box text-xl"></i>
+                            <span class="text-base ml-2">Packs</span>
+                        </x-nav-link>
                     </li>
-                    <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
-                        <a href="{{ route('sales.index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                            <i class="fa-solid fa-receipt text-xl transition-transform group-hover:-translate-y-1"></i>
-                            <span class="text-md ml-2">Minhas Encomendas</span>
-                        </a>
+                    <li>
+                        <x-nav-link :href="route('products.index')" :activeRoutes="['products.index']"
+                                    class="mb-4 px-0 pt-0 text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                            <i class="fa-solid fa-basket-shopping text-xl"></i>
+                            <span class="text-base ml-2">Produtos</span>
+                        </x-nav-link>
                     </li>
-                    <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
-                        <a href="{{ route('trainings.index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                            <i class="fa-solid fa-dumbbell text-xl transition-transform group-hover:-translate-y-1"></i>
-                            <span class="text-md ml-2">Treinos</span>
-                        </a>
+                    <li>
+                        <x-nav-link :href="route('sales.index')" :activeRoutes="['sales.index']"
+                                    class="mb-4 px-0 pt-0 text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                            <i class="fa-solid fa-receipt text-xl"></i>
+                            <span class="text-base ml-2">Área Financeira</span>
+                        </x-nav-link>
                     </li>
-                    <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
-                        <a href="{{ route('calendar') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                            <i class="fa-solid fa-calendar-days text-xl transition-transform group-hover:-translate-y-1"></i>
-                            <span class="text-md ml-2">Agenda</span>
-                        </a>
+                    <li>
+                        <x-nav-link :href="route('profile.edit')" :activeRoutes="['profile.edit']"
+                                    class="mb-4 px-0 pt-0 text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                            <i class="fa-solid fa-user text-xl"></i>
+                            <span class="text-base ml-2">Área Pessoal</span>
+                        </x-nav-link>
                     </li>
                     @if(Auth::check() && !Auth::user()->hasRole('admin'))
                         @php
@@ -77,38 +92,31 @@
                             $packCart = session()->get('packCart', []);
                             $cartCount = count($cart) + count($packCart);
                         @endphp
-                        <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
-                            <a href="{{ route('cart.index') }}" class="flex mr-3 items-center focus:outline-none focus:ring-2 focus:ring-white">
-                                <i class="fa-solid fa-cart-shopping text-xl transition-transform group-hover:-translate-y-1"></i>
-                                <span class="text-md ml-2">Carrinho</span>
-                            </a>
+                        <li class="flex text-center" >
+                            <x-nav-link :href="route('cart.index')" :activeRoutes="['cart.index']"
+                                        class="mb-4 px-0 pt-0 text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                                <i class="fa-solid fa-cart-shopping text-xl"></i>
+                                <span class="text-base ml-2">Carrinho</span>
+                            </x-nav-link>
                             @if($cartCount > 0)
                                 <span
-                                    class="mb-3 inline-flex items-center justify-center w-5 h-5 p-2 text-sm font-bold leading-none text-red-100 transform -translate-x-2 translate-y-2 bg-red-600 rounded-full">{{ $cartCount }}</span>
+                                    class="ml-5 mb-2 inline-flex items-center justify-center w-5 h-5 p-2 text-sm font-bold leading-none text-red-100 transform -translate-x-2 translate-y-2 bg-red-600 rounded-full">{{ $cartCount }}</span>
                             @endif
                         </li>
-
                     @endif
-                    <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
-                        <a href="{{ route('setup') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                            <i class="fa-regular fa-address-card text-xl transition-transform group-hover:-translate-y-1"></i>
-                            <span class="text-md ml-2">Matrícula</span>
-                        </a>
-                    </li>
-
                 </ul>
                 <div class="mt-auto mb-6">
-                    <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center dark:hover:text-lime-400 hover:text-blue-600">
+                    <li class="flex w-full justify-between text-gray-500 dark:text-gray-400 cursor-pointer items-center dark:hover:text-lime-400 hover:text-blue-600">
                         <form method="POST" action="{{ route('logout') }}" class="w-full">
                             @csrf
                             <a href="javascript:void(0)" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white" onclick="event.preventDefault(); this.closest('form').submit();">
-                                <i class="fa-solid fa-right-from-bracket text-2xl transition-transform group-hover:-translate-y-1"></i>
+                                <i class="fa-solid fa-right-from-bracket text-xl"></i>
                                 <span class="text-md ml-2">Sair</span>
                             </a>
                         </form>
                     </li>
                 </div>
-                <div class="flex justify-center">
+                <div class="flex justify-center mb-8">
                     <button id="theme-toggle-client" type="button"
                             class="theme-toggle-btn w-12 text-gray-800 dark:text-gray-400 hover:bg-gray-700 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-700 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
                         <svg id="theme-toggle-dark-icon-client" class="theme-toggle-dark-icon hidden w-5 h-5 mx-auto" fill="currentColor" viewBox="0 0 20 20"
@@ -142,23 +150,23 @@
                         </svg>
                     </button>
                 </div>
-                <div class="flex-1 overflow-y-auto">
+                <div class="flex-1 overflow-y-auto z-[65]">
                     <ul class="space-y-4 p-4">
-                        <li><a href="{{ route('dashboard') }}" class="block text-gray-800 dark:text-gray-200">Dashboard</a></li>
-                        <li><a href="{{ route('profile.edit') }}" class="block text-gray-800 dark:text-gray-200">Perfil</a></li>
-                        <li><a href="{{ route('setup') }}" class="block text-gray-800 dark:text-gray-200">Matrícula</a></li>
-                        <li><a href="{{ route('packs.index') }}" class="block text-gray-800 dark:text-gray-200">Packs</a></li>
-                        <li><a href="{{ route('products.index') }}" class="block text-gray-800 dark:text-gray-200">Produtos</a></li>
-                        <li><a href="{{ route('sales.index') }}" class="block text-gray-800 dark:text-gray-200">Minhas Encomendas</a></li>
-                        <li><a href="{{ route('calendar') }}" class="block text-gray-800 dark:text-gray-200">Agenda</a></li>
-                        <li><a href="{{ route('trainings.index') }}" class="block text-gray-800 dark:text-gray-200">Treinos</a></li>
+                        <li><a href="{{ route('dashboard') }}" class="block text-gray-800 dark:text-gray-200 dark:hover:text-lime-400 hover:text-blue-600"><i class="fa-solid fa-chart-line text-lg mr-2"></i>Dashboard</a></li>
+                        <li><a href="{{ route('calendar') }}" class="block text-gray-800 dark:text-gray-200 dark:hover:text-lime-400 hover:text-blue-600"><i class="fa-solid fa-calendar-days text-lg mr-2"></i>Agenda</a></li>
+                        <li><a href="{{ route('setup') }}" class="block text-gray-800 dark:text-gray-200 dark:hover:text-lime-400 hover:text-blue-600"><i class="fa-regular fa-address-card text-lg mr-2"></i>Matrícula</a></li>
+                        <li><a href="{{ route('trainings.index') }}" class="block text-gray-800 dark:text-gray-200 dark:hover:text-lime-400 hover:text-blue-600"><i class="fa-solid fa-dumbbell text-lg mr-2"></i>Treinos</a></li>
+                        <li><a href="{{ route('packs.index') }}" class="block text-gray-800 dark:text-gray-200 dark:hover:text-lime-400 hover:text-blue-600"><i class="fa-solid fa-box text-lg mr-2"></i>Packs</a></li>
+                        <li><a href="{{ route('products.index') }}" class="block text-gray-800 dark:text-gray-200 dark:hover:text-lime-400 hover:text-blue-600"><i class="fa-solid fa-basket-shopping text-lg mr-2"></i>Produtos</a></li>
+                        <li><a href="{{ route('sales.index') }}" class="block text-gray-800 dark:text-gray-200 dark:hover:text-lime-400 hover:text-blue-600"><i class="fa-solid fa-receipt text-lg mr-2"></i>Área Financeira</a></li>
+                        <li><a href="{{ route('profile.edit') }}" class="block text-gray-800 dark:text-gray-200 dark:hover:text-lime-400 hover:text-blue-600"><i class="fa-solid fa-user text-lg mr-2"></i>Área Pessoal</a></li>
                         @if(Auth::check() && !Auth::user()->hasRole('admin'))
                             @php
                                 $cart = session()->get('cart', []);
                                 $packCart = session()->get('packCart', []);
                                 $cartCount = count($cart) + count($packCart);
                             @endphp
-                            <li class="flex w-full justify-start text-gray-800 dark:text-gray-400 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
+                            <li class="flex w-full justify-start text-gray-800 dark:text-gray-200 cursor-pointer items-center mb-4 dark:hover:text-lime-400 hover:text-blue-600">
                                 <a href="{{ route('cart.index') }}" class="flex mr-3 items-center focus:outline-none focus:ring-2 focus:ring-white">
                                     <i class="fa-solid fa-cart-shopping text-xl transition-transform group-hover:-translate-y-1"></i>
                                     <span class="text-md ml-2">Carrinho</span>
@@ -173,7 +181,7 @@
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <a href="javascript:void(0)" class="block text-gray-800 dark:text-gray-200" onclick="event.preventDefault(); this.closest('form').submit();">
-                                    Sair
+                                    <i class="fa-solid fa-right-from-bracket  text-lg mr-2"></i>Sair
                                 </a>
                             </form>
                         </li>
@@ -199,8 +207,8 @@
         </div>
 
         <!-- Floating Button -->
-        <button @click="open = true" x-show="!open" class="fixed top-4 right-4 z-50 bg-blue-500 dark:bg-lime-500 text-white rounded-full p-4 shadow-lg sm:hidden">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <button @click="open = true" x-show="!open" class="fixed top-4 right-4 z-[70] bg-blue-500 dark:bg-lime-500 text-white rounded-full p-4 shadow-lg sm:hidden">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
         </button>

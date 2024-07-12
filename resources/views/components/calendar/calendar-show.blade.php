@@ -1,4 +1,4 @@
-<div class="container mx-auto">
+<div class="container mx-auto p-5">
     <h1 class="text-2xl mb-4 font-bold text-gray-800 dark:text-gray-200">Bem-vindo {{ Auth::user()->firstLastName() }}</h1>
 
     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">

@@ -1,4 +1,4 @@
-<div class="container mx-auto mt-5">
+<div class="container mx-auto mt-5 px-2 xs:px-0">
     <h1 class="text-2xl font-bold my-4 text-gray-900 dark:text-gray-200">Carrinho de Compras</h1>
 
     @if (session('error'))
@@ -43,15 +43,15 @@
                 <p> A sua encomenda poderá demorar mais tempo a ser processada.</p>
             </div>
         @endif
-        <div class="overflow-x-auto p-1 xs:p-4">
-            <table class="text-xs xs:text-base  min-w-full bg-gray-300 dark:bg-gray-800 rounded-2xl shadow-md text-gray-900 dark:text-gray-200">
+        <div class="overflow-x-auto px-1 xs:p-4">
+            <table class="text-xs xs:text-base table-auto min-w-full bg-gray-300 dark:bg-gray-800 rounded-2xl shadow-md text-gray-900 dark:text-gray-200">
                 <thead>
                 <tr>
-                    <th class="p-1 xs:p-1 xs:p-4 text-left">Artigo</th>
-                    <th class="p-1 xs:p-1 xs:p-4">Quantidade</th>
+                    <th class="p-2 xs:p-4 text-center">Artigo</th>
+                    <th class="p-1 xs:p-4">Quantidade</th>
                     <th class="p-1 xs:p-4">Preço</th>
                     <th class="p-1 xs:p-4">Subtotal</th>
-                    <th class="p-1 xs:p-4">Ações</th>
+                    <th class="p-2 xs:p-4">Ações</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -61,7 +61,7 @@
                         $isShortage = $product && $details['quantity'] > $product->quantity;
                     @endphp
                     <tr>
-                        <td class="p-1 xs:p-4 text-left">
+                        <td class="p-2 xs:p-4 text-center">
                             @if(isset($details['name']))
                                 <a href="{{ route('products.show', $id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
                                     <i class="fa-solid fa-basket-shopping mr-2"></i>{{ $details['name'] }}
@@ -73,22 +73,22 @@
                                 <span>Produto não encontrado</span>
                             @endif
                         </td>
-                        <td class="p-1 xs:p-4 text-center flex items-center justify-center">
+                        <td class="p-1 xs:p-4 text-center flex flex-col content-center xs:flex-row items-center xs:justify-center">
                             <form action="{{ route('cart.decreaseProduct', $id) }}" method="POST" class="inline">
                                 @csrf
                                 @method('PATCH')
-                                <button type="submit" class="mr-1 bg-gray-400 text-black px-2 py-1 rounded-md text-xs">-</button>
+                                <button type="submit" class="m-0 xs:mr-1 bg-gray-400 text-black px-2 py-0.5 xs:px-2 xs:py-1 rounded-md text-xs">-</button>
                             </form>
                             <span class="mx-2">{{ $details['quantity'] ?? 'N/A' }}</span>
                             <form action="{{ route('cart.increaseProduct', $id) }}" method="POST" class="inline">
                                 @csrf
                                 @method('PATCH')
-                                <button type="submit" class="ml-1 bg-gray-400 text-black px-2 py-1 rounded-md text-xs">+</button>
+                                <button type="submit" class="m-0 xs:ml-1 bg-gray-400 text-black px-1.5 py-0.5 xs:px-2 xs:py-1 rounded-md text-xs">+</button>
                             </form>
                         </td>
                         <td class="p-1 xs:p-4 text-center">{{ number_format($details['price'], 2) ?? 'N/A' }} €</td>
                         <td class="p-1 xs:p-4 text-center">{{ isset($details['price'], $details['quantity']) ? number_format($details['price'] * $details['quantity'], 2) : 'N/A' }} €</td>
-                        <td class="p-1 xs:p-4 text-center">
+                        <td class="p-2 xs:p-4 text-center">
                             <form action="{{ route('cart.removeProduct', $id) }}" method="POST" class="inline">
                                 @csrf
                                 @method('DELETE')

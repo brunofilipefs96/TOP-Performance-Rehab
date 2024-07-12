@@ -21,7 +21,7 @@ class SettingsTableSeeder extends Seeder
             ['key' => 'horario_fim_semanal', 'value' => '23:30'],
             ['key' => 'horario_inicio_sabado', 'value' => '08:00'],
             ['key' => 'horario_fim_sabado', 'value' => '18:00'],
-            ['key' => 'telemovel', 'value' => '910000000'],
+            ['key' => 'telemovel', 'value' => '+22 333-444-555'],
             ['key' => 'email', 'value' => 'ginasiotop@email.pt'],
         ];
 

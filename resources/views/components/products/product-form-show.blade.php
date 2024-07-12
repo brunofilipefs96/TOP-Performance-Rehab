@@ -23,14 +23,14 @@
                     </div>
                 </div>
             @endif
-
+            @if(Auth::user()->hasRole('admin'))
             <div class="mb-4">
                 <label for="quantity" class="block text-gray-800 dark:text-white">Quantidade</label>
                 <input class="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white" type="number" value="{{ $product->quantity }}" disabled>
             </div>
-
+            @endif
             <div class="mb-4">
-                <label for="price" class="block text-gray-800 dark:text-white">Preço</label>
+                <label for="price" class="block text-gray-800 dark:text-white">Preço €</label>
                 <input class="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white" type="number" value="{{ $product->price }}" disabled>
             </div>
 

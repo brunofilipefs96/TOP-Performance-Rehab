@@ -20,7 +20,7 @@
                     Os treinos são criados, em blocos de 30 minutos, entre as horas definidas para o dia selecionado.
                 </p>
                 <p class="mb-4 text-gray-600 dark:text-gray-300 text-left">
-                    Caso ative a opção de Repetir Treino, os treinos serão criados para os dias selecionados, até a data final definida.
+                    Caso ative a opção de 'Repetir para Outros Dias', os treinos serão criados para os dias selecionados, até a data final definida.
                 </p>
             </div>
             @if ($errors->any())
@@ -55,15 +55,15 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="block dark:text-white text-gray-800">Horários do Ginásio</label>
-                    <p class="text-gray-600 dark:text-gray-300">Dias da Semana: {{ $horarioInicioSemanal }} - {{ $horarioFimSemanal }}</p>
+                    <label class="block dark:text-white text-gray-800 mb-2">Horários do Ginásio</label>
+                    <p class="text-gray-600 dark:text-gray-300">Dias úteis: {{ $horarioInicioSemanal }} - {{ $horarioFimSemanal }}</p>
                     <p class="text-gray-600 dark:text-gray-300">Sábado: {{ $horarioInicioSabado }} - {{ $horarioFimSabado }}</p>
                     <p class="text-gray-600 dark:text-gray-300">Domingo: Fechado</p>
                 </div>
 
                 <div class="mb-4 flex items-center">
                     <input type="checkbox" name="repeat" id="repeat" class="form-checkbox h-5 w-5 text-blue-500 rounded dark:text-lime-500" {{ old('repeat') ? 'checked' : '' }}>
-                    <label for="repeat" class="ml-2 block dark:text-white text-gray-800">Repetir Treino</label>
+                    <label for="repeat" class="ml-2 block dark:text-white text-gray-800">Repetir para Outros Dias</label>
                 </div>
                 <div id="repeat-options" style="display: none;">
                     <div class="mb-4">

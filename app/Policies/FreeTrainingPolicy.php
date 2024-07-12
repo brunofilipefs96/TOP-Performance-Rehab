@@ -64,4 +64,16 @@ class FreeTrainingPolicy
     {
         return $user->hasRole('admin');
     }
+
+    public function markPresence(User $user, FreeTraining $freeTraining): Response
+    {
+        $currentDateTime = Carbon::now();
+        $trainingStartDateTime = Carbon::parse($freeTraining->start_date);
+
+        if (($user->hasRole('admin') || $user->hasRole('personal_trainer')) && $currentDateTime->gte($trainingStartDateTime)) {
+            return Response::allow();
+        }
+
+        return Response::deny('Não tem permissão para marcar presenças para este treino.');
+    }
 }

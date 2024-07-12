@@ -241,6 +241,27 @@ class FreeTrainingController extends Controller
         return redirect()->route('free-trainings.index')->with('success', 'Inscrição em treino livre cancelada com sucesso.');
     }
 
+    public function markPresence(Request $request, FreeTraining $freeTraining)
+    {
+        $this->authorize('markPresence', $freeTraining);
+
+        $presenceData = $request->input('presence', []);
+        $allUsers = $freeTraining->users()->pluck('user_id')->toArray();
+
+        if (array_diff($allUsers, array_keys($presenceData))) {
+            return redirect()->route('free-trainings.show', $freeTraining->id)
+                ->with('error', 'Todas as presenças devem ser marcadas antes de enviar.');
+        }
+
+        foreach ($presenceData as $userId => $presence) {
+            $freeTraining->users()->updateExistingPivot($userId, ['presence' => $presence]);
+        }
+
+        return redirect()->route('free-trainings.show', $freeTraining->id)
+            ->with('success', 'Presenças marcadas com sucesso.');
+    }
+
+
     public function destroy(FreeTraining $freeTraining)
     {
         $this->authorize('delete', $freeTraining);

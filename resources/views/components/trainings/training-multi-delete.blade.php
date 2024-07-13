@@ -59,6 +59,7 @@
                                     <input type="checkbox" onclick="toggle(this)">
                                 </th>
                                 <th class="py-2 px-4 border-b dark:border-gray-700 text-left">Treino</th>
+                                <th class="py-2 px-4 border-b dark:border-gray-700 text-left">Data</th> <!-- Adicionado -->
                                 <th class="py-2 px-4 border-b dark:border-gray-700 text-left">Hora de Início</th>
                                 <th class="py-2 px-4 border-b dark:border-gray-700 text-left">Hora de Fim</th>
                                 <th class="py-2 px-4 border-b dark:border-gray-700 text-left">Personal Trainer</th>
@@ -72,6 +73,7 @@
                                         <input type="checkbox" name="trainings[]" value="{{ $training->id }}" class="training-checkbox">
                                     </td>
                                     <td class="py-2 px-4 border-b dark:border-gray-700 text-left">{{ $training->name }}</td>
+                                    <td class="py-2 px-4 border-b dark:border-gray-700 text-left">{{ Carbon::parse($training->start_date)->format('d/m/Y') }}</td> <!-- Adicionado -->
                                     <td class="py-2 px-4 border-b dark:border-gray-700 text-left">{{ Carbon::parse($training->start_date)->format('H:i') }}</td>
                                     <td class="py-2 px-4 border-b dark:border-gray-700 text-left">{{ Carbon::parse($training->end_date)->format('H:i') }}</td>
                                     <td class="py-2 px-4 border-b dark:border-gray-700 text-left">{{ $training->personalTrainer->firstLastName() }}</td>

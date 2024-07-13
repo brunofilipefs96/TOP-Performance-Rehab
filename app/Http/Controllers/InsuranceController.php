@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Insurance;
 use App\Http\Requests\StoreInsuranceRequest;
-use App\Http\Requests\UpdateInsuranceRequest;
+use App\Http\Requests\UpdateFreeTrainingRequest;
 use App\Models\Status;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -108,7 +108,7 @@ class InsuranceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateInsuranceRequest $request, Insurance $insurance)
+    public function update(UpdateFreeTrainingRequest $request, Insurance $insurance)
     {
         $this->authorize('update', $insurance);
 

@@ -26,11 +26,9 @@
             <div class="text-center mb-10">
                 <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Definições do Ginásio</h1>
             </div>
-            @if(session('success'))
-                <div class="text-green-500 text-sm mb-5">
-                    {{ session('success') }}
-                </div>
-            @endif
+            <div class="mb-4">
+                <p class="text-sm text-gray-800 dark:text-gray-200">Preencha todas as informações das definições de ginásio para o site ficar ativo.</p>
+            </div>
             <form method="POST" action="{{ route('settings.update') }}">
                 @csrf
                 @method('PUT')
@@ -74,22 +72,6 @@
                            value="{{ old('capacidade_maxima', $settings['capacidade_maxima'] ?? '') }}"
                            aria-describedby="capacidadeMaximaHelp">
                     @error('capacidade_maxima')
-                    <span class="text-red-500 text-sm mt-2" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-
-                <div class="mb-4">
-                    <label for="percentagem_aulas_livres" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Percentagem de Aulas Livres (%)</label>
-                    <input type="number"
-                           id="percentagem_aulas_livres"
-                           name="percentagem_aulas_livres"
-                           min="0" max="100"
-                           class="mt-1 block w-full dark:border-gray-300 dark:border-gray-700 dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm"
-                           value="{{ old('percentagem_aulas_livres', $settings['percentagem_aulas_livres'] ?? '') }}"
-                           aria-describedby="percentagemAulasLivresHelp">
-                    @error('percentagem_aulas_livres')
                     <span class="text-red-500 text-sm mt-2" role="alert">
                         <strong>{{ $message }}</strong>
                     </span>

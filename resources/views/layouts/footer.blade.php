@@ -1,4 +1,4 @@
-<footer class="text-center text-sm text-gray-400 dark:text-white-70 dark:bg-gray-800 bg-gray-50">
+<footer class="text-center text-sm text-gray-400 dark:text-white-70 dark:bg-gray-800 bg-gray-50 p-4 py-8">
     <div class="dark:text-white text-gray-400 pt-6">
         <div class="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
@@ -11,9 +11,9 @@
             <div>
                 <h3 class="text-xl text-center font-bold mb-4">Horário de Funcionamento</h3>
                 <ul class="space-y-2 text-gray-400 ">
-                    <li>Seg a sex --------- {{ setting('horario_inicio_semanal') }} às {{ setting('horario_fim_semanal') }} </li>
-                    <li>Sáb --------------------- {{ setting('horario_inicio_sabado') }} às {{ setting('horario_fim__sabado') }} </li>
-                    <li>Dom --------------------- Fechado</li>
+                    <li>Seg a sex --------------- {{ setting('horario_inicio_semanal') }} às {{ setting('horario_fim_semanal') }} </li>
+                    <li>Sáb --------------------- {{ setting('horario_inicio_sabado') }} às {{ setting('horario_fim_sabado') }} </li>
+                    <li>Dom -------------------------- Fechado</li>
                 </ul>
             </div>
             <div>
@@ -22,10 +22,10 @@
                     <strong>Morada:</strong> 8953 South Gainsway Avenue Park Ridge, IL 60068
                 </p>
                 <p class="text-gray-400 mb-2">
-                    <strong>Telefone:</strong> +91 345-677-554, +22 333-444-555
+                    <strong>Telefone:</strong> {{ setting('telemovel') }}
                 </p>
                 <p class="text-gray-400 mb-4">
-                    <strong>E-mail:</strong> info@sitename.com
+                    <strong>E-mail:</strong> {{ setting('email') }}
                 </p>
                 <div class="flex justify-center space-x-4 text-xl">
                     <a href="#" class="text-gray-400 dark:hover:text-lime-400 hover:text-blue-500"><i class="fab fa-facebook"></i></a>

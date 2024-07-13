@@ -20,16 +20,9 @@ class FreeTrainingPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, FreeTraining $training): Response
+    public function view(User $user, FreeTraining $training): bool
     {
-        $currentWeekStart = Carbon::now()->startOfWeek(Carbon::MONDAY);
-        $trainingStartDateTime = Carbon::parse($training->start_date);
-
-        if ($trainingStartDateTime->gte($currentWeekStart) || $user->hasRole('admin') || $user->id === $training->personal_trainer_id || $training->users->contains($user)) {
-            return Response::allow();
-        }
-
-        return Response::deny('Não tem permissão para visualizar este treino.');
+        return $user->hasRole('admin') || $user->hasRole('personal_trainer');
     }
 
     /**
@@ -71,4 +64,22 @@ class FreeTrainingPolicy
     {
         return $user->hasRole('admin');
     }
+
+    public function markPresence(User $user, FreeTraining $freeTraining): Response
+    {
+        $currentDateTime = Carbon::now();
+        $trainingStartDateTime = Carbon::parse($freeTraining->start_date);
+
+        if (($user->hasRole('admin') || $user->hasRole('personal_trainer')) && $currentDateTime->gte($trainingStartDateTime)) {
+            return Response::allow();
+        }
+
+        return Response::deny('Não tem permissão para marcar presenças para este treino.');
+    }
+
+    public function multiDelete(User $user): bool
+    {
+        return $user->hasRole('admin');
+    }
+
 }

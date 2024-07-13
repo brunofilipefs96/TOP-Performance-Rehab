@@ -11,10 +11,9 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet"/>
 
-    <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased text-gray-100 dark:bg-gray-900">
+<body class="font-sans antialiased text-gray-100 dark:bg-gray-900 select-none">
 <div class="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col relative">
     @if(auth()->user()->hasRole('client'))
         <div class="flex ">
@@ -23,7 +22,15 @@
             </div>
             <div class="flex-1 flex flex-col">
                 <!-- Page Content -->
-                <main class="p-4 flex-1 min-h-screen">
+                <main class="p-4 pt-0 flex-1 min-h-screen">
+                    <div class="sticky py-4 top-0 z-30 flex justify-start align-middle h-[82px] w-full text-center bg-gray-900 sm:hidden">
+                        <h1 class="font-bold content-center text-3xl">
+                            <a href="{{ route('dashboard') }}">
+                                <span class="text-black dark:text-white">Ginásio</span>
+                                <span class="text-blue-500 dark:text-lime-500">TOP</span>
+                            </a>
+                        </h1>
+                    </div>
                     {{ $slot }}
                     <div id="success-modal"
                          class="fixed top-20 right-5 flex items-center justify-center bg-opacity-75 hidden">
@@ -35,7 +42,7 @@
                 </main>
             </div>
         </div>
-    <div class="bg-gray-800 text-white p-4">
+    <div >
         @include('layouts.client-footer')
     </div>
     @else
@@ -43,6 +50,7 @@
             @include('layouts.navigation')
             <!-- Page Content -->
             <main class="p-4 flex-1">
+
                 {{ $slot }}
                 <div id="success-modal" class="fixed top-20 right-5 flex items-center justify-center bg-opacity-75 hidden">
                     <div class="bg-blue-300 p-4 rounded-md shadow-md w-64 dark:bg-lime-500">
@@ -51,7 +59,7 @@
                     </div>
                 </div>
             </main>
-            <footer class="bg-gray-800 text-white p-4">
+            <footer>
                 @include('layouts.footer')
             </footer>
         </div>

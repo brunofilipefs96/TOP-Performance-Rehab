@@ -53,7 +53,11 @@ class TrainingController extends Controller
 
         $closures = GymClosure::pluck('closure_date')->toArray();
 
-        $showMembershipModal = auth()->user()->hasRole('client') && (!auth()->user()->membership || auth()->user()->membership->status->name !== 'active');
+        $showMembershipModal = false;
+        if (auth()->user()->hasRole('client') && (!auth()->user()->membership || auth()->user()->membership->status->name !== 'active') && !session()->has('trainings_membership_modal_shown')) {
+            session(['trainings_membership_modal_shown' => true]);
+            $showMembershipModal = true;
+        }
 
         return view('pages.trainings.index', [
             'trainings' => $trainings,
@@ -89,71 +93,45 @@ class TrainingController extends Controller
         $duration = (int)$validatedData['duration'];
         $endDate = $startDate->copy()->addMinutes($duration);
 
-        $startTime = $startDate->format('H:i');
-        $endTime = $endDate->format('H:i');
-        $dayOfWeek = $startDate->dayOfWeek;
-
-        $horarioInicioSemanal = setting('horario_inicio_semanal', '06:00');
-        $horarioFimSemanal = setting('horario_fim_semanal', '23:59');
-        $horarioInicioSabado = setting('horario_inicio_sabado', '08:00');
-        $horarioFimSabado = setting('horario_fim_sabado', '18:00');
-
-        if ($dayOfWeek >= Carbon::MONDAY && $dayOfWeek <= Carbon::FRIDAY) {
-            if ($startTime < $horarioInicioSemanal || $endTime > $horarioFimSemanal) {
-                return redirect()->back()->withErrors(['error' => 'O treino deve estar dentro do horário permitido nos dias de semana.']);
-            }
-        } elseif ($dayOfWeek == Carbon::SATURDAY) {
-            if ($startTime < $horarioInicioSabado || $endTime > $horarioFimSabado) {
-                return redirect()->back()->withErrors(['error' => 'O treino deve estar dentro do horário permitido no sábado.']);
-            }
-        } else {
-            return redirect()->back()->withErrors(['error' => 'O ginásio está fechado aos domingos.']);
-        }
-
-        if ($startDate->lt(Carbon::now())) {
-            return redirect()->back()->withErrors(['error' => 'Não é possível criar um treino no passado.']);
-        }
-
         if ($request->has('repeat') && $request->repeat) {
             $repeatUntil = Carbon::parse($request->repeat_until);
             $daysOfWeek = collect($request->days_of_week)->map(fn($day) => (int)$day)->all();
 
-            while ($startDate->lte($repeatUntil)) {
-                if (in_array($startDate->dayOfWeek, $daysOfWeek)) {
-                    if (Carbon::today()->eq($startDate->copy()->startOfDay()) && $startDate->lt(Carbon::now())) {
-                        $startDate = $startDate->copy()->addDay();
-                        $endDate = $startDate->copy()->addMinutes($duration);
-                        continue;
+            $createdAny = false;
+            $currentDate = $startDate->copy();
+
+            while ($currentDate->lte($repeatUntil)) {
+                if (in_array($currentDate->dayOfWeek, $daysOfWeek)) {
+                    $currentEndDate = $currentDate->copy()->addMinutes($duration);
+
+                    if ($request->passesValidation($currentDate, $currentEndDate, $validatedData['room_id'], $validatedData['personal_trainer_id'], $validatedData['max_students'])) {
+                        $trainingData = $validatedData;
+                        $trainingData['start_date'] = $currentDate->toDateTimeString();
+                        $trainingData['end_date'] = $currentEndDate->toDateTimeString();
+
+                        Training::create($trainingData);
+                        $createdAny = true;
                     }
-
-                    $trainingData = $validatedData;
-                    $trainingData['start_date'] = $startDate->toDateTimeString();
-                    $trainingData['end_date'] = $endDate->toDateTimeString();
-                    Training::create($trainingData);
                 }
+                $currentDate->addDay();
+            }
 
-                $nextDay = collect($daysOfWeek)->map(function ($day) use ($startDate) {
-                    return $startDate->copy()->next($day)->setTime($startDate->hour, $startDate->minute);
-                })->filter(function ($date) use ($repeatUntil) {
-                    return $date->lte($repeatUntil);
-                })->sort()->first();
-
-                if ($nextDay) {
-                    $startDate = $nextDay;
-                    $endDate = $startDate->copy()->addMinutes($duration);
-                } else {
-                    break;
-                }
+            if (!$createdAny) {
+                return redirect()->back()->withErrors(['error' => 'Nenhum treino pôde ser criado dentro dos horários permitidos. Selecione outras datas/horários.']);
             }
         } else {
-            $validatedData['start_date'] = $startDate->toDateTimeString();
-            $validatedData['end_date'] = $endDate->toDateTimeString();
-            Training::create($validatedData);
+            if ($request->passesValidation($startDate, $endDate, $validatedData['room_id'], $validatedData['personal_trainer_id'], $validatedData['max_students'])) {
+                $validatedData['start_date'] = $startDate->toDateTimeString();
+                $validatedData['end_date'] = $endDate->toDateTimeString();
+
+                Training::create($validatedData);
+            } else {
+                return redirect()->back()->withErrors(['error' => 'O treino deve estar dentro do horário permitido e respeitar todas as validações. Selecione outras datas/horários.']);
+            }
         }
 
-        return redirect()->route('trainings.index')->with('success', 'Treino criado com sucesso.');
+        return redirect()->route('trainings.index')->with('success', 'Treino(s) criado(s) com sucesso.');
     }
-
 
     public function show(Training $training)
     {
@@ -205,6 +183,7 @@ class TrainingController extends Controller
         return redirect()->route('trainings.index')->with('success', 'Treino atualizado com sucesso.');
     }
 
+
     public function destroy(Training $training)
     {
         $this->authorize('delete', $training);
@@ -230,7 +209,6 @@ class TrainingController extends Controller
         $training->delete();
         return redirect()->route('trainings.index')->with('success', 'Treino eliminado com sucesso.');
     }
-
 
     public function enroll(Request $request, Training $training)
     {
@@ -346,7 +324,7 @@ class TrainingController extends Controller
         $query = Training::where('start_date', '>', Carbon::now())->orderBy('start_date', 'asc');
 
         if ($isAdmin) {
-            $personalTrainers = User::whereHas('roles', function($query) {
+            $personalTrainers = User::whereHas('roles', function ($query) {
                 $query->where('name', 'personal_trainer');
             })->get();
         } else {
@@ -367,9 +345,6 @@ class TrainingController extends Controller
 
         return view('pages.trainings.multi-delete', compact('trainings', 'personalTrainers', 'trainingTypes'));
     }
-
-
-
 
     public function multiDelete(Request $request)
     {
@@ -402,5 +377,4 @@ class TrainingController extends Controller
 
         return redirect()->route('trainings.index')->with('success', 'Treinos removidos com sucesso!');
     }
-
 }

@@ -57,7 +57,7 @@
                         <label for="room_id" class="block dark:text-white text-gray-800">Sala</label>
                         <select name="room_id" id="room_id" required class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-200 dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
                             @foreach ($rooms as $room)
-                                <option value="{{ $room->id }}" {{ old('room_id', $training->room_id) == $room->id ? 'selected' : '' }}>{{ $room->name }}</option>
+                                <option value="{{ $room->id }}" {{ old('room_id', $training->room_id) == $room->id ? 'selected' : '' }} data-capacity="{{ $room->capacity }}">{{ $room->name }} - Capacidade: {{ $room->capacity }}</option>
                             @endforeach
                         </select>
                         @error('room_id')
@@ -143,6 +143,15 @@
         const maxStudentsInput = document.getElementById('max_students');
         const maxStudentsErrorMsg = document.getElementById('max-students-error-msg');
         const currentEnrolled = {{ $training->users->count() }};
+        const roomSelect = document.getElementById('room_id');
+        const selectedRoom = roomSelect.options[roomSelect.selectedIndex];
+        const roomCapacity = parseInt(selectedRoom.getAttribute('data-capacity'));
+
+        if (parseInt(maxStudentsInput.value) > roomCapacity) {
+            maxStudentsErrorMsg.innerText = 'O número máximo de alunos não pode exceder a capacidade da sala.';
+            return false;
+        }
+
         if (parseInt(maxStudentsInput.value) < currentEnrolled) {
             if (maxStudentsErrorMsg) {
                 maxStudentsErrorMsg.innerText = 'O número máximo de alunos não pode ser menor do que o número de alunos já inscritos.';

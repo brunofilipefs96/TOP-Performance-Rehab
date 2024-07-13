@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Service;
-use App\Http\Requests\StoreServiceRequest;
+use App\Http\Requests\UpdateFreeTrainingRequest;
 use App\Http\Requests\UpdateServiceRequest;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -39,7 +39,7 @@ class ServiceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreServiceRequest $request)
+    public function store(UpdateFreeTrainingRequest $request)
     {
         $validatedData = $request->validated();
         Service::create($validatedData);

@@ -1,7 +1,7 @@
 @php
     use Carbon\Carbon;
     $horarioInicioSemanal = setting('horario_inicio_semanal', '06:00');
-    $horarioFimSemanal = setting('horario_fim_semanal', '23:59');
+    $horarioFimSemanal = setting('horario_fim_semanal', '23:30');
     $horarioInicioSabado = setting('horario_inicio_sabado', '08:00');
     $horarioFimSabado = setting('horario_fim_sabado', '18:00');
 @endphp
@@ -99,7 +99,6 @@
                         @error('start_time')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
-                        <span class="text-sm text-gray-600 dark:text-gray-400">Horário permitido: {{ $horarioInicioSemanal }} - {{ $horarioFimSemanal }} (Seg-Sex) / {{ $horarioInicioSabado }} - {{ $horarioFimSabado }} (Sáb)</span>
                         <span id="start_time_error" class="text-red-500 text-sm"></span>
                     </div>
                     <div class="mb-4">
@@ -118,7 +117,7 @@
                     </div>
 
                     <div class="mb-4 flex items-center">
-                        <input type="checkbox" name="repeat" id="repeat" class="form-checkbox h-5 w-5 text-blue-500 rounded dark:text-lime-500">
+                        <input type="checkbox" name="repeat" id="repeat" class="form-checkbox h-5 w-5 text-blue-500 rounded dark:text-lime-500" value="1">
                         <label for="repeat" class="ml-2 block dark:text-white text-gray-800">Repetir Treino</label>
                     </div>
                     <div id="repeat-options" style="display: none;">
@@ -155,6 +154,13 @@
                         </div>
                     </div>
 
+                    <div class="mb-4">
+                        <label class="block dark:text-white text-gray-800 mb-2">Horários do Ginásio</label>
+                        <p class="text-gray-600 dark:text-gray-300">Dias úteis: {{ $horarioInicioSemanal }} - {{ $horarioFimSemanal }}</p>
+                        <p class="text-gray-600 dark:text-gray-300">Sábado: {{ $horarioInicioSabado }} - {{ $horarioFimSabado }}</p>
+                        <p class="text-gray-600 dark:text-gray-300">Domingo: Fechado</p>
+                    </div>
+
                     <div class="flex justify-end gap-2 mt-10">
                         <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300 text-sm">Adicionar</button>
                     </div>
@@ -170,10 +176,13 @@
         const repeatOptions = document.getElementById('repeat-options');
 
         repeatCheckbox.addEventListener('change', function () {
+            const repeatUntilInput = document.getElementById('repeat_until');
             if (this.checked) {
                 repeatOptions.style.display = 'block';
+                repeatUntilInput.setAttribute('required', 'required');
             } else {
                 repeatOptions.style.display = 'none';
+                repeatUntilInput.removeAttribute('required');
             }
         });
 
@@ -221,10 +230,14 @@
                 startDateError.innerText = '';
             }
 
-            if ((dayOfWeek >= 1 && dayOfWeek <= 5) && (startTime < horarioInicioSemanal || startTime > horarioFimSemanal || endTime > horarioFimSemanal)) {
+            const endHours = String(endTime.getHours()).padStart(2, '0');
+            const endMinutes = String(endTime.getMinutes()).padStart(2, '0');
+            const formattedEndTime = endHours + ':' + endMinutes;
+
+            if ((dayOfWeek >= 1 && dayOfWeek <= 5) && (startTime < horarioInicioSemanal || startTime > horarioFimSemanal || formattedEndTime > horarioFimSemanal)) {
                 startTimeError.innerText = 'A hora de início deve estar entre ' + horarioInicioSemanal + ' e ' + horarioFimSemanal + ' nos dias de semana.';
                 isValid = false;
-            } else if (dayOfWeek == 6 && (startTime < horarioInicioSabado || startTime > horarioFimSabado || endTime > horarioFimSabado)) {
+            } else if (dayOfWeek == 6 && (startTime < horarioInicioSabado || startTime > horarioFimSabado || formattedEndTime > horarioFimSabado)) {
                 startTimeError.innerText = 'A hora de início deve estar entre ' + horarioInicioSabado + ' e ' + horarioFimSabado + ' no sábado.';
                 isValid = false;
             } else {

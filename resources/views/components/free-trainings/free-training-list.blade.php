@@ -22,8 +22,9 @@
         @endphp
 
         @if ($availablePacks->isNotEmpty())
-            <div class="bg-gray-300 dark:bg-gray-700 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 dark:text-gray-200 p-4 mb-6"
-                 role="alert">
+            <div
+                class="bg-gray-300 dark:bg-gray-700 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 dark:text-gray-200 p-4 mb-6"
+                role="alert">
                 <p class="font-bold mb-1">Possui Packs de aulas para utilizar:</p>
                 <ul class="list-disc list-inside">
                     @foreach ($availablePacks as $pack)
@@ -36,8 +37,9 @@
                 <p class="mt-2">O pack que será utilizado é o que expira mais brevemente.</p>
             </div>
         @else
-            <div class="bg-gray-300 dark:bg-gray-700 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 dark:text-gray-200 p-4 mb-6"
-                 role="alert">
+            <div
+                class="bg-gray-300 dark:bg-gray-700 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 dark:text-gray-200 p-4 mb-6"
+                role="alert">
                 <p class="font-bold">Adquira Packs para Participar nas Aulas</p>
                 <p>Para usufruir das nossas aulas e inscrever-se, adquira um dos nossos packs de aulas. Clique no botão
                     abaixo para ver os packs que temos disponíveis para si!</p>
@@ -57,6 +59,13 @@
                     Adicionar Vários Treinos Livres
                 </button>
             </a>
+            <a href="{{ route('free-trainings.showMultiDelete') }}">
+                <button type="button"
+                        class="bg-red-600 text-white flex items-center px-2 py-2 rounded-md hover:bg-red-500 dark:bg-red-500 dark:hover:text-gray-800 font-bold text-xs sm:text-sm">
+                    <i class="fa-solid fa-trash-can w-4 h-4 mr-1 sm:mr-2"></i>
+                    Remover Vários Treinos
+                </button>
+            </a>
         </div>
     @endcan
 
@@ -73,7 +82,8 @@
                 </button>
             </form>
         @endif
-        <span class="font-bold dark:text-white text-gray-800 text-center truncate flex-grow flex justify-center items-center text-xs sm:text-sm">
+        <span
+            class="font-bold dark:text-white text-gray-800 text-center truncate flex-grow flex justify-center items-center text-xs sm:text-sm">
             <i class="fa-solid fa-calendar-day mr-2"></i>{{ $selectedWeek->startOfWeek()->format('d/m/Y') }} - {{ $selectedWeek->endOfWeek()->format('d/m/Y') }}
         </span>
         @if ($selectedWeek->lt($currentWeek->copy()->addWeek()) || !auth()->user()->hasRole('client'))
@@ -137,8 +147,9 @@
                                         $isAdminOrPT = auth()->user()->hasRole('admin') || auth()->user()->hasRole('personal_trainer');
                                     @endphp
                                     @if ($startDateTime->hour == $hour)
-                                        <div class="inline-block sm:p-2 p-1 mb-2 bg-gray-200 dark:bg-gray-700 rounded shadow transform transition duration-300 ease-in-out min-w-full sm:min-w-[350px] ml-0 sm:ml-4 relative @if($isAdminOrPT) hover:scale-105 cursor-pointer @endif"
-                                             @if($isAdminOrPT) onclick="window.location='{{ route('free-trainings.show', $freeTraining->id) }}'" @endif>
+                                        <div
+                                            class="inline-block sm:p-2 p-1 mb-2 bg-gray-200 dark:bg-gray-700 rounded shadow transform transition duration-300 ease-in-out min-w-full sm:min-w-[350px] ml-0 sm:ml-4 relative @if($isAdminOrPT) hover:scale-105 cursor-pointer @endif"
+                                            @if($isAdminOrPT) onclick="window.location='{{ route('free-trainings.show', $freeTraining->id) }}'" @endif>
                                             @if ($userPresence)
                                                 <div class="ribbon"><span>Inscrito</span></div>
                                             @endif
@@ -156,7 +167,8 @@
                                                         /{{ $freeTraining->max_students }}
                                                     </p>
                                                 </div>
-                                                <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 sm:ml-4">
+                                                <div
+                                                    class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 sm:ml-4">
                                                     @if($isAdminOrPT && $isFreeTrainingStarted && !$hasMarkedAllPresences)
                                                         <a href="{{ route('free-trainings.show', $freeTraining->id) }}"
                                                            class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-400"

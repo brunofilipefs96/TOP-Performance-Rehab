@@ -64,11 +64,11 @@
                                                 <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700">
                                                     <div class="flex items-center">
                                                         <input type="radio" name="presence[{{ $user->id }}]" value="1"
-                                                               @if($user->pivot->presence) checked @endif
+                                                               @if(!is_null($user->pivot->presence) && $user->pivot->presence) checked @endif
                                                                class="form-radio mr-2 ml-4 text-blue-500 dark:text-lime-400">
                                                         <i class="fa-solid fa-check text-green-500"></i>
                                                         <input type="radio" name="presence[{{ $user->id }}]" value="0"
-                                                               @if(!$user->pivot->presence) checked @endif
+                                                               @if(!is_null($user->pivot->presence) && !$user->pivot->presence) checked @endif
                                                                class="form-radio mr-2 ml-4 text-blue-500 dark:text-lime-400">
                                                         <i class="fa-solid fa-x text-red-500"></i>
                                                     </div>
@@ -132,20 +132,22 @@
                     @endif
                 </div>
 
-                @if($currentDateTime->lt($trainingStartDateTime))
-                    <div class="flex justify-end items-center mb-4 mt-10">
-                        <form id="delete-form-{{$freeTraining->id}}" action="{{ url('free-trainings/' . $freeTraining->id) }}"
-                              method="POST" class="inline mr-2">
-                            @csrf
-                            @method('DELETE')
-                            <button type="button"
-                                    class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500"
-                                    id="delete-button" onclick="confirmDelete({{ $freeTraining->id }})">
-                                <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
-                                Eliminar
-                            </button>
-                        </form>
-                    </div>
+                @if(auth()->user()->hasRole('admin'))
+                    @if($currentDateTime->lt($trainingStartDateTime))
+                        <div class="flex justify-end items-center mb-4 mt-10">
+                            <form id="delete-form-{{$freeTraining->id}}" action="{{ route('free-trainings.destroy', $freeTraining->id) }}"
+                                  method="POST" class="inline mr-2">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button"
+                                        class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500"
+                                        id="delete-button" onclick="confirmDelete({{ $freeTraining->id }})">
+                                    <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
+                                    Eliminar
+                                </button>
+                            </form>
+                        </div>
+                    @endif
                 @endif
             @endif
         </div>
@@ -163,6 +165,7 @@
             </button>
             <form id="confirmation-form" method="POST" class="inline">
                 @csrf
+                @method('DELETE')
                 <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500">Confirmar
                 </button>
             </form>

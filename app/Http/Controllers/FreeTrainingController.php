@@ -283,12 +283,61 @@ class FreeTrainingController extends Controller
                     $membershipPack->pivot->quantity_remaining += 1;
                     $membershipPack->pivot->save();
                 }
-
-                $freeTraining->users()->detach($user->id);
             }
+            $freeTraining->users()->detach();
         }
 
         $freeTraining->delete();
         return redirect()->route('free-trainings.index')->with('success', 'Treino livre eliminado com sucesso.');
     }
+
+    public function showMultiDelete(Request $request)
+    {
+        $this->authorize('multiDelete', FreeTraining::class);
+
+        $query = FreeTraining::where('start_date', '>', Carbon::now())->orderBy('start_date', 'asc');
+
+        if ($request->has('training_type_id') && $request->training_type_id != '') {
+            $query->where('training_type_id', $request->training_type_id);
+        }
+
+        $freeTrainings = $query->paginate(12);
+
+        return view('pages.free-trainings.multi-delete', compact('freeTrainings'));
+    }
+
+
+    public function multiDelete(Request $request)
+    {
+        $freeTrainingIds = $request->input('free_trainings', []);
+
+        $this->authorize('multiDelete', [FreeTraining::class, $freeTrainingIds]);
+
+        if (!empty($freeTrainingIds)) {
+            $freeTrainings = FreeTraining::whereIn('id', $freeTrainingIds)->get();
+
+            foreach ($freeTrainings as $freeTraining) {
+                foreach ($freeTraining->users as $user) {
+                    $today = Carbon::today();
+                    $membershipPack = $user->membership->packs()
+                        ->where('expiry_date', '>=', $today)
+                        ->where('has_personal_trainer', false)
+                        ->orderBy('expiry_date', 'asc')
+                        ->first();
+
+                    if ($membershipPack) {
+                        $membershipPack->pivot->quantity_remaining += 1;
+                        $membershipPack->pivot->save();
+                    }
+
+                    $freeTraining->users()->detach($user->id);
+                }
+                $freeTraining->delete();
+            }
+        }
+
+        return redirect()->route('free-trainings.index')->with('success', 'Treinos livres removidos com sucesso!');
+    }
+
+
 }

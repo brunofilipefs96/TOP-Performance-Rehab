@@ -76,4 +76,10 @@ class FreeTrainingPolicy
 
         return Response::deny('Não tem permissão para marcar presenças para este treino.');
     }
+
+    public function multiDelete(User $user): bool
+    {
+        return $user->hasRole('admin');
+    }
+
 }

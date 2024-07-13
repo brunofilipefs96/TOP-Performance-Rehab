@@ -108,6 +108,9 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified'])->group(function
     Route::post('trainings/{training}/mark-presence', [TrainingController::class, 'markPresence'])->name('trainings.markPresence');
 
     // Rotas para FreeTrainingController
+    Route::get('free-trainings/multi-delete', [FreeTrainingController::class, 'showMultiDelete'])->name('free-trainings.showMultiDelete');
+    Route::delete('free-trainings/multi-delete', [FreeTrainingController::class, 'multiDelete'])->name('free-trainings.multiDelete');
+
 
     Route::post('/dashboard/change-week', [DashboardController::class, 'changeWeek'])->name('dashboard.changeWeek');
     Route::post('/free-trainings/change-week', [FreeTrainingController::class, 'changeWeek'])->name('free-trainings.changeWeek');

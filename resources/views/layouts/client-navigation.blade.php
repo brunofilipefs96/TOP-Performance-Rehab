@@ -95,7 +95,6 @@
                             <span class="text-md ml-2">Matrícula</span>
                         </a>
                     </li>
-
                 </ul>
                 <div class="mt-auto mb-6">
                     <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center dark:hover:text-lime-400 hover:text-blue-600">

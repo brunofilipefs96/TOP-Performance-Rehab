@@ -16,7 +16,7 @@
                     <option value="all">Todos</option>
                     <option value="active">Ativos</option>
                     <option value="pending">Pendentes</option>
-                    <option value="rejected">Rejeitados</option>
+                    <option value="inactive">Inativos</option>
                     <option value="frozen">Congelados</option>
                     <option value="pending_payment">Aguardar Pagamento</option>
                 </select>
@@ -47,15 +47,19 @@
                     <td class="p-4">{{ $membership->user->nif }}</td>
                     <td class="p-4">
                         @if($membership->status->name == 'active')
-                            <span class="text-green-500">Ativo</span>
-                        @elseif($membership->status->name == 'pending')
+                            <span class="text-green-500">Ativa</span>
+                        @elseif(in_array($membership->status->name, ['pending', 'renew_pending']))
                             <span class="text-yellow-500">Pendente</span>
                         @elseif($membership->status->name == 'rejected')
                             <span class="text-red-500">Rejeitado</span>
                         @elseif($membership->status->name == 'frozen')
                             <span class="text-blue-500">Congelado</span>
-                        @elseif($membership->status->name == 'pending_payment')
+                        @elseif(in_array($membership->status->name, ['pending_payment', 'pending_renewPayment']))
                             <span class="text-yellow-500">Aguardar Pagamento</span>
+                        @elseif($membership->status->name == 'inactive')
+                            <span class="text-red-500">Inativa</span>
+                        @elseif($membership->status->name == 'awaiting_insurance')
+                            <span class="text-yellow-500">Aguarda renovação do seguro</span>
                         @endif
                     </td>
                     <td class="p-4 flex space-x-2 justify-center">
@@ -133,7 +137,9 @@
             const status = card.getAttribute('data-status').toLowerCase();
 
             const matchesSearchTerm = name.includes(searchTerm) || nif.includes(searchTerm) || status.includes(searchTerm);
-            const matchesStatus = selectedStatus === 'all' || status === selectedStatus;
+            const matchesStatus = selectedStatus === 'all' || status === selectedStatus ||
+                (selectedStatus === 'pending' && ['pending', 'renew_pending'].includes(status)) ||
+                (selectedStatus === 'pending_payment' && ['pending_payment', 'pending_renewPayment'].includes(status));
 
             if (matchesSearchTerm && matchesStatus) {
                 card.classList.remove('hidden');

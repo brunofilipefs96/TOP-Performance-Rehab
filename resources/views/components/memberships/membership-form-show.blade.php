@@ -1,9 +1,54 @@
 <div class="container mx-auto mt-5 pt-5 glass">
+    @php
+        $user = auth()->user();
+    @endphp
+    @if($user->hasRole('client') && ($user->membership && ($user->membership->status->name == 'inactive' && $user->membership->insurance->status->name == 'inactive')))
+        <div class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 dark:bg-gray-700 dark:text-gray-200 p-4 mb-6" role="alert">
+            <p class="font-bold">A sua matrícula e o seu seguro expiraram! </p>
+            <p>Se deseja renovar a sua matrícula e o seguro, clique no botão abaixo para renovar!</p>
+            <a href="{{ route('renew') }}" class="mt-4 inline-block text-white dark:bg-lime-500 bg-blue-500 px-3 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400">Renovar Dados</a>
+        </div>
+    @elseif($user->hasRole('client') && ($user->membership && $user->membership->status->name == 'inactive'))
+        <div class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 dark:bg-gray-700 dark:text-gray-200 p-4 mb-6" role="alert">
+            <p class="font-bold">A sua matrícula expirou! </p>
+            <p>Se deseja renovar a sua matrícula, clique no botão abaixo para renovar!</p>
+            <a href="{{ route('renew') }}" class="mt-4 inline-block text-white dark:bg-lime-500 bg-blue-500 px-3 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400">Renovar Dados</a>
+        </div>
+    @elseif($user->hasRole('client') && ($user->membership && $user->membership->insurance->status->name == 'inactive'))
+        <div class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 dark:bg-gray-700 dark:text-gray-200 p-4 mb-6" role="alert">
+            <p class="font-bold">O seu seguro expirou! </p>
+            <p>Se deseja renovar o seu seguro, clique no botão abaixo para renovar!</p>
+            <a href="{{ route('renew') }}" class="mt-4 inline-block text-white dark:bg-lime-500 bg-blue-500 px-3 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400">Renovar Dados</a>
+        </div>
+    @elseif($user->hasRole('client') && ($user->membership && $user->membership->status->name == 'awaiting_insurance'))
+        <div class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 dark:bg-gray-700 dark:text-gray-200 p-4 mb-6" role="alert">
+            <p class="font-bold">A sua matrícula está aguardando pelo seguro!</p>
+            <p>Por favor, complete o processo de seguro para continuar.</p>
+            <a href="{{ route('renew') }}" class="mt-4 inline-block text-white dark:bg-lime-500 bg-blue-500 px-3 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400">Renovar Dados</a>
+        </div>
+    @elseif($user->hasRole('client') && ($user->membership && $user->membership->status->name == 'awaiting_membership'))
+        <div class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 dark:bg-gray-700 dark:text-gray-200 p-4 mb-6" role="alert">
+            <p class="font-bold">A sua inscrição está pendente de aprovação!</p>
+            <p>Aguarde até que a sua inscrição seja aprovada.</p>
+            <a href="{{ route('renew') }}" class="mt-4 inline-block text-white dark:bg-lime-500 bg-blue-500 px-3 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400">Renovar Dados</a>
+        </div>
+    @elseif($user->hasRole('client') && ($user->membership && $user->membership->status->name == 'renew_pending'))
+        <div class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 dark:bg-gray-700 dark:text-gray-200 p-4 mb-6" role="alert">
+            <p class="font-bold">A renovação da sua matrícula está pendente!</p>
+            <p>Aguarde até que o processo de renovação seja concluído.</p>
+            <a href="{{ route('renew') }}" class="mt-4 inline-block text-white dark:bg-lime-500 bg-blue-500 px-3 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400">Renovar Dados</a>
+        </div>
+    @elseif($user->hasRole('client') && ($user->membership && $user->membership->status->name == 'pending_renewPayment'))
+        <div class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 dark:bg-gray-700 dark:text-gray-200 p-4 mb-6" role="alert">
+            <p class="font-bold">O pagamento da renovação está pendente!</p>
+            <p>Por favor, complete o pagamento para concluir a renovação.</p>
+            <a href="{{ route('renew') }}" class="mt-4 inline-block text-white dark:bg-lime-500 bg-blue-500 px-3 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400">Renovar Dados</a>
+        </div>
+    @endif
     <div class="flex justify-center">
         <div class="w-full max-w-lg bg-gray-300 dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm">
             <div class="flex justify-center">
                 <div class="w-full max-w-lg">
-
                     <div>
                         <h1 class="mb-6 mt-2 text-2xl text-gray-900 dark:text-lime-400">Matrícula {{ $membership->id }}</h1>
                     </div>
@@ -123,19 +168,25 @@
 
                     <div class="flex items-center mb-2">
                         @if($membership->status->name == 'active')
-                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle text-lg">Estado: Ativo</p>
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle text-lg">Estado: Ativa</p>
                             <span class="h-3 w-3 bg-green-500 rounded-full inline-block"></span>
-                        @elseif($membership->status->name == 'pending')
+                        @elseif($membership->status->name == 'pending' || $membership->status->name == 'renew_pending')
                             <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle text-lg">Estado: Pendente</p>
                             <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
                         @elseif($membership->status->name == 'rejected')
                             <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle text-lg">Estado: Rejeitado</p>
                             <span class="h-3 w-3 bg-red-500 rounded-full inline-block"></span>
                         @elseif($membership->status->name == 'frozen')
-                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle text-lg">Estado: Congelado</p>
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle text-lg">Estado: Congelada</p>
                             <span class="h-3 w-3 bg-blue-500 rounded-full inline-block"></span>
-                        @elseif($membership->status->name == 'pending_payment')
+                        @elseif($membership->status->name == 'pending_payment' || $membership->status->name == 'pending_renewPayment')
                             <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle text-lg">Estado: Pagamento em espera</p>
+                            <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
+                        @elseif($membership->status->name == 'inactive')
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle text-lg">Estado: Inativa</p>
+                            <span class="h-3 w-3 bg-red-500 rounded-full inline-block"></span>
+                        @elseif($membership->status->name == 'awaiting_insurance')
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle text-lg">Estado: Aguarda renovação do seguro</p>
                             <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
                         @endif
                     </div>
@@ -165,7 +216,7 @@
                             </a>
                         @endif
                         @can('update' , $membership)
-                            @if($membership->status->name == 'pending' || $membership->status->name == 'frozen')
+                            @if($membership->status->name == 'pending' || $membership->status->name == 'frozen' || $membership->status->name == 'renew_pending')
                                 {{-- Pending --}}
                                 <div class="flex justify-center">
                                     <form
@@ -173,11 +224,19 @@
                                         method="POST">
                                         @csrf
                                         @method('PATCH')
+                                        @if($membership->status->name == 'pending')
                                         <input type="hidden" name="status_name" value="pending_payment">
                                         <button type="submit"
                                                 class="inline-block bg-green-500 mt-4 mr-1 py-2 px-6 rounded-md shadow-sm hover:bg-green-700 text-white">
                                             Aceitar
                                         </button>
+                                        @elseif($membership->status->name == 'renew_pending')
+                                            <input type="hidden" name="status_name" value="pending_renewPayment">
+                                            <button type="submit"
+                                                    class="inline-block bg-green-500 mt-4 mr-1 py-2 px-6 rounded-md shadow-sm hover:bg-green-700 text-white">
+                                                Aceitar
+                                            </button>
+                                        @endif
                                     </form>
                                     <form
                                         action="{{ route('memberships.update', ['membership' => $membership->id]) }}"
@@ -192,7 +251,7 @@
                                     </form>
                                 </div>
                             @endif
-                            @if($membership->status->name == 'active' || $membership->status->name == 'pending')
+                            @if($membership->status->name == 'active' || $membership->status->name == 'pending' || $membership->status->name == 'renew_pending')
                                 <div class="flex items-center">
                                     <form
                                         action="{{ route('memberships.update', ['membership' => $membership->id]) }}"

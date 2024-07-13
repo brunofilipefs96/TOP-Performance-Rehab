@@ -32,6 +32,12 @@ class SetupController extends Controller
             }
         }
 
+        if($user->membership){
+            if ($user->membership->status->name == 'inactive' || $user->membership->insurance->status->name == 'inactive') {
+                return redirect()->route('renew');
+            }
+        }
+
         if(($user->membership && $user->membership->status->name == 'active') || ($user->membership && $user->membership->status->name == 'frozen')){
             return redirect('memberships/'. $user->membership->id);
         }
@@ -92,10 +98,6 @@ class SetupController extends Controller
     public function membershipShow()
     {
         $user = auth()->user();
-
-        if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name == 'active') && ($user->membership->insurance->status->name == 'active'))) {
-            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
-        }
 
         if(!$user->addresses || $user->addresses->count() <= 0){
             return redirect()->route('setup.addressShow');
@@ -198,6 +200,17 @@ class SetupController extends Controller
 
         return view('pages.setup.paymentShow',  ['user' => $user]);
     }
+    public function renewShow() {
+
+        $user = auth()->user();
+
+        if ($user->membership->status->name != 'inactive' || $user->membership->insurance->name == 'inactive') {
+            return redirect()->route('dashboard')->with('error', 'Apenas memberships inativas podem ser renovadas.');
+        }
+
+        return view('pages.setup.renewShow', ['user' => $user]);
+    }
+
 
     public function storeAddress(Request $request)
     {

@@ -11,6 +11,7 @@ use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\PackController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RenewController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\ServiceController;
@@ -90,6 +91,17 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified'])->group(function
     Route::get('/setup/awaiting', [SetupController::class, 'awaitingShow'])->name('setup.awaitingShow');
     Route::get('/setup/payment', [SetupController::class, 'paymentShow'])->name('setup.paymentShow');
     Route::post('/setup/process', [SetupController::class, 'processSetup'])->name('setup.process');
+
+    // Rotas para Renovação
+    Route::get('/renew', [RenewController::class, 'renew'])->name('renew');
+    Route::get('/renew/renewMembership', [RenewController::class, 'renewMembership'])->name('renew.renewMembership');
+    Route::get('/renew/renewInsurance', [RenewController::class, 'renewInsurance'])->name('renew.renewInsurance');
+    Route::get('/renew/renewAwaiting', [RenewController::class, 'renewAwaiting'])->name('renew.renewAwaiting');
+    Route::get('/renew/renewPayment', [RenewController::class, 'renewPayment'])->name('renew.renewPayment');
+    Route::post('/renew/processRenew', [RenewController::class, 'processRenew'])->name('renew.processRenew');
+    Route::post('/renew/renewMembership/{membership}', [RenewController::class, 'updateMembership'])->name('renew.updateMembership');
+    Route::post('/renew/updateInsurance/{insurance}', [RenewController::class, 'updateInsurance'])->name('renew.updateInsurance');
+
 
     // Rotas para TrainingController
     Route::get('trainings/multi-delete', [TrainingController::class, 'showMultiDelete'])->name('trainings.showMultiDelete');

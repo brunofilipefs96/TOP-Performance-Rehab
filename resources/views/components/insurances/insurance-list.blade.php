@@ -48,14 +48,16 @@
                     <td class="p-4">
                         @if($insurance->status->name == 'active')
                             <span class="text-green-500">Ativo</span>
-                        @elseif($insurance->status->name == 'pending')
+                        @elseif(in_array($insurance->status->name, ['pending', 'renew_pending']))
                             <span class="text-yellow-500">Pendente</span>
                         @elseif($insurance->status->name == 'inactive')
                             <span class="text-red-500">Inativo</span>
                         @elseif($insurance->status->name == 'frozen')
                             <span class="text-blue-500">Congelado</span>
-                        @elseif($insurance->status->name == 'pending_payment')
+                        @elseif(in_array($insurance->status->name, ['pending_payment', 'pending_renewPayment']))
                             <span class="text-yellow-500">Aguardar Pagamento</span>
+                        @elseif($insurance->status->name == 'awaiting_membership')
+                            <span class="text-yellow-500">Aguarda renovação da matrícula</span>
                         @endif
                     </td>
                     <td class="p-4 flex space-x-2 justify-center">
@@ -133,7 +135,9 @@
             const status = card.getAttribute('data-status').toLowerCase();
 
             const matchesSearchTerm = name.includes(searchTerm) || nif.includes(searchTerm) || status.includes(searchTerm);
-            const matchesStatus = selectedStatus === 'all' || status === selectedStatus;
+            const matchesStatus = selectedStatus === 'all' || status === selectedStatus ||
+                (selectedStatus === 'pending' && ['pending', 'renew_pending'].includes(status)) ||
+                (selectedStatus === 'pending_payment' && ['pending_payment', 'pending_renewPayment'].includes(status));
 
             if (matchesSearchTerm && matchesStatus) {
                 card.classList.remove('hidden');

@@ -43,7 +43,13 @@ class MembershipController extends Controller
 
         if ($filter && $filter !== 'all') {
             $query->whereHas('status', function ($q) use ($filter) {
-                $q->whereRaw('LOWER(name) = ?', [strtolower($filter)]);
+                if ($filter === 'pending') {
+                    $q->whereIn('name', ['pending', 'renew_pending']);
+                } elseif ($filter === 'pending_payment') {
+                    $q->whereIn('name', ['pending_payment', 'pending_renewPayment']);
+                } else {
+                    $q->whereRaw('LOWER(name) = ?', [strtolower($filter)]);
+                }
             });
         }
 
@@ -109,7 +115,13 @@ class MembershipController extends Controller
 
         $status = Status::where('name', $request->input('status_name'))->firstOrFail();
 
-        $membership->status_id = $status->id;
+        if($membership->status->name == 'pending'){
+            $membership->status_id = $status->id;
+        }
+
+        if($membership->status->name == 'renew_pending'){
+            $membership->status_id = $status->id;
+        }
 
         if($membership->status->name == 'active') {
             $membership->start_date = now();

@@ -53,7 +53,7 @@
                             @if($insurance->status->name == 'active')
                                 <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Ativo</p>
                                 <span class="h-3 w-3 bg-green-500 rounded-full inline-block"></span>
-                            @elseif($insurance->status->name == 'pending')
+                            @elseif($insurance->status->name == 'pending' || $insurance->status->name == 'renew_pending')
                                 <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Pendente</p>
                                 <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
                             @elseif($insurance->status->name == 'rejected')
@@ -62,8 +62,14 @@
                             @elseif($insurance->status->name == 'frozen')
                                 <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Congelado</p>
                                 <span class="h-3 w-3 bg-blue-500 rounded-full inline-block"></span>
-                            @elseif($insurance->status->name == 'pending_payment')
+                            @elseif($insurance->status->name == 'pending_payment' || $insurance->status->name == 'pending_renewPayment')
                                 <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Pagamento em espera</p>
+                                <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
+                            @elseif($insurance->status->name == 'inactive')
+                                <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Inativa</p>
+                                <span class="h-3 w-3 bg-red-500 rounded-full inline-block"></span>
+                            @elseif($insurance->status->name == 'awaiting_membership')
+                                <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle">Estado: Aguarda renovação da matrícula</p>
                                 <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
                             @endif
                         @endif
@@ -71,7 +77,7 @@
 
                     <div class="flex justify-end mb-2">
                         @can('update', $insurance)
-                            @if($insurance->status && ($insurance->status->name == 'pending' || $insurance->status->name == 'frozen'))
+                            @if($insurance->status && ($insurance->status->name == 'pending' || $insurance->status->name == 'frozen' || $insurance->status->name == 'renew_pending'))
                                 <div class="flex justify-center">
                                     @if($insurance->insurance_type == 'Pessoal')
                                         <form
@@ -79,11 +85,19 @@
                                             method="POST">
                                             @csrf
                                             @method('PATCH')
+                                            @if($insurance->status->name == 'pending')
                                             <input type="hidden" name="status_name" value="active">
                                             <button type="submit"
                                                     class="inline-block bg-green-500 mt-4 mr-1 py-2 px-6 rounded-md shadow-sm hover:bg-green-700 text-white">
                                                 Aceitar
                                             </button>
+                                            @elseif($insurance->status->name == 'renew_pending')
+                                                <input type="hidden" name="status_name" value="active">
+                                                <button type="submit"
+                                                        class="inline-block bg-green-500 mt-4 mr-1 py-2 px-6 rounded-md shadow-sm hover:bg-green-700 text-white">
+                                                    Aceitar
+                                                </button>
+                                            @endif
                                         </form>
                                         <form
                                             action="{{ route('insurances.update', ['insurance' => $insurance->id]) }}"
@@ -97,17 +111,25 @@
                                             </button>
                                         </form>
                                     @elseif($insurance->insurance_type == 'Ginásio')
-                                        <form
-                                            action="{{ route('insurances.update', ['insurance' => $insurance->id]) }}"
-                                            method="POST">
-                                            @csrf
-                                            @method('PATCH')
-                                            <input type="hidden" name="status_name" value="pending_payment">
-                                            <button type="submit"
-                                                    class="inline-block bg-green-500 mt-4 mr-1 py-2 px-6 rounded-md shadow-sm hover:bg-green-700 text-white">
-                                                Aceitar
-                                            </button>
-                                        </form>
+                                            <form
+                                                action="{{ route('insurances.update', ['insurance' => $insurance->id]) }}"
+                                                method="POST">
+                                                @csrf
+                                                @method('PATCH')
+                                                @if($insurance->status->name == 'pending')
+                                                    <input type="hidden" name="status_name" value="pending_payment">
+                                                    <button type="submit"
+                                                            class="inline-block bg-green-500 mt-4 py-2 px-6 rounded-md shadow-sm hover:bg-green-700 text-white">
+                                                        Aceitar
+                                                    </button>
+                                                @elseif($insurance->status->name == 'renew_pending')
+                                                    <input type="hidden" name="status_name" value="pending_renewPayment">
+                                                    <button type="submit"
+                                                            class="inline-block bg-green-500 mt-4 py-2 px-6 rounded-md shadow-sm hover:bg-green-700 text-white">
+                                                        Aceitar
+                                                    </button>
+                                                @endif
+                                            </form>
                                     @endif
                                 </div>
                             @endif

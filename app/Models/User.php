@@ -28,7 +28,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'nif',
         'cc_number',
         'password',
-        'image'
+        'image',
+        'active_role_id',
     ];
 
     /**
@@ -65,9 +66,23 @@ class User extends Authenticatable implements MustVerifyEmail
         }
     }
 
+    public function activeRole()
+    {
+        return $this->belongsTo(Role::class, 'active_role_id');
+    }
+
+    public function assignHighestPriorityRole()
+    {
+        $roles = $this->roles()->orderBy('priority')->get();
+        if ($roles->isNotEmpty()) {
+            $this->active_role_id = $roles->first()->id;
+            $this->save();
+        }
+    }
+
     public function hasRole(string $role): bool
     {
-        return $this->roles()->where('name', $role)->exists();
+        return $this->activeRole && $this->activeRole->name === $role;
     }
 
     public function addresses()

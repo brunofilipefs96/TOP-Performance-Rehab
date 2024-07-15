@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('gender');
             $table->string('nif');
             $table->string('cc_number')->nullable();
+            $table->foreignId('active_role_id')->nullable()->constrained('roles')->onDelete('cascade');
             $table->rememberToken();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();

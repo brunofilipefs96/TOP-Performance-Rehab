@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -16,8 +15,9 @@ class DashboardController extends Controller
         if (!Auth::check()) {
             abort(403, 'Unauthorized access.');
         }
+
         $user = Auth::user();
-        $roles = $user->roles()->pluck('name')->toArray();
+        $activeRole = $user->activeRole->name;
 
         // General data for the dashboard
         $newMembersMonthly = User::whereMonth('created_at', Carbon::now()->month)->count();
@@ -41,28 +41,29 @@ class DashboardController extends Controller
             $annualData->push(User::whereMonth('created_at', $date->month)->whereYear('created_at', $date->year)->count());
         }
 
-        if (in_array('admin', $roles)) {
-            return view('pages.dashboard.admin', [
-                'newMembersMonthly' => $newMembersMonthly,
-                'newMembersAnnually' => $newMembersAnnually,
-                'monthlyLabels' => $monthlyLabels,
-                'monthlyData' => $monthlyData,
-                'annualLabels' => $annualLabels,
-                'annualData' => $annualData,
-            ]);
-        } elseif (in_array('client', $roles)) {
-            $products = Product::orderBy('created_at', 'desc')->take(6)->get();
+        switch ($activeRole) {
+            case 'admin':
+                return view('pages.dashboard.admin', [
+                    'newMembersMonthly' => $newMembersMonthly,
+                    'newMembersAnnually' => $newMembersAnnually,
+                    'monthlyLabels' => $monthlyLabels,
+                    'monthlyData' => $monthlyData,
+                    'annualLabels' => $annualLabels,
+                    'annualData' => $annualData,
+                ]);
+            case 'client':
+                $products = Product::orderBy('created_at', 'desc')->take(6)->get();
 
-            return view('pages.dashboard.client', [
-                'user'  => $user,
-                'products' => $products,
-            ]);
-        } elseif (in_array('personal_trainer', $roles)) {
-            return view('pages.dashboard.personal-trainer');
-        } elseif (in_array('employee', $roles)) {
-            return view('pages.dashboard.employee');
-        } else {
-            abort(403, 'Unauthorized access.');
+                return view('pages.dashboard.client', [
+                    'user' => $user,
+                    'products' => $products,
+                ]);
+            case 'personal_trainer':
+                return view('pages.dashboard.personal-trainer');
+            case 'employee':
+                return view('pages.dashboard.employee');
+            default:
+                abort(403, 'Unauthorized access.');
         }
     }
 

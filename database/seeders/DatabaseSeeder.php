@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('atec123'),
         ])->roles()->sync([1]);
 
+        //Personal Trainer Account
         User::factory()->create([
             'full_name' => 'Personal Trainer',
             'birth_date' => '1990-01-01',
@@ -42,8 +43,9 @@ class DatabaseSeeder extends Seeder
             'nif' => '111111111',
             'cc_number' => '111111111',
             'password' => bcrypt('atec123'),
-        ])->roles()->sync([2]);
+        ])->roles()->sync([2, 4]);
 
+        //Personal Trainer Account 2
         User::factory()->create([
             'full_name' => 'Personal Trainer 2',
             'birth_date' => '1990-01-01',
@@ -53,8 +55,9 @@ class DatabaseSeeder extends Seeder
             'nif' => '444444444',
             'cc_number' => '444444444',
             'password' => bcrypt('atec123'),
-        ])->roles()->sync([2]);
+        ])->roles()->sync([2, 4]);
 
+        //Employee Trainer Account
         User::factory()->create([
             'full_name' => 'Funcionario',
             'birth_date' => '1990-01-01',
@@ -64,8 +67,9 @@ class DatabaseSeeder extends Seeder
             'nif' => '222222222',
             'cc_number' => '222222222',
             'password' => bcrypt('atec123'),
-        ])->roles()->sync([3]);
+        ])->roles()->sync([3, 4]);
 
+        //Client Trainer Account
         User::factory()->create([
             'full_name' => 'Cliente',
             'birth_date' => '1990-01-01',
@@ -77,6 +81,7 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('atec123'),
         ])->roles()->sync([4]);
 
+        //Client Trainer Account 2
         User::factory()->create([
             'full_name' => 'Cliente 2',
             'birth_date' => '1990-01-01',

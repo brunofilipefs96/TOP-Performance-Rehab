@@ -10,6 +10,11 @@ class Role extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $fillable = [
+        'name',
+        'priority',
+    ];
+
     public function users()
     {
         return $this->belongsToMany(User::class);

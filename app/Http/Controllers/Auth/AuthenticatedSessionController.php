@@ -28,6 +28,9 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $user = Auth::user();
+        $this->assignHighestPriorityRole($user);
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
@@ -45,4 +48,15 @@ class AuthenticatedSessionController extends Controller
         return redirect('/');
     }
 
+    /**
+     * Atribui o role ativo com base nos privilégios.
+     */
+    protected function assignHighestPriorityRole($user)
+    {
+        $roles = $user->roles->sortBy('priority');
+        if ($roles->isNotEmpty()) {
+            $user->active_role_id = $roles->first()->id;
+            $user->save();
+        }
+    }
 }

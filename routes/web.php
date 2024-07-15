@@ -12,6 +12,7 @@ use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\PackController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RenewController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\ServiceController;
@@ -46,6 +47,8 @@ Route::middleware(['auth'])->group(function () {
 
 
 Route::middleware(['auth', CheckGymSettings::class, 'verified'])->group(function () {
+    Route::get('/change-role', [RoleController::class, 'changeRole'])->name('change-role');
+
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

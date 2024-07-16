@@ -77,7 +77,7 @@ class TrainingController extends Controller
         $rooms = Room::all();
         $trainingTypes = TrainingType::all();
         $personalTrainers = User::all()->filter(function ($user) {
-            return $user->hasRole('personal_trainer');
+            return $user->roles()->pluck('name')->contains('personal_trainer');
         });
 
         $closures = GymClosure::pluck('closure_date')->toArray();
@@ -146,7 +146,7 @@ class TrainingController extends Controller
         $rooms = Room::all();
         $trainingTypes = TrainingType::all();
         $personalTrainers = User::all()->filter(function ($user) {
-            return $user->hasRole('personal_trainer');
+            return $user->roles()->pluck('name')->contains('personal_trainer');
         });
 
         $closures = GymClosure::pluck('closure_date')->toArray();

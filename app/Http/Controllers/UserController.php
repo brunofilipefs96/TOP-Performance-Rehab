@@ -13,10 +13,29 @@ class UserController extends Controller
 {
     use AuthorizesRequests;
 
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('viewAny', User::class);
-        $users = User::with('roles')->orderBy('id', 'desc')->paginate(12);
+
+        $search = $request->input('search');
+        $role = $request->input('role', 'all'); // Default to 'all' if filter is not provided
+
+        $users = User::with('roles')
+            ->when($search, function ($query, $search) {
+                return $query->where(function($q) use ($search) {
+                    $search = strtolower($search);
+                    $q->whereRaw('LOWER(full_name) LIKE ?', ["%{$search}%"])
+                        ->orWhereRaw('LOWER(nif) LIKE ?', ["%{$search}%"]);
+                });
+            })
+            ->when($role != 'all', function ($query) use ($role) {
+                return $query->whereHas('roles', function ($q) use ($role) {
+                    $q->where('name', $role);
+                });
+            })
+            ->orderBy('id', 'asc')
+            ->paginate(12);
+
         return view('pages.users.index', ['users' => $users]);
     }
 

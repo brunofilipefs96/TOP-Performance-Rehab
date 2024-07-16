@@ -26,10 +26,9 @@ class EvaluationController extends Controller
 
         $validatedData = $request->validated();
 
-        $evaluation = new Evaluation($validatedData);
-        $evaluation->save();
+        $validatedData['observations'] = $validatedData['observations'] ?? '';
 
-        $membership->evaluations()->attach($evaluation->id);
+        $evaluation = $membership->evaluations()->create($validatedData);
 
         return redirect()->route('memberships.evaluations.list', ['membership' => $membership->id])
             ->with('success', 'Avaliação adicionada com sucesso!');

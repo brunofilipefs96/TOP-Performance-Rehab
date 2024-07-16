@@ -57,6 +57,7 @@
                            class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500
                            @error('quantity') border-red-500 @enderror dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50"
                            value="{{ old('quantity') }}"
+                           min="0"
                            required
                            aria-describedby="quantityHelp">
                     @error('quantity')
@@ -76,6 +77,8 @@
                            class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500
                            @error('price') border-red-500 @enderror dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50"
                            value="{{ old('price') }}"
+                           min="0"
+                           step="0.01"
                            required
                            aria-describedby="priceHelp">
                     @error('price')

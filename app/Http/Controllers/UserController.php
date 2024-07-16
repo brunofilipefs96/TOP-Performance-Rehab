@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Storage;
 class UserController extends Controller
 {
     use AuthorizesRequests;
-
     public function index(Request $request)
     {
         $this->authorize('viewAny', User::class);
@@ -28,14 +27,24 @@ class UserController extends Controller
                 });
             })
             ->when($role != 'all', function ($query) use ($role) {
-                return $query->whereHas('roles', function ($q) use ($role) {
-                    $q->where('name', $role);
-                });
+                if ($role === 'client') {
+                    return $query->whereHas('roles', function ($q) {
+                        $q->where('name', 'client');
+                    })->has('roles', '=', 1);
+                } else {
+                    return $query->whereHas('roles', function ($q) use ($role) {
+                        $q->where('name', $role);
+                    });
+                }
             })
             ->orderBy('id', 'asc')
             ->paginate(12);
 
-        return view('pages.users.index', ['users' => $users]);
+        return view('pages.users.index', [
+            'users' => $users,
+            'search' => $search,
+            'role' => $role,
+        ]);
     }
 
     public function show(User $user)

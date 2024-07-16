@@ -12,6 +12,45 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet"/>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+        .fade-out {
+            transition: opacity 0.5s ease-in-out;
+            opacity: 0;
+        }
+
+        .success-modal-content {
+            display: flex;
+            align-items: center;
+            background-color: #529af4; /* Tailwind blue-300 */
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 1rem 1.5rem;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .success-modal-content.dark {
+            background-color: #A3E635; /* Tailwind lime-500 */
+        }
+
+        .success-modal-content i {
+            font-size: 2rem;
+            color: white;
+            margin-right: 0.75rem;
+        }
+
+        .success-modal-text h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+
+        .success-modal-text p {
+            font-size: 0.875rem;
+            color: white;
+        }
+    </style>
 </head>
 <body class="font-sans antialiased text-gray-100 dark:bg-gray-900 select-none">
 <div class="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col relative">
@@ -33,18 +72,21 @@
                     </div>
                     {{ $slot }}
                     <div id="success-modal"
-                         class="fixed top-20 right-5 flex items-center justify-center bg-opacity-75 hidden">
-                        <div class="bg-blue-300 p-4 rounded-md shadow-md w-64 dark:bg-lime-500">
-                            <h2 class="text-base font-bold mb-2 dark:text-white text-gray-800">Ação bem-sucedida!</h2>
-                            <p class="text-sm mb-2 dark:text-white text-gray-800">A ação foi realizada com sucesso.</p>
+                         class="fixed top-20 right-5 hidden z-50">
+                        <div class="success-modal-content">
+                            <i class="fa-solid fa-check-circle"></i>
+                            <div class="success-modal-text">
+                                <h2>Ação bem-sucedida!</h2>
+                                <p>A ação foi realizada com sucesso.</p>
+                            </div>
                         </div>
                     </div>
                 </main>
             </div>
         </div>
-    <div >
-        @include('layouts.client-footer')
-    </div>
+        <div >
+            @include('layouts.client-footer')
+        </div>
     @else
         <div class="flex-1 flex flex-col">
             @include('layouts.navigation')
@@ -52,10 +94,13 @@
             <main class="p-4 flex-1">
 
                 {{ $slot }}
-                <div id="success-modal" class="fixed top-20 right-5 flex items-center justify-center bg-opacity-75 hidden">
-                    <div class="bg-blue-300 p-4 rounded-md shadow-md w-64 dark:bg-lime-500">
-                        <h2 class="text-base font-bold mb-2 dark:text-white text-gray-800">Ação bem-sucedida!</h2>
-                        <p class="text-sm mb-2 dark:text-white text-gray-800">A ação foi realizada com sucesso.</p>
+                <div id="success-modal" class="fixed top-20 right-5 hidden z-50">
+                    <div class="success-modal-content">
+                        <i class="fa-solid fa-check-circle"></i>
+                        <div class="success-modal-text">
+                            <h2>Ação bem-sucedida!</h2>
+                            <p>A ação foi realizada com sucesso.</p>
+                        </div>
                     </div>
                 </div>
             </main>
@@ -69,14 +114,17 @@
 <script>
     (function () {
         function applyTheme(theme) {
+            const successModal = document.querySelector('.success-modal-content');
             if (theme === "dark") {
                 document.documentElement.classList.add("dark");
                 document.querySelectorAll('.theme-toggle-dark-icon').forEach(icon => icon.classList.add('hidden'));
                 document.querySelectorAll('.theme-toggle-light-icon').forEach(icon => icon.classList.remove('hidden'));
+                successModal.classList.add('dark');
             } else {
                 document.documentElement.classList.remove("dark");
                 document.querySelectorAll('.theme-toggle-dark-icon').forEach(icon => icon.classList.remove('hidden'));
                 document.querySelectorAll('.theme-toggle-light-icon').forEach(icon => icon.classList.add('hidden'));
+                successModal.classList.remove('dark');
             }
         }
 
@@ -101,7 +149,8 @@
 
             setTimeout(function () {
                 successModal.classList.add('hidden');
-            }, 2500);
+                successModal.classList.remove('fade-out');
+            }, 2000);
         }
 
         // Theme toggle
@@ -109,14 +158,17 @@
         themeToggleBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const isDarkMode = document.documentElement.classList.toggle('dark');
+                const successModal = document.querySelector('.success-modal-content');
                 if (isDarkMode) {
                     document.querySelectorAll('.theme-toggle-dark-icon').forEach(icon => icon.classList.add('hidden'));
                     document.querySelectorAll('.theme-toggle-light-icon').forEach(icon => icon.classList.remove('hidden'));
                     localStorage.setItem('color-theme', 'dark');
+                    successModal.classList.add('dark');
                 } else {
                     document.querySelectorAll('.theme-toggle-dark-icon').forEach(icon => icon.classList.remove('hidden'));
                     document.querySelectorAll('.theme-toggle-light-icon').forEach(icon => icon.classList.add('hidden'));
                     localStorage.setItem('color-theme', 'light');
+                    successModal.classList.remove('dark');
                 }
             });
         });

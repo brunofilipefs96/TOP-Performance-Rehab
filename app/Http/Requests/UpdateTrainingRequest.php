@@ -25,6 +25,32 @@ class UpdateTrainingRequest extends FormRequest
         ];
     }
 
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'O nome é obrigatório.',
+            'name.string' => 'O nome deve ser uma string.',
+            'name.max' => 'O nome não pode ter mais que 255 caracteres.',
+            'training_type_id.required' => 'O tipo de treino é obrigatório.',
+            'training_type_id.exists' => 'O tipo de treino selecionado é inválido.',
+            'room_id.required' => 'A sala é obrigatória.',
+            'room_id.exists' => 'A sala selecionada é inválida.',
+            'max_students.required' => 'O número máximo de alunos é obrigatório.',
+            'max_students.integer' => 'O número máximo de alunos deve ser um número inteiro.',
+            'max_students.min' => 'O número máximo de alunos deve ser pelo menos 1.',
+            'personal_trainer_id.exists' => 'O personal trainer selecionado é inválido.',
+            'start_date.required' => 'A data de início é obrigatória.',
+            'start_date.date' => 'A data de início deve ser uma data válida.',
+            'start_date.after_or_equal' => 'A data de início deve ser hoje ou uma data futura.',
+            'start_time.required' => 'A hora de início é obrigatória.',
+            'start_time.date_format' => 'A hora de início deve estar no formato HH:mm.',
+            'duration.required' => 'A duração é obrigatória.',
+            'duration.integer' => 'A duração deve ser um número inteiro.',
+            'duration.min' => 'A duração mínima é de 30 minutos.',
+            'duration.max' => 'A duração máxima é de 90 minutos.',
+        ];
+    }
+
     public function withValidator($validator): void
     {
         $validator->after(function ($validator) {

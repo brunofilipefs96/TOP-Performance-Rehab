@@ -18,4 +18,17 @@ class StoreRoomRequest extends FormRequest
             'capacity' => ['required', 'integer', 'min:0', 'max:999'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'O nome é obrigatório.',
+            'name.string' => 'O nome deve ser uma string.',
+            'name.max' => 'O nome não pode ter mais que 255 caracteres.',
+            'capacity.required' => 'A capacidade é obrigatória.',
+            'capacity.integer' => 'A capacidade deve ser um número inteiro.',
+            'capacity.min' => 'A capacidade mínima é 0.',
+            'capacity.max' => 'A capacidade máxima é 999.',
+        ];
+    }
 }

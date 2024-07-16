@@ -22,4 +22,19 @@ class ProfileUpdateRequest extends FormRequest
             'other_gender' => 'nullable|string|max:255',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'full_name.required' => 'O nome completo é obrigatório.',
+            'full_name.string' => 'O nome completo deve ser uma string.',
+            'full_name.max' => 'O nome completo não pode ter mais que 255 caracteres.',
+            'phone_number.required' => 'O número de telefone é obrigatório.',
+            'phone_number.digits' => 'O número de telefone deve ter exatamente 9 dígitos.',
+            'gender.required' => 'O gênero é obrigatório.',
+            'gender.string' => 'O gênero deve ser uma string.',
+            'other_gender.string' => 'O outro gênero deve ser uma string.',
+            'other_gender.max' => 'O outro gênero não pode ter mais que 255 caracteres.',
+        ];
+    }
 }

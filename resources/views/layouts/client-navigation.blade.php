@@ -15,16 +15,21 @@
                             </a>
                         </h1>
                         @if($user->image && file_exists(public_path('storage/' . $user->image)))
-                            <img src="{{ asset('storage/' . $user->image) }}" alt="{{ $user->firstLastName() }}" class="h-32 w-32 object-cover rounded-full border-2 border-gray-300">
+                            <a href="{{ url('/profile') }}" class="cursor-pointer">
+                                <img src="{{ asset('storage/' . $user->image) }}" alt="{{ $user->firstLastName() }}" class="h-32 w-32 object-cover rounded-full border-2 border-gray-300">
+                            </a>
                         @else
-                            <div class="h-32 w-32 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white flex items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600">
-                                <i class="fa-solid fa-user text-4xl"></i>
-                                <a class="cursor-pointer"><i class="fa-solid fa-circle-plus text-2xl"></i></a>
-                            </div>
+                            <a href="{{ url('/profile') }}" class="cursor-pointer">
+                                <div class="h-32 w-32 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white flex items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600">
+                                    <i class="fa-solid fa-user text-4xl"></i>
+                                    <i class="fa-solid fa-circle-plus text-2xl ml-2"></i>
+                                </div>
+                            </a>
                         @endif
                         <span class="flex flex-col mt-2 content-center">
-                            <span class="text-lg text-gray-300">{{$user->full_name}}</span>
-                        </span>
+    <span class="text-lg text-gray-300">{{$user->full_name}}</span>
+</span>
+
                     </div>
                 </div>
                 <ul class="flex-1">

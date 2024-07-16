@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -32,16 +33,30 @@ class ProfileController extends Controller
             $data['gender'] = $request->input('other_gender');
         }
 
-        $request->user()->fill($data);
+        $user = $request->user();
+        $user->fill($data);
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($request->hasFile('image')) {
+            // Store the new image
+            $path = $request->file('image')->store('profile_images', 'public');
+
+            // Delete the old image if exists
+            if ($user->image) {
+                Storage::disk('public')->delete($user->image);
+            }
+
+            // Update the user with the new image path
+            $user->image = $path;
         }
-        $request->user()->save();
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
-
 
     /**
      * Delete the user's account.
@@ -64,3 +79,4 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 }
+

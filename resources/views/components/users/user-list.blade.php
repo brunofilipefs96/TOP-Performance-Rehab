@@ -1,19 +1,19 @@
-<div class="container mx-auto mt-5">
+<div class="container mx-auto mt-5 px-4">
     <h1 class="text-2xl font-bold mb-5 text-gray-800 dark:text-gray-200">Lista de Utilizadores</h1>
     @can('viewAny', App\Models\User::class)
-        <div class="mb-10 flex justify-between items-center">
-            <div class="relative w-1/3">
-                <form action="{{ route('users.index') }}" method="GET" id="search-filter-form" class="flex">
+        <div class="mb-10 flex flex-col md:flex-row justify-between items-center">
+            <div class="relative w-full md:w-1/3 mb-4 md:mb-0">
+                <form action="{{ route('users.index') }}" method="GET" id="search-filter-form" class="flex w-full">
                     <button type="submit" class="absolute w-6 h-6 left-3 top-1/2 transform -translate-y-1/2 text-black dark:text-white">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </button>
                     <input type="text" name="search" id="search" placeholder="Pesquisar utilizador..." class="w-full p-2 pl-10 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-light-gray dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50" value="{{ $search ?? '' }}">
                     <select name="role" id="role-filter" class="bg-white text-black px-4 py-2 rounded-md border border-gray-300 dark:bg-gray-600 dark:text-white ml-4" onchange="document.getElementById('search-filter-form').submit();">
-                        <option value="all" {{ ($role ?? 'all') == 'all' ? 'selected' : '' }}>Todos</option>
-                        <option value="employee" {{ ($role ?? '') == 'employee' ? 'selected' : '' }}>Funcionário</option>
-                        <option value="client" {{ ($role ?? '') == 'client' ? 'selected' : '' }}>Cliente</option>
-                        <option value="personal_trainer" {{ ($role ?? '') == 'personal_trainer' ? 'selected' : '' }}>Personal Trainer</option>
-                        <option value="admin" {{ ($role ?? '') == 'admin' ? 'selected' : '' }}>Administrador</option>
+                        <option value="all" {{ isset($role) && $role == 'all' ? 'selected' : '' }}>Todos</option>
+                        <option value="employee" {{ isset($role) && $role == 'employee' ? 'selected' : '' }}>Funcionário</option>
+                        <option value="client" {{ isset($role) && $role == 'client' ? 'selected' : '' }}>Cliente</option>
+                        <option value="personal_trainer" {{ isset($role) && $role == 'personal_trainer' ? 'selected' : '' }}>Personal Trainer</option>
+                        <option value="admin" {{ isset($role) && $role == 'admin' ? 'selected' : '' }}>Administrador</option>
                     </select>
                 </form>
             </div>
@@ -26,10 +26,11 @@
         <table class="min-w-full bg-gray-300 dark:bg-gray-800 rounded-2xl shadow-md text-gray-900 dark:text-gray-200">
             <thead>
             <tr>
+                <th class="text-left p-2"></th>
                 <th class="p-4 text-left">ID</th>
                 <th class="p-4 text-left">Nome</th>
                 <th class="p-4 text-left">NIF</th>
-                <th class="p-4 text-left">Papel</th>
+                <th class="p-4 text-left">Cargo</th>
                 <th class="p-4 text-center">Ações</th>
             </tr>
             </thead>
@@ -52,6 +53,13 @@
                     data-name="{{ $user->firstLastName() }}"
                     data-nif="{{ $user->nif }}"
                     data-role="{{ $userRole }}">
+                    <td class="pl-2"> <!-- Ajusta o padding da célula da imagem -->
+                        @if ($user->image)
+                            <img src="{{ asset('storage/' . $user->image) }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300 dark:border-gray-600 shadow-sm ml-4 mr-2">
+                        @else
+                            <i class="fa-solid fa-user w-10 h-10 rounded-full border-2 border-gray-300 dark:border-gray-600 shadow-sm ml-4 mr-2 flex items-center justify-center text-gray-800 dark:text-gray-400"></i>
+                        @endif
+                    </td>
                     <td class="p-4">{{ $user->id }}</td>
                     <td class="p-4">{{ $user->firstLastName() }}</td>
                     <td class="p-4">{{ $user->nif }}</td>
@@ -95,6 +103,15 @@
 </div>
 
 <script>
+    window.addEventListener('load', function () {
+        let roleFilter = document.getElementById('role-filter');
+        let urlParams = new URLSearchParams(window.location.search);
+        let role = urlParams.get('role');
+        if (role) {
+            roleFilter.value = role;
+        }
+    });
+
     document.getElementById('role-filter').addEventListener('change', function () {
         document.getElementById('search-filter-form').submit();
     });

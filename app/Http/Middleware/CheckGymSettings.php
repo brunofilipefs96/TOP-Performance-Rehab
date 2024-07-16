@@ -26,6 +26,17 @@ class CheckGymSettings
             'horario_fim_semanal',
             'horario_inicio_sabado',
             'horario_fim_sabado',
+            'top_paddle_client_membership_discount',
+            'top_paddle_client_insurance_discount',
+            'top_paddle_client_trainings_discount',
+            'top_paddle_admin_membership_discount',
+            'top_paddle_admin_insurance_discount',
+            'top_paddle_admin_funcional_training_discount',
+            'top_paddle_admin_personal_training_trainings_discount',
+            'top_paddle_employee_membership_discount',
+            'top_paddle_employee_insurance_discount',
+            'top_paddle_employee_funcional_training_discount',
+            'top_paddle_employee_personal_training_trainings_discount'
         ];
 
         foreach ($requiredSettings as $setting) {

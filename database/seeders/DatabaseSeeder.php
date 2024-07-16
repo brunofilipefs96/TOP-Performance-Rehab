@@ -29,7 +29,6 @@ class DatabaseSeeder extends Seeder
             'phone_number' => '000000000',
             'gender' => 'male',
             'nif' => '000000000',
-            'cc_number' => '000000000',
             'password' => bcrypt('atec123'),
         ])->roles()->sync([1]);
 
@@ -41,7 +40,6 @@ class DatabaseSeeder extends Seeder
             'phone_number' => '111111111',
             'gender' => 'male',
             'nif' => '111111111',
-            'cc_number' => '111111111',
             'password' => bcrypt('atec123'),
         ])->roles()->sync([2, 4]);
 
@@ -53,7 +51,6 @@ class DatabaseSeeder extends Seeder
             'phone_number' => '444444444',
             'gender' => 'male',
             'nif' => '444444444',
-            'cc_number' => '444444444',
             'password' => bcrypt('atec123'),
         ])->roles()->sync([2, 4]);
 
@@ -65,7 +62,6 @@ class DatabaseSeeder extends Seeder
             'phone_number' => '222222222',
             'gender' => 'female',
             'nif' => '222222222',
-            'cc_number' => '222222222',
             'password' => bcrypt('atec123'),
         ])->roles()->sync([3, 4]);
 
@@ -77,7 +73,6 @@ class DatabaseSeeder extends Seeder
             'phone_number' => '333333333',
             'gender' => 'female',
             'nif' => '333333333',
-            'cc_number' => '333333333',
             'password' => bcrypt('atec123'),
         ])->roles()->sync([4]);
 
@@ -89,7 +84,6 @@ class DatabaseSeeder extends Seeder
             'phone_number' => '555555555',
             'gender' => 'male',
             'nif' => '555555555',
-            'cc_number' => '555555555',
             'password' => bcrypt('atec123'),
         ])->roles()->sync([4]);
 

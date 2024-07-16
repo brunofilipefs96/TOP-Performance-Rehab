@@ -4,9 +4,10 @@
             <div class="text-center mb-10">
                 <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Adicionar Avaliação</h1>
             </div>
-            <form method="POST" action="{{ route('memberships.evaluations.store', ['membership' => $membership->id]) }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('memberships.evaluations.store', ['membership' => $membership->id]) }}" enctype="multipart/form-data" id="evaluationForm">
                 @csrf
                 <input type="hidden" name="membership_id" value="{{ $membership->id }}">
+
                 @foreach ([
                     'weight' => 'Peso',
                     'height' => 'Altura',
@@ -39,14 +40,13 @@
                                id="{{ $field }}"
                                name="{{ $field }}"
                                class="mt-1 block w-full p-2 bg-gray-100 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 dark:text-gray-200 placeholder-gray-500
-                           @error($field) border-red-500 @enderror dark:bg-gray-600"
+                               @error($field) border-red-500 @enderror dark:bg-gray-600"
                                value="{{ old($field) }}"
-                               required
                                aria-describedby="{{ $field }}Help">
                         @error($field)
                         <span class="text-red-500 text-sm mt-2" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
+                            <strong>{{ $message }}</strong>
+                        </span>
                         @enderror
                     </div>
                 @endforeach
@@ -89,3 +89,20 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('evaluationForm').addEventListener('submit', function(event) {
+        let isFormValid = false;
+        const inputs = this.querySelectorAll('input[type="number"], textarea');
+        inputs.forEach(function(input) {
+            if (input.value.trim() !== '') {
+                isFormValid = true;
+            }
+        });
+
+        if (!isFormValid) {
+            event.preventDefault();
+            alert('Por favor, preencha pelo menos um campo.');
+        }
+    });
+</script>

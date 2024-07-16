@@ -76,12 +76,13 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         // Date manipulation for week navigation
-        if (!$request->session()->has('currentWeek')) {
-            $request->session()->put('currentWeek', Carbon::now()->format('Y-m-d'));
+        if (!$request->session()->has('selectedWeek')) {
+            $request->session()->put('selectedWeek', Carbon::now()->startOfWeek());
         }
-        $currentWeek = Carbon::parse($request->session()->get('currentWeek'));
-        $startOfWeek = $currentWeek->copy()->startOfWeek();
-        $endOfWeek = $currentWeek->copy()->endOfWeek();
+
+        $selectedWeek = Carbon::parse($request->session()->get('selectedWeek'));
+        $startOfWeek = $selectedWeek->copy()->startOfWeek();
+        $endOfWeek = $selectedWeek->copy()->endOfWeek();
 
         $trainings = $user->trainings()
             ->whereBetween('start_date', [$startOfWeek, $endOfWeek])
@@ -92,7 +93,8 @@ class DashboardController extends Controller
             'trainings' => $trainings,
             'startOfWeek' => $startOfWeek,
             'endOfWeek' => $endOfWeek,
-            'currentWeek' => $currentWeek->format('Y-m-d')
+            'selectedWeek' => $selectedWeek,
+            'currentWeek' => Carbon::now()->startOfWeek()
         ]);
     }
 
@@ -102,15 +104,19 @@ class DashboardController extends Controller
             abort(403, 'Unauthorized access.');
         }
 
-        $currentWeek = Carbon::parse($request->session()->get('currentWeek'));
+        $selectedWeek = Carbon::parse($request->session()->get('selectedWeek'));
+        $currentWeek = Carbon::now()->startOfWeek();
+        $direction = $request->input('direction');
 
-        if ($request->input('direction') === 'previous') {
-            $newWeek = $currentWeek->subWeek();
+        if ($direction === 'previous' && $selectedWeek->gt($currentWeek)) {
+            $newWeek = $selectedWeek->subWeek();
+        } elseif ($direction === 'next' && $selectedWeek->lt($currentWeek->copy()->addWeeks(2))) {
+            $newWeek = $selectedWeek->addWeek();
         } else {
-            $newWeek = $currentWeek->addWeek();
+            $newWeek = $selectedWeek;
         }
 
-        $request->session()->put('currentWeek', $newWeek->format('Y-m-d'));
+        $request->session()->put('selectedWeek', $newWeek->format('Y-m-d'));
 
         return redirect()->route('calendar');
     }

@@ -12,16 +12,19 @@
         @php
             $membership = $user->membership;
             $today = Carbon::today();
-            $availablePacks = $membership->packs()
+            $availablePacks = null;
+            if($membership){
+                $availablePacks = $membership->packs()
                 ->where('quantity_remaining', '>', 0)
                 ->where('expiry_date', '>=', $today)
                 ->where('has_personal_trainer', false)
                 ->orderBy('expiry_date', 'asc')
                 ->get();
             $earliestExpiringPack = $availablePacks->first();
+            }
         @endphp
 
-        @if ($availablePacks->isNotEmpty())
+        @if ($availablePacks && $availablePacks->isNotEmpty())
             <div
                 class="bg-gray-300 dark:bg-gray-700 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 dark:text-gray-200 p-4 mb-6"
                 role="alert">

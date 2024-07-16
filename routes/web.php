@@ -49,6 +49,7 @@ Route::middleware(['auth'])->group(function () {
 
 
 Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::class])->group(function () {
+    Route::patch('/users/{user}/client-type', [UserController::class, 'updateClientType'])->name('user.client-type.update');
     Route::post('/users/{user}/roles', [UserController::class, 'storeRole'])->name('user.roles.store');
     Route::delete('/users/{user}/roles/{role}', [UserController::class, 'destroyRole'])->name('user.roles.destroy');
     Route::get('/change-role', [RoleController::class, 'changeRole'])->name('change-role');

@@ -2,7 +2,9 @@
 
     @component('components.users.user-form-show', [
             'user' => $user,
-            'roles' => $roles,])
+            'roles' => $roles,
+            'clientTypes' => $clientTypes,
+            ])
     @endcomponent
 
 </x-app-layout>

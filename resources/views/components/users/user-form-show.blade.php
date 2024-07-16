@@ -6,9 +6,6 @@
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
             </div>
-            <div class="text-center">
-                <h1 class="mb-8 mt-4 dark:text-lime-400 text-gray-800 font-semibold">{{ $user->firstLastName() }}</h1>
-            </div>
 
             <div class="flex justify-center mt-4 mb-6">
                 @if($user->image && file_exists(public_path('storage/' . $user->image)))
@@ -19,6 +16,12 @@
                     </div>
                 @endif
             </div>
+
+            <div class="text-center">
+                <h1 class="mb-8 mt-4 dark:text-lime-400 text-gray-800 font-semibold text-xl">{{ $user->firstLastName() }}</h1>
+            </div>
+
+            <h2 class="text-xl dark:text-white text-gray-800 mb-4">Informações Pessoais</h2>
 
             <div class="mb-4">
                 <label for="full_name" class="block dark:text-white text-gray-800">Nome Completo</label>
@@ -58,11 +61,40 @@
                 <input type="text" value="{{$user->cc_number}}" disabled class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
             </div>
 
+            <!-- Client Type Section -->
+            <hr class="dark:border-gray-400 border-gray-400 mb-4 mt-6">
+            <h2 class="text-xl dark:text-white text-gray-800 mb-2">Tipo de Cliente (Benefícios)</h2>
+            <div class="mb-4">
+                <p class="dark:text-gray-400 text-gray-600 text-sm">Pode ajustar os benifícios na página de definições do ginásio.</p>
+            </div>
+            <form action="{{ route('user.client-type.update', $user) }}" method="POST">
+                @csrf
+                @method('PATCH')
+                <div class="flex items-center gap-4 mb-4">
+                    <select name="client_type_id" id="client_type_id" class="block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
+                        <option value="">Nenhum</option>
+                        @foreach ($clientTypes as $clientType)
+                            <option value="{{ $clientType->id }}" {{ $user->client_type_id == $clientType->id ? 'selected' : '' }}>
+                                @if ($clientType->name == 'admin_top_paddle')
+                                    Administrador Top Paddle
+                                @elseif ($clientType->name == 'employee_top_paddle')
+                                    Funcionário Top Paddle
+                                @elseif ($clientType->name == 'client_top_paddle')
+                                    Cliente Top Paddle
+                                @endif
+                            </option>
+                        @endforeach
+                    </select>
+                    <button type="submit" class="dark:bg-lime-500 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all">Guardar</button>
+                </div>
+            </form>
+
+            <hr class="dark:border-gray-400 border-gray-400 mb-4 mt-6">
             <!-- Roles Section -->
             <h2 class="text-xl dark:text-white text-gray-800">Cargos</h2>
             <div class="mt-1 block gap-4 p-2 text-gray-700 dark:text-gray-200 mb-4">
                 @foreach ($user->roles as $role)
-                    <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center justify-between">
                         <span>{{ $role->name === 'client' ? 'Cliente' : ($role->name === 'personal_trainer' ? 'Personal Trainer' : ($role->name === 'employee' ? 'Funcionário' : 'Administrador')) }}</span>
                         @if($role->name !== 'client')
                             <form action="{{ route('user.roles.destroy', ['user' => $user->id, 'role' => $role->id]) }}" method="POST" class="remove-role-form">
@@ -79,7 +111,7 @@
 
             @if ($user->roles->isEmpty())
                 <div class="mb-4">
-                    <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all" onclick="openAddRoleModal()">
+                    <button type="button" class="dark:bg-lime-500 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all" onclick="openAddRoleModal()">
                         <i class="fa-solid fa-plus"></i> Adicionar Cargo
                     </button>
                 </div>
@@ -89,11 +121,13 @@
                 </div>
             @elseif ($user->roles->count() < 2)
                 <div class="mb-4">
-                    <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all" onclick="openAddRoleModal()">
+                    <button type="button" class="dark:bg-lime-500 bg-blue-500 text-md text-white py-1 px-2 rounded-md hover:bg-blue-600 transition-all" onclick="openAddRoleModal()">
                         <i class="fa-solid fa-plus"></i> Adicionar Cargo
                     </button>
                 </div>
             @endif
+
+            <hr class="dark:border-gray-400 border-gray-400 mb-4 mt-6">
 
             <h2 class="text-xl dark:text-white text-gray-800">Matrícula</h2>
             <div class="mt-1 block gap-4 p-2 text-gray-700 dark:text-gray-200 mb-4">
@@ -131,7 +165,6 @@
     </div>
 </div>
 
-<!-- Modal de Confirmação de Remoção de Cargo -->
 <div id="confirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
     <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
         <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Pretende eliminar?</h2>

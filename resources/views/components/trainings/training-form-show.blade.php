@@ -170,7 +170,7 @@
                             <ul class="list-disc list-inside dark:text-white">
                                 @foreach ($training->users as $user)
                                     <li>
-                                        <a href="{{ url('users/' . $user->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
+                                        <a href="{{ url('memberships/' . $user->membership->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
                                             {{ $user->firstLastName() }}
                                         </a>
                                     </li>

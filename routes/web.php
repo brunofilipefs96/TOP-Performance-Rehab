@@ -22,6 +22,7 @@ use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\TrainingTypeController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\CheckGymSettings;
+use App\Http\Middleware\CheckUserRole;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Mail\TestEmail;
@@ -43,10 +44,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/settings/closures', [GymClosureController::class, 'index'])->name('settings.closures');
     Route::post('/settings/closures/update', [GymClosureController::class, 'update'])->name('settings.closures.update');
     Route::view('unavailable', 'unavailable')->name('unavailable');
+    Route::view('/no-roles', 'no-roles')->name('no-roles');
 });
 
 
-Route::middleware(['auth', CheckGymSettings::class, 'verified'])->group(function () {
+Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::class])->group(function () {
+    Route::post('/users/{user}/roles', [UserController::class, 'storeRole'])->name('user.roles.store');
+    Route::delete('/users/{user}/roles/{role}', [UserController::class, 'destroyRole'])->name('user.roles.destroy');
     Route::get('/change-role', [RoleController::class, 'changeRole'])->name('change-role');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

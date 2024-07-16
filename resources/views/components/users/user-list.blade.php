@@ -46,11 +46,6 @@
                         <p class="text-gray-300 mb-2 mt-6 ml-3">NIF: {{ $user->nif }}</p>
                         <p class="text-gray-300 mb-2 ml-3">{!! $roleName !!}</p>
                         <div class="flex justify-end items-center mt-6 gap-2" onclick="event.stopPropagation();">
-                            @can('update', $user)
-                                <a href="{{ url('users/' . $user->id . '/edit') }}" class="bg-yellow-500 text-white px-2 py-1 rounded-md hover:bg-yellow-700 dark:bg-gray-500 dark:hover:bg-gray-400 flex items-center">
-                                    <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>Editar
-                                </a>
-                            @endcan
                             @can('delete', $user)
                                 <form id="delete-form-{{$user->id}}" action="{{ url('users/' . $user->id) }}" method="POST" class="inline">
                                     @csrf

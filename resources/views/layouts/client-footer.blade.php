@@ -1,4 +1,4 @@
-<footer class="text-center text-sm text-black dark:text-white dark:bg-gray-800 bg-gray-600 p-4 py-8">
+<footer class="text-center text-sm text-white dark:text-white dark:bg-gray-800 bg-gray-600 p-4 py-8">
         <div class="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
                 <h3 class="text-xl font-bold mb-4">Apoio ao Cliente</h3>

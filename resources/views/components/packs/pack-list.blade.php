@@ -1,5 +1,14 @@
+@php
+    use Carbon\Carbon;
+    use Illuminate\Support\Facades\Auth;
+    $user = Auth::user();
+    if($user->membership) {
+        $myPacks = $user->membership->packs;
+        }
+@endphp
 <div class="container mx-auto mt-5 mb-10">
-   <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Lista de Packs</h1>
+    <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Lista de Packs</h1>
+
     @can('create', App\Models\Pack::class)
         <div class="mb-10 flex justify-between items-center">
             <a href="{{ url('packs/create') }}">
@@ -10,6 +19,43 @@
             </a>
         </div>
     @endcan
+    <hr class="mb-10 border-gray-400 dark:border-gray-300">
+    @if(Auth::check() && Auth::user()->hasRole('client'))
+        <h1 class="text-2xl mb-5 mt-10 dark:text-white text-gray-800">Seus packs disponíveis</h1>
+
+        @if($user->membership && count($myPacks) > 0)
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-10">
+            @foreach($myPacks as $pack)
+                @if($pack->pivot->expiry_date > Carbon::today())
+                    <div class="pack-card dark:bg-gray-800 bg-gray-500 rounded-lg overflow-hidden shadow-md text-white select-none transform transition-transform duration-300 hover:scale-105 flex flex-col justify-between cursor-pointer" data-name="{{ $pack->name }}" onclick="location.href='{{ url('packs/' . $pack->id) }}'">
+                        <div class="p-4 dark:bg-gray-800 bg-gray-500 flex-grow">
+                            <h3 class="text-lg font-semibold mb-2"><i class="fa-solid fa-box w-5 h-5 mr-2"></i>{{ $pack->name }}</h3>
+                            <p class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-md">
+                                <i class="fa-solid fa-hourglass-half w-4 h-4 mr-2"></i>
+                                <span>{{ $pack->duration }} Dias</span>
+                            </p>
+                            <p class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-md">
+                                <i class="fa-solid fa-dumbbell w-4 h-4 mr-2"></i>
+                                <span>{{ $pack->trainings_number }} Treinos</span>
+                            </p>
+                            <p class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-md">
+                                <i class="fa-solid fa-dumbbell w-4 h-4 mr-2"></i>
+                                <span>{{ $pack->pivot->quantity_remaining }} restantes</span>
+                            </p>
+                            <p class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-md">
+
+                                <span>Válidade: {{ Carbon::parse($pack->pivot->expiry_date)->format('d/m/Y') }}</span>
+                            </p>
+                        </div>
+                    </div>
+                @endif
+            @endforeach
+            </div>
+        @else
+            <p class="mb-10">Não possui treinos disponíveis vá a loja para adiquirir novos packs</p>
+        @endif
+    @endif
+    <hr class="mb-10 border-gray-400 dark:border-gray-300">
 
     <div class="mb-10 flex justify-between items-center">
         <div class="relative w-full sm:w-1/3">

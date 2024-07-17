@@ -4,6 +4,7 @@
     $horarioFimSemana = setting('horario_fim_semana', '23:59');
     $horarioInicioSabado = setting('horario_inicio_sabado', '08:00');
     $horarioFimSabado = setting('horario_fim_sabado', '20:00');
+    $hasActiveMembership = false;
 @endphp
 
 <div class="container mx-auto mt-5 mb-10">
@@ -21,6 +22,9 @@
                 $availablePacks = $membership->packs()
                     ->where('quantity_remaining', '>', 0)
                     ->where('expiry_date', '>=', $today)
+                    ->whereHas('trainingType', function ($query) {
+                        $query->where('has_personal_trainer', true);
+                    })
                     ->orderBy('expiry_date', 'asc')
                     ->get();
                 $earliestExpiringPack = $availablePacks->first();
@@ -36,7 +40,7 @@
                             </li>
                         @endforeach
                     </ul>
-                    <p class="mt-2">O pack que será utilizado é o que expira mais brevemente.</p>
+                    <p class="mt-2">O pack que será utilizado é o destinado ao tipo de aula selecionada, utilizando o que expira mais brevemente.</p>
                 </div>
             @else
                 <div class="bg-gray-300 dark:bg-gray-700 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 dark:text-gray-200 p-4 mb-6" role="alert">
@@ -111,13 +115,26 @@
                             @foreach ($trainings[$day] as $training)
                                 @php
                                     $userPresence = $training->users()->where('user_id', auth()->id())->exists();
-                                    $userPresenceFalse = $training->users()->where('user_id', auth()->id())->wherePivot('presence', false)->exists();
+                                    $userCancelled = $training->users()->where('user_id', auth()->id())->wherePivot('cancelled', true)->exists();
                                     $currentDateTime = Carbon::now();
                                     $trainingStartDateTime = Carbon::parse($training->start_date);
                                     $isTrainingStarted = $currentDateTime->gte($trainingStartDateTime);
-                                    $totalSubscribes = $training->users()->count();
+                                    $totalSubscribes = $training->users()->wherePivot('cancelled', false)->count();
                                     $remainingSpots = $training->trainingType->max_capacity - $totalSubscribes;
-                                    $hasMarkedAllPresences = $training->users()->wherePivotNotNull('presence')->count() == $totalSubscribes;
+                                    $hasMarkedAllPresences = $training->users()->wherePivotNotNull('presence')->wherePivot('cancelled', false)->count() == $totalSubscribes;
+                                    $hoursDifference = $currentDateTime->diffInHours($trainingStartDateTime, false);
+
+                                    $hasAvailablePack = false;
+                                    if (auth()->check() && auth()->user()->hasRole('client') && $hasActiveMembership) {
+                                        $today = Carbon::today();
+                                        $hasAvailablePack = $membership->packs()
+                                            ->where('quantity_remaining', '>', 0)
+                                            ->where('expiry_date', '>=', $today)
+                                            ->where('training_type_id', $training->training_type_id)
+                                            ->exists();
+                                    }
+
+                                    $tooltipMessage = $hasAvailablePack ? '' : 'Você não possui pacotes disponíveis para este tipo de treino.';
                                 @endphp
                                 <div
                                     class="training-card relative dark:bg-gray-800 bg-gray-300 rounded-lg overflow-hidden shadow-md text-white select-none transform transition-transform duration-300 hover:scale-105"
@@ -125,7 +142,7 @@
                                     data-start-time="{{ $training->start_time }}">
                                     <a href="{{ route('trainings.show', $training->id) }}"
                                        class="block p-4 dark:bg-gray-800 bg-gray-300">
-                                        @if ($userPresence && !$userPresenceFalse)
+                                        @if ($userPresence && !$userCancelled)
                                             <div class="ribbon"><span>Inscrito</span></div>
                                         @endif
                                         <h3 class="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-100">{{ $training->trainingType->name }}</h3>
@@ -162,10 +179,10 @@
                                                 Treino a Decorrer/Finalizado
                                             </div>
                                         @endif
-                                        @if ($userPresence && $userPresenceFalse)
+                                        @if ($userCancelled)
                                             <p class="text-red-500 mb-5 text-sm">
                                                 <i class="fa-solid fa-ban mr-1"></i>
-                                                Cancelou a inscrição com menos de 12 horas de antecedência. Não pode voltar
+                                                Cancelou a inscrição. Não pode voltar
                                                 a inscrever-se e o treino não será reembolsado.
                                             </p>
                                         @endif
@@ -197,26 +214,33 @@
                                             @endif
                                         @endcan
                                         @if (auth()->check() && auth()->user()->hasRole('client') && auth()->user()->cannot('update', $training) && auth()->user()->cannot('delete', $training) && $training->personal_trainer_id !== auth()->user()->id)
-                                            @if ($userPresence && !$userPresenceFalse && !$isTrainingStarted)
+                                            @if ($userPresence && !$userCancelled && !$isTrainingStarted)
                                                 <form id="cancel-form-{{ $training->id }}" action="{{ route('trainings.cancel', $training->id) }}" method="POST" class="inline text-sm">
                                                     @csrf
-                                                    <button type="button"
-                                                            class="bg-red-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-400 text-sm"
-                                                            onclick="confirmCancel({{ $training->id }}, this)">
+                                                    <button type="button" onclick="confirmCancel({{ $training->id }})"
+                                                            class="bg-red-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-red-400 text-sm">
                                                         <i class="fa-solid fa-x w-4 h-4 mr-2"></i>
                                                         Cancelar Inscrição
                                                     </button>
                                                 </form>
-                                            @elseif(!$userPresenceFalse && !$isTrainingStarted)
+                                            @elseif(!$userCancelled && !$isTrainingStarted)
                                                 @if ($remainingSpots > 0 && $currentDateTime->lt($trainingStartDateTime))
                                                     <form id="enroll-form-{{ $training->id }}" action="{{ route('trainings.enroll', $training->id) }}" method="POST" class="inline text-sm">
                                                         @csrf
-                                                        <button type="button"
-                                                                class="dark:bg-lime-400 bg-blue-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-green-400 text-sm"
-                                                                onclick="confirmEnroll({{ $training->id }}, this)">
-                                                            <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
-                                                            Inscrever-me
-                                                        </button>
+                                                        @if($hasAvailablePack)
+                                                            <button type="button"
+                                                                    class="dark:bg-lime-400 bg-blue-500 hover:bg-green-400 text-white flex items-center px-2 py-1 rounded-md text-sm"
+                                                                    onclick="confirmEnroll({{ $training->id }}, this)">
+                                                                <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
+                                                                Inscrever-me
+                                                            </button>
+                                                        @else
+                                                            <button type="button" disabled title="{{ $tooltipMessage }}"
+                                                                    class="dark:bg-gray-600 bg-gray-400 text-white flex items-center px-2 py-1 rounded-md text-sm cursor-not-allowed">
+                                                                <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
+                                                                Inscrever-me
+                                                            </button>
+                                                        @endif
                                                     </form>
                                                 @endif
                                             @endif
@@ -262,9 +286,9 @@
             <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400"
                     onclick="cancelAction()">Cancelar
             </button>
-            <form id="confirmation-form" method="POST" class="inline" onsubmit="disableConfirmButton(this)">
+            <form id="confirmation-form" method="POST" class="inline">
                 @csrf
-                <input type="hidden" name="_method" value="DELETE">
+                @method('DELETE')
                 <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500">Confirmar
                 </button>
             </form>
@@ -273,70 +297,44 @@
 </div>
 
 <script>
-    let packDeleted = 0;
+    function openModal(title, message, actionUrl, method = 'POST') {
+        document.getElementById('confirmation-title').innerText = title;
+        document.getElementById('confirmation-message').innerText = message;
+        const form = document.getElementById('confirmation-form');
+        form.action = actionUrl;
+        form.setAttribute('method', 'POST');
 
-    function confirmDelete(id) {
-        openModal('Pretende eliminar?', 'Não poderá reverter isso!', `/trainings/${id}`, 'DELETE');
+        // Remove existing _method input if present
+        const existingMethodInput = form.querySelector('input[name="_method"]');
+        if (existingMethodInput) {
+            existingMethodInput.remove();
+        }
+
+        // Add _method input if method is DELETE or PUT
+        if (method === 'DELETE' || method === 'PUT') {
+            const methodInput = document.createElement('input');
+            methodInput.type = 'hidden';
+            methodInput.name = '_method';
+            methodInput.value = method;
+            form.appendChild(methodInput);
+        }
+
+        document.getElementById('confirmation-modal').classList.remove('hidden');
     }
 
     function cancelAction() {
         document.getElementById('confirmation-modal').classList.add('hidden');
     }
 
-    function closeMembershipModal() {
-        document.getElementById('membership-modal').classList.add('hidden');
+    function confirmEnroll(id) {
+        openModal('Pretende inscrever-se?', '', `/trainings/${id}/enroll`);
     }
 
-    function filterPacks() {
-        const searchTerm = document.getElementById('search').value.toLowerCase();
-        const packCards = document.querySelectorAll('.pack-card');
-        packCards.forEach(card => {
-            const name = card.getAttribute('data-name').toLowerCase();
-            if (name.includes(searchTerm)) {
-                card.classList.remove('hidden');
-            } else {
-                card.classList.add('hidden');
-            }
-        });
+    function confirmCancel(id) {
+        openModal('Pretende cancelar a inscrição?', 'Se cancelar agora não poderá voltar a inscrever-se neste treino e não irá ser reembolsado.', `/trainings/${id}/cancel`);
     }
 
-    function navigateToWeek(weekDate) {
-        const url = new URL(window.location.href);
-        url.searchParams.set('week', weekDate);
-        window.location.href = url.toString();
+    function confirmDelete(id) {
+        openModal('Pretende eliminar?', 'Não poderá reverter isso!', `/trainings/${id}`, 'DELETE');
     }
-
-    function confirmEnroll(id, button) {
-        openModal('Pretende inscrever-se?', '', `/trainings/${id}/enroll`, 'POST');
-    }
-
-    function confirmCancel(id, button) {
-        openModal('Pretende cancelar a inscrição?', '', `/trainings/${id}/cancel`, 'POST');
-    }
-
-    function disableConfirmButton(form) {
-        const button = form.querySelector('button[type="submit"]');
-        button.disabled = true;
-        button.innerHTML = '<i class="fa-solid fa-spinner fa-spin w-4 h-4 mr-2"></i> Processando...';
-    }
-
-    function openModal(title, message, actionUrl, method) {
-        document.getElementById('confirmation-title').innerText = title;
-        document.getElementById('confirmation-message').innerText = message;
-        const confirmationForm = document.getElementById('confirmation-form');
-        confirmationForm.action = actionUrl;
-        confirmationForm.querySelector('input[name="_method"]').value = method;
-        document.getElementById('confirmation-modal').classList.remove('hidden');
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById('search');
-        if (searchInput) {
-            searchInput.addEventListener('input', filterPacks);
-        }
-
-        @if($showMembershipModal)
-        document.getElementById('membership-modal').classList.remove('hidden');
-        @endif
-    });
 </script>

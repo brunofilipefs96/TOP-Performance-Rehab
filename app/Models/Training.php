@@ -32,7 +32,7 @@ class Training extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class)->withPivot('presence');
+        return $this->belongsToMany(User::class)->withPivot(['presence', 'cancelled']);
     }
 
     public function personalTrainer()

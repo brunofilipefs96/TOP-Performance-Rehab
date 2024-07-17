@@ -1,11 +1,11 @@
 <x-app-layout>
     <div class="container mx-auto pt-5 mb-10">
         @if ($user->gender == 'male')
-        <span class="text-3xl font-bold mb-2 dark:text-white text-gray-800">Bem vindo, <br> <span  class="text-blue-500 dark:text-lime-500" >{{ Auth::user()->full_name }}</span>!</span>
+        <span class="text-3xl font-bold mb-2 dark:text-white text-gray-800">Bem vindo, <br> <span  class="text-blue-500 dark:text-lime-500" >{{ Auth::user()->firstLastName() }}</span>!</span>
         @elseif ($user->gender == 'female')
-            <span class="text-3xl font-bold mb-2 dark:text-white text-gray-800">Bem vinda, <br> <span  class="text-blue-500 dark:text-lime-500" >{{ Auth::user()->full_name }}</span>!</span>
+            <span class="text-3xl font-bold mb-2 dark:text-white text-gray-800">Bem vinda, <br> <span  class="text-blue-500 dark:text-lime-500" >{{ Auth::user()->firstLastName() }}</span>!</span>
         @else
-            <span class="text-3xl font-bold mb-2 dark:text-white text-gray-800">Bem vind@, <br> <span  class="text-blue-500 dark:text-lime-500" >{{ Auth::user()->full_name }}</span>!</span>
+            <span class="text-3xl font-bold mb-2 dark:text-white text-gray-800">Bem vind@, <br> <span  class="text-blue-500 dark:text-lime-500" >{{ Auth::user()->firstLastName() }}</span>!</span>
         @endif
 
         <hr class="mb-6 border-gray-400 dark:border-gray-300 mt-6">

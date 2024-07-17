@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('image')->default('training_types/default.png');
             $table->string('name');
+            $table->boolean('has_personal_trainer');
+            $table->integer('max_capacity')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
             $table->softDeletes();

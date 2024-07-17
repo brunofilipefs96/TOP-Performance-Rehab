@@ -36,6 +36,11 @@ class TrainingTypeController extends Controller
     public function store(StoreTrainingTypeRequest $request)
     {
         $validatedData = $request->validated();
+
+        if (!$request->has_personal_trainer) {
+            $validatedData['max_capacity'] = null;
+        }
+
         $trainingType = new TrainingType($validatedData);
         $trainingType->save();
 
@@ -51,6 +56,7 @@ class TrainingTypeController extends Controller
 
         return redirect()->route('training-types.index')->with('success', 'Training type created successfully.');
     }
+
 
     /**
      * Display the specified resource.
@@ -76,17 +82,24 @@ class TrainingTypeController extends Controller
     public function update(UpdateTrainingTypeRequest $request, TrainingType $trainingType)
     {
         $validatedData = $request->validated();
+
         if ($request->hasFile('image')) {
-        $imagePath = $request->file('image');
-        $imageName = $trainingType->id . '_' . time() . '_' . $imagePath->getClientOriginalName();
-        $path = $request->file('image')->storeAs('images/training_types/' . $trainingType->id, $imageName, 'public');
-        Storage::delete('public/' . $trainingType->image);
-        $validatedData['image'] = $path;
+            $imagePath = $request->file('image');
+            $imageName = $trainingType->id . '_' . time() . '_' . $imagePath->getClientOriginalName();
+            $path = $request->file('image')->storeAs('images/training_types/' . $trainingType->id, $imageName, 'public');
+            Storage::delete('public/' . $trainingType->image);
+            $validatedData['image'] = $path;
         }
+
+        if (!$request->has_personal_trainer) {
+            $validatedData['max_capacity'] = null;
+        }
+
         $trainingType->update($validatedData);
 
         return redirect()->route('training-types.index')->with('success', 'Training type updated successfully.');
     }
+
 
     /**
      * Remove the specified resource from storage.

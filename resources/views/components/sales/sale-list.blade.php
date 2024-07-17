@@ -22,7 +22,7 @@
             </div>
         </div>
     @else
-        <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">As minhas Encomendas</h1>
+        <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Meu histórico de compras</h1>
     @endif
     <hr class="mb-5 border-gray-400 dark:border-gray-300">
 

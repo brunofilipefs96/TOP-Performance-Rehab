@@ -252,11 +252,10 @@
                             <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
                             Editar
                         </a>
-                        <form id="delete-form-{{$training->id}}" action="{{ url('trainings/' . $training->id) }}"
-                              method="POST" class="inline mr-2">
+                        <form id="delete-form-{{$training->id}}" action="{{ url('trainings/' . $training->id) }}" method="POST" class="inline mr-2">
                             @csrf
                             @method('DELETE')
-                            <button type="submit"
+                            <button type="button" onclick="confirmDelete({{ $training->id }})"
                                     class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500"
                                     id="delete-button">
                                 <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
@@ -282,7 +281,7 @@
             <form id="confirmation-form" method="POST" class="inline">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500">Confirmar
+                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Confirmar
                 </button>
             </form>
         </div>

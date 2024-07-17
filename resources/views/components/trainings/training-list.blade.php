@@ -289,7 +289,7 @@
             <form id="confirmation-form" method="POST" class="inline">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500">Confirmar
+                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Confirmar
                 </button>
             </form>
         </div>

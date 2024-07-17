@@ -36,7 +36,7 @@
             </div>
         </div>
         <div class="mt-8 pt-4">
-            <div class="max-w-screen-xl mx-auto flex flex-col justify-center items-center dark:text-gray-400 text-white text-sm">
+            <div class="max-w-screen-xl mx-auto flex flex-col justify-center items-center dark:text-gray-400 text-gray-400 text-sm">
                 <p>2024 © Ginásio TOP Performance & Rehab</p>
                 <h1>Developed by Team One</h1>
             </div>

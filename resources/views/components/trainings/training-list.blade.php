@@ -21,7 +21,6 @@
                 $availablePacks = $membership->packs()
                     ->where('quantity_remaining', '>', 0)
                     ->where('expiry_date', '>=', $today)
-                    ->where('has_personal_trainer', true)
                     ->orderBy('expiry_date', 'asc')
                     ->get();
                 $earliestExpiringPack = $availablePacks->first();
@@ -89,7 +88,7 @@
         </a>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         @foreach ($daysOfWeek as $day)
             @php
                 $formattedDay = Carbon::parse($day)->locale('pt')->isoFormat('dddd');
@@ -117,7 +116,7 @@
                                     $trainingStartDateTime = Carbon::parse($training->start_date);
                                     $isTrainingStarted = $currentDateTime->gte($trainingStartDateTime);
                                     $totalSubscribes = $training->users()->count();
-                                    $remainingSpots = $training->max_students - $totalSubscribes;
+                                    $remainingSpots = $training->trainingType->max_capacity - $totalSubscribes;
                                     $hasMarkedAllPresences = $training->users()->wherePivotNotNull('presence')->count() == $totalSubscribes;
                                 @endphp
                                 <div
@@ -148,7 +147,7 @@
                                         </div>
                                         <div class="dark:text-gray-400 text-gray-600 mb-5 flex items-center text-sm">
                                             <i class="fa-solid fa-square-check w-4 h-4 mr-2"></i>
-                                            Inscrições: {{ $totalSubscribes }}/{{ $training->max_students }}
+                                            Inscrições: {{ $totalSubscribes }}/{{ $training->trainingType->max_capacity }}
                                             @if ($remainingSpots > 0)
                                                 <span class="inline-block w-3 h-3 bg-green-500 rounded-full ml-2"
                                                       title="Vagas disponíveis"></span>

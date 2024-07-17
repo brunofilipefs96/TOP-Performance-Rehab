@@ -6,6 +6,7 @@ use App\Models\GymClosure;
 use App\Models\Room;
 use App\Models\Training;
 use App\Models\FreeTraining;
+use App\Models\TrainingType;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -21,10 +22,8 @@ class StoreTrainingRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255',
             'training_type_id' => 'required|exists:training_types,id',
             'room_id' => 'required|exists:rooms,id',
-            'max_students' => 'required|integer|min:1',
             'personal_trainer_id' => 'nullable|exists:users,id',
             'start_date' => 'required|date|after_or_equal:today',
             'start_time' => 'required|date_format:H:i',
@@ -36,20 +35,13 @@ class StoreTrainingRequest extends FormRequest
         ];
     }
 
-
     public function messages(): array
     {
         return [
-            'name.required' => 'O nome é obrigatório.',
-            'name.string' => 'O nome deve ser uma string.',
-            'name.max' => 'O nome não pode ter mais que 255 caracteres.',
             'training_type_id.required' => 'O tipo de treino é obrigatório.',
             'training_type_id.exists' => 'O tipo de treino selecionado é inválido.',
             'room_id.required' => 'A sala é obrigatória.',
             'room_id.exists' => 'A sala selecionada é inválida.',
-            'max_students.required' => 'O número máximo de alunos é obrigatório.',
-            'max_students.integer' => 'O número máximo de alunos deve ser um número inteiro.',
-            'max_students.min' => 'O número máximo de alunos deve ser pelo menos 1.',
             'personal_trainer_id.exists' => 'O personal trainer selecionado é inválido.',
             'start_date.required' => 'A data de início é obrigatória.',
             'start_date.date' => 'A data de início deve ser uma data válida.',
@@ -120,7 +112,10 @@ class StoreTrainingRequest extends FormRequest
                 }
             }
 
-            if (!$this->validateRoomCapacity($startDate, $endDate, $this->room_id, $this->max_students)) {
+            $trainingTypeId = $this->training_type_id;
+            $maxStudents = TrainingType::find($trainingTypeId)->max_capacity;
+
+            if (!$this->validateRoomCapacity($startDate, $endDate, $this->room_id, $maxStudents)) {
                 $validator->errors()->add('room_id', 'A capacidade da sala não permite este treino.');
             }
 
@@ -128,8 +123,8 @@ class StoreTrainingRequest extends FormRequest
                 $validator->errors()->add('personal_trainer_id', 'O Personal Trainer não está disponível neste horário.');
             }
 
-            if (!$this->validateGymCapacity($startDate, $endDate, $this->max_students)) {
-                $validator->errors()->add('max_students', 'A capacidade do ginásio não permite este treino.');
+            if (!$this->validateGymCapacity($startDate, $endDate, $trainingTypeId)) {
+                $validator->errors()->add('training_type_id', 'A capacidade do ginásio não permite este treino.');
             }
         });
     }
@@ -154,7 +149,7 @@ class StoreTrainingRequest extends FormRequest
         return true;
     }
 
-    public function passesValidation($startDate, $endDate, $roomId, $personalTrainerId, $maxStudents)
+    public function passesValidation($startDate, $endDate, $roomId, $personalTrainerId, $trainingTypeId)
     {
         return $this->isHorarioPermitido(
                 $startDate,
@@ -164,9 +159,9 @@ class StoreTrainingRequest extends FormRequest
                 setting('horario_fim_semanal', '23:30'),
                 setting('horario_inicio_sabado', '08:00'),
                 setting('horario_fim_sabado', '18:00')
-            ) && $this->validateRoomCapacity($startDate, $endDate, $roomId, $maxStudents)
+            ) && $this->validateRoomCapacity($startDate, $endDate, $roomId, TrainingType::find($trainingTypeId)->max_capacity)
             && $this->validatePersonalTrainerAvailability($startDate, $endDate, $personalTrainerId)
-            && $this->validateGymCapacity($startDate, $endDate, $maxStudents);
+            && $this->validateGymCapacity($startDate, $endDate, $trainingTypeId);
     }
 
     protected function validateRoomCapacity($startDate, $endDate, $roomId, $maxStudents)
@@ -183,7 +178,9 @@ class StoreTrainingRequest extends FormRequest
             ->get();
 
         $room = Room::find($roomId);
-        $occupiedCapacity = $conflictingTrainings->sum('max_students');
+        $occupiedCapacity = $conflictingTrainings->sum(function ($training) {
+            return $training->trainingType->max_capacity;
+        });
         $availableCapacity = $room->capacity - $occupiedCapacity;
 
         return $maxStudents <= $availableCapacity;
@@ -205,9 +202,10 @@ class StoreTrainingRequest extends FormRequest
         return $conflictingTrainings->isEmpty();
     }
 
-    protected function validateGymCapacity($startDate, $endDate, $maxStudents)
+    protected function validateGymCapacity($startDate, $endDate, $trainingTypeId)
     {
         $totalCapacity = setting('capacidade_maxima');
+        $maxStudents = TrainingType::find($trainingTypeId)->max_capacity;
 
         $regularTrainingOccupancy = Training::where(function ($query) use ($startDate, $endDate) {
             $query->whereBetween('start_date', [$startDate, $endDate])
@@ -216,7 +214,9 @@ class StoreTrainingRequest extends FormRequest
                     $query->where('start_date', '<', $startDate)
                         ->where('end_date', '>', $endDate);
                 });
-        })->sum('max_students');
+        })->get()->sum(function ($training) {
+            return $training->trainingType->max_capacity;
+        });
 
         $freeTrainingOccupancy = FreeTraining::where(function ($query) use ($startDate, $endDate) {
             $query->whereBetween('start_date', [$startDate, $endDate])

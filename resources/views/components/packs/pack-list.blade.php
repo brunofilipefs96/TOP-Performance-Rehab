@@ -1,5 +1,5 @@
 <div class="container mx-auto mt-5 mb-10">
-   <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Lista de Packs</h1>
+    <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Lista de Packs</h1>
     @can('create', App\Models\Pack::class)
         <div class="mb-10 flex justify-between items-center">
             <a href="{{ url('packs/create') }}">
@@ -28,16 +28,20 @@
             <div class="pack-card dark:bg-gray-800 bg-gray-500 rounded-lg overflow-hidden shadow-md text-white select-none transform transition-transform duration-300 hover:scale-105 flex flex-col justify-between cursor-pointer" data-name="{{ $pack->name }}" onclick="location.href='{{ url('packs/' . $pack->id) }}'">
                 <div class="p-4 dark:bg-gray-800 bg-gray-500 flex-grow">
                     <h3 class="text-lg font-semibold mb-2 flex items-center">
-                        @if($pack->trainingType->has_personal_trainer)
-                            @if($pack->trainingType->max_capacity == 1)
-                                <i class="fa-solid fa-user w-5 h-5 mr-1"></i>
-                            @elseif($pack->trainingType->max_capacity == 2)
-                                <i class="fa-solid fa-user-group w-5 h-5 mr-1"></i>
-                            @elseif($pack->trainingType->max_capacity >= 3)
-                                <i class="fa-solid fa-users w-5 h-5 mr-1"></i>
+                        @if($pack->trainingType)
+                            @if($pack->trainingType->has_personal_trainer)
+                                @if($pack->trainingType->max_capacity == 1)
+                                    <i class="fa-solid fa-user w-5 h-5 mr-1"></i>
+                                @elseif($pack->trainingType->max_capacity == 2)
+                                    <i class="fa-solid fa-user-group w-5 h-5 mr-1"></i>
+                                @elseif($pack->trainingType->max_capacity >= 3)
+                                    <i class="fa-solid fa-users w-5 h-5 mr-1"></i>
+                                @endif
+                            @else
+                                <i class="fa-solid fa-person-running w-5 h-5 mr-1"></i>
                             @endif
                         @else
-                            <i class="fa-solid fa-person-running w-5 h-5 mr-1"></i>
+                            <i class="fa-solid fa-exclamation-circle w-5 h-5 mr-1"></i>
                         @endif
                         {{ $pack->name }}
                     </h3>
@@ -51,7 +55,7 @@
                     </p>
                     <p class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-md">
                         <i class="fa-solid fa-user-tie w-4 h-4 mr-2"></i>
-                        <span>{{ $pack->trainingType->has_personal_trainer ? 'Acompanhado' : 'Livre' }}</span>
+                        <span>{{ $pack->trainingType && $pack->trainingType->has_personal_trainer ? 'Acompanhado' : 'Livre' }}</span>
                     </p>
                     <p class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-md">
                         <i class="fa-solid fa-coins w-4 h-4 mr-2"></i>

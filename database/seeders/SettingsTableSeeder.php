@@ -16,7 +16,7 @@ class SettingsTableSeeder extends Seeder
         $settings = [
             ['key' => 'taxa_inscricao', 'value' => '50'],
             ['key' => 'taxa_seguro', 'value' => '20'],
-            ['key' => 'capacidade_maxima', 'value' => '20'],
+            ['key' => 'capacidade_maxima', 'value' => '15'],
             ['key' => 'horario_inicio_semanal', 'value' => '06:00'],
             ['key' => 'horario_fim_semanal', 'value' => '23:30'],
             ['key' => 'horario_inicio_sabado', 'value' => '08:00'],

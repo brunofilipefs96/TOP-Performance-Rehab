@@ -36,13 +36,6 @@
                     @csrf
                     @method('PUT')
                     <div class="mb-4">
-                        <label for="name" class="block dark:text-white text-gray-800">Nome</label>
-                        <input type="text" name="name" id="name" value="{{ old('name', $training->name) }}" required class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-200 dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
-                        @error('name')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="mb-4">
                         <label for="training_type_id" class="block dark:text-white text-gray-800">Tipo de Treino</label>
                         <select name="training_type_id" id="training_type_id" required class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-200 dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
                             @foreach ($trainingTypes as $type)
@@ -63,14 +56,6 @@
                         @error('room_id')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
-                    </div>
-                    <div class="mb-4">
-                        <label for="max_students" class="block dark:text-white text-gray-800">Máximo de Alunos</label>
-                        <input type="number" name="max_students" id="max_students" value="{{ old('max_students', $training->max_students) }}" required class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-200 dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
-                        @error('max_students')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                        <span id="max-students-error-msg" class="text-red-500 text-sm"></span>
                     </div>
                     <div class="mb-4">
                         <label for="personal_trainer_id" class="block dark:text-white text-gray-800">Personal Trainer</label>
@@ -120,7 +105,7 @@
                         <span id="duration_error" class="text-red-500 text-sm"></span>
                     </div>
                     <div class="flex justify-end gap-2 mt-10">
-                        <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300 text-sm" onclick="confirmarAtualizacao()">Atualizar</button>
+                        <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300 text-sm" onclick="showConfirmationModal()">Atualizar</button>
                     </div>
                 </form>
                 <div id="confirmation-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden">
@@ -129,7 +114,7 @@
                         <p class="mb-4 dark:text-lime-200 text-gray-800">Poderá reverter isso!</p>
                         <div class="flex justify-end gap-4">
                             <button id="cancel-button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400">Cancelar</button>
-                            <button id="confirm-button" class="bg-blue-500 hover:bg-blue-400 dark:bg-lime-500 text-white px-4 py-2 rounded-md dark:hover:bg-lime-400">Atualizar</button>
+                            <button id="confirm-button" class="bg-blue-500 hover:bg-blue-400 dark:bg-lime-500 text-white px-4 py-2 rounded-md dark:hover:bg-lime-400" onclick="confirmarAtualizacao()">Atualizar</button>
                         </div>
                     </div>
                 </div>
@@ -139,37 +124,16 @@
 </div>
 
 <script>
-    function confirmarAtualizacao() {
-        const maxStudentsInput = document.getElementById('max_students');
-        const maxStudentsErrorMsg = document.getElementById('max-students-error-msg');
-        const currentEnrolled = {{ $training->users->count() }};
-        const roomSelect = document.getElementById('room_id');
-        const selectedRoom = roomSelect.options[roomSelect.selectedIndex];
-        const roomCapacity = parseInt(selectedRoom.getAttribute('data-capacity'));
-
-        if (parseInt(maxStudentsInput.value) > roomCapacity) {
-            maxStudentsErrorMsg.innerText = 'O número máximo de alunos não pode exceder a capacidade da sala.';
-            return false;
-        }
-
-        if (parseInt(maxStudentsInput.value) < currentEnrolled) {
-            if (maxStudentsErrorMsg) {
-                maxStudentsErrorMsg.innerText = 'O número máximo de alunos não pode ser menor do que o número de alunos já inscritos.';
-            }
-            return false;
-        }
-        if (maxStudentsErrorMsg) {
-            maxStudentsErrorMsg.innerText = '';
-        }
+    function showConfirmationModal() {
         document.getElementById('confirmation-modal').classList.remove('hidden');
+    }
+
+    function confirmarAtualizacao() {
+        document.getElementById('update-form').submit();
     }
 
     document.getElementById('cancel-button').addEventListener('click', function() {
         document.getElementById('confirmation-modal').classList.add('hidden');
-    });
-
-    document.getElementById('confirm-button').addEventListener('click', function() {
-        document.getElementById('update-form').submit();
     });
 
     document.addEventListener('DOMContentLoaded', function () {

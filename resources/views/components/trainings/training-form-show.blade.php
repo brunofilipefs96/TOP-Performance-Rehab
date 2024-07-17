@@ -9,14 +9,7 @@
                 </a>
             </div>
             <div class="text-center">
-                <h1 class="mb-8 mt-4 dark:text-lime-400 text-gray-800 font-semibold">{{ $training->name }}</h1>
-            </div>
-
-            <div class="mb-4">
-                <label for="training_type" class="block text-gray-800 dark:text-white">Tipo de Treino</label>
-                <input type="text" name="training_type" id="training_type" value="{{ $training->trainingType->name }}"
-                       disabled
-                       class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
+                <h1 class="mb-8 mt-4 dark:text-lime-400 text-gray-800 font-semibold">{{ $training->trainingType->name }}</h1>
             </div>
 
             <div class="mb-4">
@@ -29,13 +22,6 @@
                 <label for="personal_trainer" class="block text-gray-800 dark:text-white">Personal Trainer</label>
                 <input type="text" name="personal_trainer" id="personal_trainer"
                        value="{{ $training->personalTrainer->firstLastName() }}" disabled
-                       class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
-            </div>
-
-            <div class="mb-4">
-                <label for="max_students" class="block text-gray-800 dark:text-white">Máximo de Alunos</label>
-                <input type="number" name="max_students" id="max_students" value="{{ $training->max_students }}"
-                       disabled
                        class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
             </div>
 
@@ -65,7 +51,7 @@
                 $userPresence = $training->users()->where('user_id', auth()->id())->exists();
                 $userPresenceFalse = $training->users()->where('user_id', auth()->id())->wherePivot('presence', false)->exists();
                 $currentDateTime = Carbon::now();
-                $remainingSpots = $training->max_students - $training->users()->wherePivot('presence', true)->count();
+                $remainingSpots = $training->trainingType->max_capacity - $training->users()->wherePivot('presence', true)->count();
                 $trainingStartDateTime = Carbon::parse($training->start_date);
                 $trainingEndDateTime = Carbon::parse($training->end_date);
                 $userHasActiveMembership = auth()->user()->membership && auth()->user()->membership->status->name === 'active';

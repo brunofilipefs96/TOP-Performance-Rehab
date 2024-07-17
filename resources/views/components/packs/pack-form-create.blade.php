@@ -35,6 +35,7 @@
                     <input type="number"
                            id="duration"
                            name="duration"
+                           min="1"
                            autocomplete="duration"
                            placeholder="Insira a duração em dias"
                            class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500
@@ -54,6 +55,7 @@
                     <input type="number"
                            id="trainings_number"
                            name="trainings_number"
+                           min="1"
                            autocomplete="trainings_number"
                            placeholder="Insira a quantidade de treinos"
                            class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500
@@ -69,16 +71,13 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-sm font-medium dark:text-gray-200 text-gray-800">Personal Trainer</label>
-                    <div class="flex items-center">
-                        <input type="radio" id="personal_trainer_yes" name="has_personal_trainer" value="1" class="form-radio text-blue-500 dark:text-lime-400 h-4 w-4  dark:bg-gray-600  dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50 dark:checked:bg-lime-400 focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 checked:bg-blue-500" {{ old('has_personal_trainer') == '1' ? 'checked' : '' }} required>
-                        <label for="personal_trainer_yes" class="ml-2 dark:text-gray-200 text-gray-800">Sim</label>
-                    </div>
-                    <div class="flex items-center mt-2">
-                        <input type="radio" id="personal_trainer_no" name="has_personal_trainer" value="0" class="form-radio text-blue-500 dark:text-lime-400 h-4 w-4  dark:bg-gray-600 dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50 dark:checked:bg-lime-400  focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 checked:bg-blue-500" {{ old('has_personal_trainer') == '0' ? 'checked' : '' }} required>
-                        <label for="personal_trainer_no" class="ml-2 dark:text-gray-200 text-gray-800">Não</label>
-                    </div>
-                    @error('has_personal_trainer')
+                    <label for="training_type_id" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Tipo de Treino</label>
+                    <select id="training_type_id" name="training_type_id" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500 dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50" required>
+                        @foreach($training_types as $training_type)
+                            <option value="{{ $training_type->id }}" {{ old('training_type_id') == $training_type->id ? 'selected' : '' }}>{{ $training_type->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('training_type_id')
                     <span class="text-red-500 text-sm mt-2" role="alert">
                         <strong>{{ $message }}</strong>
                     </span>
@@ -90,6 +89,8 @@
                     <input type="number"
                            id="price"
                            name="price"
+                           step="0.01"
+                           min="0"
                            autocomplete="price"
                            placeholder="Insira o preço"
                            class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500

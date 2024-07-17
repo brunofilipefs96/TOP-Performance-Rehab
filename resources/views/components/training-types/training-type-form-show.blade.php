@@ -12,7 +12,7 @@
 
             @if($training_type->image && file_exists(public_path('storage/' . $training_type->image)))
                 <div class="mb-4 select-none">
-                    <label for="image" class="block">Imagem</label>
+                    <label for="image" class="block text-gray-800 dark:text-white">Imagem</label>
                     <img src="{{ asset('storage/' . $training_type->image) }}" alt="Imagem do Tipo de Treino" class="mt-1 block w-full h-auto border border-gray-300 rounded-md shadow-sm">
                 </div>
             @else
@@ -27,6 +27,16 @@
             <div class="mb-4">
                 <label for="name" class="block text-gray-800 dark:text-white">Nome</label>
                 <input type="text" name="name" id="name" value="{{ $training_type->name }}" disabled class="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
+            </div>
+
+            <div class="mb-4">
+                <label for="has_personal_trainer" class="block text-gray-800 dark:text-white">Tem Personal Trainer?</label>
+                <input type="text" name="has_personal_trainer" id="has_personal_trainer" value="{{ $training_type->has_personal_trainer ? 'Sim' : 'Não' }}" disabled class="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
+            </div>
+
+            <div class="mb-4">
+                <label for="max_capacity" class="block text-gray-800 dark:text-white">Capacidade Máxima</label>
+                <input type="text" name="max_capacity" id="max_capacity" value="{{ $training_type->max_capacity ?? 'Ilimitada' }}" disabled class="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
             </div>
         </div>
     </div>

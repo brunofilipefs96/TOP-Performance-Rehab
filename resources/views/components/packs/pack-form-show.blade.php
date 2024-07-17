@@ -1,4 +1,4 @@
-<div class="container mx-auto mt-10 pt-5 glass">
+<div class="container mx-auto mt-10 mb-10 pt-5 glass">
     <div class="flex justify-center">
         <div class="w-full max-w-lg bg-gray-300 dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm relative">
             <div class="absolute top-4 left-4">
@@ -21,17 +21,18 @@
             </div>
 
             <div class="mb-4">
-                <label for="has_personal_trainer" class="block text-gray-800 dark:text-white">Personal Trainer</label>
-                <div class="mt-1">
-                    <label class="inline-flex items-center">
-                        <input type="radio" name="has_personal_trainer" value="1" {{ $pack->has_personal_trainer ? 'checked' : '' }} disabled class="form-radio text-blue-500 dark:text-lime-400 h-4 w-4 dark:bg-gray-600 dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50 dark:checked:bg-lime-400 focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 checked:bg-blue-500">
-                        <span class="ml-2 dark:text-gray-200 text-gray-800">Sim</span>
-                    </label>
-                    <label class="inline-flex items-center ml-4">
-                        <input type="radio" name="has_personal_trainer" value="0" {{ !$pack->has_personal_trainer ? 'checked' : '' }} disabled class="form-radio text-blue-500 dark:text-lime-400 h-4 w-4 dark:bg-gray-600 dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50 dark:checked:bg-lime-400 focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 checked:bg-blue-500">
-                        <span class="ml-2 dark:text-gray-200 text-gray-800">Não</span>
-                    </label>
-                </div>
+                <label for="training_type_name" class="block text-gray-800 dark:text-white">Tipo de Treino</label>
+                <input class="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white" type="text" value="{{ optional($pack->trainingType)->name }}" disabled>
+            </div>
+
+            <div class="mb-4">
+                <label for="accompaniment" class="block text-gray-800 dark:text-white">Tipo de Acompanhamento</label>
+                <input class="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white" type="text" value="{{ optional($pack->trainingType)->has_personal_trainer ? 'Acompanhado' : 'Livre' }}" disabled>
+            </div>
+
+            <div class="mb-4">
+                <label for="max_capacity" class="block text-gray-800 dark:text-white">Capacidade Máxima de Alunos no Treino</label>
+                <input class="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white" type="text" value="{{ optional($pack->trainingType)->max_capacity ?? 'Sem capacidade máxima limite' }}" disabled>
             </div>
 
             <div class="mb-4">
@@ -64,20 +65,19 @@
                         <form action="{{ route('cart.addPack') }}" method="POST">
                             @csrf
                             <input type="hidden" name="pack_id" value="{{ $pack->id }}">
-                            <button type="submit" class="bg-blue-500 dark:bg-lime-500 text-white flex items-center px-2 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400 text-sm">
+                            <button type="submit" class="bg-blue-500 dark:bg-lime-500 text-white flex items-center px-4 py-2 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400 text-sm">
                                 <i class="fa-solid fa-cart-plus w-4 h-4 mr-2"></i>
                                 Adicionar
                             </button>
                         </form>
                     @else
-                        <button type="button" class="bg-gray-500 dark:bg-gray-700 text-white flex items-center px-2 py-1 rounded-md text-sm cursor-not-allowed" disabled>
+                        <button type="button" class="bg-gray-500 dark:bg-gray-700 text-white flex items-center px-4 py-2 rounded-md text-sm cursor-not-allowed" disabled>
                             <i class="fa-solid fa-cart-plus w-4 h-4 mr-2"></i>
                             Adicionar
                         </button>
                     @endif
                 </div>
             @endif
-
         </div>
     </div>
 </div>
@@ -88,7 +88,7 @@
         <p class="mb-4 text-red-500 dark:text-red-300" id="confirmation-message">Não poderá reverter isso!</p>
         <div class="flex justify-end gap-4">
             <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400" onclick="cancelAction()">Cancelar</button>
-            <button type="button" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500" onclick="confirmAction()">Confirmar</button>
+            <button type="button" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500" onclick="confirmAction()">Eliminar</button>
         </div>
     </div>
 </div>
@@ -131,4 +131,3 @@
         document.getElementById(`delete-form-${packDeleted}`).submit();
     }
 </script>
-

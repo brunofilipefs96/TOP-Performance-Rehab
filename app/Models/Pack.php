@@ -14,9 +14,9 @@ class Pack extends Model
         'name',
         'duration',
         'trainings_number',
-        'has_personal_trainer',
         'price',
-    ];
+        'training_type_id',
+        ];
 
     public function memberships()
     {
@@ -30,5 +30,8 @@ class Pack extends Model
             ->withPivot('quantity', 'price');
     }
 
-
+    public function trainingType()
+    {
+        return $this->belongsTo(TrainingType::class);
+    }
 }

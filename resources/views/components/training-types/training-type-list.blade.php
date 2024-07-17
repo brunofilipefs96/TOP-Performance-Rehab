@@ -8,17 +8,13 @@
                     Adicionar Tipo de Treino
                 </button>
             </a>
-            <div class="relative w-1/3">
-                <i class="fa-solid fa-magnifying-glass absolute w-5 h-5 left-3 top-1/2 transform -translate-y-1/2 text-black dark:text-white"></i>
-                <input type="text" id="search" placeholder="Pesquisar tipos de treino..." class="w-full p-2 pl-10 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-light-gray dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
-            </div>
         </div>
     @endcan
     <hr class="mb-10 border-gray-400 dark:border-gray-300">
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @foreach ($training_types as $training_type)
-            <div class="training-type-card dark:bg-gray-800 bg-gray-500 rounded-lg overflow-hidden shadow-md text-white select-none transform transition-transform duration-300 hover:scale-105 flex flex-col justify-between" data-name="{{ $training_type->name }}">
+            <div class="training-type-card dark:bg-gray-800 bg-gray-500 rounded-lg overflow-hidden shadow-md text-white select-none transform transition-transform duration-300 hover:scale-105 flex flex-col justify-between">
                 <a href="{{ url('training-types/' . $training_type->id) }}" class="flex-grow">
                     <div class="flex justify-center">
                         @if($training_type->image && file_exists(public_path('storage/' . $training_type->image)))
@@ -31,6 +27,8 @@
                     </div>
                     <div class="p-4 dark:bg-gray-800 bg-gray-500 flex-grow">
                         <h3 class="text-lg font-semibold mb-2">{{ $training_type->name }}</h3>
+                        <p class="text-sm mb-1"><i class="fa-solid fa-user-tie w-4 h-4 mr-2"></i>Personal trainer: {{ $training_type->has_personal_trainer ? 'Sim' : 'Não' }}</p>
+                        <p class="text-sm"><i class="fa-solid fa-users w-4 h-4 mr-2"></i>Capacidade: {{ $training_type->max_capacity ?? 'Ilimitada' }}</p>
                     </div>
                 </a>
                 <div class="flex justify-end items-center p-4 mt-auto space-x-2">
@@ -54,16 +52,16 @@
             </div>
         @endforeach
 
-            <div id="confirmation-modal" class="fixed flex inset-0 items-center justify-center bg-gray-800 bg-opacity-75 hidden">
-                <div class="bg-gray-300 p-6 rounded-md shadow-md w-96 dark:bg-gray-900">
-                    <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Pretende eliminar?</h2>
-                    <p class="mb-4 dark:text-red-300 text-red-500">Não poderá reverter isso!</p>
-                    <div class="flex justify-end gap-4">
-                        <button id="cancel-button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400">Cancelar</button>
-                        <button id="confirm-button" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Eliminar</button>
-                    </div>
+        <div id="confirmation-modal" class="fixed flex inset-0 items-center justify-center bg-gray-800 bg-opacity-75 hidden">
+            <div class="bg-gray-300 p-6 rounded-md shadow-md w-96 dark:bg-gray-900">
+                <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Pretende eliminar?</h2>
+                <p class="mb-4 dark:text-red-300 text-red-500">Não poderá reverter isso!</p>
+                <div class="flex justify-end gap-4">
+                    <button id="cancel-button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400">Cancelar</button>
+                    <button id="confirm-button" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Eliminar</button>
                 </div>
             </div>
+        </div>
     </div>
 
     <div class="flex justify-center mt-4 mb-3">
@@ -86,19 +84,4 @@
     document.getElementById('confirm-button').addEventListener('click', function() {
         document.getElementById(`delete-form-${trainingTypeDeleted}`).submit();
     });
-
-    function filterTrainingTypes() {
-        const searchTerm = document.getElementById('search').value.toLowerCase();
-        const trainingTypeCards = document.querySelectorAll('.training-type-card');
-        trainingTypeCards.forEach(card => {
-            const name = card.getAttribute('data-name').toLowerCase();
-            if (name.includes(searchTerm)) {
-                card.classList.remove('hidden');
-            } else {
-                card.classList.add('hidden');
-            }
-        });
-    }
-
-    document.getElementById('search').addEventListener('input', filterTrainingTypes);
 </script>

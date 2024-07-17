@@ -13,21 +13,17 @@ class TrainingTypeSeeder extends Seeder
      */
     public function run(): void
     {
-        $tiposTreino = [
-            ['name' => 'Cardio', 'image' => 'images/training_types/1/cardio.jpg'],
-            ['name' => 'Treino de Força', 'image' => 'images/training_types/2/forca.jpg'],
-            ['name' => 'Flexibilidade', 'image' => 'images/training_types/3/flexibilidade.jpg'],
-            ['name' => 'Pilates', 'image' => 'images/training_types/4/pilates.jpg'],
-            ['name' => 'Yoga', 'image' => 'images/training_types/5/yoga.jpg'],
-            ['name' => 'HIIT', 'image' => 'images/training_types/6/hiit.jpg'],
-            ['name' => 'CrossFit', 'image' => 'images/training_types/7/crossfit.jpg'],
-            ['name' => 'Musculação', 'image' => 'images/training_types/8/musculacao.jpg'],
-            ['name' => 'Cycling', 'image' => 'images/training_types/9/cycling.jpg'],
-            ['name' => 'Aeróbica', 'image' => 'images/training_types/10/aerobica.jpg'],
+        $trainingTypes = [
+            ['name' => 'Treino Funcional Livre', 'image' => 'training_types/default.png', 'has_personal_trainer' => false, 'max_capacity' => null],
+            ['name' => 'PT Individual', 'image' => 'training_types/default.png', 'has_personal_trainer' => true, 'max_capacity' => 1],
+            ['name' => 'PT Duo (Dois Clientes)', 'image' => 'training_types/default.png', 'has_personal_trainer' => true, 'max_capacity' => 2],
+            ['name' => 'PT Trio (Três Clientes)', 'image' => 'training_types/default.png', 'has_personal_trainer' => true, 'max_capacity' => 3],
+            ['name' => 'PT Individual de Eletroestimulação', 'image' => 'training_types/default.png', 'has_personal_trainer' => true, 'max_capacity' => 1],
+            ['name' => 'PT Individual de Pilates Equipamentos', 'image' => 'training_types/default.png', 'has_personal_trainer' => true, 'max_capacity' => 1],
         ];
 
-        foreach ($tiposTreino as $tipo) {
-            TrainingType::create($tipo);
+        foreach ($trainingTypes as $type) {
+            TrainingType::create($type);
         }
     }
 }

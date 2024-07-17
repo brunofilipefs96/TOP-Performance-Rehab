@@ -13,7 +13,15 @@ class RoomSeeder extends Seeder
      */
     public function run(): void
     {
-        //Room::factory()->count(10)->create();
-        sala funcional e pilates
+        Room::factory()->create([
+            'name' => 'Funcional',
+            'capacity' => 5,
+        ]);
+
+        Room::factory()->create([
+            'name' => 'Pilates',
+            'capacity' => 10,
+        ]);
+
     }
 }

@@ -22,13 +22,11 @@ class TrainingController extends Controller
     {
         $this->authorize('viewAny', Training::class);
 
-        $type = $request->input('type', 'accompanied'); // Default to 'accompanied'
+        $type = $request->input('type', 'accompanied');
         $currentWeek = Carbon::now()->startOfWeek();
         $selectedWeek = $request->get('week') ? Carbon::parse($request->get('week'))->startOfWeek() : $currentWeek;
 
         if ($type === 'free') {
-            $this->generateFreeTrainings();
-
             $trainings = FreeTraining::whereBetween('start_date', [$selectedWeek, $selectedWeek->copy()->endOfWeek()])
                 ->orderBy('start_date', 'asc')
                 ->get()
@@ -146,7 +144,7 @@ class TrainingController extends Controller
     {
         $this->authorize('update', $training);
         $rooms = Room::all();
-        $trainingTypes = TrainingType::where('has_personal_trainer', true)->get(); // Filtrar os tipos de treino
+        $trainingTypes = TrainingType::where('has_personal_trainer', true)->get();
         $personalTrainers = User::all()->filter(function ($user) {
             return $user->roles()->pluck('name')->contains('personal_trainer');
         });
@@ -179,9 +177,12 @@ class TrainingController extends Controller
         if ($training->users()->count() > 0) {
             foreach ($training->users as $user) {
                 $today = Carbon::today();
+                $trainingTypeId = $training->training_type_id;
+
                 $membershipPack = $user->membership->packs()
+                    ->where('quantity_remaining', '>', 0)
                     ->where('expiry_date', '>=', $today)
-                    ->where('has_personal_trainer', true)
+                    ->where('training_type_id', $trainingTypeId)
                     ->orderBy('expiry_date', 'asc')
                     ->first();
 
@@ -197,6 +198,7 @@ class TrainingController extends Controller
         $training->delete();
         return redirect()->route('trainings.index')->with('success', 'Treino eliminado com sucesso.');
     }
+
 
     public function enroll(Request $request, Training $training)
     {
@@ -280,19 +282,23 @@ class TrainingController extends Controller
 
             return redirect()->route('trainings.index')->with('success', 'Inscrição cancelada com sucesso. Você não será cobrado.');
         } elseif ($differenceInHours <= 12 && $differenceInHours > 0) {
-            $training->users()->updateExistingPivot($user->id, ['presence' => false]);
+            $training->users()->updateExistingPivot($user->id, ['presence' => false, 'cancelled' => true]);
             return redirect()->route('trainings.index')->with('success', 'Inscrição cancelada com sucesso. A presença será marcada como ausente e você será cobrado.');
         } else {
             return redirect()->route('trainings.index')->with('error', 'Não é possível cancelar a inscrição após o início do treino.');
         }
     }
 
+
     public function markPresence(Request $request, Training $training)
     {
         $this->authorize('markPresence', $training);
 
         $presenceData = $request->input('presence', []);
-        $allUsers = $training->users()->pluck('user_id')->toArray();
+        $allUsers = $training->users()
+            ->wherePivot('cancelled', false)
+            ->pluck('user_id')
+            ->toArray();
 
         if (array_diff($allUsers, array_keys($presenceData))) {
             return redirect()->route('trainings.show', $training->id)
@@ -306,6 +312,9 @@ class TrainingController extends Controller
         return redirect()->route('trainings.show', $training->id)
             ->with('success', 'Presenças marcadas com sucesso.');
     }
+
+
+
 
     public function showMultiDelete(Request $request)
     {
@@ -352,9 +361,12 @@ class TrainingController extends Controller
             foreach ($trainings as $training) {
                 foreach ($training->users as $user) {
                     $today = Carbon::today();
+                    $trainingTypeId = $training->training_type_id;
+
                     $membershipPack = $user->membership->packs()
+                        ->where('quantity_remaining', '>', 0)
                         ->where('expiry_date', '>=', $today)
-                        ->where('has_personal_trainer', true)
+                        ->where('training_type_id', $trainingTypeId)
                         ->orderBy('expiry_date', 'asc')
                         ->first();
 
@@ -371,4 +383,5 @@ class TrainingController extends Controller
 
         return redirect()->route('trainings.index')->with('success', 'Treinos removidos com sucesso!');
     }
+
 }

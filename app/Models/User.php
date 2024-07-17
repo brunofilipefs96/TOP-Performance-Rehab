@@ -129,4 +129,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Entry::class, 'participant_id')->where('survey_id', 1)->exists();
     }
+
+    public function clientType()
+    {
+        return $this->belongsTo(ClientType::class);
+    }
 }

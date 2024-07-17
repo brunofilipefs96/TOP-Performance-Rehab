@@ -78,10 +78,16 @@ class MembershipController extends Controller
         $user = auth()->user();
 
         if ($user->hasRole('client') && !$user->membership) {
+            if (!$user->cc_number && $request->has('cc_number')) {
+                $user->cc_number = $request->input('cc_number');
+                $user->save();
+            }
+
             $membership = Membership::create([
                 'user_id' => $user->id,
-                'address_id' => $request->address_id,
+                'address_id' => $request->input('address_id'),
             ]);
+
             return redirect()->route('setup.trainingTypesShow')->with('success', 'Matrícula criada com sucesso!');
         }
 

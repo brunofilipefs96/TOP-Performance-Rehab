@@ -32,6 +32,17 @@ class SettingController extends Controller
             'horario_fim_semanal' => 'required|date_format:H:i',
             'horario_inicio_sabado' => 'required|date_format:H:i',
             'horario_fim_sabado' => 'required|date_format:H:i',
+            'top_paddle_client_membership_discount' => 'required|numeric|min:0|max:100',
+            'top_paddle_client_insurance_discount' => 'required|numeric|min:0|max:100',
+            'top_paddle_client_trainings_discount' => 'required|numeric|min:0|max:100',
+            'top_paddle_admin_membership_discount' => 'required|numeric|min:0|max:100',
+            'top_paddle_admin_insurance_discount' => 'required|numeric|min:0|max:100',
+            'top_paddle_admin_funcional_training_discount' => 'required|numeric|min:0|max:100',
+            'top_paddle_admin_personal_training_trainings_discount' => 'required|numeric|min:0|max:100',
+            'top_paddle_employee_membership_discount' => 'required|numeric|min:0|max:100',
+            'top_paddle_employee_insurance_discount' => 'required|numeric|min:0|max:100',
+            'top_paddle_employee_funcional_training_discount' => 'required|numeric|min:0|max:100',
+            'top_paddle_employee_personal_training_trainings_discount' => 'required|numeric|min:0|max:100',
         ], [
             'required' => 'O campo :attribute é obrigatório.',
             'numeric' => 'O campo :attribute deve ser um número.',
@@ -42,8 +53,29 @@ class SettingController extends Controller
         ]);
 
         $data = $request->all();
-        foreach ($data as $key => $value) {
-            if (in_array($key, ['taxa_inscricao', 'taxa_seguro', 'capacidade_maxima', 'horario_inicio_semanal', 'horario_fim_semanal', 'horario_inicio_sabado', 'horario_fim_sabado'])) {
+        $settingsKeys = [
+            'taxa_inscricao',
+            'taxa_seguro',
+            'capacidade_maxima',
+            'horario_inicio_semanal',
+            'horario_fim_semanal',
+            'horario_inicio_sabado',
+            'horario_fim_sabado',
+            'top_paddle_client_membership_discount',
+            'top_paddle_client_insurance_discount',
+            'top_paddle_client_trainings_discount',
+            'top_paddle_admin_membership_discount',
+            'top_paddle_admin_insurance_discount',
+            'top_paddle_admin_funcional_training_discount',
+            'top_paddle_admin_personal_training_trainings_discount',
+            'top_paddle_employee_membership_discount',
+            'top_paddle_employee_insurance_discount',
+            'top_paddle_employee_funcional_training_discount',
+            'top_paddle_employee_personal_training_trainings_discount'
+        ];
+
+        foreach ($settingsKeys as $key) {
+            if (isset($data[$key])) {
                 Setting::updateOrCreate(['key' => $key], ['value' => $value]);
             }
         }

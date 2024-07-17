@@ -70,12 +70,11 @@ class TrainingController extends Controller
         ]);
     }
 
-
     public function create()
     {
         $this->authorize('create', Training::class);
         $rooms = Room::all();
-        $trainingTypes = TrainingType::all();
+        $trainingTypes = TrainingType::where('has_personal_trainer', true)->get(); // Filtrar os tipos de treino
         $personalTrainers = User::all()->filter(function ($user) {
             return $user->roles()->pluck('name')->contains('personal_trainer');
         });
@@ -93,6 +92,9 @@ class TrainingController extends Controller
         $duration = (int)$validatedData['duration'];
         $endDate = $startDate->copy()->addMinutes($duration);
 
+        $trainingType = TrainingType::find($validatedData['training_type_id']);
+        $maxStudents = $trainingType->max_capacity;
+
         if ($request->has('repeat') && $request->repeat) {
             $repeatUntil = Carbon::parse($request->repeat_until);
             $daysOfWeek = collect($request->days_of_week)->map(fn($day) => (int)$day)->all();
@@ -104,7 +106,7 @@ class TrainingController extends Controller
                 if (in_array($currentDate->dayOfWeek, $daysOfWeek)) {
                     $currentEndDate = $currentDate->copy()->addMinutes($duration);
 
-                    if ($request->passesValidation($currentDate, $currentEndDate, $validatedData['room_id'], $validatedData['personal_trainer_id'], $validatedData['max_students'])) {
+                    if ($request->passesValidation($currentDate, $currentEndDate, $validatedData['room_id'], $validatedData['personal_trainer_id'], $validatedData['training_type_id'])) {
                         $trainingData = $validatedData;
                         $trainingData['start_date'] = $currentDate->toDateTimeString();
                         $trainingData['end_date'] = $currentEndDate->toDateTimeString();
@@ -120,7 +122,7 @@ class TrainingController extends Controller
                 return redirect()->back()->withErrors(['error' => 'Nenhum treino pôde ser criado dentro dos horários permitidos. Selecione outras datas/horários.']);
             }
         } else {
-            if ($request->passesValidation($startDate, $endDate, $validatedData['room_id'], $validatedData['personal_trainer_id'], $validatedData['max_students'])) {
+            if ($request->passesValidation($startDate, $endDate, $validatedData['room_id'], $validatedData['personal_trainer_id'], $validatedData['training_type_id'])) {
                 $validatedData['start_date'] = $startDate->toDateTimeString();
                 $validatedData['end_date'] = $endDate->toDateTimeString();
 
@@ -144,7 +146,7 @@ class TrainingController extends Controller
     {
         $this->authorize('update', $training);
         $rooms = Room::all();
-        $trainingTypes = TrainingType::all();
+        $trainingTypes = TrainingType::where('has_personal_trainer', true)->get(); // Filtrar os tipos de treino
         $personalTrainers = User::all()->filter(function ($user) {
             return $user->roles()->pluck('name')->contains('personal_trainer');
         });
@@ -162,19 +164,6 @@ class TrainingController extends Controller
         $duration = (int)$validatedData['duration'];
         $endDate = $startDate->copy()->addMinutes($duration);
 
-        $startTime = $startDate->format('H:i');
-        $endTime = $endDate->format('H:i');
-        $horarioInicio = setting('horario_inicio', '06:00');
-        $horarioFim = setting('horario_fim', '23:59');
-
-        if ($startTime < $horarioInicio || $endTime > $horarioFim) {
-            return redirect()->back()->withErrors(['error' => 'O treino deve estar dentro do horário permitido.']);
-        }
-
-        if ($training->users()->count() > 0) {
-            return redirect()->route('trainings.index')->with('error', 'Não é possível editar um treino com alunos inscritos.');
-        }
-
         $validatedData['start_date'] = $startDate->toDateTimeString();
         $validatedData['end_date'] = $endDate->toDateTimeString();
 
@@ -182,7 +171,6 @@ class TrainingController extends Controller
 
         return redirect()->route('trainings.index')->with('success', 'Treino atualizado com sucesso.');
     }
-
 
     public function destroy(Training $training)
     {
@@ -238,18 +226,21 @@ class TrainingController extends Controller
         }
 
         $today = Carbon::today();
+        $trainingTypeId = $training->training_type_id;
+
         $membershipPack = $user->membership->packs()
             ->where('quantity_remaining', '>', 0)
             ->where('expiry_date', '>=', $today)
-            ->where('has_personal_trainer', true)
+            ->where('training_type_id', $trainingTypeId)
             ->orderBy('expiry_date', 'asc')
             ->first();
 
         if (!$membershipPack) {
-            return redirect()->route('trainings.index')->with('error', 'Não possui nenhum pack de aulas acompanhadas disponível para se inscrever.');
+            return redirect()->route('trainings.index')->with('error', 'Não possui nenhum pack disponível para se inscrever neste tipo de treino.');
         }
 
-        if ($training->users()->count() < $training->max_students) {
+        $maxCapacity = $training->trainingType->max_capacity;
+        if ($training->users()->count() < $maxCapacity) {
             $training->users()->attach($user->id);
 
             $membershipPack->pivot->quantity_remaining -= 1;
@@ -274,11 +265,14 @@ class TrainingController extends Controller
             $training->users()->detach($user->id);
 
             $today = Carbon::today();
+            $trainingTypeId = $training->training_type_id;
+
             $membershipPack = $user->membership->packs()
                 ->where('expiry_date', '>=', $today)
-                ->where('has_personal_trainer', true)
+                ->where('training_type_id', $trainingTypeId)
                 ->orderBy('expiry_date', 'asc')
                 ->first();
+
             if ($membershipPack) {
                 $membershipPack->pivot->quantity_remaining += 1;
                 $membershipPack->pivot->save();

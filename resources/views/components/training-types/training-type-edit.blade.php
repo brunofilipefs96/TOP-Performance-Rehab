@@ -78,15 +78,11 @@
 
                 <div class="mb-4" id="max_capacity_field">
                     <label for="max_capacity" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Capacidade Máxima</label>
-                    <input type="number"
-                           id="max_capacity"
-                           name="max_capacity"
-                           autocomplete="max_capacity"
-                           placeholder="Insira a capacidade máxima"
-                           class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500
-                           @error('max_capacity') border-red-500 @enderror dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50"
-                           value="{{ old('max_capacity', $training_type->max_capacity) }}"
-                           aria-describedby="max_capacityHelp">
+                    <select id="max_capacity" name="max_capacity" class="mt-1 block w-full p-2 bg-gray-100 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500 dark:bg-gray-600 dark:text-white">
+                        <option value="1" {{ old('max_capacity', $training_type->max_capacity) == 1 ? 'selected' : '' }}>1</option>
+                        <option value="2" {{ old('max_capacity', $training_type->max_capacity) == 2 ? 'selected' : '' }}>2</option>
+                        <option value="3" {{ old('max_capacity', $training_type->max_capacity) == 3 ? 'selected' : '' }}>3</option>
+                    </select>
                     @error('max_capacity')
                     <span class="text-red-500 text-sm mt-2" role="alert">
                         <strong>{{ $message }}</strong>
@@ -111,6 +107,7 @@
         </div>
     </div>
 </div>
+
 <script>
     function confirmarAtualizacao() {
         document.getElementById('confirmation-modal').classList.remove('hidden');
@@ -132,6 +129,9 @@
         if (hasPersonalTrainer == "1") {
             maxCapacityField.style.display = 'block';
             maxCapacityInput.required = true;
+            if (!maxCapacityInput.value) {
+                maxCapacityInput.value = 1; // Definir valor padrão para 1
+            }
         } else {
             maxCapacityField.style.display = 'none';
             maxCapacityInput.required = false;

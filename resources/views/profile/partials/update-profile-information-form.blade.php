@@ -13,9 +13,28 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
         @csrf
         @method('patch')
+
+        <!-- Profile Photo -->
+        <div class="flex items-center gap-4">
+            <div class="relative">
+                <label for="image" class="cursor-pointer">
+                    @if ($user->image)
+                        <img id="profile-image-preview" src="{{ asset('storage/' . $user->image) }}" alt="{{ $user->name }}" class="w-20 h-20 rounded-full object-cover border-2 border-gray-300 dark:border-gray-600 shadow-sm">
+                    @else
+                        <i id="profile-image-icon" class="fa-solid fa-user w-20 h-20 rounded-full border-2 border-gray-300 dark:border-gray-600 shadow-sm flex items-center justify-center text-gray-800 dark:text-white"></i>
+                    @endif
+                </label>
+                <input type="file" name="image" id="image" class="hidden" accept="image/*" onchange="previewImage(event)">
+            </div>
+            <div>
+                <x-input-label class="dark:text-white text-gray-800" for="image" :value="__('Foto de Perfil')" />
+                <x-input-error class="mt-2" :messages="$errors->get('image')" />
+                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Clique na imagem para alterar sua foto de perfil.') }}</p>
+            </div>
+        </div>
 
         <div>
             <x-input-label class="dark:text-white text-gray-800" for="full_name" :value="__('Nome Completo')" />
@@ -48,7 +67,7 @@
                 </label>
             </div>
             <div id="other_gender_container" class="block mt-1 w-full" style="{{ old('gender', $user->gender) != 'male' && old('gender', $user->gender) != 'female' ? 'display: block;' : 'display: none;' }}">
-                <x-text-input id="other_gender" class="block mt-1 w-full dark:text-gray-800 text-gray-800" type="text" name="other_gender" :value="old('other_gender', old('gender', $user->gender) != 'male' && old('gender', $user->gender) != 'female' ? $user->gender : '')" placeholder="{{ __('Specify') }}" />
+                <x-text-input id="other_gender" class="block mt-1 w-full dark:text-gray-800 text-gray-800" type="text" name="other_gender" :value="old('other_gender', old('gender', $user->gender) != 'male' && old('gender', $user->gender) != 'female' ? $user->gender : '')" placeholder="{{ __('Especificar') }}" />
                 <x-input-error :messages="$errors->get('other_gender')" class="mt-2" />
             </div>
             <x-input-error :messages="$errors->get('gender')" class="mt-2" />
@@ -70,6 +89,31 @@
     </form>
 
     <script>
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('profile-image-preview');
+                    const icon = document.getElementById('profile-image-icon');
+                    if (preview) {
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                        if (icon) icon.style.display = 'none';
+                    } else if (icon) {
+                        icon.classList.add('hidden');
+                        const img = document.createElement('img');
+                        img.id = 'profile-image-preview';
+                        img.src = e.target.result;
+                        img.alt = 'Profile Image Preview';
+                        img.className = 'w-20 h-20 rounded-full object-cover border-2 border-gray-300 dark:border-gray-600 shadow-sm';
+                        icon.parentNode.insertBefore(img, icon);
+                    }
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             const otherRadio = document.getElementById('other');
             const otherGenderContainer = document.getElementById('other_gender_container');

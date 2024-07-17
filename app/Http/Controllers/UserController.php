@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ClientType;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -11,12 +12,40 @@ use Illuminate\Support\Facades\Storage;
 class UserController extends Controller
 {
     use AuthorizesRequests;
-
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('viewAny', User::class);
-        $users = User::with('roles')->orderBy('id', 'desc')->paginate(12);
-        return view('pages.users.index', ['users' => $users]);
+
+        $search = $request->input('search');
+        $role = $request->input('role', 'all'); // Default to 'all' if filter is not provided
+
+        $users = User::with('roles')
+            ->when($search, function ($query, $search) {
+                return $query->where(function($q) use ($search) {
+                    $search = strtolower($search);
+                    $q->whereRaw('LOWER(full_name) LIKE ?', ["%{$search}%"])
+                        ->orWhereRaw('LOWER(nif) LIKE ?', ["%{$search}%"]);
+                });
+            })
+            ->when($role != 'all', function ($query) use ($role) {
+                if ($role === 'client') {
+                    return $query->whereHas('roles', function ($q) {
+                        $q->where('name', 'client');
+                    })->has('roles', '=', 1);
+                } else {
+                    return $query->whereHas('roles', function ($q) use ($role) {
+                        $q->where('name', $role);
+                    });
+                }
+            })
+            ->orderBy('id', 'asc')
+            ->paginate(12);
+
+        return view('pages.users.index', [
+            'users' => $users,
+            'search' => $search,
+            'role' => $role,
+        ]);
     }
 
     public function show(User $user)
@@ -24,10 +53,12 @@ class UserController extends Controller
         $this->authorize('view', $user);
 
         $roles = Role::whereNotIn('name', $user->roles->pluck('name'))->get();
+        $clientTypes = ClientType::all();
 
         return view('pages.users.show', [
             'user' => $user,
             'roles' => $roles,
+            'clientTypes' => $clientTypes,
         ]);
     }
 
@@ -78,5 +109,19 @@ class UserController extends Controller
         }
 
         return redirect()->route('users.show', $user)->with('success', 'Cargo removido com sucesso.');
+    }
+
+    public function updateClientType(Request $request, User $user)
+    {
+        $this->authorize('update', $user);
+
+        $request->validate([
+            'client_type_id' => 'nullable|exists:client_types,id',
+        ]);
+
+        $user->client_type_id = $request->input('client_type_id');
+        $user->save();
+
+        return redirect()->route('users.show', $user)->with('success', 'Tipo de cliente atualizado com sucesso.');
     }
 }

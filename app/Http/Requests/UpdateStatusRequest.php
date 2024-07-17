@@ -25,4 +25,13 @@ class UpdateStatusRequest extends FormRequest
             'name' => 'required|string|max:255',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'O nome é obrigatório.',
+            'name.string' => 'O nome deve ser uma string.',
+            'name.max' => 'O nome não pode ter mais que 255 caracteres.',
+        ];
+    }
 }

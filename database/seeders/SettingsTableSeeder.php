@@ -23,6 +23,17 @@ class SettingsTableSeeder extends Seeder
             ['key' => 'horario_fim_sabado', 'value' => '18:00'],
             ['key' => 'telemovel', 'value' => '+22 333-444-555'],
             ['key' => 'email', 'value' => 'ginasiotop@email.pt'],
+            ['key' => 'top_paddle_client_membership_discount', 'value' => '10'],
+            ['key' => 'top_paddle_client_insurance_discount', 'value' => '10'],
+            ['key' => 'top_paddle_client_trainings_discount', 'value' => '10'],
+            ['key' => 'top_paddle_admin_membership_discount', 'value' => '100'],
+            ['key' => 'top_paddle_admin_insurance_discount', 'value' => '100'],
+            ['key' => 'top_paddle_admin_funcional_training_discount', 'value' => '100'],
+            ['key' => 'top_paddle_admin_personal_training_trainings_discount', 'value' => '30'],
+            ['key' => 'top_paddle_employee_membership_discount', 'value' => '100'],
+            ['key' => 'top_paddle_employee_insurance_discount', 'value' => '100'],
+            ['key' => 'top_paddle_employee_funcional_training_discount', 'value' => '45'],
+            ['key' => 'top_paddle_employee_personal_training_trainings_discount', 'value' => '30'],
         ];
 
         foreach ($settings as $setting) {

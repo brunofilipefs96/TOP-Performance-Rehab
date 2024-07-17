@@ -13,6 +13,8 @@ class TrainingType extends Model
     protected $fillable = [
         'name',
         'image',
+        'max_capacity',
+        'has_personal_trainer'
     ];
 
     public function trainings()
@@ -23,5 +25,10 @@ class TrainingType extends Model
     public function memberships()
     {
         return $this->belongsToMany(Membership::class);
+    }
+
+    public function packs()
+    {
+        return $this->hasMany(Pack::class);
     }
 }

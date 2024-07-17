@@ -24,7 +24,7 @@ class MembershipPolicy
      */
     public function view(User $user, $membership): bool
     {
-        return $user->id === $membership->user_id || $user->hasRole('admin');
+        return $user->id === $membership->user_id || $user->hasRole('admin') || $user->hasRole('personal_trainer');
     }
 
     /**

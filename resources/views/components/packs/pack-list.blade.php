@@ -1,5 +1,5 @@
-<div class="container mx-auto mt-5">
-    <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Lista de Packs</h1>
+<div class="container mx-auto mt-5 mb-10">
+   <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Lista de Packs</h1>
     @can('create', App\Models\Pack::class)
         <div class="mb-10 flex justify-between items-center">
             <a href="{{ url('packs/create') }}">
@@ -8,140 +8,98 @@
                     Adicionar Pack
                 </button>
             </a>
-            <div class="relative w-1/3">
-                <i class="fa-solid fa-magnifying-glass absolute w-5 h-5 left-3 top-1/2 transform -translate-y-1/2 text-black dark:text-white"></i>
-                <input type="text" id="search" placeholder="Pesquisar packs..." class="w-full p-2 pl-10 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-light-gray dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
-            </div>
         </div>
     @endcan
-    <hr class="mb-10 border-gray-400 dark:border-gray-300">
 
-    <h1 class="text-2xl mb-5 mt-10 dark:text-white text-gray-800">Pack Individual</h1>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        @foreach ($packs as $pack)
-            @if (!$pack->has_personal_trainer)
-                <div class="pack-card dark:bg-gray-800 bg-gray-500 rounded-lg overflow-hidden shadow-md text-white select-none transform transition-transform duration-300 hover:scale-105 flex flex-col justify-between cursor-pointer" data-name="{{ $pack->name }}" onclick="location.href='{{ url('packs/' . $pack->id) }}'">
-                    <div class="p-4 dark:bg-gray-800 bg-gray-500 flex-grow">
-                        <h3 class="text-lg font-semibold mb-2"><i class="fa-solid fa-box w-5 h-5 mr-2"></i>{{ $pack->name }}</h3>
-                        <p class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-md">
-                            <i class="fa-solid fa-hourglass-half w-4 h-4 mr-2"></i>
-                            <span>{{ $pack->duration }} Dias</span>
-                        </p>
-                        <p class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-md">
-                            <i class="fa-regular fa-calendar-check w-4 h-4 mr-2"></i>
-                            <span>{{ $pack->trainings_number }} Treinos</span>
-                        </p>
-                        <p class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-md">
-                            <i class="fa-solid fa-coins w-4 h-4 mr-2"></i>
-                            <span>{{ $pack->price }}€</span>
-                        </p>
-                    </div>
-                    <div class="flex justify-end items-center p-4 mt-auto space-x-2" onclick="event.stopPropagation();">
-                        @if(Auth::user()->hasRole('admin'))
-                            @can('update', $pack)
-                                <a href="{{ url('packs/' . $pack->id . '/edit') }}" class="bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400 mr-2">
-                                    <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
-                                    Editar
-                                </a>
-                            @endcan
-                            @can('delete', $pack)
-                                <form id="delete-form-{{$pack->id}}" action="{{ url('packs/' . $pack->id) }}" method="POST" class="inline mr-2">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500" onclick="confirmDelete({{ $pack->id }})">
-                                        <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
-                                        Eliminar
-                                    </button>
-                                </form>
-                            @endcan
-                        @else
-                            @if(Auth::user()->membership && Auth::user()->membership->status->name === 'active')
-                                <form action="{{ route('cart.addPack') }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="pack_id" value="{{ $pack->id }}">
-                                    <button type="submit" class="bg-blue-500 dark:bg-lime-500 text-white flex items-center px-2 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400 text-sm">
-                                        <i class="fa-solid fa-cart-plus w-4 h-4 mr-2"></i>
-                                        Adicionar
-                                    </button>
-                                </form>
-                            @else
-                                <button type="button" class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 flex items-center px-2 py-1 rounded-md cursor-not-allowed text-sm" title="Necessita de uma matrícula ativa">
-                                    <i class="fa-solid fa-lock w-4 h-4 mr-2"></i>
-                                    Adicionar
-                                </button>
-                            @endif
-                        @endif
-                    </div>
-                </div>
-            @endif
-        @endforeach
+    <div class="mb-10 flex justify-between items-center">
+        <div class="relative w-full sm:w-1/3">
+            <select id="filter" class="w-full p-2 border-gray-300 border rounded-md shadow-sm text-gray-800 bg-white dark:border-gray-600 dark:bg-gray-600 dark:text-white focus:border-blue-500 focus:ring-blue-500 dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50" onchange="filterPacks()">
+                <option value="all" {{ request()->get('filter') == 'all' ? 'selected' : '' }}>Todos</option>
+                <option value="personal_trainer" {{ request()->get('filter') == 'personal_trainer' ? 'selected' : '' }}>Acompanhados</option>
+                <option value="individual" {{ request()->get('filter') == 'individual' ? 'selected' : '' }}>Livres</option>
+            </select>
+        </div>
     </div>
 
-    <hr class="mt-10 border-gray-800 dark:border-white">
+    <hr class="mb-10 border-gray-400 dark:border-gray-300">
 
-    <h1 class="text-2xl mb-5 mt-10 dark:text-white text-gray-800">Pack com Personal Trainer</h1>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div id="packs-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @foreach ($packs as $pack)
-            @if ($pack->has_personal_trainer)
-                <div class="pack-card dark:bg-gray-800 bg-gray-500 rounded-lg overflow-hidden shadow-md text-white select-none transform transition-transform duration-300 hover:scale-105 flex flex-col justify-between cursor-pointer" data-name="{{ $pack->name }}" onclick="location.href='{{ url('packs/' . $pack->id) }}'">
-                    <div class="p-4 dark:bg-gray-800 bg-gray-500 flex-grow">
-                        <h3 class="text-lg font-semibold mb-2"><i class="fa-solid fa-box w-5 h-5 mr-2"></i>{{ $pack->name }}</h3>
-                        <p class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-md">
-                            <i class="fa-solid fa-calendar w-4 h-4 mr-2"></i>
-                            <span>{{ $pack->duration }} Dias</span>
-                        </p>
-                        <p class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-md">
-                            <i class="fa-solid fa-dumbbell w-4 h-4 mr-2"></i>
-                            <span>{{ $pack->trainings_number }} Treinos</span>
-                        </p>
-                        <p class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-md">
-                            <i class="fa-solid fa-euro-sign w-4 h-4 mr-2"></i>
-                            <span>{{ $pack->price }}€</span>
-                        </p>
-                    </div>
-                    <div class="flex justify-end items-center p-4 mt-auto space-x-2" onclick="event.stopPropagation();">
-                        @if(Auth::user()->hasRole('admin'))
-                            @can('update', $pack)
-                                <a href="{{ url('packs/' . $pack->id . '/edit') }}" class="bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400 mr-2">
-                                    <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
-                                    Editar
-                                </a>
-                            @endcan
-                            @can('delete', $pack)
-                                <form id="delete-form-{{$pack->id}}" action="{{ url('packs/' . $pack->id) }}" method="POST" class="inline mr-2">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500" onclick="confirmDelete({{ $pack->id }})">
-                                        <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
-                                        Eliminar
-                                    </button>
-                                </form>
-                            @endcan
+            <div class="pack-card dark:bg-gray-800 bg-gray-500 rounded-lg overflow-hidden shadow-md text-white select-none transform transition-transform duration-300 hover:scale-105 flex flex-col justify-between cursor-pointer" data-name="{{ $pack->name }}" onclick="location.href='{{ url('packs/' . $pack->id) }}'">
+                <div class="p-4 dark:bg-gray-800 bg-gray-500 flex-grow">
+                    <h3 class="text-lg font-semibold mb-2 flex items-center">
+                        @if($pack->trainingType->has_personal_trainer)
+                            @if($pack->trainingType->max_capacity == 1)
+                                <i class="fa-solid fa-user w-5 h-5 mr-1"></i>
+                            @elseif($pack->trainingType->max_capacity == 2)
+                                <i class="fa-solid fa-user-group w-5 h-5 mr-1"></i>
+                            @elseif($pack->trainingType->max_capacity >= 3)
+                                <i class="fa-solid fa-users w-5 h-5 mr-1"></i>
+                            @endif
                         @else
-                            @if(Auth::user()->membership && Auth::user()->membership->status->name === 'active')
-                                <form action="{{ route('cart.addPack') }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="pack_id" value="{{ $pack->id }}">
-                                    <button type="submit" class="bg-blue-500 dark:bg-lime-500 text-white flex items-center px-2 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400 text-sm">
-                                        <i class="fa-solid fa-cart-plus w-4 h-4 mr-2"></i>
-                                        Adicionar
-                                    </button>
-                                </form>
-                            @else
-                                <button type="button" class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 flex items-center px-2 py-1 rounded-md cursor-not-allowed text-sm" title="Necessita de uma matrícula ativa">
-                                    <i class="fa-solid fa-lock w-4 h-4 mr-2"></i>
+                            <i class="fa-solid fa-person-running w-5 h-5 mr-1"></i>
+                        @endif
+                        {{ $pack->name }}
+                    </h3>
+                    <p class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-md">
+                        <i class="fa-solid fa-hourglass-half w-4 h-4 mr-2"></i>
+                        <span>Duração: {{ $pack->duration }} Dias</span>
+                    </p>
+                    <p class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-md">
+                        <i class="fa-regular fa-calendar-check w-4 h-4 mr-2"></i>
+                        <span>Treinos: {{ $pack->trainings_number }}</span>
+                    </p>
+                    <p class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-md">
+                        <i class="fa-solid fa-user-tie w-4 h-4 mr-2"></i>
+                        <span>{{ $pack->trainingType->has_personal_trainer ? 'Acompanhado' : 'Livre' }}</span>
+                    </p>
+                    <p class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-md">
+                        <i class="fa-solid fa-coins w-4 h-4 mr-2"></i>
+                        <span>Preço: {{ $pack->price }}€</span>
+                    </p>
+                </div>
+                <div class="flex justify-end items-center p-4 mt-auto space-x-2" onclick="event.stopPropagation();">
+                    @if(Auth::user()->hasRole('admin'))
+                        @can('update', $pack)
+                            <a href="{{ url('packs/' . $pack->id . '/edit') }}" class="bg-blue-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-blue-500 dark:bg-gray-500 dark:hover:bg-gray-400 mr-2">
+                                <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
+                                Editar
+                            </a>
+                        @endcan
+                        @can('delete', $pack)
+                            <form id="delete-form-{{$pack->id}}" action="{{ url('packs/' . $pack->id) }}" method="POST" class="inline mr-2">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button" class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500" onclick="confirmDelete({{ $pack->id }})">
+                                    <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
+                                    Eliminar
+                                </button>
+                            </form>
+                        @endcan
+                    @else
+                        @if(Auth::user()->membership && Auth::user()->membership->status->name === 'active')
+                            <form action="{{ route('cart.addPack') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="pack_id" value="{{ $pack->id }}">
+                                <button type="submit" class="bg-blue-500 dark:bg-lime-500 text-white flex items-center px-2 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400 text-sm">
+                                    <i class="fa-solid fa-cart-plus w-4 h-4 mr-2"></i>
                                     Adicionar
                                 </button>
-                            @endif
+                            </form>
+                        @else
+                            <button type="button" class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 flex items-center px-2 py-1 rounded-md cursor-not-allowed text-sm" title="Necessita de uma matrícula ativa">
+                                <i class="fa-solid fa-lock w-4 h-4 mr-2"></i>
+                                Adicionar
+                            </button>
                         @endif
-                    </div>
+                    @endif
                 </div>
-            @endif
+            </div>
         @endforeach
     </div>
 
     <div class="flex justify-center mt-4 mb-3">
-        {{ $packs->links() }}
+        {{ $packs->appends(request()->query())->links() }}
     </div>
 </div>
 
@@ -163,14 +121,12 @@
         <p class="mb-4 text-red-500 dark:text-red-300" id="confirmation-message">Não poderá reverter isso!</p>
         <div class="flex justify-end gap-4">
             <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400" onclick="cancelAction()">Cancelar</button>
-            <button type="button" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500" onclick="confirmAction()">Confirmar</button>
+            <button type="button" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500" onclick="confirmAction()">Eliminar</button>
         </div>
     </div>
 </div>
 
 <script>
-    let packDeleted = 0;
-
     function confirmDelete(id) {
         document.getElementById('confirmation-modal').classList.remove('hidden');
         packDeleted = id;
@@ -189,26 +145,9 @@
     }
 
     function filterPacks() {
-        const searchTerm = document.getElementById('search').value.toLowerCase();
-        const packCards = document.querySelectorAll('.pack-card');
-        packCards.forEach(card => {
-            const name = card.getAttribute('data-name').toLowerCase();
-            if (name.includes(searchTerm)) {
-                card.classList.remove('hidden');
-            } else {
-                card.classList.add('hidden');
-            }
-        });
+        const filterValue = document.getElementById('filter').value;
+        const url = new URL(window.location.href);
+        url.searchParams.set('filter', filterValue);
+        window.location.href = url.href;
     }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById('search');
-        if (searchInput) {
-            searchInput.addEventListener('input', filterPacks);
-        }
-
-        @if($showMembershipModal)
-        document.getElementById('membership-modal').classList.remove('hidden');
-        @endif
-    });
 </script>

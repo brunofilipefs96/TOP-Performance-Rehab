@@ -63,6 +63,37 @@
                     @enderror
                 </div>
 
+                <div class="mb-4">
+                    <label for="has_personal_trainer" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Tem Personal Trainer?</label>
+                    <select id="has_personal_trainer" name="has_personal_trainer" class="mt-1 block w-full p-2 bg-gray-100 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500 dark:bg-gray-600 dark:text-white" onchange="toggleMaxCapacity()">
+                        <option value="1" {{ $training_type->has_personal_trainer ? 'selected' : '' }}>Sim</option>
+                        <option value="0" {{ !$training_type->has_personal_trainer ? 'selected' : '' }}>Não</option>
+                    </select>
+                    @error('has_personal_trainer')
+                    <span class="text-red-500 text-sm mt-2" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+
+                <div class="mb-4" id="max_capacity_field">
+                    <label for="max_capacity" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Capacidade Máxima</label>
+                    <input type="number"
+                           id="max_capacity"
+                           name="max_capacity"
+                           autocomplete="max_capacity"
+                           placeholder="Insira a capacidade máxima"
+                           class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500
+                           @error('max_capacity') border-red-500 @enderror dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50"
+                           value="{{ old('max_capacity', $training_type->max_capacity) }}"
+                           aria-describedby="max_capacityHelp">
+                    @error('max_capacity')
+                    <span class="text-red-500 text-sm mt-2" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+
                 <div class="flex justify-end gap-2 mt-10">
                     <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:hover:bg-lime-300 dark:text-gray-900 text-sm" onclick="confirmarAtualizacao()">Atualizar</button>
                 </div>
@@ -91,5 +122,24 @@
 
     document.getElementById('confirm-button').addEventListener('click', function() {
         document.getElementById('update-form').submit();
+    });
+
+    function toggleMaxCapacity() {
+        var hasPersonalTrainer = document.getElementById('has_personal_trainer').value;
+        var maxCapacityField = document.getElementById('max_capacity_field');
+        var maxCapacityInput = document.getElementById('max_capacity');
+
+        if (hasPersonalTrainer == "1") {
+            maxCapacityField.style.display = 'block';
+            maxCapacityInput.required = true;
+        } else {
+            maxCapacityField.style.display = 'none';
+            maxCapacityInput.required = false;
+            maxCapacityInput.value = null;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleMaxCapacity(); // Chama a função para definir o estado inicial
     });
 </script>

@@ -39,4 +39,9 @@ class Training extends Model
     {
         return $this->belongsTo(User::class, 'personal_trainer_id');
     }
+
+    public function packs()
+    {
+        return $this->hasMany(Pack::class);
+    }
 }

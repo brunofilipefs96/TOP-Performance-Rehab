@@ -15,12 +15,12 @@ class RoomSeeder extends Seeder
     {
         Room::factory()->create([
             'name' => 'Funcional',
-            'capacity' => 5,
+            'capacity' => 10,
         ]);
 
         Room::factory()->create([
             'name' => 'Pilates',
-            'capacity' => 10,
+            'capacity' => 5,
         ]);
 
     }

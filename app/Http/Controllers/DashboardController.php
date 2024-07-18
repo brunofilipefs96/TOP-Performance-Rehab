@@ -85,7 +85,6 @@ class DashboardController extends Controller
 
         $user = Auth::user();
 
-        // Date manipulation for week navigation
         if (!$request->session()->has('selectedWeek')) {
             $request->session()->put('selectedWeek', Carbon::now()->startOfWeek());
         }

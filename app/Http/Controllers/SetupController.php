@@ -22,12 +22,14 @@ class SetupController extends Controller
     {
         $user = auth()->user();
 
-        foreach ($user->sales as $sale) {
-            if ($sale->products()->count() == 0 && $sale->packs()->count() == 0) {
-                if ($user->membership->status->name == 'pending_payment') {
-                    return redirect('sales/'.$sale->id);
-                } else {
-                    return redirect('memberships/'.$user->membership->id);
+        if($user->membership){
+            foreach ($user->sales as $sale) {
+                if ($sale->products()->count() == 0 && $sale->packs()->count() == 0) {
+                    if ($user->membership->status->name == 'pending_payment') {
+                        return redirect('sales/'.$sale->id);
+                    } else {
+                        return redirect('memberships/'.$user->membership->id);
+                    }
                 }
             }
         }
@@ -59,7 +61,7 @@ class SetupController extends Controller
         }
 
         if($user->addresses || $user->addresses->count() <= 0 && $user->membership && $user->membership->trainingTypes->count() <= 0 && $user->insurance) {
-            if($user->membership->status->name == 'active' && $user->membership->insurance->status->name) {
+            if($user->membership->status->name == 'pending_payment' && $user->membership->insurance->status->name == 'pending_payment') {
                 return redirect()->route('setup.paymentShow');
             }
             return redirect()->route('setup.awaitingShow');
@@ -200,18 +202,6 @@ class SetupController extends Controller
 
         return view('pages.setup.paymentShow',  ['user' => $user]);
     }
-    public function renewShow() {
-
-        $user = auth()->user();
-
-        if ($user->membership->status->name != 'inactive' || $user->membership->insurance->name == 'inactive') {
-            return redirect()->route('dashboard')->with('error', 'Apenas memberships inativas podem ser renovadas.');
-        }
-
-        return view('pages.setup.renewShow', ['user' => $user]);
-    }
-
-
     public function storeAddress(Request $request)
     {
         $validator = Validator::make($request->all(), [

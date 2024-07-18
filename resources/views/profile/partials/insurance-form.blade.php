@@ -9,18 +9,27 @@
             @if($user->membership->insurance)
                 <div class="flex items-center mt-5">
                     <span class="mr-2">Estado:</span>
-                    @if($user->membership->insurance->status->name == 'pending')
+                    @if($user->membership->insurance->status->name == 'pending' || $user->membership->insurance->status->name == 'renew_pending')
                         <span class="inline-block w-3 h-3 bg-yellow-500 rounded-full" title="Pendente"></span>
                         <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Pendente</span>
                     @elseif($user->membership->insurance->status->name == 'active')
-                        <span class="inline-block w-3 h-3 bg-green-500 rounded-full" title="Ativo"></span>
-                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Ativo</span>
-                    @elseif($user->membership->insurance->status->name == 'inactive')
-                        <span class="inline-block w-3 h-3 bg-red-500 rounded-full" title="Inativo"></span>
-                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Inativo</span>
-                    @elseif($user->membership->insurance->status->name == 'pending_payment')
+                        <span class="inline-block w-3 h-3 bg-green-500 rounded-full" title="Ativa"></span>
+                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Ativa</span>
+                    @elseif($user->membership->insurance->status->name == 'rejected')
+                        <span class="inline-block w-3 h-3 bg-red-500 rounded-full" title="Rejeitada"></span>
+                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Rejeitada</span>
+                    @elseif($user->membership->insurance->status->name == 'frozen')
+                        <span class="inline-block w-3 h-3 bg-blue-500 rounded-full" title="Congelada"></span>
+                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Congelada</span>
+                    @elseif($user->membership->insurance->status->name == 'pending_payment' || $user->membership->insurance->status->name == 'pending_renewPayment')
                         <span class="inline-block w-3 h-3 bg-yellow-500 rounded-full" title="Pagamento em espera"></span>
                         <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Pagamento em espera</span>
+                    @elseif($user->membership->insurance->status->name == 'awaiting_insurance')
+                        <span class="inline-block w-3 h-3 bg-yellow-500 rounded-full" title="Aguarda renovação do seguro"></span>
+                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Aguarda renovação do seguro</span>
+                    @elseif($user->membership->insurance->status->name == 'inactive')
+                        <span class="inline-block w-3 h-3 bg-red-500 rounded-full" title="Rejeitada"></span>
+                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Inativa</span>
                     @endif
                 </div>
                 <div class="flex items-center">

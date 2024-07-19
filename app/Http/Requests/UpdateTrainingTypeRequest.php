@@ -60,8 +60,11 @@ class UpdateTrainingTypeRequest extends FormRequest
     protected function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            if ($this->has_personal_trainer && (is_null($this->max_capacity) || $this->max_capacity <= 0)) {
-                $validator->errors()->add('max_capacity', 'Capacidade máxima é obrigatória e deve ser maior que 0 quando tem personal trainer.');
+            if ($this->has_personal_trainer && is_null($this->max_capacity)) {
+                return;
+            }
+            if ($this->has_personal_trainer && $this->max_capacity <= 0) {
+                $validator->errors()->add('max_capacity', 'Capacidade máxima deve ser maior que 0 quando tem personal trainer.');
             }
         });
     }

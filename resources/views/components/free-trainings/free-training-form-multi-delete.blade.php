@@ -33,6 +33,7 @@
                                 <th class="py-2 px-4 border-b dark:border-gray-700 text-left">Data</th>
                                 <th class="py-2 px-4 border-b dark:border-gray-700 text-left">Hora de Início</th>
                                 <th class="py-2 px-4 border-b dark:border-gray-700 text-left">Hora de Fim</th>
+                                <th class="py-2 px-4 border-b dark:border-gray-700 text-left">Tem alunos inscritos?</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -45,6 +46,9 @@
                                     <td class="py-2 px-4 border-b dark:border-gray-700 text-left">{{ Carbon::parse($freeTraining->start_date)->format('d/m/Y') }}</td>
                                     <td class="py-2 px-4 border-b dark:border-gray-700 text-left">{{ Carbon::parse($freeTraining->start_date)->format('H:i') }}</td>
                                     <td class="py-2 px-4 border-b dark:border-gray-700 text-left">{{ Carbon::parse($freeTraining->end_date)->format('H:i') }}</td>
+                                    <td class="py-2 px-4 border-b dark:border-gray-700 text-left">
+                                        {{ $freeTraining->users()->count() > 0 ? 'Sim' : 'Não' }}
+                                    </td>
                                 </tr>
                             @endforeach
                             </tbody>

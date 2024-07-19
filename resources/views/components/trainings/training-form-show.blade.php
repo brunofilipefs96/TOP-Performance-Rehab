@@ -51,7 +51,8 @@
                 $userPresence = $training->users()->where('user_id', auth()->id())->exists();
                 $userCancelled = $training->users()->where('user_id', auth()->id())->wherePivot('cancelled', true)->exists();
                 $currentDateTime = Carbon::now();
-                $remainingSpots = $training->trainingType->max_capacity - $training->users()->wherePivot('cancelled', false)->count();
+                $maxCapacity = $training->capacity ?? $training->trainingType->max_capacity;
+                $remainingSpots = $maxCapacity - $training->users()->wherePivot('cancelled', false)->count();
                 $trainingStartDateTime = Carbon::parse($training->start_date);
                 $trainingEndDateTime = Carbon::parse($training->end_date);
                 $userHasActiveMembership = auth()->user()->membership && auth()->user()->membership->status->name === 'active';
@@ -77,7 +78,7 @@
             @endif
 
             <div class="mb-4">
-                <h2 class="block text-gray-800 dark:text-white mb-2">Inscrições: {{ $training->users()->wherePivot('cancelled', false)->count() }}/{{ $training->trainingType->max_capacity }}</h2>
+                <h2 class="block text-gray-800 dark:text-white mb-2">Inscrições: {{ $training->users()->wherePivot('cancelled', false)->count() }}/{{ $maxCapacity }}</h2>
             </div>
 
             @if (auth()->user()->hasRole('admin') || auth()->user()->id === $training->personal_trainer_id)

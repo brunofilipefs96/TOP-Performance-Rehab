@@ -20,6 +20,7 @@ class TrainingTypeSeeder extends Seeder
             ['name' => 'PT Trio (Três Clientes)', 'image' => 'training_types/default.png', 'has_personal_trainer' => true, 'max_capacity' => 3],
             ['name' => 'PT Individual de Eletroestimulação', 'image' => 'training_types/default.png', 'has_personal_trainer' => true, 'max_capacity' => 1],
             ['name' => 'PT Individual de Pilates Equipamentos', 'image' => 'training_types/default.png', 'has_personal_trainer' => true, 'max_capacity' => 1],
+            ['name' => 'Treino Funcional', 'image' => 'training_types/default.png', 'has_personal_trainer' => true, 'max_capacity' => null],
         ];
 
         foreach ($trainingTypes as $type) {

@@ -64,6 +64,7 @@
                 <div class="mb-4" id="max_capacity_field" style="display: none;">
                     <label for="max_capacity" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Capacidade Máxima</label>
                     <select id="max_capacity" name="max_capacity" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500 dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
+                        <option value="" {{ old('max_capacity') == '' ? 'selected' : '' }}>Definir no próprio treino</option>
                         <option value="1" {{ old('max_capacity') == '1' ? 'selected' : '' }}>1</option>
                         <option value="2" {{ old('max_capacity') == '2' ? 'selected' : '' }}>2</option>
                         <option value="3" {{ old('max_capacity') == '3' ? 'selected' : '' }}>3</option>
@@ -92,6 +93,7 @@
         </div>
     </div>
 </div>
+
 <script>
     function confirmarCriacao() {
         document.getElementById('confirmation-modal').classList.remove('hidden');
@@ -112,13 +114,11 @@
 
         if (hasPersonalTrainer == "1") {
             maxCapacityField.style.display = 'block';
-            maxCapacityInput.required = true;
             if (maxCapacityInput.value === "") {
                 maxCapacityInput.value = "1";
             }
         } else {
             maxCapacityField.style.display = 'none';
-            maxCapacityInput.required = false;
             maxCapacityInput.value = null;
         }
     }

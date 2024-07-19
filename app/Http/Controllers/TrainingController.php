@@ -91,7 +91,7 @@ class TrainingController extends Controller
         $endDate = $startDate->copy()->addMinutes($duration);
 
         $trainingType = TrainingType::find($validatedData['training_type_id']);
-        $maxStudents = $trainingType->max_capacity;
+        $maxStudents = is_null($trainingType->max_capacity) && $trainingType->has_personal_trainer ? $validatedData['capacity'] : $trainingType->max_capacity;
 
         if ($request->has('repeat') && $request->repeat) {
             $repeatUntil = Carbon::parse($request->repeat_until);
@@ -108,6 +108,7 @@ class TrainingController extends Controller
                         $trainingData = $validatedData;
                         $trainingData['start_date'] = $currentDate->toDateTimeString();
                         $trainingData['end_date'] = $currentEndDate->toDateTimeString();
+                        $trainingData['capacity'] = $maxStudents;
 
                         Training::create($trainingData);
                         $createdAny = true;
@@ -123,6 +124,7 @@ class TrainingController extends Controller
             if ($request->passesValidation($startDate, $endDate, $validatedData['room_id'], $validatedData['personal_trainer_id'], $validatedData['training_type_id'])) {
                 $validatedData['start_date'] = $startDate->toDateTimeString();
                 $validatedData['end_date'] = $endDate->toDateTimeString();
+                $validatedData['capacity'] = $maxStudents;
 
                 Training::create($validatedData);
             } else {
@@ -241,7 +243,7 @@ class TrainingController extends Controller
             return redirect()->route('trainings.index')->with('error', 'Não possui nenhum pack disponível para se inscrever neste tipo de treino.');
         }
 
-        $maxCapacity = $training->trainingType->max_capacity;
+        $maxCapacity = $training->capacity ?? $training->trainingType->max_capacity;
         if ($training->users()->count() < $maxCapacity) {
             $training->users()->attach($user->id);
 

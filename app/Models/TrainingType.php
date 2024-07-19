@@ -22,6 +22,11 @@ class TrainingType extends Model
         return $this->hasMany(Training::class);
     }
 
+    public function freeTrainings()
+    {
+        return $this->hasMany(FreeTraining::class);
+    }
+
     public function memberships()
     {
         return $this->belongsToMany(Membership::class);

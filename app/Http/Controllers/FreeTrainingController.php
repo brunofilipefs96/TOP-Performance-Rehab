@@ -6,6 +6,7 @@ use App\Http\Requests\StoreFreeTrainingRequest;
 use App\Models\FreeTraining;
 use App\Models\GymClosure;
 use App\Models\Training;
+use App\Models\TrainingType;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
@@ -76,8 +77,10 @@ class FreeTrainingController extends Controller
     public function create()
     {
         $closures = GymClosure::pluck('closure_date')->toArray();
-        return view('pages.free-trainings.create', compact('closures'));
+        $trainingTypes = TrainingType::where('has_personal_trainer', false)->get();
+        return view('pages.free-trainings.create', compact('closures', 'trainingTypes'));
     }
+
 
     public function store(StoreFreeTrainingRequest $request)
     {
@@ -86,7 +89,7 @@ class FreeTrainingController extends Controller
         $startDate = Carbon::createFromFormat('Y-m-d', $validated['start_date']);
         $startTime = Carbon::createFromFormat('H:i', $validated['start_time']);
         $endTime = Carbon::createFromFormat('H:i', $validated['end_time']);
-        $duration = 30;
+        $duration = 60; // Alterado para 60 minutos
 
         $daysOfWeek = $request->input('days_of_week', []);
         $repeatUntil = $request->input('repeat_until');
@@ -126,6 +129,7 @@ class FreeTrainingController extends Controller
 
                 if (!$existingFreeTraining) {
                     FreeTraining::create([
+                        'training_type_id' => $validated['training_type_id'],
                         'name' => 'Treino Livre',
                         'max_students' => $validated['max_students'],
                         'start_date' => $startDateTime->toDateTimeString(),
@@ -153,10 +157,6 @@ class FreeTrainingController extends Controller
 
         return redirect()->route('free-trainings.index')->with('success', 'Treinos livres criados com sucesso.');
     }
-
-
-
-
 
     public function show(FreeTraining $freeTraining)
     {
@@ -201,34 +201,55 @@ class FreeTrainingController extends Controller
             return redirect()->route('free-trainings.index')->with('error', 'Já está inscrito neste treino livre.');
         }
 
-        if ($freeTraining->users()->count() < $freeTraining->max_students) {
-            $membershipPack = $user->membership->packs()
-                ->where('quantity_remaining', '>', 0)
-                ->where('expiry_date', '>=', Carbon::today())
-                ->where('has_personal_trainer', false)
-                ->orderBy('expiry_date', 'asc')
-                ->first();
+        $overlappingTrainings = FreeTraining::where('start_date', '<', $freeTraining->end_date)
+            ->where('end_date', '>', $freeTraining->start_date)
+            ->whereHas('users', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })->exists();
 
-            if ($membershipPack) {
-                $membershipPack->pivot->quantity_remaining -= 1;
-                $membershipPack->pivot->save();
-                $freeTraining->users()->attach($user->id);
-                return redirect()->route('free-trainings.index')->with('success', 'Inscrição em treino livre realizada com sucesso.');
-            } else {
-                return redirect()->route('free-trainings.index')->with('error', 'Você não possui packs disponíveis.');
-            }
+        if ($overlappingTrainings) {
+            return redirect()->route('free-trainings.index')->with('error', 'Já está inscrito noutro treino nesse horário.');
+        }
+
+        $today = Carbon::today();
+        $trainingTypeId = $freeTraining->training_type_id;
+
+        $membershipPack = $user->membership->packs()
+            ->where('quantity_remaining', '>', 0)
+            ->where('expiry_date', '>=', $today)
+            ->whereHas('trainingType', function ($query) {
+                $query->where('has_personal_trainer', false);
+            })
+            ->orderBy('expiry_date', 'asc')
+            ->first();
+
+        if (!$membershipPack) {
+            return redirect()->route('free-trainings.index')->with('error', 'Não possui nenhum pack disponível para se inscrever neste tipo de treino.');
+        }
+
+        if ($freeTraining->users()->count() < $freeTraining->max_students) {
+            $freeTraining->users()->attach($user->id);
+
+            $membershipPack->pivot->quantity_remaining -= 1;
+            $membershipPack->pivot->save();
+
+            return redirect()->route('free-trainings.index')->with('success', 'Inscreveu-se com sucesso.');
         } else {
-            return redirect()->route('free-trainings.index')->with('error', 'O treino livre está cheio.');
+            return redirect()->route('free-trainings.index')->with('error', 'O treino está cheio.');
         }
     }
+
 
     public function cancel(Request $request, FreeTraining $freeTraining)
     {
         $user = auth()->user();
 
+        $today = Carbon::today();
         $membershipPack = $user->membership->packs()
-            ->where('expiry_date', '>=', Carbon::today())
-            ->where('has_personal_trainer', false)
+            ->where('expiry_date', '>=', $today)
+            ->whereHas('trainingType', function ($query) {
+                $query->where('has_personal_trainer', false);
+            })
             ->orderBy('expiry_date', 'asc')
             ->first();
 
@@ -240,6 +261,7 @@ class FreeTrainingController extends Controller
         $freeTraining->users()->detach($user->id);
         return redirect()->route('free-trainings.index')->with('success', 'Inscrição em treino livre cancelada com sucesso.');
     }
+
 
     public function markPresence(Request $request, FreeTraining $freeTraining)
     {
@@ -275,7 +297,9 @@ class FreeTrainingController extends Controller
                 $today = Carbon::today();
                 $membershipPack = $user->membership->packs()
                     ->where('expiry_date', '>=', $today)
-                    ->where('has_personal_trainer', false)
+                    ->whereHas('trainingType', function ($query) {
+                        $query->where('has_personal_trainer', false);
+                    })
                     ->orderBy('expiry_date', 'asc')
                     ->first();
 
@@ -290,6 +314,7 @@ class FreeTrainingController extends Controller
         $freeTraining->delete();
         return redirect()->route('free-trainings.index')->with('success', 'Treino livre eliminado com sucesso.');
     }
+
 
     public function showMultiDelete(Request $request)
     {
@@ -321,7 +346,9 @@ class FreeTrainingController extends Controller
                     $today = Carbon::today();
                     $membershipPack = $user->membership->packs()
                         ->where('expiry_date', '>=', $today)
-                        ->where('has_personal_trainer', false)
+                        ->whereHas('trainingType', function ($query) {
+                            $query->where('has_personal_trainer', false);
+                        })
                         ->orderBy('expiry_date', 'asc')
                         ->first();
 
@@ -338,6 +365,5 @@ class FreeTrainingController extends Controller
 
         return redirect()->route('free-trainings.index')->with('success', 'Treinos livres removidos com sucesso!');
     }
-
 
 }

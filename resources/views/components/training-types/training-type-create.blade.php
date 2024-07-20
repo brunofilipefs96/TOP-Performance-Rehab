@@ -76,6 +76,23 @@
                     @enderror
                 </div>
 
+                <div class="mb-4">
+                    <label for="is_electrostimulation" class="block text-sm font-medium dark:text-gray-200 text-gray-800">É Eletroestimulação?</label>
+                    <div class="flex items-center">
+                        <input type="radio" id="is_electrostimulation_yes" name="is_electrostimulation" class="form-radio text-blue-500 dark:text-lime-400" value="1" {{ old('is_electrostimulation') == '1' ? 'checked' : '' }}>
+                        <label for="is_electrostimulation_yes" class="ml-2 text-sm font-medium text-gray-800 dark:text-gray-200">Sim</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="radio" id="is_electrostimulation_no" name="is_electrostimulation" class="form-radio text-blue-500 dark:text-lime-400" value="0" {{ old('is_electrostimulation') == '0' ? 'checked' : '' }} checked>
+                        <label for="is_electrostimulation_no" class="ml-2 text-sm font-medium text-gray-800 dark:text-gray-200">Não</label>
+                    </div>
+                    @error('is_electrostimulation')
+                    <span class="text-red-500 text-sm mt-2" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+
                 <div class="flex justify-end gap-2 mt-10">
                     <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:hover:bg-lime-300 dark:text-gray-900 text-sm" onclick="confirmarCriacao()">Criar</button>
                 </div>

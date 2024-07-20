@@ -4,8 +4,46 @@
     $user = Auth::user();
     if($user->membership) {
         $myPacks = $user->membership->packs;
+    }
+
+    $prohibitedConditions = [
+        'Gravidez', 'Tuberculose', 'AVC', 'Doença cardíaca', 'Enfarte', 'Angina de peito',
+        'Cirrose hepática', 'Insuficiência hepática', 'Pancreatite', 'Icterícia', 'Insuficiência renal',
+        'Cálculos renais', 'Quistos mamários', 'Epilepsia', 'Psoríase'
+    ];
+
+    $userConditions = [];
+    $isPregnant = false;
+    $hasCancer = false;
+
+    foreach ($user->entries as $entry) {
+        foreach ($entry->answers as $answer) {
+            if (is_array($answer->value)) {
+                $userConditions = array_merge($userConditions, $answer->value);
+            } else {
+                $userConditions[] = $answer->value;
+                if ($answer->question->content == 'Se é mulher, encontra-se grávida?' && $answer->value == 'Sim') {
+                    $isPregnant = true;
+                }
+                if (stripos($answer->value, 'Cancro') !== false) {
+                    $hasCancer = true;
+                }
+            }
         }
+    }
+
+    $showWarning = function($pack) use ($prohibitedConditions, $userConditions, $isPregnant, $hasCancer) {
+        if ($pack->trainingType && $pack->trainingType->is_electrostimulation) {
+            foreach ($prohibitedConditions as $condition) {
+                if (in_array($condition, $userConditions) || $isPregnant || $hasCancer) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
 @endphp
+
 <div class="container mx-auto mt-5 mb-10">
     @if(Auth::check() && Auth::user()->hasRole('client'))
         <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Seus packs disponíveis</h1>
@@ -34,7 +72,6 @@
                                     @endif
                                 </p>
                                 <p class="dark:text-gray-300 text-gray-200 mb-2 flex items-center text-md">
-
                                     <span>Válidade: {{ Carbon::parse($pack->pivot->expiry_date)->format('d/m/Y') }}</span>
                                 </p>
                             </div>
@@ -111,6 +148,12 @@
                         <i class="fa-solid fa-coins w-4 h-4 mr-2"></i>
                         <span>Preço: {{ $pack->price }}€</span>
                     </p>
+                    @if ($showWarning($pack))
+                        <p class="text-yellow-400 text-sm mb-2 flex items-center text-md">
+                            <i class="fa-solid fa-exclamation-triangle w-4 h-4 mr-2"></i>
+                            Este pack contém treinos que podem não ser recomendados devido às suas condições de saúde.
+                        </p>
+                    @endif
                 </div>
                 <div class="flex justify-end items-center p-4 mt-auto space-x-2" onclick="event.stopPropagation();">
                     @if(Auth::user()->hasRole('admin'))

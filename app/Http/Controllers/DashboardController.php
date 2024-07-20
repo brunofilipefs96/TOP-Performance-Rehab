@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FreeTraining;
 use App\Models\Product;
 use App\Models\Training;
 use App\Models\User;
@@ -79,8 +80,8 @@ class DashboardController extends Controller
 
     public function showCalendar(Request $request)
     {
-        if (!Auth::check()) {
-            abort(403, 'Unauthorized access.');
+        if (!Auth::check() || !Auth::user()->hasRole('client')) {
+            return redirect()->route('dashboard')->with('error', 'Acesso não autorizado.');
         }
 
         $user = Auth::user();
@@ -97,9 +98,14 @@ class DashboardController extends Controller
             ->whereBetween('start_date', [$startOfWeek, $endOfWeek])
             ->get();
 
+        $freeTrainings = $user->freeTrainings()
+            ->whereBetween('start_date', [$startOfWeek, $endOfWeek])
+            ->get();
+
         return view('pages.dashboard.calendar', [
             'user' => $user,
             'trainings' => $trainings,
+            'freeTrainings' => $freeTrainings,
             'startOfWeek' => $startOfWeek,
             'endOfWeek' => $endOfWeek,
             'selectedWeek' => $selectedWeek,

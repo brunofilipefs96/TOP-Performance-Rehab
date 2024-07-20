@@ -194,4 +194,23 @@ class SaleController extends Controller
     {
         //
     }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status_id' => 'required|exists:statuses,id',
+        ]);
+
+        $sale = Sale::findOrFail($id);
+
+        if ($sale->status_id == 6 && $request->status_id == 8) {
+            $sale->status_id = $request->status_id;
+            $sale->save();
+
+            return redirect()->route('sales.show', $id)->with('success', 'Estado da encomenda atualizado com sucesso.');
+        }
+
+        return redirect()->route('sales.show', $id)->with('error', 'Não é possível atualizar o estado da encomenda.');
+    }
+
 }

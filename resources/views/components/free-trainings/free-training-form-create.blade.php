@@ -125,19 +125,12 @@
         function populateTimeSelects() {
             for (let hour = {{ $startHour }}; hour <= {{ $endHour }}; hour++) {
                 let hourString = hour.toString().padStart(2, '0');
-                let option1 = document.createElement('option');
-                option1.value = `${hourString}:00`;
-                option1.textContent = `${hourString}:00`;
+                let option = document.createElement('option');
+                option.value = `${hourString}:00`;
+                option.textContent = `${hourString}:00`;
 
-                let option2 = document.createElement('option');
-                option2.value = `${hourString}:30`;
-                option2.textContent = `${hourString}:30`;
-
-                startTimeSelect.appendChild(option1.cloneNode(true));
-                startTimeSelect.appendChild(option2.cloneNode(true));
-
-                endTimeSelect.appendChild(option1.cloneNode(true));
-                endTimeSelect.appendChild(option2.cloneNode(true));
+                startTimeSelect.appendChild(option.cloneNode(true));
+                endTimeSelect.appendChild(option.cloneNode(true));
             }
         }
 

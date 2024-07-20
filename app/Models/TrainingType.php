@@ -14,7 +14,8 @@ class TrainingType extends Model
         'name',
         'image',
         'max_capacity',
-        'has_personal_trainer'
+        'has_personal_trainer',
+        'is_electrostimulation',
     ];
 
     public function trainings()

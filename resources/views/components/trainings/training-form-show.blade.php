@@ -1,4 +1,43 @@
-@php use Carbon\Carbon; @endphp
+@php
+    use Carbon\Carbon;
+
+    $prohibitedConditions = [
+        'Gravidez', 'Tuberculose', 'AVC', 'Doença cardíaca', 'Enfarte', 'Angina de peito',
+        'Cirrose hepática', 'Insuficiência hepática', 'Pancreatite', 'Icterícia', 'Insuficiência renal',
+        'Cálculos renais', 'Quistos mamários', 'Epilepsia', 'Psoríase'
+    ];
+
+    function userHasProhibitedCondition($user, $prohibitedConditions) {
+        $isPregnant = false;
+        $hasCancer = false;
+        $userConditions = [];
+
+        foreach ($user->entries as $entry) {
+            foreach ($entry->answers as $answer) {
+                if (is_array($answer->value)) {
+                    $userConditions = array_merge($userConditions, $answer->value);
+                } else {
+                    $userConditions[] = $answer->value;
+                    if ($answer->question->content == 'Se é mulher, encontra-se grávida?' && $answer->value == 'Sim') {
+                        $isPregnant = true;
+                    }
+                    if (stripos($answer->value, 'Cancro') !== false) {
+                        $hasCancer = true;
+                    }
+                }
+            }
+        }
+
+        foreach ($prohibitedConditions as $condition) {
+            if (in_array($condition, $userConditions) || $isPregnant || $hasCancer) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+@endphp
+
 <div class="container mx-auto mt-10 mb-10 pt-5 glass">
     <div class="flex justify-center">
         <div class="w-full max-w-lg bg-gray-300 dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm relative">
@@ -107,7 +146,10 @@
                                             @if ($user->pivot->cancelled === false && is_null($user->pivot->presence))
                                                 <tr>
                                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">
-                                                        <a href="{{ url('users/' . $user->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
+                                                        <a href="{{ url('memberships/' . $user->membership->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
+                                                            @if(userHasProhibitedCondition($user, $prohibitedConditions))
+                                                                <i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>
+                                                            @endif
                                                             {{ $user->firstLastName() }}
                                                         </a>
                                                     </td>
@@ -152,7 +194,10 @@
                                         @if ($user->pivot->cancelled === false)
                                             <tr>
                                                 <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">
-                                                    <a href="{{ url('users/' . $user->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
+                                                    <a href="{{ url('memberships/' . $user->membership->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
+                                                        @if(userHasProhibitedCondition($user, $prohibitedConditions))
+                                                            <i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>
+                                                        @endif
                                                         {{ $user->firstLastName() }}
                                                     </a>
                                                 </td>
@@ -169,7 +214,7 @@
                                         @else
                                             <tr>
                                                 <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">
-                                                    <a href="{{ url('users/' . $user->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
+                                                    <a href="{{ url('memberships/' . $user->membership->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
                                                         {{ $user->firstLastName() }}
                                                     </a>
                                                 </td>
@@ -189,6 +234,9 @@
                                 @foreach ($training->users as $user)
                                     <li>
                                         <a href="{{ url('memberships/' . $user->membership->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
+                                            @if(userHasProhibitedCondition($user, $prohibitedConditions))
+                                                <i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>
+                                            @endif
                                             {{ $user->firstLastName() }}
                                         </a>
                                     </li>
@@ -197,6 +245,10 @@
                         @endif
                     @endif
                 </div>
+                <p class="text-yellow-500 mt-4">
+                    <i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>
+                    Os alunos marcados com um triângulo amarelo possuem condições médicas que podem não ser adequadas para este treino de eletroestimulação.
+                </p>
             @endif
 
             @if (auth()->user()->hasRole('client'))

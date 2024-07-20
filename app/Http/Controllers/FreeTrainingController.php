@@ -233,9 +233,9 @@ class FreeTrainingController extends Controller
             $membershipPack->pivot->quantity_remaining -= 1;
             $membershipPack->pivot->save();
 
-            return redirect()->route('free-trainings.index')->with('success', 'Inscreveu-se com sucesso.');
+            return redirect()->back()->with('success', 'Inscreveu-se com sucesso.');
         } else {
-            return redirect()->route('free-trainings.index')->with('error', 'O treino está cheio.');
+            return redirect()->back()->with('error', 'O treino está cheio.');
         }
     }
 
@@ -259,7 +259,7 @@ class FreeTrainingController extends Controller
         }
 
         $freeTraining->users()->detach($user->id);
-        return redirect()->route('free-trainings.index')->with('success', 'Inscrição em treino livre cancelada com sucesso.');
+        return redirect()->back()->with('success', 'Inscrição em treino livre cancelada com sucesso.');
     }
 
 
@@ -312,7 +312,12 @@ class FreeTrainingController extends Controller
         }
 
         $freeTraining->delete();
-        return redirect()->route('free-trainings.index')->with('success', 'Treino livre eliminado com sucesso.');
+
+        if (str_contains(url()->previous(), route('free-trainings.show', $freeTraining->id))) {
+            return redirect()->route('free-trainings.index')->with('success', 'Treino livre eliminado com sucesso.');
+        } else {
+            return redirect()->back()->with('success', 'Treino livre eliminado com sucesso.');
+        }
     }
 
 
@@ -363,7 +368,7 @@ class FreeTrainingController extends Controller
             }
         }
 
-        return redirect()->route('free-trainings.index')->with('success', 'Treinos livres removidos com sucesso!');
+        return redirect()->route('free-trainings.multiDelete')->with('success', 'Treinos livres removidos com sucesso!');
     }
 
 }

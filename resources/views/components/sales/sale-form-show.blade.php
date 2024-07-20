@@ -95,6 +95,16 @@
         <div class="p-4 bg-gray-200 dark:bg-gray-700 rounded-lg shadow-md">
             <p><strong class="text-gray-800 dark:text-gray-200">Estado:</strong> <span class="text-gray-900 dark:text-gray-300">{{ $sale->translated_status }}</span></p>
         </div>
+        @if(auth()->user()->hasRole('admin') && $sale->status_id == 6)
+            <div class="mt-4">
+                <form action="{{ route('sales.updateStatus', $sale->id) }}" method="POST">
+                    @csrf
+                    @method('PATCH')
+                    <input type="hidden" name="status_id" value="8">
+                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">Marcar como Entregue</button>
+                </form>
+            </div>
+        @endif
     </div>
 
     <!-- Dados para Pagamento -->

@@ -32,6 +32,13 @@
                     @endif
                 </div>
             @else
+                @if ($errors->any())
+                    <div class="mb-4">
+                        @foreach ($errors->all() as $error)
+                            <p class="text-red-500 text-sm">{{ $error }}</p>
+                        @endforeach
+                    </div>
+                @endif
                 <form method="POST" action="{{ route('trainings.update', $training) }}" id="update-form">
                     @csrf
                     @method('PUT')
@@ -39,10 +46,17 @@
                         <label for="training_type_id" class="block dark:text-white text-gray-800">Tipo de Treino</label>
                         <select name="training_type_id" id="training_type_id" required class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-200 dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
                             @foreach ($trainingTypes as $type)
-                                <option value="{{ $type->id }}" {{ old('training_type_id', $training->training_type_id) == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
+                                <option value="{{ $type->id }}" {{ old('training_type_id', $training->training_type_id) == $type->id ? 'selected' : '' }} data-has-personal-trainer="{{ $type->has_personal_trainer }}" data-max-capacity="{{ $type->max_capacity }}">{{ $type->name }}</option>
                             @endforeach
                         </select>
                         @error('training_type_id')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div id="capacity-field" class="mb-4" style="display: {{ is_null($training->trainingType->max_capacity) && $training->trainingType->has_personal_trainer ? 'block' : 'none' }}">
+                        <label for="capacity" class="block dark:text-white text-gray-800">Capacidade</label>
+                        <input type="number" name="capacity" id="capacity" min="1" value="{{ old('capacity', $training->capacity) }}" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-200 dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
+                        @error('capacity')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
@@ -137,6 +151,28 @@
     });
 
     document.addEventListener('DOMContentLoaded', function () {
+        const trainingTypeSelect = document.getElementById('training_type_id');
+        const capacityField = document.getElementById('capacity-field');
+        const capacityInput = document.getElementById('capacity');
+
+        trainingTypeSelect.addEventListener('change', function () {
+            const selectedOption = trainingTypeSelect.options[trainingTypeSelect.selectedIndex];
+            const hasPersonalTrainer = selectedOption.getAttribute('data-has-personal-trainer') == '1';
+            const maxCapacity = selectedOption.getAttribute('data-max-capacity');
+
+            if (hasPersonalTrainer && maxCapacity == '') {
+                capacityField.style.display = 'block';
+                capacityInput.setAttribute('required', 'required');
+                capacityInput.setAttribute('max', '{{ setting("capacidade_maxima") }}');
+            } else {
+                capacityField.style.display = 'none';
+                capacityInput.removeAttribute('required');
+                capacityInput.removeAttribute('max');
+            }
+        });
+
+        trainingTypeSelect.dispatchEvent(new Event('change'));
+
         const startDateInput = document.getElementById('start_date');
         const startTimeInput = document.getElementById('start_time');
         const durationInput = document.getElementById('duration');

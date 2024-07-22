@@ -38,6 +38,11 @@
                 <label for="max_capacity" class="block text-gray-800 dark:text-white">Capacidade Máxima</label>
                 <input type="text" name="max_capacity" id="max_capacity" value="{{ $training_type->max_capacity ?? 'Ilimitada' }}" disabled class="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
             </div>
+
+            <div class="mb-4">
+                <label for="is_electrostimulation" class="block text-gray-800 dark:text-white">É de Eletroestimulação?</label>
+                <input type="text" name="is_electrostimulation" id="is_electrostimulation" value="{{ $training_type->is_electrostimulation ? 'Sim' : 'Não' }}" disabled class="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
+            </div>
         </div>
     </div>
 </div>

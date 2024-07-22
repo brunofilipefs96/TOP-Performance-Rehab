@@ -130,9 +130,17 @@
                         </form>
                     </li>
                 </div>
-                <div class="flex justify-center mb-8">
+                <!-- Theme Toggle Button and Notification Bell -->
+                <div class="flex justify-center mb-8 space-x-4">
+                    <!-- Notification Bell Icon -->
+                    <button type="button"
+                            class="flex items-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
+                        <i class="fa-solid fa-bell w-6 h-6 pt-[5px]"></i>
+                    </button>
+
+                    <!-- Theme Toggle Button -->
                     <button id="theme-toggle-client" type="button"
-                            class="theme-toggle-btn w-12 text-gray-800 dark:text-gray-400 hover:text-white dark:hover:text-yellow-400 rounded-lg text-sm p-2.5">
+                            class="flex items-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 theme-toggle-btn">
                         <svg id="theme-toggle-dark-icon-client" class="theme-toggle-dark-icon hidden w-5 h-5 mx-auto" fill="currentColor" viewBox="0 0 20 20"
                              xmlns="http://www.w3.org/2000/svg">
                             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
@@ -204,10 +212,18 @@
                         </li>
                     </ul>
                 </div>
-                <!-- Theme Toggle Button -->
-                <div class="flex justify-center mb-8">
+
+
+                <div class="flex justify-center mb-8 space-x-4">
+                    <!-- Notification Bell Icon -->
+                    <button type="button"
+                            class="flex items-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
+                        <i class="fa-solid fa-bell w-6 h-6 pt-[5px]"></i>
+                    </button>
+
+                    <!-- Theme Toggle Button -->
                     <button id="theme-toggle-client" type="button"
-                            class="theme-toggle-btn w-12 text-gray-800 dark:text-gray-400 hover:text-gray-400 dark:hover:text-yellow-400 rounded-lg text-sm p-2.5">
+                            class="flex items-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 theme-toggle-btn">
                         <svg id="theme-toggle-dark-icon-client" class="theme-toggle-dark-icon hidden w-5 h-5 mx-auto" fill="currentColor" viewBox="0 0 20 20"
                              xmlns="http://www.w3.org/2000/svg">
                             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>

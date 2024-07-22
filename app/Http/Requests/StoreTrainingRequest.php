@@ -32,6 +32,7 @@ class StoreTrainingRequest extends FormRequest
             'repeat_until' => 'nullable|required_if:repeat,true|date|after:start_date',
             'days_of_week' => 'nullable|array|required_if:repeat,true',
             'days_of_week.*' => 'in:1,2,3,4,5,6',
+            'capacity' => 'nullable|integer|min:1|max:' . setting('capacidade_maxima'),
         ];
     }
 
@@ -58,6 +59,9 @@ class StoreTrainingRequest extends FormRequest
             'repeat_until.after' => 'A data de repetição final deve ser posterior à data de início.',
             'days_of_week.required_if' => 'Por favor, selecione pelo menos um dia da semana para repetição.',
             'days_of_week.*.in' => 'O dia da semana selecionado é inválido.',
+            'capacity.integer' => 'A capacidade deve ser um número inteiro.',
+            'capacity.min' => 'A capacidade mínima é de 1.',
+            'capacity.max' => 'A capacidade máxima é de ' . setting('capacidade_maxima') . '.',
         ];
     }
 
@@ -113,7 +117,8 @@ class StoreTrainingRequest extends FormRequest
             }
 
             $trainingTypeId = $this->training_type_id;
-            $maxStudents = TrainingType::find($trainingTypeId)->max_capacity;
+            $trainingType = TrainingType::find($trainingTypeId);
+            $maxStudents = is_null($trainingType->max_capacity) && $trainingType->has_personal_trainer ? $this->capacity : $trainingType->max_capacity;
 
             if (!$this->validateRoomCapacity($startDate, $endDate, $this->room_id, $maxStudents)) {
                 $validator->errors()->add('room_id', 'A capacidade da sala não permite este treino.');
@@ -179,7 +184,8 @@ class StoreTrainingRequest extends FormRequest
 
         $room = Room::find($roomId);
         $occupiedCapacity = $conflictingTrainings->sum(function ($training) {
-            return $training->trainingType->max_capacity;
+            $trainingType = TrainingType::find($training->training_type_id);
+            return is_null($trainingType->max_capacity) && $trainingType->has_personal_trainer ? $training->capacity : $trainingType->max_capacity;
         });
         $availableCapacity = $room->capacity - $occupiedCapacity;
 
@@ -205,7 +211,8 @@ class StoreTrainingRequest extends FormRequest
     protected function validateGymCapacity($startDate, $endDate, $trainingTypeId)
     {
         $totalCapacity = setting('capacidade_maxima');
-        $maxStudents = TrainingType::find($trainingTypeId)->max_capacity;
+        $trainingType = TrainingType::find($trainingTypeId);
+        $maxStudents = is_null($trainingType->max_capacity) && $trainingType->has_personal_trainer ? $this->capacity : $trainingType->max_capacity;
 
         $regularTrainingOccupancy = Training::where(function ($query) use ($startDate, $endDate) {
             $query->whereBetween('start_date', [$startDate, $endDate])
@@ -215,7 +222,8 @@ class StoreTrainingRequest extends FormRequest
                         ->where('end_date', '>', $endDate);
                 });
         })->get()->sum(function ($training) {
-            return $training->trainingType->max_capacity;
+            $trainingType = TrainingType::find($training->training_type_id);
+            return is_null($trainingType->max_capacity) && $trainingType->has_personal_trainer ? $training->capacity : $trainingType->max_capacity;
         });
 
         $freeTrainingOccupancy = FreeTraining::where(function ($query) use ($startDate, $endDate) {

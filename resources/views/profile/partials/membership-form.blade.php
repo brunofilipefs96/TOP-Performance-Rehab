@@ -8,7 +8,7 @@
             @if($user->membership->status != null)
                 <div class="flex items-center mt-5">
                     <span class="mr-2">Estado:</span>
-                    @if($user->membership->status->name == 'pending')
+                    @if($user->membership->status->name == 'pending' || $user->membership->status->name == 'renew_pending')
                         <span class="inline-block w-3 h-3 bg-yellow-500 rounded-full" title="Pendente"></span>
                         <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Pendente</span>
                     @elseif($user->membership->status->name == 'active')
@@ -20,9 +20,15 @@
                     @elseif($user->membership->status->name == 'frozen')
                         <span class="inline-block w-3 h-3 bg-blue-500 rounded-full" title="Congelada"></span>
                         <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Congelada</span>
-                    @elseif($user->membership->status->name == 'pending_payment')
+                    @elseif($user->membership->status->name == 'pending_payment' || $user->membership->status->name == 'pending_renewPayment')
                         <span class="inline-block w-3 h-3 bg-yellow-500 rounded-full" title="Pagamento em espera"></span>
                         <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Pagamento em espera</span>
+                    @elseif($user->membership->status->name == 'awaiting_insurance')
+                        <span class="inline-block w-3 h-3 bg-yellow-500 rounded-full" title="Aguarda renovação do seguro"></span>
+                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Aguarda renovação do seguro</span>
+                    @elseif($user->membership->status->name == 'inactive')
+                        <span class="inline-block w-3 h-3 bg-red-500 rounded-full" title="Rejeitada"></span>
+                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Inativa</span>
                     @endif
                 </div>
             @endif

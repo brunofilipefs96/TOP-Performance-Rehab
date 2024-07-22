@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('room_id')->constrained();
             $table->foreignId('training_type_id')->constrained();
             $table->foreignId('personal_trainer_id')->constrained('users');
+            $table->integer('capacity')->nullable();   //Only for training types without max_capacity and with personal trainer
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->timestamp('created_at')->useCurrent();

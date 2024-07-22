@@ -9,6 +9,7 @@
             'amount' => $amount,
             'paymentVoucherUrl' => $paymentVoucherUrl,
             'receiptUrl' => $receiptUrl,
+            'validity' => $validity,
         ])
     @endcomponent
 

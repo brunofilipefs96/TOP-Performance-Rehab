@@ -100,8 +100,51 @@ class CartController extends Controller
 
         session()->put('packCart', $packCart);
 
+        $user = auth()->user();
+        $prohibitedConditions = [
+            'Gravidez', 'Tuberculose', 'AVC', 'Doença cardíaca', 'Enfarte', 'Angina de peito',
+            'Cirrose hepática', 'Insuficiência hepática', 'Pancreatite', 'Icterícia', 'Insuficiência renal',
+            'Cálculos renais', 'Quistos mamários', 'Epilepsia', 'Psoríase'
+        ];
+
+        $userConditions = [];
+        $isPregnant = false;
+        $hasCancer = false;
+
+        foreach ($user->entries as $entry) {
+            foreach ($entry->answers as $answer) {
+                if (is_array($answer->value)) {
+                    $userConditions = array_merge($userConditions, $answer->value);
+                } else {
+                    $userConditions[] = $answer->value;
+                    if ($answer->question->content == 'Se é mulher, encontra-se grávida?' && $answer->value == 'Sim') {
+                        $isPregnant = true;
+                    }
+                    if (stripos($answer->value, 'Cancro') !== false) {
+                        $hasCancer = true;
+                    }
+                }
+            }
+        }
+
+        $showWarning = false;
+        if ($pack->trainingType && $pack->trainingType->is_electrostimulation) {
+            foreach ($prohibitedConditions as $condition) {
+                if (in_array($condition, $userConditions) || $isPregnant || $hasCancer) {
+                    $showWarning = true;
+                    break;
+                }
+            }
+        }
+
+        if ($showWarning) {
+            return redirect()->route('packs.index')->with('warning', 'Este pack contém treinos que podem não ser recomendados devido às suas condições de saúde.');
+        }
+
         return redirect()->route('packs.index')->with('success', 'Pack adicionado ao carrinho com sucesso!');
     }
+
+
 
     public function removeProductFromCart($id)
     {

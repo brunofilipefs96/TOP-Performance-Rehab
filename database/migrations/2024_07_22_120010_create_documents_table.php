@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('free_trainings', function (Blueprint $table) {
+        Schema::create('documents', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('training_type_id')->constrained();
             $table->string('name');
-            $table->integer('max_students');
-            $table->dateTime('start_date');
-            $table->dateTime('end_date');
+            $table->string('file_path');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('free_trainings');
+        Schema::dropIfExists('documents');
     }
 };

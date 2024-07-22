@@ -1,6 +1,6 @@
 <div class="container mx-auto mt-5">
     @if(Auth::user()->hasRole('admin'))
-        <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Vendas</h1>
+        <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Lista de Vendas</h1>
 
         <div class="flex flex-wrap justify-between mb-4">
             <div class="w-full sm:w-1/2 lg:w-1/3 mb-2">
@@ -22,7 +22,7 @@
             </div>
         </div>
     @else
-        <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Meu histórico de compras</h1>
+        <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">O Meu Histórico de Compras</h1>
     @endif
     <hr class="mb-5 border-gray-400 dark:border-gray-300">
 

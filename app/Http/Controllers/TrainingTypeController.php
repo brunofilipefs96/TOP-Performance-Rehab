@@ -6,6 +6,7 @@ use App\Models\TrainingType;
 use App\Http\Requests\StoreTrainingTypeRequest;
 use App\Http\Requests\UpdateTrainingTypeRequest;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class TrainingTypeController extends Controller
@@ -14,11 +15,18 @@ class TrainingTypeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('viewAny', TrainingType::class);
-        $trainingTypes = TrainingType::orderBy('id', 'desc')->paginate(12);
-        return view('pages.training-types.index', ['training_types' => $trainingTypes]);
+
+        $filter = $request->input('filter', 'acompanhados');
+
+        if ($filter == 'livres') {
+            $trainingTypes = TrainingType::where('has_personal_trainer', false)->paginate(12);
+        } else {
+            $trainingTypes = TrainingType::where('has_personal_trainer', true)->paginate(12);
+        }
+        return view('pages.training-types.index', ['training_types' => $trainingTypes, 'filter' => $filter]);
     }
 
     /**
@@ -37,7 +45,9 @@ class TrainingTypeController extends Controller
     {
         $validatedData = $request->validated();
 
-        if (!$request->has_personal_trainer) {
+        if ($request->has_personal_trainer && is_null($request->max_capacity)) {
+            $validatedData['max_capacity'] = null;
+        } elseif (!$request->has_personal_trainer) {
             $validatedData['max_capacity'] = null;
         }
 
@@ -48,7 +58,6 @@ class TrainingTypeController extends Controller
             $imagePath = $request->file('image');
             $imageName = $trainingType->id . '_' . time() . '_' . $imagePath->getClientOriginalName();
             $path = $request->file('image')->storeAs('images/training_types/' . $trainingType->id, $imageName, 'public');
-            $validatedData['image'] = $path;
             $trainingType->image = $path;
         }
 
@@ -56,7 +65,6 @@ class TrainingTypeController extends Controller
 
         return redirect()->route('training-types.index')->with('success', 'Training type created successfully.');
     }
-
 
     /**
      * Display the specified resource.
@@ -91,7 +99,9 @@ class TrainingTypeController extends Controller
             $validatedData['image'] = $path;
         }
 
-        if (!$request->has_personal_trainer) {
+        if ($request->has_personal_trainer && is_null($request->max_capacity)) {
+            $validatedData['max_capacity'] = null;
+        } elseif (!$request->has_personal_trainer) {
             $validatedData['max_capacity'] = null;
         }
 
@@ -99,7 +109,6 @@ class TrainingTypeController extends Controller
 
         return redirect()->route('training-types.index')->with('success', 'Training type updated successfully.');
     }
-
 
     /**
      * Remove the specified resource from storage.

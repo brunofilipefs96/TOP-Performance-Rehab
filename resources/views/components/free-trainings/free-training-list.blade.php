@@ -15,12 +15,14 @@
             $availablePacks = null;
             if($membership){
                 $availablePacks = $membership->packs()
-                ->where('quantity_remaining', '>', 0)
-                ->where('expiry_date', '>=', $today)
-                ->where('has_personal_trainer', false)
-                ->orderBy('expiry_date', 'asc')
-                ->get();
-            $earliestExpiringPack = $availablePacks->first();
+                    ->where('quantity_remaining', '>', 0)
+                    ->where('expiry_date', '>=', $today)
+                    ->whereHas('trainingType', function ($query) {
+                        $query->where('has_personal_trainer', false);
+                    })
+                    ->orderBy('expiry_date', 'asc')
+                    ->get();
+                $earliestExpiringPack = $availablePacks->first();
             }
         @endphp
 

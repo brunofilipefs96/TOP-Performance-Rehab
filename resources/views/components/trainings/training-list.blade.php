@@ -119,8 +119,9 @@
                                     $currentDateTime = Carbon::now();
                                     $trainingStartDateTime = Carbon::parse($training->start_date);
                                     $isTrainingStarted = $currentDateTime->gte($trainingStartDateTime);
+                                    $maxCapacity = $training->capacity ?? $training->trainingType->max_capacity;
                                     $totalSubscribes = $training->users()->wherePivot('cancelled', false)->count();
-                                    $remainingSpots = $training->trainingType->max_capacity - $totalSubscribes;
+                                    $remainingSpots = $maxCapacity - $totalSubscribes;
                                     $hasMarkedAllPresences = $training->users()->wherePivotNotNull('presence')->wherePivot('cancelled', false)->count() == $totalSubscribes;
                                     $hoursDifference = $currentDateTime->diffInHours($trainingStartDateTime, false);
 
@@ -164,7 +165,7 @@
                                         </div>
                                         <div class="dark:text-gray-400 text-gray-600 mb-5 flex items-center text-sm">
                                             <i class="fa-solid fa-square-check w-4 h-4 mr-2"></i>
-                                            Inscrições: {{ $totalSubscribes }}/{{ $training->trainingType->max_capacity }}
+                                            Inscrições: {{ $totalSubscribes }}/{{ $maxCapacity }}
                                             @if ($remainingSpots > 0)
                                                 <span class="inline-block w-3 h-3 bg-green-500 rounded-full ml-2"
                                                       title="Vagas disponíveis"></span>
@@ -304,13 +305,11 @@
         form.action = actionUrl;
         form.setAttribute('method', 'POST');
 
-        // Remove existing _method input if present
         const existingMethodInput = form.querySelector('input[name="_method"]');
         if (existingMethodInput) {
             existingMethodInput.remove();
         }
 
-        // Add _method input if method is DELETE or PUT
         if (method === 'DELETE' || method === 'PUT') {
             const methodInput = document.createElement('input');
             methodInput.type = 'hidden';

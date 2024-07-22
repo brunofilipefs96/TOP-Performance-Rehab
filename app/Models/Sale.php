@@ -46,6 +46,11 @@ class Sale extends Model
         return $this->belongsTo(Status::class);
     }
 
+    public function documents()
+    {
+        return $this->belongsToMany(Document::class);
+    }
+
     public function getTranslatedStatusAttribute()
     {
         $translations = [

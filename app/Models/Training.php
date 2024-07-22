@@ -14,6 +14,7 @@ class Training extends Model
         'training_type_id',
         'room_id',
         'name',
+        'capacity',
         'max_students',
         'start_date',
         'end_date',

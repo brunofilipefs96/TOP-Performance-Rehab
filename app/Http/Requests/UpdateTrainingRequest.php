@@ -21,6 +21,7 @@ class UpdateTrainingRequest extends FormRequest
             'start_date' => 'required|date|after_or_equal:today',
             'start_time' => 'required|date_format:H:i',
             'duration' => 'required|integer|min:30|max:90',
+            'capacity' => 'nullable|integer|min:1|max:' . setting('capacidade_maxima'),
         ];
     }
 
@@ -41,6 +42,9 @@ class UpdateTrainingRequest extends FormRequest
             'duration.integer' => 'A duração deve ser um número inteiro.',
             'duration.min' => 'A duração mínima é de 30 minutos.',
             'duration.max' => 'A duração máxima é de 90 minutos.',
+            'capacity.integer' => 'A capacidade deve ser um número inteiro.',
+            'capacity.min' => 'A capacidade mínima é 1.',
+            'capacity.max' => 'A capacidade máxima não pode exceder ' . setting('capacidade_maxima') . '.',
         ];
     }
 
@@ -119,7 +123,8 @@ class UpdateTrainingRequest extends FormRequest
     protected function validateRoomCapacity($validator, $startDate, $endDate, $training)
     {
         $roomId = $this->room_id;
-        $maxStudents = TrainingType::find($this->training_type_id)->max_capacity;
+        $trainingType = TrainingType::find($this->training_type_id);
+        $maxStudents = is_null($trainingType->max_capacity) && $trainingType->has_personal_trainer ? $this->capacity : $trainingType->max_capacity;
 
         $conflictingTrainings = Training::where('room_id', $roomId)
             ->where('id', '!=', $training->id)
@@ -134,8 +139,8 @@ class UpdateTrainingRequest extends FormRequest
             ->get();
 
         $room = Room::find($roomId);
-        $occupiedCapacity = $conflictingTrainings->sum(fn($training) => $training->trainingType->max_capacity);
-        $availableCapacity = $room->capacity - $occupiedCapacity + $training->trainingType->max_capacity;
+        $occupiedCapacity = $conflictingTrainings->sum(fn($training) => is_null($training->trainingType->max_capacity) && $training->trainingType->has_personal_trainer ? $training->capacity : $training->trainingType->max_capacity);
+        $availableCapacity = $room->capacity - $occupiedCapacity + (is_null($training->trainingType->max_capacity) && $training->trainingType->has_personal_trainer ? $training->capacity : $training->trainingType->max_capacity);
 
         if ($maxStudents > $availableCapacity) {
             if ($availableCapacity <= 0) {
@@ -170,7 +175,8 @@ class UpdateTrainingRequest extends FormRequest
     protected function validateGymCapacity($validator, $startDate, $endDate, $trainingTypeId)
     {
         $totalCapacity = setting('capacidade_maxima');
-        $maxStudents = TrainingType::find($trainingTypeId)->max_capacity;
+        $trainingType = TrainingType::find($trainingTypeId);
+        $maxStudents = is_null($trainingType->max_capacity) && $trainingType->has_personal_trainer ? $this->capacity : $trainingType->max_capacity;
 
         $regularTrainingOccupancy = Training::where('id', '!=', $this->route('training')->id)
             ->where(function ($query) use ($startDate, $endDate) {
@@ -181,7 +187,8 @@ class UpdateTrainingRequest extends FormRequest
                             ->where('end_date', '>', $endDate);
                     });
             })->get()->sum(function ($training) {
-                return $training->trainingType->max_capacity;
+                $trainingType = TrainingType::find($training->training_type_id);
+                return is_null($trainingType->max_capacity) && $trainingType->has_personal_trainer ? $training->capacity : $trainingType->max_capacity;
             });
 
         $freeTrainingOccupancy = FreeTraining::where(function ($query) use ($startDate, $endDate) {
@@ -194,7 +201,7 @@ class UpdateTrainingRequest extends FormRequest
         })->sum('max_students');
 
         $occupiedCapacity = $regularTrainingOccupancy + $freeTrainingOccupancy;
-        $availableCapacity = $totalCapacity - $occupiedCapacity + $this->route('training')->trainingType->max_capacity;
+        $availableCapacity = $totalCapacity - $occupiedCapacity + (is_null($this->route('training')->trainingType->max_capacity) && $this->route('training')->trainingType->has_personal_trainer ? $this->route('training')->capacity : $this->route('training')->trainingType->max_capacity);
 
         if ($occupiedCapacity + $maxStudents > $totalCapacity) {
             if ($availableCapacity <= 0) {

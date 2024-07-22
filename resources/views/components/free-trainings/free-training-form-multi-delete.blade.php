@@ -5,7 +5,7 @@
     <div class="flex justify-center">
         <div class="w-full max-w-6xl dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm bg-gray-300 relative">
             <div class="absolute top-4 left-4">
-                <a href="{{ url()->previous() }}" class="inline-block bg-gray-500 py-1 px-2 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                <a href="/free-trainings" class="inline-block bg-gray-500 py-1 px-2 rounded-md shadow-sm hover:bg-gray-700 text-white">
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
             </div>
@@ -33,6 +33,7 @@
                                 <th class="py-2 px-4 border-b dark:border-gray-700 text-left">Data</th>
                                 <th class="py-2 px-4 border-b dark:border-gray-700 text-left">Hora de Início</th>
                                 <th class="py-2 px-4 border-b dark:border-gray-700 text-left">Hora de Fim</th>
+                                <th class="py-2 px-4 border-b dark:border-gray-700 text-left">Tem alunos inscritos?</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -45,6 +46,9 @@
                                     <td class="py-2 px-4 border-b dark:border-gray-700 text-left">{{ Carbon::parse($freeTraining->start_date)->format('d/m/Y') }}</td>
                                     <td class="py-2 px-4 border-b dark:border-gray-700 text-left">{{ Carbon::parse($freeTraining->start_date)->format('H:i') }}</td>
                                     <td class="py-2 px-4 border-b dark:border-gray-700 text-left">{{ Carbon::parse($freeTraining->end_date)->format('H:i') }}</td>
+                                    <td class="py-2 px-4 border-b dark:border-gray-700 text-left">
+                                        {{ $freeTraining->users()->count() > 0 ? 'Sim' : 'Não' }}
+                                    </td>
                                 </tr>
                             @endforeach
                             </tbody>

@@ -13,12 +13,17 @@
         @if(!Auth::user()->membership)
             <div class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 dark:bg-gray-700 dark:text-gray-200 p-4 mb-6" role="alert">
                 <p class="font-bold">Ainda não se matriculou no nosso ginásio</p>
-                <p>Gostaria de se juntar a nós e começar sua jornada fitness? Clique no botão abaixo para se matricular agora!</p>
+                <p>Gostaria de se juntar a nós e começar a sua jornada fitness? </p>
+                <p>Clique no botão abaixo para se matricular agora!</p>
                 <a href="{{ route('setup') }}" class="mt-4 inline-block text-white dark:bg-lime-500 bg-blue-500 px-3 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400">Matricular-se</a>
             </div>
         @endif
-            //este if esta incorreto, quero um if onde vai ver se ja tem uma sale de matricula feita, para que desapareça.
-        @if($user->addresses || $user->addresses->count() <= 0 && $user->membership && $user->membership->trainingTypes->count() <= 0 && $user->insurance)
+
+
+            <!-- este if esta incorreto, quero um if onde vai ver se ja tem uma sale de matricula feita, para que desapareça. -->
+
+
+            @if($user->addresses || $user->addresses->count() <= 0 && $user->membership && $user->membership->trainingTypes->count() <= 0 && $user->insurance)
             @if($user->membership && $user->membership->status->name == 'pending_payment' && $user->membership->insurance->status->name == 'pending_payment')
                 <div class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 dark:bg-gray-700 dark:text-gray-200 p-4 mb-6" role="alert">
                     <p class="font-bold">A sua Matrícula e o seu seguro ja foram aprovados pelo administrador.</p>

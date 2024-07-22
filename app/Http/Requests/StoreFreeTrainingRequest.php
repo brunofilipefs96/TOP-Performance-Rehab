@@ -13,6 +13,7 @@ class StoreFreeTrainingRequest extends FormRequest
     public function rules()
     {
         $rules = [
+            'training_type_id' => 'required|exists:training_types,id',
             'max_students' => 'required|integer|min:1',
             'start_date' => 'required|date|after_or_equal:today',
             'start_time' => 'required|date_format:H:i',
@@ -30,6 +31,8 @@ class StoreFreeTrainingRequest extends FormRequest
     public function messages()
     {
         return [
+            'training_type_id.required' => 'O tipo de treino é obrigatório.',
+            'training_type_id.exists' => 'O tipo de treino selecionado é inválido.',
             'max_students.required' => 'O campo máximo de alunos é obrigatório.',
             'max_students.integer' => 'O campo máximo de alunos deve ser um número inteiro.',
             'max_students.min' => 'O campo máximo de alunos deve ser pelo menos 1.',
@@ -93,7 +96,7 @@ class StoreFreeTrainingRequest extends FormRequest
 
             if ($this->has('repeat')) {
                 $repeatUntilDate = Carbon::createFromFormat('Y-m-d', $this->repeat_until);
-                $daysOfWeek = $this->days_of_week;
+                $daysOfWeek = $this->input('days_of_week', []);
                 $allDaysValid = false;
 
                 foreach ($daysOfWeek as $dayOfWeek) {
@@ -123,13 +126,13 @@ class StoreFreeTrainingRequest extends FormRequest
                 }
 
                 if (!$allDaysValid) {
-                    $validator->errors()->add('start_time', 'Todos os blocos de 30 minutos no horário selecionado já possuem treinos livres em todos os dias selecionados.');
+                    $validator->errors()->add('start_time', 'Todos os blocos de 60 minutos no horário selecionado já possuem treinos livres ou não existe espaço suficiente.');
                 }
             } else {
                 $gymCapacityValid = $this->validateGymCapacity($startDate, $endDate, $this->max_students);
                 $uniqueTimesValid = $this->validateUniqueTimes($startDate, $endDate);
                 if (!$gymCapacityValid || !$uniqueTimesValid) {
-                    $validator->errors()->add('start_time', 'Todos os blocos de 30 minutos no horário selecionado já possuem treinos livres.');
+                    $validator->errors()->add('start_time', 'Todos os blocos de 60 minutos no horário selecionado já possuem treinos livres ou não existe espaço suficiente.');
                 }
             }
         });
@@ -138,7 +141,7 @@ class StoreFreeTrainingRequest extends FormRequest
     protected function validateGymCapacity($startDate, $endDate, $maxStudents)
     {
         $totalCapacity = setting('capacidade_maxima');
-        $duration = 30;
+        $duration = 60;
         $allSlotsFull = true;
 
         while ($startDate->lessThan($endDate)) {
@@ -151,7 +154,9 @@ class StoreFreeTrainingRequest extends FormRequest
                         $query->where('start_date', '<', $startDate)
                             ->where('end_date', '>', $blockEndDate);
                     });
-            })->sum('max_students');
+            })->get()->sum(function ($training) {
+                return $training->capacity ?? $training->trainingType->max_capacity;
+            });
 
             $freeTrainingOccupancy = FreeTraining::where(function ($query) use ($startDate, $blockEndDate) {
                 $query->whereBetween('start_date', [$startDate, $blockEndDate])
@@ -166,7 +171,7 @@ class StoreFreeTrainingRequest extends FormRequest
 
             if ($maxStudents <= $availableCapacity) {
                 $allSlotsFull = false;
-                break; // Se encontrar um bloco com capacidade disponível, para o loop
+                break;
             }
 
             $startDate->addMinutes($duration);
@@ -177,7 +182,7 @@ class StoreFreeTrainingRequest extends FormRequest
 
     protected function validateUniqueTimes($startDate, $endDate)
     {
-        $duration = 30;
+        $duration = 60;
         $allSlotsOccupied = true;
 
         while ($startDate->lessThan($endDate)) {

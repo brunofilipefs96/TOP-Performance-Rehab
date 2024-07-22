@@ -64,6 +64,7 @@
                                 <th class="py-2 px-4 border-b dark:border-gray-700 text-left">Hora de Fim</th>
                                 <th class="py-2 px-4 border-b dark:border-gray-700 text-left">Personal Trainer</th>
                                 <th class="py-2 px-4 border-b dark:border-gray-700 text-left">Tipo</th>
+                                <th class="py-2 px-4 border-b dark:border-gray-700 text-left">Tem Alunos Inscritos?</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -78,6 +79,9 @@
                                     <td class="py-2 px-4 border-b dark:border-gray-700 text-left">{{ Carbon::parse($training->end_date)->format('H:i') }}</td>
                                     <td class="py-2 px-4 border-b dark:border-gray-700 text-left">{{ $training->personalTrainer->firstLastName() }}</td>
                                     <td class="py-2 px-4 border-b dark:border-gray-700 text-left">{{ $training->trainingType->name }}</td>
+                                    <td class="py-2 px-4 border-b dark:border-gray-700 text-left">
+                                        {{ $training->users()->exists() ? 'Sim' : 'Não' }}
+                                    </td>
                                 </tr>
                             @endforeach
                             </tbody>

@@ -15,10 +15,16 @@ class FreeTraining extends Model
         'max_students',
         'start_date',
         'end_date',
+        'training_type_id',
     ];
 
     public function users()
     {
         return $this->belongsToMany(User::class)->withPivot('presence');
+    }
+
+    public function trainingType()
+    {
+        return $this->belongsTo(TrainingType::class);
     }
 }

@@ -1,3 +1,70 @@
+@php
+    use Carbon\Carbon;
+    use Illuminate\Support\Facades\Auth;
+
+    $user = Auth::user();
+    $cart = session()->get('cart', []);
+    $packCart = session()->get('packCart', []);
+    $totalCart = 0;
+    $totalPackCart = 0;
+    $warnings = [];
+    $hasShortages = false;
+
+    $prohibitedConditions = [
+        'Gravidez', 'Tuberculose', 'AVC', 'Doença cardíaca', 'Enfarte', 'Angina de peito',
+        'Cirrose hepática', 'Insuficiência hepática', 'Pancreatite', 'Icterícia', 'Insuficiência renal',
+        'Cálculos renais', 'Quistos mamários', 'Epilepsia', 'Psoríase'
+    ];
+
+    $userConditions = [];
+    $isPregnant = false;
+    $hasCancer = false;
+
+    foreach ($user->entries as $entry) {
+        foreach ($entry->answers as $answer) {
+            if (is_array($answer->value)) {
+                $userConditions = array_merge($userConditions, $answer->value);
+            } else {
+                $userConditions[] = $answer->value;
+                if ($answer->question->content == 'Se é mulher, encontra-se grávida?' && $answer->value == 'Sim') {
+                    $isPregnant = true;
+                }
+                if (stripos($answer->value, 'Cancro') !== false) {
+                    $hasCancer = true;
+                }
+            }
+        }
+    }
+
+    $showWarning = false;
+    foreach ($packCart as $id => $details) {
+        $pack = App\Models\Pack::find($id);
+        if ($pack && $pack->trainingType && $pack->trainingType->is_electrostimulation) {
+            foreach ($prohibitedConditions as $condition) {
+                if (in_array($condition, $userConditions) || $isPregnant || $hasCancer) {
+                    $showWarning = true;
+                    break 2;
+                }
+            }
+        }
+    }
+
+    foreach ($cart as $id => $details) {
+        $product = App\Models\Product::find($id);
+        $totalCart += $details['price'] * $details['quantity'];
+        if ($product && $details['quantity'] > $product->quantity) {
+            $hasShortages = true;
+            $warnings[] = 'A quantidade de ' . $product->name . ' excede o estoque disponível.';
+        }
+    }
+
+    foreach ($packCart as $details) {
+        $totalPackCart += $details['price'] * $details['quantity'];
+    }
+
+    $totalGeral = $totalCart + $totalPackCart;
+@endphp
+
 <div class="container mx-auto mt-5 px-2 xs:px-0">
     <h1 class="text-2xl font-bold my-4 text-gray-900 dark:text-gray-200">Carrinho de Compras</h1>
 
@@ -12,29 +79,12 @@
         </div>
     @endif
 
-    @php
-        $cart = session()->get('cart', []);
-        $packCart = session()->get('packCart', []);
-        $totalCart = 0;
-        $totalPackCart = 0;
-        $warnings = [];
-        $hasShortages = false;
-
-        foreach ($cart as $id => $details) {
-            $product = App\Models\Product::find($id);
-            $totalCart += $details['price'] * $details['quantity'];
-            if ($product && $details['quantity'] > $product->quantity) {
-                $hasShortages = true;
-                $warnings[] = 'A quantidade de ' . $product->name . ' excede o estoque disponível.';
-            }
-        }
-
-        foreach ($packCart as $details) {
-            $totalPackCart += $details['price'] * $details['quantity'];
-        }
-
-        $totalGeral = $totalCart + $totalPackCart;
-    @endphp
+    @if ($showWarning)
+        <div class="text-xs bg-yellow-400 text-black p-1 xs:p-4 rounded mb-4">
+            <i class="fa-solid fa-exclamation-triangle"></i>
+            Atenção: Alguns packs no seu carrinho contêm treinos de eletroestimulação que podem não ser recomendados devido às suas condições de saúde.
+        </div>
+    @endif
 
     @if(count($cart) > 0 || count($packCart) > 0)
         @if($hasShortages)

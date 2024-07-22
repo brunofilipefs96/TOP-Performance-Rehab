@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->boolean('has_personal_trainer');
             $table->integer('max_capacity')->nullable();
+            $table->boolean('is_electrostimulation')->default(false);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
             $table->softDeletes();

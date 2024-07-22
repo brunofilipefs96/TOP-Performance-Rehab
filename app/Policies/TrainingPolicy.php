@@ -100,7 +100,7 @@ class TrainingPolicy
     {
         $currentDateTime = Carbon::now();
         $trainingDateTime = Carbon::parse($training->start_date);
-        $maxCapacity = $training->trainingType->max_capacity;
+        $maxCapacity = $training->capacity ?? $training->trainingType->max_capacity;
 
         if (!$user->membership || $user->membership->status->name !== 'active') {
             return Response::deny('Necessita de uma matrícula ativa para se inscrever em qualquer treino.');

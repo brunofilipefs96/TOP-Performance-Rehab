@@ -33,6 +33,7 @@ class StoreTrainingRequest extends FormRequest
             'days_of_week' => 'nullable|array|required_if:repeat,true',
             'days_of_week.*' => 'in:1,2,3,4,5,6',
             'capacity' => 'nullable|integer|min:1|max:' . setting('capacidade_maxima'),
+            'end_date' => 'required_if:repeat,true | after:start_date'
         ];
     }
 

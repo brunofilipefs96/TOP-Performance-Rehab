@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Sale;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class SalePolicy
 {
@@ -60,6 +59,14 @@ class SalePolicy
      * Determine whether the user can permanently delete the model.
      */
     public function forceDelete(User $user, Sale $sale): bool
+    {
+        return $user->hasRole('admin');
+    }
+
+    /**
+     * Determine whether the user can add a document.
+     */
+    public function addDocument(User $user, Sale $sale): bool
     {
         return $user->hasRole('admin');
     }

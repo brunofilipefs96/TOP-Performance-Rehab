@@ -115,7 +115,7 @@
                                     <x-dropdown-link :href="route('sales.index')"
                                                      :active="request()->routeIs('sales.index')"
                                                      class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                                        {{ __('Encomendas') }}
+                                        {{ __('Vendas') }}
                                     </x-dropdown-link>
                                 </div>
                             </div>
@@ -284,7 +284,7 @@
                         </x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('sales.index')" :active="request()->routeIs('sales.index')"
                                                class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                            <i class="fa-solid fa-receipt text-lg mr-2"></i>{{ __('Encomendas') }}
+                            <i class="fa-solid fa-receipt text-lg mr-2"></i>{{ __('Vendas') }}
                         </x-responsive-nav-link>
                     @elseif(Auth::user()->hasRole('personal_trainer'))
                         <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')"

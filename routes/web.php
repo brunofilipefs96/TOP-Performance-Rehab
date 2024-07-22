@@ -145,6 +145,8 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::c
     Route::post('cart/checkout', [CartController::class, 'processCheckout'])->name('cart.processCheckout');
 
     Route::patch('/sales/{id}/updateStatus', [SaleController::class, 'updateStatus'])->name('sales.updateStatus');
+    Route::post('/sales/{sale}/documents', [SaleController::class, 'addDocument'])->name('sales.addDocument');
+    Route::delete('/sales/{sale}/documents/{document}', [SaleController::class, 'deleteDocument'])->name('sales.deleteDocument');
     Route::resource('/sales', SaleController::class)->only(['index', 'show']);
     Route::get('/sales/{sale}/payment-reference', [SaleController::class, 'showPaymentReference'])->name('sales.showPaymentReference');
 

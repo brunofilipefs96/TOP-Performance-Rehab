@@ -1,32 +1,61 @@
 <style>
+
     .accordion-content {
+
         max-height: 0;
+
         overflow: hidden;
+
         transition: max-height 0.3s ease;
+
     }
+
     .accordion-item.active .accordion-content {
+
         max-height: 500px; /* Ajustar conforme necessário */
+
     }
+
     .category-button {
+
         transition: background-color 0.3s, transform 0.3s;
+
     }
+
     .category-button:hover {
+
         background-color: #4b5563; /* Ajustar cor de fundo ao passar o mouse */
+
         transform: scale(1.05);
+
     }
+
     .category-button:active {
+
         background-color: #1f2937; /* Ajustar cor de fundo ao clicar */
+
         transform: scale(0.95);
+
     }
+
     .active-category {
-        background-color: #4b5563; /* Ajustar cor de fundo da categoria ativa */
+
+        background-color: #68ed09; /* Ajustar cor de fundo da categoria ativa */
+
         color: white;
+
     }
+
     .dark .active-category {
-        background-color: #4b5563; /* Ajustar cor de fundo da categoria ativa */
+
+        background-color: #68ed09; /* Ajustar cor de fundo da categoria ativa */
+
         color: white;
+
     }
+
 </style>
+
 
 <body>
 
@@ -60,12 +89,12 @@
             <div class="accordion-item dark:bg-gray-800 bg-gray-400 rounded-lg shadow-md p-4" data-category="services">
                 <div class="accordion-header cursor-pointer flex justify-between items-center" onclick="toggleAccordion(event)">
                     <h2 class="text-lg font-medium">Como funciona o processo de inscrição?</h2>
-                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="w-6 h-6 text-gray-500 accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
                     </svg>
                 </div>
                 <div class="accordion-content mt-4 dark:text-lime-400 text-gray-900">
-                    <p>Para se inscrever, você precisa preencher o formulário de inscrição disponível no nosso site. Após o envio, você terá de aguardar pela aprovação de uma administrador.</p>
+                    <p>Para se inscrever, você precisa preencher o formulário de inscrição disponível no nosso site. Após o envio, você terá de aguardar pela aprovação de um administrador.</p>
                 </div>
             </div>
 
@@ -73,12 +102,12 @@
             <div class="accordion-item dark:bg-gray-800 bg-gray-400 rounded-lg shadow-md p-4" data-category="workouts">
                 <div class="accordion-header cursor-pointer flex justify-between items-center" onclick="toggleAccordion(event)">
                     <h2 class="text-lg font-medium">Quais tipos de treinos vocês oferecem?</h2>
-                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="w-6 h-6 text-gray-500 accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
                     </svg>
                 </div>
                 <div class="accordion-content mt-4 dark:text-lime-400 text-gray-900">
-                    <p>Oferecemos uma variedade de treinos, incluindo cardio, musculação, yoga, HIIT, Aeróbica, Cycling, CrossFit, Pilates, Flexibilidade e Treino de Força. Nossos treinos são projetados para diferentes níveis de condicionamento físico.</p>
+                    <p>Oferecemos uma variedade de treinos, incluindo PT Individual, PT Duo (dois clientes), PT Trio (três clientes), PT Individual de Eletroestimulação, PT Individual de Pilates e Treino Funcional. Os nossos treinos são projetados para diferentes níveis de condicionamento físico.</p>
                 </div>
             </div>
 
@@ -86,12 +115,12 @@
             <div class="accordion-item dark:bg-gray-800 bg-gray-400 rounded-lg shadow-md p-4" data-category="products">
                 <div class="accordion-header cursor-pointer flex justify-between items-center" onclick="toggleAccordion(event)">
                     <h2 class="text-lg font-medium">Como posso acompanhar minha encomenda?</h2>
-                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="w-6 h-6 text-gray-500 accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
                     </svg>
                 </div>
                 <div class="accordion-content mt-4 dark:text-lime-400 text-gray-900">
-                    <p>Você pode acompanhar sua encomenda usando o número de rastreamento fornecido no e-mail de confirmação de envio.</p>
+                    <p>Você pode acompanhar a sua encomenda usando o número de rastreamento fornecido no e-mail de confirmação de envio.</p>
                 </div>
             </div>
 
@@ -99,7 +128,7 @@
             <div class="accordion-item dark:bg-gray-800 bg-gray-400 rounded-lg shadow-md p-4" data-category="products">
                 <div class="accordion-header cursor-pointer flex justify-between items-center" onclick="toggleAccordion(event)">
                     <h2 class="text-lg font-medium">Como posso agendar uma avaliação física?</h2>
-                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="w-6 h-6 text-gray-500 accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
                     </svg>
                 </div>
@@ -112,7 +141,7 @@
             <div class="accordion-item dark:bg-gray-800 bg-gray-400 rounded-lg shadow-md p-4" data-category="workouts">
                 <div class="accordion-header cursor-pointer flex justify-between items-center" onclick="toggleAccordion(event)">
                     <h2 class="text-lg font-medium">Como devo começar uma rotina de treinos?</h2>
-                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="w-6 h-6 text-gray-500 accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
                     </svg>
                 </div>
@@ -127,7 +156,9 @@
 <script>
     function toggleAccordion(event) {
         const item = event.currentTarget.parentElement;
+        const icon = event.currentTarget.querySelector('.accordion-icon');
         item.classList.toggle('active');
+        icon.classList.toggle('rotate-180');
     }
 
     function filterCategory(category) {
@@ -146,11 +177,24 @@
             button.classList.remove('active-category');
         });
 
-        const activeButton = Array.from(buttons).find(button => button.textContent.trim().toLowerCase() === category);
+        const activeButton = Array.from(buttons).find(button => {
+            return button.textContent.trim().toLowerCase() === category.toLowerCase();
+        });
+
         if (activeButton) {
             activeButton.classList.add('active-category');
-        } else {
-            buttons[0].classList.add('active-category'); // Padrão para "Todos" se não houver correspondência
+            if (document.documentElement.classList.contains('dark')) {
+                activeButton.style.backgroundColor = '#32CD32'; // bg-lime-400
+            } else {
+                activeButton.style.backgroundColor = '#1E90FF'; // bg-blue-400
+            }
         }
     }
+
+    // Seleciona a categoria "Todos" por padrão ao carregar a página
+    document.addEventListener('DOMContentLoaded', () => {
+        filterCategory('all');
+    });
 </script>
+
+</body>

@@ -21,6 +21,66 @@
             height: 400px; /* Adjust height as needed */
             width: 100%;
         }
+
+        .welcome-section {
+            background-image: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border-radius: 15px; /* Rounded corners for the welcome section */
+            overflow: hidden;
+            margin: 20px;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1); /* Dark overlay for better text readability */
+            z-index: 1;
+        }
+
+        .dark .welcome-section::before {
+            background: rgba(255, 255, 255, 0.1); /* Light overlay for a softer image in light mode */
+        }
+
+        .welcome-section .content {
+            position: relative;
+            z-index: 2;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .welcome-section .content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: inherit;
+        }
+
+        .welcome-section .content a {
+            display: inline-block;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-section .content a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
     </style>
 </head>
 <body class="font-sans antialiased dark:text-white/50 select-none">
@@ -80,14 +140,10 @@
 
         <main class="mt-10 mb-20">
             <!-- Welcome Section -->
-            <section class="text-center py-20 bg-gray-100 dark:bg-gray-800 relative h-96 rounded-2xl shadow-2xl">
-                <div class="absolute inset-y-0 right-0 transform">
-                    <img src="{{ asset('images/welcome.png') }}" alt="Imagem de boas-vindas" class="object-cover h-full w-full">
-                </div>
-                <div class="relative z-10">
-                    <h1 class="text-5xl font-bold mb-4 dark:text-gray-200 text-gray-800">Sessão grátis com um treinador</h1>
-                    <br>
-                    <a href="{{ route('register') }}" class="bg-blue-500 text-white dark:bg-lime-400 dark:text-white py-2 px-4 rounded hover:bg-blue-400 dark:hover:bg-lime-300">Junte-se a nós</a>
+            <section class="welcome-section">
+                <div class="content">
+                    <h1 class="text-5xl font-bold mb-4">Sessão grátis com um treinador</h1>
+                    <a href="{{ route('register') }}" class="dark:bg-lime-400 dark:hover:bg-lime-300 bg-blue-500 hover:bg-blue-400">Junte-se a nós</a>
                 </div>
             </section>
 
@@ -156,7 +212,7 @@
                 </div>
             </section>
         </main>
-        <footer class="bg-gray-800 text-white p-4 w-full">
+        <footer class=" w-full">
             @include('layouts.footer')
         </footer>
     </div>

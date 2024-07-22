@@ -18,6 +18,20 @@ class RenewController extends Controller
     {
         $user = auth()->user();
 
+        if ($user->membership) {
+            $sales = $user->sales->sortByDesc('created_at');
+
+            foreach ($sales as $sale) {
+                if ($sale->products()->count() == 0 && $sale->packs()->count() == 0) {
+                    if ($user->membership->status->name == 'pending_renewPayment') {
+                        return redirect('sales/'.$sale->id);
+                    } else {
+                        return redirect('memberships/'.$user->membership->id);
+                    }
+                }
+            }
+        }
+
         if($user->hasRole('client')){
 
             if($user->membership && ($user->membership->status->name == 'inactive')){

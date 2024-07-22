@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('notification_type_id')->constrained();
             $table->string('message');
+            $table->string('url')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
             $table->softDeletes();

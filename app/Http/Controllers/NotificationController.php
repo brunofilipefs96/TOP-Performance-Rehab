@@ -15,7 +15,11 @@ class NotificationController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $notifications = $user->notifications()->with('notificationType')->get();
+
+        $notifications = $user->notifications()
+            ->with('notificationType')
+            ->orderBy('pivot_created_at', 'desc')
+            ->paginate(12);
 
         return view('pages.notifications.index', compact('notifications'));
     }
@@ -28,7 +32,7 @@ class NotificationController extends Controller
         $user = Auth::user();
         $user->notifications()->updateExistingPivot($notification->id, ['read_at' => now()]);
 
-        return redirect()->route('pages.notifications.index')->with('success', 'Notificação marcada como lida.');
+        return redirect()->back()->with('success', 'Notificação marcada como lida.');
     }
 
     /**

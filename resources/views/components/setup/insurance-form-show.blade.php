@@ -88,6 +88,11 @@
                         </span>
                         @enderror
                     </div>
+
+                    <div id="insurance_warning_message" class="mb-4 dark:text-yellow-500 text-gray-700 flex items-center">
+                        <i class="fa-solid text-2xl fa-triangle-exclamation mr-2"></i>
+                        Deve entregar os documentos do seguro em mão ou envie para o seguinte email: {{ setting('email') }}
+                    </div>
                 </div>
 
                 <div class="flex justify-between items-center gap-2">
@@ -133,6 +138,7 @@
         const endDateField = document.getElementById('end_date');
         const insuranceSubmitButton = document.getElementById('insurance_submit_button');
         const insuranceMessage = document.getElementById('insurance_message');
+        const insuranceWarningMessage = document.getElementById('insurance_warning_message');
 
         function formatDateToISO(date) {
             return date.toISOString().split('T')[0];
@@ -177,9 +183,20 @@
             }
         }
 
+        function toggleInsuranceWarningMessage() {
+            if (insuranceWarningMessage) {
+                if (insuranceTypePersonal && insuranceTypePersonal.checked) {
+                    insuranceWarningMessage.style.display = 'flex';
+                } else {
+                    insuranceWarningMessage.style.display = 'none';
+                }
+            }
+        }
+
         if (insuranceTypePersonal) {
             insuranceTypePersonal.addEventListener('change', toggleDateFields);
             insuranceTypePersonal.addEventListener('change', toggleSubmitButton);
+            insuranceTypePersonal.addEventListener('change', toggleInsuranceWarningMessage);
         }
 
         if (insuranceTypeGym) {
@@ -191,5 +208,6 @@
         toggleDateFields();
         toggleSubmitButton();
         toggleInsuranceMessage();
+        toggleInsuranceWarningMessage();
     });
 </script>

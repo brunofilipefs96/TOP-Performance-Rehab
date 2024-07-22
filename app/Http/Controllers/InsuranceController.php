@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Insurance;
 use App\Http\Requests\StoreInsuranceRequest;
 use App\Http\Requests\UpdateFreeTrainingRequest;
+use App\Models\Notification;
+use App\Models\NotificationType;
 use App\Models\Status;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -113,24 +115,71 @@ class InsuranceController extends Controller
         $this->authorize('update', $insurance);
 
         $status = Status::where('name', $request->input('status_name'))->firstOrFail();
+        $notificationType = null;
+        $notificationMessage = '';
+        $url = 'insurances/' . $insurance->id;
 
-        if($insurance->status->name == 'pending'){
+        if ($status->name == 'pending_payment') {
             $insurance->status_id = $status->id;
-        }
+            $insurance->save();
 
-        if($insurance->status->name == 'renew_pending'){
+            if ($insurance->insurance_type === 'pessoal') {
+                $notificationType = NotificationType::where('name', 'Seguro Aprovado')->firstOrFail();
+                $notificationMessage = 'O seu seguro foi aprovado.';
+            } else {
+                $notificationType = NotificationType::where('name', 'Seguro Aprovado')->firstOrFail();
+                $notificationMessage = 'O seu seguro foi aprovado e aguarda pagamento.';
+            }
+        } elseif ($status->name == 'pending_renewPayment') {
             $insurance->status_id = $status->id;
-        }
+            $insurance->save();
 
-        if($insurance->status->name == 'active') {
+            if ($insurance->insurance_type === 'pessoal') {
+                $notificationType = NotificationType::where('name', 'Renovação Aprovada')->firstOrFail();
+                $notificationMessage = 'A sua renovação de seguro foi aprovada.';
+            } else {
+                $notificationType = NotificationType::where('name', 'Renovação Aprovada')->firstOrFail();
+                $notificationMessage = 'A sua renovação de seguro foi aprovada e aguarda pagamento.';
+            }
+        } elseif ($status->name == 'rejected') {
+            $insurance->status_id = $status->id;
+            $insurance->save();
+
+            $notificationType = NotificationType::where('name', 'Seguro Negado')->firstOrFail();
+            $notificationMessage = 'O seu seguro foi rejeitado.';
+        } elseif ($status->name == 'frozen') {
+            $insurance->status_id = $status->id;
+            $insurance->save();
+
+            $notificationType = NotificationType::where('name', 'Seguro Congelado')->firstOrFail();
+            $notificationMessage = 'O seu seguro foi congelado.';
+        } elseif ($status->name == 'active') {
             $insurance->start_date = now();
             $insurance->end_date = now()->addYear();
+            $insurance->status_id = $status->id;
+            $insurance->save();
+
+            $notificationType = NotificationType::where('name', 'Seguro Aprovado')->firstOrFail();
+            $notificationMessage = 'O seu seguro foi ativado.';
+        } else {
+            $insurance->status_id = $status->id;
+            $insurance->save();
         }
 
-        $insurance->save();
+        if ($notificationType) {
+            $notification = Notification::create([
+                'notification_type_id' => $notificationType->id,
+                'message' => $notificationMessage,
+                'url' => $url,
+            ]);
+
+            $user = $insurance->membership->user;
+            $user->notifications()->attach($notification->id);
+        }
 
         return redirect()->route('insurances.show', ['insurance' => $insurance])->with('success', 'Insurance Updated!');
     }
+
 
     /**
      * Remove the specified resource from storage.

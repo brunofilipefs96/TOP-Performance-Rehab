@@ -14,17 +14,18 @@ class NotificationTypeSeeder extends Seeder
     public function run(): void
     {
         $notificationTypes = [
-            ['name' => 'membershipAproved'],
-            ['name' => 'membershipDenied'],
-            ['name' => 'membershipFreezed'],
-            ['name' => 'membershipExpired'],
-            ['name' => 'insuranceAproved'],
-            ['name' => 'insuranceDenied'],
-            ['name' => 'insuranceFreezed'],
-            ['name' => 'insuranceExpired'],
-            ['name' => 'renewAproved'],
-            ['name' => 'renewDenied'],
+            ['name' => 'Matrícula Aprovada'],
+            ['name' => 'Matrícula Negada'],
+            ['name' => 'Matrícula Congelada'],
+            ['name' => 'Matrícula Expirada'],
+            ['name' => 'Seguro Aprovado'],
+            ['name' => 'Seguro Negado'],
+            ['name' => 'Seguro Congelado'],
+            ['name' => 'Seguro Expirado'],
+            ['name' => 'Renovação Aprovada'],
+            ['name' => 'Renovação Negada'],
         ];
+
 
         DB::table('notification_types')->insert($notificationTypes);
     }

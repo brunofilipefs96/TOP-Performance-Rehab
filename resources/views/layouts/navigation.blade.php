@@ -164,7 +164,7 @@
                 <!-- Notification Bell Icon -->
                 <button type="button"
                         class="flex items-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
-                    <i class="fa-solid fa-bell w-5 h-5 pt-1"></i>
+                    <i class="fa-solid fa-bell w-5 h-5 mb-1 text-lg"></i>
                 </button>
 
                 <!-- Theme Toggle Button -->

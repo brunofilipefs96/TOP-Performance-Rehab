@@ -94,5 +94,6 @@ class DatabaseSeeder extends Seeder
         $this->call(TrainingTypeSeeder::class);
         $this->call(PackSeeder::class);
         $this->call(SurveySeeder::class);
+        $this->call(NotificationTypeSeeder::class);
     }
 }

@@ -14,6 +14,10 @@
                 <h1 class="mb-6 dark:text-lime-400 font-semibold text-gray-800">{{ $freeTraining->name }}</h1>
             </div>
             <div class="mb-4">
+                <label class="block dark:text-white text-gray-800">Tipo de Treino</label>
+                <p class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 dark:bg-gray-600 dark:text-white">{{ $freeTraining->trainingType->name }}</p>
+            </div>
+            <div class="mb-4">
                 <label class="block dark:text-white text-gray-800">Máximo de Alunos</label>
                 <p class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 dark:bg-gray-600 dark:text-white">{{ $freeTraining->max_students }}</p>
             </div>

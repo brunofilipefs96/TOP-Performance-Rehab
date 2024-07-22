@@ -76,14 +76,32 @@
                     @enderror
                 </div>
 
-                <div class="mb-4" id="max_capacity_field">
+                <div class="mb-4" id="max_capacity_field" style="{{ $training_type->has_personal_trainer ? '' : 'display: none;' }}">
                     <label for="max_capacity" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Capacidade Máxima</label>
                     <select id="max_capacity" name="max_capacity" class="mt-1 block w-full p-2 bg-gray-100 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500 dark:bg-gray-600 dark:text-white">
+                        <option value="" {{ old('max_capacity', $training_type->max_capacity) === null ? 'selected' : '' }}>Definir no próprio treino</option>
                         <option value="1" {{ old('max_capacity', $training_type->max_capacity) == 1 ? 'selected' : '' }}>1</option>
                         <option value="2" {{ old('max_capacity', $training_type->max_capacity) == 2 ? 'selected' : '' }}>2</option>
                         <option value="3" {{ old('max_capacity', $training_type->max_capacity) == 3 ? 'selected' : '' }}>3</option>
                     </select>
                     @error('max_capacity')
+                    <span class="text-red-500 text-sm mt-2" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label for="is_electrostimulation" class="block text-sm font-medium dark:text-gray-200 text-gray-800">É Eletroestimulação?</label>
+                    <div class="flex items-center">
+                        <input type="radio" id="is_electrostimulation_yes" name="is_electrostimulation" class="form-radio text-blue-500 dark:text-lime-400" value="1" {{ $training_type->is_electrostimulation ? 'checked' : '' }}>
+                        <label for="is_electrostimulation_yes" class="ml-2 text-sm font-medium text-gray-800 dark:text-gray-200">Sim</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="radio" id="is_electrostimulation_no" name="is_electrostimulation" class="form-radio text-blue-500 dark:text-lime-400" value="0" {{ !$training_type->is_electrostimulation ? 'checked' : '' }}>
+                        <label for="is_electrostimulation_no" class="ml-2 text-sm font-medium text-gray-800 dark:text-gray-200">Não</label>
+                    </div>
+                    @error('is_electrostimulation')
                     <span class="text-red-500 text-sm mt-2" role="alert">
                         <strong>{{ $message }}</strong>
                     </span>
@@ -128,18 +146,12 @@
 
         if (hasPersonalTrainer == "1") {
             maxCapacityField.style.display = 'block';
-            maxCapacityInput.required = true;
             if (!maxCapacityInput.value) {
-                maxCapacityInput.value = 1; // Definir valor padrão para 1
+                maxCapacityInput.value = 1;
             }
         } else {
             maxCapacityField.style.display = 'none';
-            maxCapacityInput.required = false;
             maxCapacityInput.value = null;
         }
     }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        toggleMaxCapacity(); // Chama a função para definir o estado inicial
-    });
 </script>

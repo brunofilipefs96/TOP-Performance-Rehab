@@ -4,6 +4,9 @@
     $horarioFimSemanal = setting('horario_fim_semanal', '23:59');
     $horarioInicioSabado = setting('horario_inicio_sabado', '08:00');
     $horarioFimSabado = setting('horario_fim_sabado', '18:00');
+
+    $startHour = min((int)substr($horarioInicioSemanal, 0, 2), (int)substr($horarioInicioSabado, 0, 2));
+    $endHour = max((int)substr($horarioFimSemanal, 0, 2), (int)substr($horarioFimSabado, 0, 2));
 @endphp
 
 <div class="container mx-auto mt-10 mb-10 pt-5 glass">
@@ -17,7 +20,7 @@
             <div class="mt-10 text-center">
                 <h1 class="mb-6 dark:text-lime-400 font-semibold text-gray-800">Criar Treinos Livres</h1>
                 <p class="mb-2 text-gray-600 dark:text-gray-300 text-left">
-                    Os treinos são criados, em blocos de 30 minutos, entre as horas definidas para o dia selecionado.
+                    Os treinos são criados, em blocos de 60 minutos, entre as horas definidas para o dia selecionado.
                 </p>
                 <p class="mb-4 text-gray-600 dark:text-gray-300 text-left">
                     Caso ative a opção de 'Repetir para Outros Dias', os treinos serão criados para os dias selecionados, até a data final definida.
@@ -34,6 +37,14 @@
             @endif
             <form method="POST" action="{{ route('free-trainings.store') }}" id="freeTrainingForm">
                 @csrf
+                <div class="mb-4">
+                    <label for="training_type_id" class="block dark:text-white text-gray-800">Tipo de Treino</label>
+                    <select name="training_type_id" id="training_type_id" required class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-200 dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
+                        @foreach ($trainingTypes as $type)
+                            <option value="{{ $type->id }}" {{ old('training_type_id') == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <div class="mb-4">
                     <label for="max_students" class="block dark:text-white text-gray-800">Máximo de Alunos</label>
                     <input type="number" name="max_students" id="max_students" value="{{ old('max_students') }}" required min="1" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-200 dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
@@ -112,21 +123,14 @@
         const oldEndTime = '{{ old("end_time") }}';
 
         function populateTimeSelects() {
-            for (let hour = 6; hour < 24; hour++) {
+            for (let hour = {{ $startHour }}; hour <= {{ $endHour }}; hour++) {
                 let hourString = hour.toString().padStart(2, '0');
-                let option1 = document.createElement('option');
-                option1.value = `${hourString}:00`;
-                option1.textContent = `${hourString}:00`;
+                let option = document.createElement('option');
+                option.value = `${hourString}:00`;
+                option.textContent = `${hourString}:00`;
 
-                let option2 = document.createElement('option');
-                option2.value = `${hourString}:30`;
-                option2.textContent = `${hourString}:30`;
-
-                startTimeSelect.appendChild(option1.cloneNode(true));
-                startTimeSelect.appendChild(option2.cloneNode(true));
-
-                endTimeSelect.appendChild(option1.cloneNode(true));
-                endTimeSelect.appendChild(option2.cloneNode(true));
+                startTimeSelect.appendChild(option.cloneNode(true));
+                endTimeSelect.appendChild(option.cloneNode(true));
             }
         }
 

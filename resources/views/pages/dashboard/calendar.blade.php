@@ -4,6 +4,7 @@
     @component('components.calendar.calendar-show', ['user' => $user,
             'user' => $user,
             'trainings' => $trainings,
+            'freeTrainings' => $freeTrainings,
             'startOfWeek' => $startOfWeek,
             'endOfWeek' => $endOfWeek,
             'selectedWeek' => $selectedWeek,

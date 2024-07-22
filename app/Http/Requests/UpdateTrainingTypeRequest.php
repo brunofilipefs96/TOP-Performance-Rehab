@@ -18,6 +18,7 @@ class UpdateTrainingTypeRequest extends FormRequest
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'has_personal_trainer' => ['required', 'boolean'],
             'max_capacity' => ['nullable', 'integer', 'min:1'],
+            'is_electrostimulation' => ['required', 'boolean'],
         ];
     }
 
@@ -34,6 +35,8 @@ class UpdateTrainingTypeRequest extends FormRequest
             'has_personal_trainer.boolean' => 'O campo de personal trainer deve ser verdadeiro ou falso.',
             'max_capacity.integer' => 'A capacidade máxima deve ser um número inteiro.',
             'max_capacity.min' => 'A capacidade máxima deve ser pelo menos 1.',
+            'is_electrostimulation.required' => 'O campo de eletroestimulação é obrigatório.',
+            'is_electrostimulation.boolean' => 'O campo de eletroestimulação deve ser verdadeiro ou falso.',
         ];
     }
 
@@ -44,11 +47,10 @@ class UpdateTrainingTypeRequest extends FormRequest
      */
     protected function prepareForValidation()
     {
-        if ($this->has_personal_trainer == "true" || $this->has_personal_trainer == "1") {
-            $this->merge(['has_personal_trainer' => true]);
-        } else {
-            $this->merge(['has_personal_trainer' => false]);
-        }
+        $this->merge([
+            'has_personal_trainer' => filter_var($this->has_personal_trainer, FILTER_VALIDATE_BOOLEAN),
+            'is_electrostimulation' => filter_var($this->is_electrostimulation, FILTER_VALIDATE_BOOLEAN),
+        ]);
     }
 
     /**
@@ -60,8 +62,11 @@ class UpdateTrainingTypeRequest extends FormRequest
     protected function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            if ($this->has_personal_trainer && (is_null($this->max_capacity) || $this->max_capacity <= 0)) {
-                $validator->errors()->add('max_capacity', 'Capacidade máxima é obrigatória e deve ser maior que 0 quando tem personal trainer.');
+            if ($this->has_personal_trainer && is_null($this->max_capacity)) {
+                return;
+            }
+            if ($this->has_personal_trainer && $this->max_capacity <= 0) {
+                $validator->errors()->add('max_capacity', 'Capacidade máxima deve ser maior que 0 quando tem personal trainer.');
             }
         });
     }

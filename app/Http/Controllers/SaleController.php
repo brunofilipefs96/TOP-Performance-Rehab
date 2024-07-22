@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Document;
 use App\Models\Membership;
 use App\Models\Sale;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Stripe\Charge;
 use Stripe\Event;
 use Stripe\PaymentIntent;
@@ -53,7 +55,6 @@ class SaleController extends Controller
         return view('pages.sales.index', ['sales' => $sales, 'status' => $status, 'nif' => $nif]);
     }
 
-
     public function show(Sale $sale)
     {
         $this->authorize('view', $sale);
@@ -68,12 +69,15 @@ class SaleController extends Controller
         $amount = $paymentIntent->amount / 100;
         $paymentVoucherUrl = null;
         $receiptUrl = null;
+        $validity = null;
 
         if ($paymentStatus !== 'succeeded') {
-            if (isset($paymentIntent->next_action->multibanco_display_details)) {
-                $paymentReference = $paymentIntent->next_action->multibanco_display_details->reference;
-                $paymentEntity = $paymentIntent->next_action->multibanco_display_details->entity;
-                $paymentVoucherUrl = $paymentIntent->next_action->multibanco_display_details->hosted_voucher_url;
+            if (isset($paymentIntent->next_action) && isset($paymentIntent->next_action->multibanco_display_details)) {
+                $multibancoDetails = $paymentIntent->next_action->multibanco_display_details;
+                $paymentReference = $multibancoDetails->reference;
+                $paymentEntity = $multibancoDetails->entity;
+                $paymentVoucherUrl = $multibancoDetails->hosted_voucher_url;
+                $validity = Carbon::createFromTimestamp($multibancoDetails->expires_at)->setTimezone('Europe/Lisbon')->format('d/m/Y H:i');
             }
         } else {
             $chargeId = $paymentIntent->latest_charge;
@@ -91,6 +95,7 @@ class SaleController extends Controller
             'amount' => $amount,
             'paymentVoucherUrl' => $paymentVoucherUrl,
             'receiptUrl' => $receiptUrl,
+            'validity' => $validity,
         ]);
     }
 
@@ -98,7 +103,6 @@ class SaleController extends Controller
     {
         Log::info('Webhook received');
 
-        // Defina a chave da API do Stripe
         \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
 
         $payload = $request->all();
@@ -190,8 +194,63 @@ class SaleController extends Controller
 
         return response()->json(['status' => 'success']);
     }
-    public function destroy(Sale $sale)
+
+    public function updateStatus(Request $request, $id)
     {
-        //
+        $request->validate([
+            'status_id' => 'required|exists:statuses,id',
+        ]);
+
+        $sale = Sale::findOrFail($id);
+
+        if ($sale->status_id == 6 && $request->status_id == 8) {
+            $sale->status_id = $request->status_id;
+            $sale->save();
+
+            return redirect()->route('sales.show', $id)->with('success', 'Estado da encomenda atualizado com sucesso.');
+        }
+
+        return redirect()->route('sales.show', $id)->with('error', 'Não é possível atualizar o estado da encomenda.');
     }
+
+    public function addDocument(Request $request, Sale $sale)
+    {
+        $this->authorize('update', $sale);
+
+        $request->validate([
+            'documents.*' => 'required|file|mimes:pdf,jpg,png,doc,docx|max:2048'
+        ]);
+
+        try {
+            foreach ($request->file('documents') as $file) {
+                $path = $file->storeAs("public/documents/{$sale->id}", $file->getClientOriginalName());
+
+                $document = new Document();
+                $document->name = $file->getClientOriginalName();
+                $document->file_path = $path;
+                $document->save();
+
+                $sale->documents()->attach($document->id);
+            }
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()]);
+        }
+    }
+
+    public function deleteDocument(Sale $sale, Document $document)
+    {
+        $this->authorize('delete', $sale);
+
+        try {
+            $sale->documents()->detach($document->id);
+            Storage::delete($document->file_path);
+            $document->delete();
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()]);
+        }
+    }
+
 }

@@ -44,14 +44,13 @@
                             <h3 class="text-lg font-semibold mb-4">Treinos Agendados:</h3>
                             <div class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                                 @foreach ($trainings as $training)
-                                    <a href="{{ route('trainings.show', $training->id) }}" class="block bg-gradient-to-r from-lime-400 to-blue-600 p-1 rounded-lg shadow-md transition-transform transform hover:scale-105">
+                                    <a href="{{ route('trainings.show', $training->id) }}" class="block bg-gradient-to-r from-blue-300 to-blue-600 dark:from-lime-200 dark:to-lime-600 p-1 rounded-lg shadow-md transition-transform transform hover:scale-105">
                                         <div class="bg-gray-200 dark:bg-gray-700 p-6 rounded-lg">
                                             <div class="flex justify-between items-center mb-4">
-                                                <h4 class="text-xl font-bold text-blue-500 dark:text-lime-500">{{ $training->name }}</h4>
+                                                <h4 class="text-xl font-bold text-blue-500 dark:text-lime-500">{{ $training->trainingType->name }}</h4>
                                                 <i class="fa-solid fa-dumbbell text-2xl text-blue-500 dark:text-lime-500"></i>
                                             </div>
                                             <div class="space-y-2">
-                                                <p class="text-sm text-gray-600 dark:text-gray-400"><span class="font-semibold">Tipo de Treino:</span> {{ $training->trainingType->name }}</p>
                                                 <p class="text-sm text-gray-600 dark:text-gray-400"><span class="font-semibold">Sala:</span> {{ $training->room->name }}</p>
                                                 <p class="text-sm text-gray-600 dark:text-gray-400"><span class="font-semibold">Dia:</span> {{ \Carbon\Carbon::parse($training->start_date)->format('d/m/Y') }}</p>
                                                 <p class="text-sm text-gray-600 dark:text-gray-400"><span class="font-semibold">Hora:</span> {{ \Carbon\Carbon::parse($training->start_date)->format('H:i') }} - {{ \Carbon\Carbon::parse($training->end_date)->format('H:i') }}</p>

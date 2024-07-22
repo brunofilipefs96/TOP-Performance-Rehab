@@ -1,4 +1,47 @@
-@php use Carbon\Carbon; @endphp
+@php
+    use Carbon\Carbon;
+
+    $prohibitedConditions = [
+        'Gravidez', 'Tuberculose', 'AVC', 'Doença cardíaca', 'Enfarte', 'Angina de peito',
+        'Cirrose hepática', 'Insuficiência hepática', 'Pancreatite', 'Icterícia', 'Insuficiência renal',
+        'Cálculos renais', 'Quistos mamários', 'Epilepsia', 'Psoríase'
+    ];
+
+    function userHasProhibitedCondition($user, $prohibitedConditions) {
+        $isPregnant = false;
+        $hasCancer = false;
+        $userConditions = [];
+
+        foreach ($user->entries as $entry) {
+            foreach ($entry->answers as $answer) {
+                if (is_array($answer->value)) {
+                    $userConditions = array_merge($userConditions, $answer->value);
+                } else {
+                    $userConditions[] = $answer->value;
+                    if ($answer->question->content == 'Se é mulher, encontra-se grávida?' && $answer->value == 'Sim') {
+                        $isPregnant = true;
+                    }
+                    if (stripos($answer->value, 'Cancro') !== false) {
+                        $hasCancer = true;
+                    }
+                }
+            }
+        }
+
+        foreach ($prohibitedConditions as $condition) {
+            if (in_array($condition, $userConditions) || $isPregnant || $hasCancer) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Separar usuários inscritos e cancelados
+    $registeredUsers = $training->users()->wherePivot('cancelled', false)->get();
+    $cancelledUsers = $training->users()->wherePivot('cancelled', true)->get();
+@endphp
+
 <div class="container mx-auto mt-10 mb-10 pt-5 glass">
     <div class="flex justify-center">
         <div class="w-full max-w-lg bg-gray-300 dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm relative">
@@ -51,11 +94,12 @@
                 $userPresence = $training->users()->where('user_id', auth()->id())->exists();
                 $userCancelled = $training->users()->where('user_id', auth()->id())->wherePivot('cancelled', true)->exists();
                 $currentDateTime = Carbon::now();
-                $remainingSpots = $training->trainingType->max_capacity - $training->users()->wherePivot('cancelled', false)->count();
+                $maxCapacity = $training->capacity ?? $training->trainingType->max_capacity;
+                $remainingSpots = $maxCapacity - $registeredUsers->count();
                 $trainingStartDateTime = Carbon::parse($training->start_date);
                 $trainingEndDateTime = Carbon::parse($training->end_date);
                 $userHasActiveMembership = auth()->user()->membership && auth()->user()->membership->status->name === 'active';
-                $presenceMarked = $training->users->every(fn($user) => !is_null($user->pivot->presence));
+                $presenceMarked = $registeredUsers->every(fn($user) => !is_null($user->pivot->presence));
 
                 // Check if the user has available packs for this training type
                 $today = Carbon::today();
@@ -67,6 +111,9 @@
                         ->where('training_type_id', $training->training_type_id)
                         ->exists();
                 }
+
+                // Calculate hours difference for cancelation warning
+                $hoursDifference = $currentDateTime->diffInHours($trainingStartDateTime, false);
             @endphp
 
             @if ($userCancelled)
@@ -77,13 +124,13 @@
             @endif
 
             <div class="mb-4">
-                <h2 class="block text-gray-800 dark:text-white mb-2">Inscrições: {{ $training->users()->wherePivot('cancelled', false)->count() }}/{{ $training->trainingType->max_capacity }}</h2>
+                <h2 class="block text-gray-800 dark:text-white mb-2">Inscrições: {{ $registeredUsers->count() }}/{{ $maxCapacity }}</h2>
             </div>
 
             @if (auth()->user()->hasRole('admin') || auth()->user()->id === $training->personal_trainer_id)
                 <div class="mb-4">
                     <h2 class="block text-gray-800 dark:text-white mb-2">Alunos Inscritos</h2>
-                    @if ($training->users->isEmpty())
+                    @if ($registeredUsers->isEmpty())
                         <p class="text-gray-800 dark:text-white">Ainda não existem alunos inscritos neste treino.</p>
                     @else
                         @if ($currentDateTime->gte($trainingStartDateTime))
@@ -102,11 +149,14 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @foreach ($training->users as $user)
-                                            @if ($user->pivot->cancelled === false && is_null($user->pivot->presence))
+                                        @foreach ($registeredUsers as $user)
+                                            @if (is_null($user->pivot->presence))
                                                 <tr>
                                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">
-                                                        <a href="{{ url('users/' . $user->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
+                                                        <a href="{{ url('memberships/' . $user->membership->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
+                                                            @if(userHasProhibitedCondition($user, $prohibitedConditions))
+                                                                <i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>
+                                                            @endif
                                                             {{ $user->firstLastName() }}
                                                         </a>
                                                     </td>
@@ -147,47 +197,38 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach ($training->users as $user)
-                                        @if ($user->pivot->cancelled === false)
-                                            <tr>
-                                                <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">
-                                                    <a href="{{ url('users/' . $user->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
-                                                        {{ $user->firstLastName() }}
-                                                    </a>
-                                                </td>
-                                                <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700">
-                                                    <div class="flex items-center">
-                                                        @if($user->pivot->presence)
-                                                            <i class="fa-solid fa-check text-green-500"></i>
-                                                        @else
-                                                            <i class="fa-solid fa-x text-red-500"></i>
-                                                        @endif
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @else
-                                            <tr>
-                                                <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">
-                                                    <a href="{{ url('users/' . $user->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
-                                                        {{ $user->firstLastName() }}
-                                                    </a>
-                                                </td>
-                                                <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700">
-                                                    <div class="flex items-center">
-                                                        <i class="fa-solid fa-ban text-red-500"></i> Cancelado
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endif
+                                    @foreach ($registeredUsers as $user)
+                                        <tr>
+                                            <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">
+                                                <a href="{{ url('memberships/' . $user->membership->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
+                                                    @if(userHasProhibitedCondition($user, $prohibitedConditions))
+                                                        <i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>
+                                                    @endif
+                                                    {{ $user->firstLastName() }}
+                                                </a>
+                                            </td>
+                                            <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700">
+                                                <div class="flex items-center">
+                                                    @if($user->pivot->presence)
+                                                        <i class="fa-solid fa-check text-green-500"></i>
+                                                    @else
+                                                        <i class="fa-solid fa-x text-red-500"></i>
+                                                    @endif
+                                                </div>
+                                            </td>
+                                        </tr>
                                     @endforeach
                                     </tbody>
                                 </table>
                             @endif
                         @else
                             <ul class="list-disc list-inside dark:text-white">
-                                @foreach ($training->users as $user)
+                                @foreach ($registeredUsers as $user)
                                     <li>
                                         <a href="{{ url('memberships/' . $user->membership->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
+                                            @if(userHasProhibitedCondition($user, $prohibitedConditions))
+                                                <i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>
+                                            @endif
                                             {{ $user->firstLastName() }}
                                         </a>
                                     </li>
@@ -196,6 +237,26 @@
                         @endif
                     @endif
                 </div>
+
+                @if (!$cancelledUsers->isEmpty())
+                    <div class="mb-4">
+                        <h2 class="block text-gray-800 dark:text-white mb-2">Alunos que Cancelaram:</h2>
+                        <ul class="list-disc list-inside dark:text-white">
+                            @foreach ($cancelledUsers as $user)
+                                <li>
+                                    <a href="{{ url('memberships/' . $user->membership->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
+                                        {{ $user->firstLastName() }}
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <p class="text-yellow-500 mt-4">
+                    <i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>
+                    Os alunos marcados com um triângulo amarelo possuem condições médicas que podem não ser adequadas para este treino de eletroestimulação.
+                </p>
             @endif
 
             @if (auth()->user()->hasRole('client'))
@@ -206,7 +267,7 @@
                                 @if($hasAvailablePack)
                                     <form id="enroll-form-{{ $training->id }}" action="{{ route('trainings.enroll', $training->id) }}" method="POST" class="inline text-sm">
                                         @csrf
-                                        <button type="submit"
+                                        <button type="button" onclick="confirmEnroll({{ $training->id }})"
                                                 class="dark:bg-lime-400 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-400 text-sm">
                                             <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
                                             Inscrever-me
@@ -222,7 +283,7 @@
                             @elseif ($userPresence && !$userCancelled)
                                 <form id="cancel-form-{{ $training->id }}" action="{{ route('trainings.cancel', $training->id) }}" method="POST" class="inline text-sm">
                                     @csrf
-                                    <button type="submit"
+                                    <button type="button" onclick="confirmCancel({{ $training->id }}, {{ $hoursDifference }})"
                                             class="bg-red-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-red-400 text-sm">
                                         <i class="fa-solid fa-x w-4 h-4 mr-2"></i>
                                         Cancelar Inscrição
@@ -252,11 +313,10 @@
                             <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
                             Editar
                         </a>
-                        <form id="delete-form-{{$training->id}}" action="{{ url('trainings/' . $training->id) }}"
-                              method="POST" class="inline mr-2">
+                        <form id="delete-form-{{$training->id}}" action="{{ url('trainings/' . $training->id) }}" method="POST" class="inline mr-2">
                             @csrf
                             @method('DELETE')
-                            <button type="submit"
+                            <button type="button" onclick="confirmDelete({{ $training->id }})"
                                     class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500"
                                     id="delete-button">
                                 <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
@@ -282,7 +342,7 @@
             <form id="confirmation-form" method="POST" class="inline">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500">Confirmar
+                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Confirmar
                 </button>
             </form>
         </div>
@@ -323,8 +383,12 @@
         openModal('Pretende inscrever-se?', '', `/trainings/${id}/enroll`);
     }
 
-    function confirmCancel(id) {
-        openModal('Pretende cancelar a inscrição?', 'Se cancelar agora não poderá voltar a inscrever-se neste treino e não irá ser reembolsado.', `/trainings/${id}/cancel`);
+    function confirmCancel(id, hoursDifference) {
+        let message = 'Pretende cancelar a inscrição?';
+        if (hoursDifference < 12) {
+            message = 'Se cancelar agora não poderá voltar a inscrever-se neste treino e não irá ser reembolsado.';
+        }
+        openModal('Pretende cancelar a inscrição?', message, `/trainings/${id}/cancel`);
     }
 
     function confirmDelete(id) {

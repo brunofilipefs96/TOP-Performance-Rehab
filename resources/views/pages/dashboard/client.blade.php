@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="container mx-auto pt-5 mb-10">
         @if ($user->gender == 'male')
-        <span class="text-3xl font-bold mb-2 dark:text-white text-gray-800">Bem vindo, <br> <span  class="text-blue-500 dark:text-lime-500" >{{ Auth::user()->firstLastName() }}</span>!</span>
+            <span class="text-3xl font-bold mb-2 dark:text-white text-gray-800">Bem vindo, <br> <span  class="text-blue-500 dark:text-lime-500" >{{ Auth::user()->firstLastName() }}</span>!</span>
         @elseif ($user->gender == 'female')
             <span class="text-3xl font-bold mb-2 dark:text-white text-gray-800">Bem vinda, <br> <span  class="text-blue-500 dark:text-lime-500" >{{ Auth::user()->firstLastName() }}</span>!</span>
         @else
@@ -13,9 +13,24 @@
         @if(!Auth::user()->membership)
             <div class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 dark:bg-gray-700 dark:text-gray-200 p-4 mb-6" role="alert">
                 <p class="font-bold">Ainda não se matriculou no nosso ginásio</p>
-                <p>Gostaria de se juntar a nós e começar sua jornada fitness? Clique no botão abaixo para se matricular agora!</p>
+                <p>Gostaria de se juntar a nós e começar a sua jornada fitness? </p>
+                <p>Clique no botão abaixo para se matricular agora!</p>
                 <a href="{{ route('setup') }}" class="mt-4 inline-block text-white dark:bg-lime-500 bg-blue-500 px-3 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400">Matricular-se</a>
             </div>
+        @endif
+
+
+            <!-- este if esta incorreto, quero um if onde vai ver se ja tem uma sale de matricula feita, para que desapareça. -->
+
+
+            @if($user->addresses || $user->addresses->count() <= 0 && $user->membership && $user->membership->trainingTypes->count() <= 0 && $user->insurance)
+            @if($user->membership && $user->membership->status->name == 'pending_payment' && $user->membership->insurance->status->name == 'pending_payment')
+                <div class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 dark:bg-gray-700 dark:text-gray-200 p-4 mb-6" role="alert">
+                    <p class="font-bold">A sua Matrícula e o seu seguro ja foram aprovados pelo administrador.</p>
+                    <p>Para se juntar ao nosso ginásio, falta apenas fazer o processo de pagamento!</p>
+                    <a href="{{ route('setup') }}" class="mt-4 inline-block text-white dark:bg-lime-500 bg-blue-500 px-3 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400">Realizar Pagamento</a>
+                </div>
+            @endif
         @endif
 
         @if(Auth::user()->membership && Auth::user()->membership->status_id == 2 && Auth::user()->membership->packs->isEmpty())
@@ -26,9 +41,9 @@
             </div>
         @endif
 
-            @if($products->count() > 0)
-                <h1 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Temos produtos novos para si.</h1>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        @if($products->count() > 0)
+            <h1 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Temos produtos novos para si.</h1>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 @foreach ($products as $product)
                     <div
                         class="product-card dark:bg-gray-800 bg-gray-500 rounded-lg overflow-hidden shadow-md text-white select-none transform transition-transform duration-300 hover:scale-105 flex flex-col justify-between"
@@ -69,11 +84,11 @@
                         </div>
                     </div>
                 @endforeach
-            @else
-                <div class="flex justify-center">
-                    <img  src="https://cdn.dribbble.com/users/1162077/screenshots/4672791/gym.gif" alt="">
-                </div>
-            @endif
-        </div>
+                @else
+                    <div class="flex justify-center">
+                        <img  src="https://cdn.dribbble.com/users/1162077/screenshots/4672791/gym.gif" alt="">
+                    </div>
+                @endif
+            </div>
     </div>
 </x-app-layout>

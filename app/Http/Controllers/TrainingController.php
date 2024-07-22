@@ -91,7 +91,7 @@ class TrainingController extends Controller
         $endDate = $startDate->copy()->addMinutes($duration);
 
         $trainingType = TrainingType::find($validatedData['training_type_id']);
-        $maxStudents = $trainingType->max_capacity;
+        $maxStudents = is_null($trainingType->max_capacity) && $trainingType->has_personal_trainer ? $validatedData['capacity'] : $trainingType->max_capacity;
 
         if ($request->has('repeat') && $request->repeat) {
             $repeatUntil = Carbon::parse($request->repeat_until);
@@ -108,6 +108,7 @@ class TrainingController extends Controller
                         $trainingData = $validatedData;
                         $trainingData['start_date'] = $currentDate->toDateTimeString();
                         $trainingData['end_date'] = $currentEndDate->toDateTimeString();
+                        $trainingData['capacity'] = $maxStudents;
 
                         Training::create($trainingData);
                         $createdAny = true;
@@ -123,6 +124,7 @@ class TrainingController extends Controller
             if ($request->passesValidation($startDate, $endDate, $validatedData['room_id'], $validatedData['personal_trainer_id'], $validatedData['training_type_id'])) {
                 $validatedData['start_date'] = $startDate->toDateTimeString();
                 $validatedData['end_date'] = $endDate->toDateTimeString();
+                $validatedData['capacity'] = $maxStudents;
 
                 Training::create($validatedData);
             } else {
@@ -196,9 +198,13 @@ class TrainingController extends Controller
         }
 
         $training->delete();
-        return redirect()->route('trainings.index')->with('success', 'Treino eliminado com sucesso.');
-    }
 
+        if (str_contains(url()->previous(), route('trainings.show', $training->id))) {
+            return redirect()->route('trainings.index')->with('success', 'Treino eliminado com sucesso.');
+        } else {
+            return redirect()->back()->with('success', 'Treino eliminado com sucesso.');
+        }
+    }
 
     public function enroll(Request $request, Training $training)
     {
@@ -241,16 +247,16 @@ class TrainingController extends Controller
             return redirect()->route('trainings.index')->with('error', 'Não possui nenhum pack disponível para se inscrever neste tipo de treino.');
         }
 
-        $maxCapacity = $training->trainingType->max_capacity;
+        $maxCapacity = $training->capacity ?? $training->trainingType->max_capacity;
         if ($training->users()->count() < $maxCapacity) {
             $training->users()->attach($user->id);
 
             $membershipPack->pivot->quantity_remaining -= 1;
             $membershipPack->pivot->save();
 
-            return redirect()->route('trainings.index')->with('success', 'Inscreveu-se com sucesso.');
+            return redirect()->back()->with('success', 'Inscreveu-se com sucesso.');
         } else {
-            return redirect()->route('trainings.index')->with('error', 'O treino está cheio.');
+            return redirect()->back()->with('error', 'O treino está cheio.');
         }
     }
 
@@ -283,9 +289,9 @@ class TrainingController extends Controller
             return redirect()->route('trainings.index')->with('success', 'Inscrição cancelada com sucesso. Você não será cobrado.');
         } elseif ($differenceInHours <= 12 && $differenceInHours > 0) {
             $training->users()->updateExistingPivot($user->id, ['presence' => false, 'cancelled' => true]);
-            return redirect()->route('trainings.index')->with('success', 'Inscrição cancelada com sucesso. A presença será marcada como ausente e você será cobrado.');
+            return redirect()->back()->with('success', 'Inscrição cancelada com sucesso. A presença será marcada como ausente e você será cobrado.');
         } else {
-            return redirect()->route('trainings.index')->with('error', 'Não é possível cancelar a inscrição após o início do treino.');
+            return redirect()->back()->with('error', 'Não é possível cancelar a inscrição após o início do treino.');
         }
     }
 
@@ -343,7 +349,7 @@ class TrainingController extends Controller
             $query->where('personal_trainer_id', $request->personal_trainer_id);
         }
 
-        $trainings = $query->paginate(12);
+        $trainings = $query->paginate(32);
         $trainingTypes = TrainingType::all();
 
         return view('pages.trainings.multi-delete', compact('trainings', 'personalTrainers', 'trainingTypes'));
@@ -381,7 +387,7 @@ class TrainingController extends Controller
             }
         }
 
-        return redirect()->route('trainings.index')->with('success', 'Treinos removidos com sucesso!');
+        return redirect()->route('trainings.multiDelete')->with('success', 'Treinos removidos com sucesso!');
     }
 
 }

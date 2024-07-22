@@ -9,6 +9,7 @@ use App\Http\Controllers\FreeTrainingController;
 use App\Http\Controllers\GymClosureController;
 use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PackController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RenewController;
@@ -49,6 +50,11 @@ Route::middleware(['auth'])->group(function () {
 
 
 Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::class])->group(function () {
+
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+
+
     Route::patch('/users/{user}/client-type', [UserController::class, 'updateClientType'])->name('user.client-type.update');
     Route::post('/users/{user}/roles', [UserController::class, 'storeRole'])->name('user.roles.store');
     Route::delete('/users/{user}/roles/{role}', [UserController::class, 'destroyRole'])->name('user.roles.destroy');
@@ -69,6 +75,7 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::c
     Route::resource('/services', ServiceController::class);
     Route::resource('/memberships', MembershipController::class);
 
+
     Route::get('/entries/{survey}/fill', [EntryController::class, 'fill'])->name('entries.fill');
     Route::post('/entries/{survey}', [EntryController::class, 'store'])->name('entries.store');
     Route::get('/entries/{entry}', [EntryController::class, 'show'])->name('entries.show');
@@ -87,7 +94,6 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::c
     Route::delete('/memberships/{membership}/evaluations/{evaluation}', [EvaluationController::class, 'destroy'])->name('memberships.evaluations.destroy');
     Route::get('/memberships/{membership}/evaluations', [EvaluationController::class, 'listForMembership'])->name('memberships.evaluations.list');
 
-    // Rotas para Setup
     Route::get('/setup', [SetupController::class, 'setup'])->name('setup');
     Route::get('/setup/address', [SetupController::class, 'addressShow'])->name('setup.addressShow');
     Route::post('/setup/address/store', [SetupController::class, 'storeAddress'])->name('setup.address.store');
@@ -100,7 +106,6 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::c
     Route::get('/setup/payment', [SetupController::class, 'paymentShow'])->name('setup.paymentShow');
     Route::post('/setup/process', [SetupController::class, 'processSetup'])->name('setup.process');
 
-    // Rotas para Renovação
     Route::get('/renew', [RenewController::class, 'renew'])->name('renew');
     Route::get('/renew/renewMembership', [RenewController::class, 'renewMembership'])->name('renew.renewMembership');
     Route::get('/renew/renewInsurance', [RenewController::class, 'renewInsurance'])->name('renew.renewInsurance');
@@ -111,7 +116,6 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::c
     Route::post('/renew/updateInsurance/{insurance}', [RenewController::class, 'updateInsurance'])->name('renew.updateInsurance');
 
 
-    // Rotas para TrainingController
     Route::get('trainings/multi-delete', [TrainingController::class, 'showMultiDelete'])->name('trainings.showMultiDelete');
     Route::delete('trainings/multi-delete', [TrainingController::class, 'multiDelete'])->name('trainings.multiDelete');
 
@@ -122,21 +126,16 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::c
     Route::get('trainings/{training}/edit', [TrainingController::class, 'edit'])->name('trainings.edit');
     Route::put('trainings/{training}', [TrainingController::class, 'update'])->name('trainings.update');
     Route::delete('trainings/{training}', [TrainingController::class, 'destroy'])->name('trainings.destroy');
-
     Route::post('trainings/{training}/enroll', [TrainingController::class, 'enroll'])->name('trainings.enroll');
     Route::post('trainings/{training}/cancel', [TrainingController::class, 'cancel'])->name('trainings.cancel');
     Route::post('trainings/{training}/mark-presence', [TrainingController::class, 'markPresence'])->name('trainings.markPresence');
 
-    // Rotas para FreeTrainingController
     Route::get('free-trainings/multi-delete', [FreeTrainingController::class, 'showMultiDelete'])->name('free-trainings.showMultiDelete');
     Route::delete('free-trainings/multi-delete', [FreeTrainingController::class, 'multiDelete'])->name('free-trainings.multiDelete');
-
-
     Route::post('/dashboard/change-week', [DashboardController::class, 'changeWeek'])->name('dashboard.changeWeek');
     Route::post('/free-trainings/change-week', [FreeTrainingController::class, 'changeWeek'])->name('free-trainings.changeWeek');
     Route::get('/free-trainings/select-day/{day}', [FreeTrainingController::class, 'selectDay'])->name('free-trainings.selectDay');
     Route::resource('free-trainings', FreeTrainingController::class)->except(['edit', 'update']);
-
     Route::post('free-trainings/{freeTraining}/enroll', [FreeTrainingController::class, 'enroll'])->name('free-trainings.enroll');
     Route::post('free-trainings/{freeTraining}/cancel', [FreeTrainingController::class, 'cancel'])->name('free-trainings.cancel');
     Route::post('free-trainings/{freeTraining}/mark-presence', [FreeTrainingController::class, 'markPresence'])->name('free-trainings.markPresence');
@@ -152,6 +151,9 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::c
     Route::get('cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
     Route::post('cart/checkout', [CartController::class, 'processCheckout'])->name('cart.processCheckout');
 
+    Route::patch('/sales/{id}/updateStatus', [SaleController::class, 'updateStatus'])->name('sales.updateStatus');
+    Route::post('/sales/{sale}/documents', [SaleController::class, 'addDocument'])->name('sales.addDocument');
+    Route::delete('/sales/{sale}/documents/{document}', [SaleController::class, 'deleteDocument'])->name('sales.deleteDocument');
     Route::resource('/sales', SaleController::class)->only(['index', 'show']);
     Route::get('/sales/{sale}/payment-reference', [SaleController::class, 'showPaymentReference'])->name('sales.showPaymentReference');
 

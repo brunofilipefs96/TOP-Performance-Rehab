@@ -119,8 +119,9 @@
                                     $currentDateTime = Carbon::now();
                                     $trainingStartDateTime = Carbon::parse($training->start_date);
                                     $isTrainingStarted = $currentDateTime->gte($trainingStartDateTime);
+                                    $maxCapacity = $training->capacity ?? $training->trainingType->max_capacity;
                                     $totalSubscribes = $training->users()->wherePivot('cancelled', false)->count();
-                                    $remainingSpots = $training->trainingType->max_capacity - $totalSubscribes;
+                                    $remainingSpots = $maxCapacity - $totalSubscribes;
                                     $hasMarkedAllPresences = $training->users()->wherePivotNotNull('presence')->wherePivot('cancelled', false)->count() == $totalSubscribes;
                                     $hoursDifference = $currentDateTime->diffInHours($trainingStartDateTime, false);
 
@@ -164,7 +165,7 @@
                                         </div>
                                         <div class="dark:text-gray-400 text-gray-600 mb-5 flex items-center text-sm">
                                             <i class="fa-solid fa-square-check w-4 h-4 mr-2"></i>
-                                            Inscrições: {{ $totalSubscribes }}/{{ $training->trainingType->max_capacity }}
+                                            Inscrições: {{ $totalSubscribes }}/{{ $maxCapacity }}
                                             @if ($remainingSpots > 0)
                                                 <span class="inline-block w-3 h-3 bg-green-500 rounded-full ml-2"
                                                       title="Vagas disponíveis"></span>
@@ -217,7 +218,7 @@
                                             @if ($userPresence && !$userCancelled && !$isTrainingStarted)
                                                 <form id="cancel-form-{{ $training->id }}" action="{{ route('trainings.cancel', $training->id) }}" method="POST" class="inline text-sm">
                                                     @csrf
-                                                    <button type="button" onclick="confirmCancel({{ $training->id }})"
+                                                    <button type="button" onclick="confirmCancel({{ $training->id }}, {{ $hoursDifference }})"
                                                             class="bg-red-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-red-400 text-sm">
                                                         <i class="fa-solid fa-x w-4 h-4 mr-2"></i>
                                                         Cancelar Inscrição
@@ -229,7 +230,7 @@
                                                         @csrf
                                                         @if($hasAvailablePack)
                                                             <button type="button"
-                                                                    class="dark:bg-lime-400 bg-blue-500 hover:bg-green-400 text-white flex items-center px-2 py-1 rounded-md text-sm"
+                                                                    class="dark:bg-lime-500 bg-blue-500 hover:bg-green-400 text-white flex items-center px-2 py-1 rounded-md text-sm"
                                                                     onclick="confirmEnroll({{ $training->id }}, this)">
                                                                 <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
                                                                 Inscrever-me
@@ -289,7 +290,7 @@
             <form id="confirmation-form" method="POST" class="inline">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500">Confirmar
+                <button type="submit" class="bg-blue-600 hover:bg-blue-500 dark:bg-lime-600 dark:hover:bg-lime-500 text-white px-4 py-2 rounded-md ">Confirmar
                 </button>
             </form>
         </div>
@@ -304,13 +305,11 @@
         form.action = actionUrl;
         form.setAttribute('method', 'POST');
 
-        // Remove existing _method input if present
         const existingMethodInput = form.querySelector('input[name="_method"]');
         if (existingMethodInput) {
             existingMethodInput.remove();
         }
 
-        // Add _method input if method is DELETE or PUT
         if (method === 'DELETE' || method === 'PUT') {
             const methodInput = document.createElement('input');
             methodInput.type = 'hidden';
@@ -330,11 +329,25 @@
         openModal('Pretende inscrever-se?', '', `/trainings/${id}/enroll`);
     }
 
-    function confirmCancel(id) {
-        openModal('Pretende cancelar a inscrição?', 'Se cancelar agora não poderá voltar a inscrever-se neste treino e não irá ser reembolsado.', `/trainings/${id}/cancel`);
+    function confirmCancel(id, hoursDifference) {
+        let message = 'Pretende cancelar a inscrição?';
+        if (hoursDifference < 12) {
+            message = 'Se cancelar agora não poderá voltar a inscrever-se neste treino e não irá ser reembolsado.';
+        }
+        openModal('Pretende cancelar a inscrição?', message, `/trainings/${id}/cancel`);
     }
 
     function confirmDelete(id) {
         openModal('Pretende eliminar?', 'Não poderá reverter isso!', `/trainings/${id}`, 'DELETE');
+    }
+
+    function closeMembershipModal() {
+        document.getElementById('membership-modal').classList.add('hidden');
+    }
+
+    function navigateToWeek(date) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('week', date);
+        window.location.href = url.toString();
     }
 </script>

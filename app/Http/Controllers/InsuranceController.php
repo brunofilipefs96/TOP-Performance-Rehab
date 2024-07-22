@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Document;
 use App\Models\Insurance;
 use App\Http\Requests\StoreInsuranceRequest;
 use App\Http\Requests\UpdateFreeTrainingRequest;
@@ -9,6 +10,7 @@ use App\Models\Status;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 
 class InsuranceController extends Controller
 {
@@ -143,4 +145,53 @@ class InsuranceController extends Controller
 
         return Redirect::back()->with('success', 'Insurance Deleted!');
     }
+
+    public function addDocument(Request $request, Insurance $insurance)
+    {
+        $this->authorize('update', $insurance);
+
+        $request->validate([
+            'documents.*' => 'required|file|mimes:pdf,jpg,png,doc,docx|max:2048'
+        ]);
+
+        try {
+            foreach ($request->file('documents') as $file) {
+                $filename = "{$insurance->id}_{$file->getClientOriginalName()}";
+                $path = $file->storeAs("public/documents/insurances/{$insurance->id}", $filename);
+
+                $document = new Document();
+                $document->name = $filename;
+                $document->file_path = $path;
+                $document->save();
+
+                $insurance->documents()->attach($document->id);
+            }
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()]);
+        }
+    }
+
+    public function deleteDocument(Insurance $insurance, Document $document)
+    {
+        $this->authorize('delete', $insurance);
+
+        try {
+            $insurance->documents()->detach($document->id);
+            Storage::delete($document->file_path);
+            $document->delete();
+
+            // Remove the directory if it is empty
+            $directory = "public/documents/insurances/{$insurance->id}";
+            if (Storage::files($directory) == []) {
+                Storage::deleteDirectory($directory);
+            }
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()]);
+        }
+    }
+
 }

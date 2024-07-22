@@ -223,10 +223,11 @@ class SaleController extends Controller
 
         try {
             foreach ($request->file('documents') as $file) {
-                $path = $file->storeAs("public/documents/{$sale->id}", $file->getClientOriginalName());
+                $filename = "{$sale->id}_{$file->getClientOriginalName()}";
+                $path = $file->storeAs("public/documents/sales/{$sale->id}", $filename);
 
                 $document = new Document();
-                $document->name = $file->getClientOriginalName();
+                $document->name = $filename;
                 $document->file_path = $path;
                 $document->save();
 
@@ -247,10 +248,17 @@ class SaleController extends Controller
             $sale->documents()->detach($document->id);
             Storage::delete($document->file_path);
             $document->delete();
+
+            $directory = "public/documents/sales/{$sale->id}";
+            if (Storage::allFiles($directory) === []) {
+                Storage::deleteDirectory($directory);
+            }
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()]);
         }
     }
+
 
 }

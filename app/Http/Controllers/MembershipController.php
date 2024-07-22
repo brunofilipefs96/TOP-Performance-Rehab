@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Document;
 use App\Models\Insurance;
 use App\Models\Membership;
 use App\Http\Requests\StoreMembershipRequest;
@@ -12,6 +13,7 @@ use App\Models\Status;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use MattDaneshvar\Survey\Models\Entry;
 use MattDaneshvar\Survey\Models\Survey;
 
@@ -181,6 +183,53 @@ class MembershipController extends Controller
         $entries = Entry::find($request->entry)->questions;
 
         return view('pages.memberships.form', ['entries' => $entries]);
+    }
+
+    public function addDocument(Request $request, Membership $membership)
+    {
+        $this->authorize('update', $membership);
+
+        $request->validate([
+            'documents.*' => 'required|file|mimes:pdf,jpg,png,doc,docx|max:2048'
+        ]);
+
+        try {
+            foreach ($request->file('documents') as $file) {
+                $filename = "{$membership->id}_{$file->getClientOriginalName()}";
+                $path = $file->storeAs("public/documents/memberships/{$membership->id}", $filename);
+
+                $document = new Document();
+                $document->name = $filename;
+                $document->file_path = $path;
+                $document->save();
+
+                $membership->documents()->attach($document->id);
+            }
+
+            return redirect()->back()->with('success', 'Documentos adicionados com sucesso.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Erro ao adicionar documentos.');
+        }
+    }
+
+    public function deleteDocument(Membership $membership, Document $document)
+    {
+        $this->authorize('delete', $membership);
+
+        try {
+            $membership->documents()->detach($document->id);
+            Storage::delete($document->file_path);
+            $document->delete();
+
+            $directory = "public/documents/memberships/{$membership->id}";
+            if (count(Storage::files($directory)) === 0) {
+                Storage::deleteDirectory($directory);
+            }
+
+            return redirect()->back()->with('success', 'Documento removido com sucesso.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Erro ao remover documento.');
+        }
     }
 
 }

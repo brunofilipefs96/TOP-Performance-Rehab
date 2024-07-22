@@ -27,6 +27,9 @@
                         <span class="inline-block w-3 h-3 bg-yellow-500 rounded-full" title="Aguarda renovação do seguro"></span>
                         <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Aguarda renovação do seguro</span>
                     @elseif($user->membership->status->name == 'inactive')
+                        <span class="inline-block w-3 h-3 bg-red-500 rounded-full" title="Inativa"></span>
+                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Inativa</span>
+                    @elseif($user->membership->status->name == 'inactive')
                         <span class="inline-block w-3 h-3 bg-red-500 rounded-full" title="Rejeitada"></span>
                         <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Inativa</span>
                     @endif

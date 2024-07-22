@@ -56,4 +56,9 @@ class Membership extends Model
         return $this->belongsToMany(TrainingType::class);
     }
 
+    public function documents()
+    {
+        return $this->belongsToMany(Document::class);
+    }
+
 }

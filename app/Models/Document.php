@@ -15,4 +15,15 @@ class Document extends Model
     {
         return $this->belongsToMany(Sale::class);
     }
+
+    public function memberships()
+    {
+        return $this->belongsToMany(Membership::class);
+    }
+
+    public function insurances()
+    {
+        return $this->belongsToMany(Insurance::class);
+    }
+
 }

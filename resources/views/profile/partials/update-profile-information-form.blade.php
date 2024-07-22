@@ -18,11 +18,14 @@
         @method('patch')
 
         <!-- Profile Photo -->
-        <div class="flex items-center gap-4">
+        <div class="flex flex-col md:flex-row items-center gap-4 relative">
             <div class="relative">
                 <label for="image" class="cursor-pointer">
                     @if ($user->image)
                         <img id="profile-image-preview" src="{{ asset('storage/' . $user->image) }}" alt="{{ $user->name }}" class="w-20 h-20 rounded-full object-cover border-2 border-gray-300 dark:border-gray-600 shadow-sm">
+                        <button type="button" id="remove-profile-image-button" class="absolute bottom-0 right-0 bg-red-500 text-white rounded-full p-1" title="Remover Imagem">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
                     @else
                         <i id="profile-image-icon" class="fa-solid fa-user w-20 h-20 rounded-full border-2 border-gray-300 dark:border-gray-600 shadow-sm flex items-center justify-center text-gray-800 dark:text-white"></i>
                     @endif
@@ -88,6 +91,23 @@
         </div>
     </form>
 
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
+        <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
+            <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800" id="confirmation-title">Pretende eliminar?</h2>
+            <p class="mb-4 text-red-500 dark:text-red-300" id="confirmation-message">Não poderá reverter isso!</p>
+            <div class="flex justify-end gap-4">
+                <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400" onclick="cancelAction()">Cancelar</button>
+                <button type="button" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500" onclick="confirmAction()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <form id="remove-image-form" method="post" action="{{ route('profile.removeImage') }}" class="hidden">
+        @csrf
+        @method('delete')
+    </form>
+
     <script>
         function previewImage(event) {
             const file = event.target.files[0];
@@ -145,6 +165,25 @@
             femaleRadio.addEventListener('change', handleMaleFemaleChange);
 
             handleOtherGenderInput();
+
+            // Modal logic
+            const removeButton = document.getElementById('remove-profile-image-button');
+            const modal = document.getElementById('confirmation-modal');
+            const removeImageForm = document.getElementById('remove-image-form');
+
+            if (removeButton) {
+                removeButton.addEventListener('click', function() {
+                    modal.classList.remove('hidden');
+                });
+            }
+
+            window.cancelAction = function() {
+                modal.classList.add('hidden');
+            }
+
+            window.confirmAction = function() {
+                removeImageForm.submit();
+            }
         });
     </script>
 </section>

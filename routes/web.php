@@ -62,6 +62,7 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::c
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    Route::delete('/profile/remove-image', [ProfileController::class, 'removeImage'])->name('profile.removeImage');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -84,10 +85,14 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::c
     Route::put('/profile/addresses/{address}', [AddressController::class, 'update'])->name('addresses.update');
     Route::delete('/profile/addresses/{address}', [AddressController::class, 'destroy'])->name('addresses.destroy');
 
+    Route::post('insurances/{insurance}/documents', [InsuranceController::class, 'addDocument'])->name('insurances.addDocument');
+    Route::delete('insurances/{insurance}/documents/{document}', [InsuranceController::class, 'deleteDocument'])->name('insurances.deleteDocument');
     Route::post('/profile/insurance', [InsuranceController::class, 'store'])->name('insurance.store');
     Route::put('/profile/insurance/{insurance}', [InsuranceController::class, 'update'])->name('insurance.update');
     Route::delete('/profile/insurance/{insurance}', [InsuranceController::class, 'destroy'])->name('insurance.destroy');
 
+    Route::post('memberships/{membership}/documents', [MembershipController::class, 'addDocument'])->name('memberships.addDocument');
+    Route::delete('memberships/{membership}/documents/{document}', [MembershipController::class, 'deleteDocument'])->name('memberships.deleteDocument');
     Route::get('/memberships/{membership}/evaluations/create', [EvaluationController::class, 'create'])->name('memberships.evaluations.create');
     Route::post('/memberships/{membership}/evaluations', [EvaluationController::class, 'store'])->name('memberships.evaluations.store');
     Route::get('/memberships/{membership}/evaluations/{evaluation}', [EvaluationController::class, 'show'])->name('memberships.evaluations.show');

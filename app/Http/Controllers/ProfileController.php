@@ -37,15 +37,13 @@ class ProfileController extends Controller
         $user->fill($data);
 
         if ($request->hasFile('image')) {
-            // Store the new image
-            $path = $request->file('image')->store('profile_images', 'public');
+            $filename = "{$user->id}_{$request->file('image')->getClientOriginalName()}";
+            $path = $request->file('image')->storeAs("images/users/{$user->id}", $filename, 'public');
 
-            // Delete the old image if exists
             if ($user->image) {
                 Storage::disk('public')->delete($user->image);
             }
 
-            // Update the user with the new image path
             $user->image = $path;
         }
 
@@ -56,6 +54,22 @@ class ProfileController extends Controller
         $user->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    }
+
+    /**
+     * Delete the user's profile image.
+     */
+    public function removeImage(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+
+        if ($user->image) {
+            Storage::disk('public')->delete($user->image);
+            $user->image = null;
+            $user->save();
+        }
+
+        return Redirect::route('profile.edit')->with('status', 'profile-image-removed');
     }
 
     /**
@@ -79,4 +93,3 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 }
-

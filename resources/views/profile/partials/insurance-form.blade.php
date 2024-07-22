@@ -24,11 +24,11 @@
                     @elseif($user->membership->insurance->status->name == 'pending_payment' || $user->membership->insurance->status->name == 'pending_renewPayment')
                         <span class="inline-block w-3 h-3 bg-yellow-500 rounded-full" title="Pagamento em espera"></span>
                         <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Pagamento em espera</span>
-                    @elseif($user->membership->insurance->status->name == 'awaiting_insurance')
-                        <span class="inline-block w-3 h-3 bg-yellow-500 rounded-full" title="Aguarda renovação do seguro"></span>
-                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Aguarda renovação do seguro</span>
+                    @elseif($user->membership->insurance->status->name == 'awaiting_membership')
+                        <span class="inline-block w-3 h-3 bg-yellow-500 rounded-full" title="Aguarda renovação da Matrícula"></span>
+                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Aguarda renovação da Matrícula</span>
                     @elseif($user->membership->insurance->status->name == 'inactive')
-                        <span class="inline-block w-3 h-3 bg-red-500 rounded-full" title="Rejeitada"></span>
+                        <span class="inline-block w-3 h-3 bg-red-500 rounded-full" title="Inativa"></span>
                         <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Inativa</span>
                     @endif
                 </div>

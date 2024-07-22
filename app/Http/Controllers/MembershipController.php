@@ -6,6 +6,8 @@ use App\Models\Insurance;
 use App\Models\Membership;
 use App\Http\Requests\StoreMembershipRequest;
 use App\Http\Requests\UpdateMembershipRequest;
+use App\Models\Notification;
+use App\Models\NotificationType;
 use App\Models\Status;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -121,23 +123,42 @@ class MembershipController extends Controller
 
         $status = Status::where('name', $request->input('status_name'))->firstOrFail();
 
-        if($membership->status->name == 'pending'){
+        if (($membership->status->name == 'pending' || $membership->status->name == 'renew_pending') &&
+            ($status->name == 'pending_payment' || $status->name == 'pending_renewPayment')) {
+
             $membership->status_id = $status->id;
-        }
+            $membership->save();
 
-        if($membership->status->name == 'renew_pending'){
+            // Verifique o tipo de notificação
+            $notificationType = NotificationType::where('name', 'membershipAproved')->firstOrFail();
+
+            // Crie a notificação
+            $notification = Notification::create([
+                'notification_type_id' => $notificationType->id,
+                'message' => 'Sua matrícula foi aprovada e aguarda pagamento.',
+            ]);
+
+            // Verifique o usuário
+            $user = $membership->user;
+
+            // Anexe a notificação ao usuário
+            $user->notifications()->attach($notification->id);
+
+        } else {
             $membership->status_id = $status->id;
+            $membership->save();
         }
-
-        if($membership->status->name == 'active') {
-            $membership->start_date = now();
-            $membership->end_date = now()->addYear();
-        }
-
-        $membership->save();
 
         return redirect()->route('memberships.show', ['membership' => $membership])->with('success', 'Membership Updated!');
     }
+
+
+
+
+
+
+
+
 
     /**
      * Remove the specified resource from storage.

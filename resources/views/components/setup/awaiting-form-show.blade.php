@@ -71,17 +71,17 @@
             </div>
 
             @if($user->membership->status->name == 'pending' &&  $user->membership->insurance->status->name == 'pending')
-                <p class="text-center text-lg mt-4">
+                <p class="text-center text-md sm:text-lg mt-4">
                     Por favor, aguarde enquanto a sua matrícula e seguro são avaliados pelo administrador.
                 </p>
-                <p class="text-center text-lg">
+                <p class="text-center text-md sm:text-lg">
                     Será notificado assim que a avaliação for concluída.
                 </p>
             @elseif($user->membership->status->name == 'pending_payment' && ($user->membership->insurance->status->name == 'pending_payment' || $user->membership->insurance->status->name == 'active'))
-                <p class="text-center text-lg mt-4">
+                <p class="text-center text-md sm:text-lg mt-4">
                     Os seus dados foram avaliados e aceites.
                 </p>
-                <p class="text-center text-lg">
+                <p class="text-center text-md sm:text-lg">
                     Por favor, prossiga com o pagamento.
                 </p>
                 <div class="flex justify-between items-center mt-6 gap-2">
@@ -97,20 +97,20 @@
                     </a>
                 </div>
             @elseif($user->membership->status->name == 'pending_payment' || $user->membership->insurance->status->name == 'pending_payment')
-                <p class="text-center text-lg mt-4">
+                <p class="text-center text-md sm:text-lg mt-4">
                     Por favor, aguarde enquanto os deus dados estão a ser avaliados pelo administrador.
                 </p>
-                <p class="text-center text-lg">
+                <p class="text-center text-md sm:text-lg">
                     Será notificado assim que a avaliação for concluída.
                 </p>
             @elseif($user->membership->status->name == 'rejected' || $user->membership->insurance->status->name == 'rejected')
-                <p class="text-center text-lg mt-4">
+                <p class="text-center text-md sm:text-lg mt-4">
                     Infelizmente, os seus dados foram rejeitados.
                 </p>
-                <p class="text-center text-lg">
+                <p class="text-center text-md sm:text-lg">
                     Por favor, entre em contacto com o administrador para mais informações.
                 </p>
-                <p class="text-center text-lg mt-4">Telemóvel: {{setting('telemovel', '910000000')}}, Email: {{setting('email', 'ginasiotop@email.pt')}}</p>
+                <p class="text-center text-md sm:text-lg mt-4">Telemóvel: {{setting('telemovel', '910000000')}}, Email: {{setting('email', 'ginasiotop@email.pt')}}</p>
             @endif
         </div>
     </div>

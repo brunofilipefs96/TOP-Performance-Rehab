@@ -27,22 +27,22 @@
                             </a>
                         @endif
                         <span class="flex flex-col mt-2 content-center">
-    <span class="text-lg text-gray-300">{{$user->full_name}}</span>
-</span>
+                            <span class="text-lg text-gray-300">{{$user->firstLastName()}}</span>
+                        </span>
 
                     </div>
                 </div>
                 <ul class="flex-1">
                     <li>
                         <x-nav-link :href="route('dashboard')" :activeRoutes="['dashboard']"
-                                    class="mb-4 px-0 pt-0 text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-600 dark:focus:text-lime-400 relative">
+                                    class="mb-4 px-0 pt-0 text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-lime-400 focus:text-blue-600 dark:focus:text-lime-400 relative">
                             <i class="fa-solid fa-chart-line text-xl"></i>
                             <span class="text-base ml-2">Dashboard</span>
                         </x-nav-link>
                     </li>
                     <li>
                         <x-nav-link :href="route('calendar')" :activeRoutes="['calendar']"
-                                    class="mb-4 px-0 pt-0 text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                                    class="mb-4 px-0 pt-0 text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
                             <i class="fa-solid fa-calendar-days text-xl"></i>
                             <span class="text-base ml-2">Agenda</span>
                         </x-nav-link>
@@ -50,7 +50,7 @@
                     @if (!$user->membership || $user->membership->status->name == 'pending')
                         <li>
                             <x-nav-link :href="route('setup')" :activeRoutes="['setup.address', 'setup.membership', 'setup.training-types', 'setup.insurance', 'setup.awaiting', 'setup.payment']"
-                                        class="mb-4 px-0 pt-0 text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                                        class="mb-4 px-0 pt-0 text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
                                 <i class="fa-regular fa-address-card text-xl"></i>
                                 <span class="text-base ml-2">Matrícula</span>
                             </x-nav-link>
@@ -58,39 +58,48 @@
                     @endif
                     <li>
                         <x-nav-link :href="route('trainings.index')" :activeRoutes="['trainings.index']"
-                                    class="mb-4 px-0 pt-0 text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                                    class="mb-4 px-0 pt-0 text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
                             <i class="fa-solid fa-dumbbell text-xl"></i>
                             <span class="text-base ml-2">Treinos</span>
                         </x-nav-link>
                     </li>
                     <li>
                         <x-nav-link :href="route('packs.index')" :activeRoutes="['packs.index']"
-                                    class="mb-4 px-0 pt-0 text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                                    class="mb-4 px-0 pt-0 text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
                             <i class="fa-solid fa-box text-xl"></i>
                             <span class="text-base ml-2">Packs</span>
                         </x-nav-link>
                     </li>
                     <li>
                         <x-nav-link :href="route('products.index')" :activeRoutes="['products.index']"
-                                    class="mb-4 px-0 pt-0 text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                                    class="mb-4 px-0 pt-0 text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
                             <i class="fa-solid fa-basket-shopping text-xl"></i>
                             <span class="text-base ml-2">Produtos</span>
                         </x-nav-link>
                     </li>
                     <li>
                         <x-nav-link :href="route('sales.index')" :activeRoutes="['sales.index']"
-                                    class="mb-4 px-0 pt-0 text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                                    class="mb-4 px-0 pt-0 text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
                             <i class="fa-solid fa-receipt text-xl"></i>
                             <span class="text-base ml-2">Área Financeira</span>
                         </x-nav-link>
                     </li>
                     <li>
                         <x-nav-link :href="route('profile.edit')" :activeRoutes="['profile.edit']"
-                                    class="mb-4 px-0 pt-0 text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                                    class="mb-4 px-0 pt-0 text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
                             <i class="fa-solid fa-user text-xl"></i>
                             <span class="text-base ml-2">Área Pessoal</span>
                         </x-nav-link>
                     </li>
+                    @if(Auth::user()->roles->count() > 1)
+                        <li>
+                            <x-nav-link :href="route('change-role')" :active="request()->routeIs('change-role')"
+                                                   class="mb-4 px-0 pt-0 text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                                <i class="fa-solid fa-exchange-alt text-lg mr-2"></i>
+                                <span class="text-base ml-2">{{ __('Alternar Conta') }}</span>
+                            </x-nav-link>
+                        </li>
+                    @endif
                     @if(Auth::check() && !Auth::user()->hasRole('admin'))
                         @php
                             $cart = session()->get('cart', []);
@@ -99,7 +108,7 @@
                         @endphp
                         <li class="flex text-center" >
                             <x-nav-link :href="route('cart.index')" :activeRoutes="['cart.index']"
-                                        class="mb-4 px-0 pt-0 text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                                        class="mb-4 px-0 pt-0 text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
                                 <i class="fa-solid fa-cart-shopping text-xl"></i>
                                 <span class="text-base ml-2">Carrinho</span>
                             </x-nav-link>
@@ -110,8 +119,8 @@
                         </li>
                     @endif
                 </ul>
-                <div class="mt-auto mb-6">
-                    <li class="flex w-full justify-between text-gray-500 dark:text-gray-400 cursor-pointer items-center dark:hover:text-lime-400 hover:text-blue-600">
+                <div class="mt-auto mb-6 ml-2">
+                    <li class="flex w-full justify-between text-gray-800 dark:text-gray-400 cursor-pointer items-center dark:hover:text-lime-400 hover:text-blue-600">
                         <form method="POST" action="{{ route('logout') }}" class="w-full">
                             @csrf
                             <a href="javascript:void(0)" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white" onclick="event.preventDefault(); this.closest('form').submit();">
@@ -121,9 +130,17 @@
                         </form>
                     </li>
                 </div>
-                <div class="flex justify-center mb-8">
+                <!-- Theme Toggle Button and Notification Bell -->
+                <div class="flex justify-center mb-8 space-x-4">
+                    <!-- Notification Bell Icon -->
+                    <button type="button"
+                            class="flex items-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
+                        <i class="fa-solid fa-bell w-6 h-6 text-lg"></i>
+                    </button>
+
+                    <!-- Theme Toggle Button -->
                     <button id="theme-toggle-client" type="button"
-                            class="theme-toggle-btn w-12 text-gray-800 dark:text-gray-400 hover:bg-gray-700 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-700 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
+                            class="flex items-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 theme-toggle-btn">
                         <svg id="theme-toggle-dark-icon-client" class="theme-toggle-dark-icon hidden w-5 h-5 mx-auto" fill="currentColor" viewBox="0 0 20 20"
                              xmlns="http://www.w3.org/2000/svg">
                             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
@@ -165,6 +182,9 @@
                         <li><a href="{{ route('products.index') }}" class="block text-gray-800 dark:text-gray-200 dark:hover:text-lime-400 hover:text-blue-600"><i class="fa-solid fa-basket-shopping text-lg mr-2"></i>Produtos</a></li>
                         <li><a href="{{ route('sales.index') }}" class="block text-gray-800 dark:text-gray-200 dark:hover:text-lime-400 hover:text-blue-600"><i class="fa-solid fa-receipt text-lg mr-2"></i>Área Financeira</a></li>
                         <li><a href="{{ route('profile.edit') }}" class="block text-gray-800 dark:text-gray-200 dark:hover:text-lime-400 hover:text-blue-600"><i class="fa-solid fa-user text-lg mr-2"></i>Área Pessoal</a></li>
+                        @if(Auth::user()->roles->count() > 1)
+                            <li><a href="{{ route('change-role') }}" class="block text-gray-800 dark:text-gray-200 dark:hover:text-lime-400 hover:text-blue-600"><i class="fa-solid fa-exchange-alt text-lg mr-2"></i>Alternar Conta</a></li>
+                        @endif
                         @if(Auth::check() && !Auth::user()->hasRole('admin'))
                             @php
                                 $cart = session()->get('cart', []);
@@ -192,10 +212,18 @@
                         </li>
                     </ul>
                 </div>
-                <!-- Theme Toggle Button -->
-                <div class="p-2 flex justify-center mb-5">
+
+
+                <div class="flex justify-center mb-8 space-x-4">
+                    <!-- Notification Bell Icon -->
+                    <button type="button"
+                            class="flex items-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
+                        <i class="fa-solid fa-bell w-6 h-6 text-lg"></i>
+                    </button>
+
+                    <!-- Theme Toggle Button -->
                     <button id="theme-toggle-client" type="button"
-                            class="theme-toggle-btn w-12 text-gray-500 dark:text-gray-400 hover:bg-gray-700 hover:text-gray-200 dark:hover:bg-gray-700 focus:outline-none  dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
+                            class="flex items-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 theme-toggle-btn">
                         <svg id="theme-toggle-dark-icon-client" class="theme-toggle-dark-icon hidden w-5 h-5 mx-auto" fill="currentColor" viewBox="0 0 20 20"
                              xmlns="http://www.w3.org/2000/svg">
                             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
@@ -208,6 +236,7 @@
                         </svg>
                     </button>
                 </div>
+
             </div>
         </div>
 

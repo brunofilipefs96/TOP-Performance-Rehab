@@ -62,7 +62,7 @@
             <div class="flex-1 flex flex-col">
                 <!-- Page Content -->
                 <main class="p-4 pt-0 flex-1 min-h-screen">
-                    <div class="sticky py-4 top-0 z-30 flex justify-start align-middle h-[82px] w-full text-center bg-gray-900 sm:hidden">
+                    <div class="w-full sticky py-4 top-0 z-30 flex justify-start align-middle h-[82px] text-center bg-gray-100 dark:bg-gray-900 sm:hidden">
                         <h1 class="font-bold content-center text-3xl">
                             <a href="{{ route('dashboard') }}">
                                 <span class="text-black dark:text-white">Ginásio</span>

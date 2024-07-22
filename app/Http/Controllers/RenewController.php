@@ -38,12 +38,22 @@ class RenewController extends Controller
     public function renewMembership()
     {
         $user = auth()->user();
+
+        if (!$user->hasRole('client') || ($user->membership && $user->membership->status->name != 'inactive')) {
+            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
+        }
+
         return view('pages.renew.renewMembership', ['user' => $user]);
     }
 
     public function renewInsurance()
     {
         $user = auth()->user();
+
+        if (!$user->hasRole('client') || ($user->membership && $user->membership->insurance->status->name != 'incative')) {
+            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
+        }
+
         return view('pages.renew.renewInsurance', ['user' => $user]);
     }
 
@@ -51,6 +61,13 @@ class RenewController extends Controller
     {
         $user = auth()->user();
 
+        if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name != 'inactive') && ($user->membership->insurance->status->name != 'incative'))) {
+            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
+        }
+
+        if($user->membership && (($user->membership->status->name != 'awaiting_insurance') || ($user->membership->status->name != 'renew_pending')) && (($user->membership->insurance->status->name != 'awaiting_membership') || ($user->membership->insurance->status->name != 'renew_pending'))) {
+            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
+        }
 
         return view('pages.renew.renewAwaiting', ['user' => $user]);
     }
@@ -58,6 +75,19 @@ class RenewController extends Controller
     public function renewPayment()
     {
         $user = auth()->user();
+
+        if (!$user->hasRole('client') || ($user->membership && $user->membership->status->name == 'active')) {
+            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
+        }
+
+        if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name != 'inactive') && ($user->membership->insurance->status->name != 'incative'))) {
+            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
+        }
+
+        if ($user->membership && $user->membership->status->name != 'pending_renewPayment' && $user->insurance && $user->insurance->status->name != 'pending_renewPayment') {
+            return redirect()->route('renew');
+        }
+
         return view('pages.renew.renewPayment', ['user' => $user]);
     }
 

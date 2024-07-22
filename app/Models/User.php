@@ -102,7 +102,14 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function trainings()
     {
-        return $this->belongsToMany(Training::class)->withPivot('presence')->withTimestamps();
+        return $this->belongsToMany(Training::class)->withPivot(['presence', 'cancelled'])->withTimestamps();
+    }
+
+    public function notifications()
+    {
+        return $this->belongsToMany(Notification::class, 'notification_user')
+            ->withPivot('read_at')
+            ->withTimestamps();
     }
 
     public function freeTrainings()

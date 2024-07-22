@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Pack;
 use App\Http\Requests\StorePackRequest;
 use App\Http\Requests\UpdatePackRequest;
+use App\Models\TrainingType;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -15,10 +16,26 @@ class PackController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('viewAny', Pack::class);
-        $packs = Pack::orderBy('id', 'desc')->paginate(10);
+
+        $filter = $request->input('filter', 'all');
+
+        $query = Pack::query()
+            ->join('training_types', 'packs.training_type_id', '=', 'training_types.id')
+            ->select('packs.*', 'training_types.has_personal_trainer', 'training_types.max_capacity');
+
+        if ($filter == 'personal_trainer') {
+            $query->where('training_types.has_personal_trainer', true);
+        } elseif ($filter == 'individual') {
+            $query->where('training_types.has_personal_trainer', false);
+        }
+
+        $packs = $query->orderBy('training_types.has_personal_trainer', 'asc')
+            ->orderBy('training_types.max_capacity', 'asc')
+            ->orderBy('packs.price', 'asc')
+            ->paginate(12);
 
         $showMembershipModal = false;
         if (auth()->user()->hasRole('client') && (!auth()->user()->membership || auth()->user()->membership->status->name !== 'active') && !session()->has('packs_membership_modal_shown')) {
@@ -26,8 +43,14 @@ class PackController extends Controller
             $showMembershipModal = true;
         }
 
-        return view('pages.packs.index', ['packs' => $packs, 'showMembershipModal' => $showMembershipModal]);
+        return view('pages.packs.index', [
+            'packs' => $packs,
+            'showMembershipModal' => $showMembershipModal,
+            'filter' => $filter
+        ]);
     }
+
+
 
 
     /**
@@ -36,8 +59,15 @@ class PackController extends Controller
     public function create()
     {
         $this->authorize('create', Pack::class);
-        return view('pages.packs.create');
+        $training_types = TrainingType::all();
+
+        if ($training_types->isEmpty()) {
+            return redirect()->route('packs.index')->with('error', 'Por favor, crie pelo menos um tipo de treino antes de criar um pack.');
+        }
+
+        return view('pages.packs.create', ['training_types' => $training_types]);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -45,11 +75,10 @@ class PackController extends Controller
     public function store(StorePackRequest $request)
     {
         $validatedData = $request->validated();
-
         Pack::create($validatedData);
-
-        return redirect()->route('packs.index')->with('success', 'Pack created successfully.');
+        return redirect()->route('packs.index')->with('success', 'Pack criado com sucesso.');
     }
+
 
     /**
      * Display the specified resource.
@@ -74,20 +103,17 @@ class PackController extends Controller
     public function edit(Pack $pack)
     {
         $this->authorize('update', $pack);
-        return view('pages.packs.edit', ['pack' => $pack]);
+        $training_types = TrainingType::all();
+        return view('pages.packs.edit', ['pack' => $pack, 'training_types' => $training_types]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdatePackRequest $request, Pack $pack)
     {
         $validatedData = $request->validated();
-
         $pack->update($validatedData);
-
-        return redirect()->route('packs.index')->with('success', 'Pack updated successfully.');
+        return redirect()->route('packs.index')->with('success', 'Pack atualizado com sucesso.');
     }
+
 
     /**
      * Remove the specified resource from storage.

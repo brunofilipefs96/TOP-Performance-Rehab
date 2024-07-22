@@ -9,6 +9,7 @@ use App\Http\Controllers\FreeTrainingController;
 use App\Http\Controllers\GymClosureController;
 use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PackController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RenewController;
@@ -49,6 +50,11 @@ Route::middleware(['auth'])->group(function () {
 
 
 Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::class])->group(function () {
+
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+
+
     Route::patch('/users/{user}/client-type', [UserController::class, 'updateClientType'])->name('user.client-type.update');
     Route::post('/users/{user}/roles', [UserController::class, 'storeRole'])->name('user.roles.store');
     Route::delete('/users/{user}/roles/{role}', [UserController::class, 'destroyRole'])->name('user.roles.destroy');
@@ -68,6 +74,7 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::c
     Route::resource('/insurances', InsuranceController::class);
     Route::resource('/services', ServiceController::class);
     Route::resource('/memberships', MembershipController::class);
+
 
     Route::get('/entries/{survey}/fill', [EntryController::class, 'fill'])->name('entries.fill');
     Route::post('/entries/{survey}', [EntryController::class, 'store'])->name('entries.store');

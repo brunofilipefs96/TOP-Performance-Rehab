@@ -9,14 +9,7 @@
                 </a>
             </div>
             <div class="text-center">
-                <h1 class="mb-8 mt-4 dark:text-lime-400 text-gray-800 font-semibold">{{ $training->name }}</h1>
-            </div>
-
-            <div class="mb-4">
-                <label for="training_type" class="block text-gray-800 dark:text-white">Tipo de Treino</label>
-                <input type="text" name="training_type" id="training_type" value="{{ $training->trainingType->name }}"
-                       disabled
-                       class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
+                <h1 class="mb-8 mt-4 dark:text-lime-400 text-gray-800 font-semibold">{{ $training->trainingType->name }}</h1>
             </div>
 
             <div class="mb-4">
@@ -29,13 +22,6 @@
                 <label for="personal_trainer" class="block text-gray-800 dark:text-white">Personal Trainer</label>
                 <input type="text" name="personal_trainer" id="personal_trainer"
                        value="{{ $training->personalTrainer->firstLastName() }}" disabled
-                       class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
-            </div>
-
-            <div class="mb-4">
-                <label for="max_students" class="block text-gray-800 dark:text-white">Máximo de Alunos</label>
-                <input type="number" name="max_students" id="max_students" value="{{ $training->max_students }}"
-                       disabled
                        class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
             </div>
 
@@ -63,26 +49,40 @@
 
             @php
                 $userPresence = $training->users()->where('user_id', auth()->id())->exists();
-                $userPresenceFalse = $training->users()->where('user_id', auth()->id())->wherePivot('presence', false)->exists();
+                $userCancelled = $training->users()->where('user_id', auth()->id())->wherePivot('cancelled', true)->exists();
                 $currentDateTime = Carbon::now();
-                $remainingSpots = $training->max_students - $training->users()->wherePivot('presence', true)->count();
+                $remainingSpots = $training->trainingType->max_capacity - $training->users()->wherePivot('cancelled', false)->count();
                 $trainingStartDateTime = Carbon::parse($training->start_date);
                 $trainingEndDateTime = Carbon::parse($training->end_date);
                 $userHasActiveMembership = auth()->user()->membership && auth()->user()->membership->status->name === 'active';
                 $presenceMarked = $training->users->every(fn($user) => !is_null($user->pivot->presence));
+
+                // Check if the user has available packs for this training type
+                $today = Carbon::today();
+                $hasAvailablePack = null;
+                if($userHasActiveMembership) {
+                    $hasAvailablePack = auth()->user()->membership->packs()
+                        ->where('quantity_remaining', '>', 0)
+                        ->where('expiry_date', '>=', $today)
+                        ->where('training_type_id', $training->training_type_id)
+                        ->exists();
+                }
             @endphp
 
-            @if ($userPresence && $userPresenceFalse)
+            @if ($userCancelled)
                 <p class="text-red-500 mb-5">
                     <i class="fa-solid fa-ban mr-1"></i>
-                    Cancelou a inscrição com menos de 12 horas de antecedência. Não pode voltar a inscrever-se e o
-                    treino não será reembolsado.
+                    Cancelou a inscrição. Não pode voltar a inscrever-se e o treino não será reembolsado.
                 </p>
             @endif
 
+            <div class="mb-4">
+                <h2 class="block text-gray-800 dark:text-white mb-2">Inscrições: {{ $training->users()->wherePivot('cancelled', false)->count() }}/{{ $training->trainingType->max_capacity }}</h2>
+            </div>
+
             @if (auth()->user()->hasRole('admin') || auth()->user()->id === $training->personal_trainer_id)
                 <div class="mb-4">
-                    <h2 class="block text-gray-800 dark:text-white mb-2">Inscrições</h2>
+                    <h2 class="block text-gray-800 dark:text-white mb-2">Alunos Inscritos</h2>
                     @if ($training->users->isEmpty())
                         <p class="text-gray-800 dark:text-white">Ainda não existem alunos inscritos neste treino.</p>
                     @else
@@ -103,25 +103,27 @@
                                         </thead>
                                         <tbody>
                                         @foreach ($training->users as $user)
-                                            <tr>
-                                                <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">
-                                                    <a href="{{ url('users/' . $user->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
-                                                        {{ $user->firstLastName() }}
-                                                    </a>
-                                                </td>
-                                                <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700">
-                                                    <div class="flex items-center">
-                                                        <input type="radio" name="presence[{{ $user->id }}]" value="1"
-                                                               @if($user->pivot->presence) checked @endif
-                                                               class="form-radio mr-2 ml-4 text-blue-500 dark:text-lime-400">
-                                                        <i class="fa-solid fa-check text-green-500"></i>
-                                                        <input type="radio" name="presence[{{ $user->id }}]" value="0"
-                                                               @if(!$user->pivot->presence) checked @endif
-                                                               class="form-radio mr-2 ml-4 text-blue-500 dark:text-lime-400">
-                                                        <i class="fa-solid fa-x text-red-500"></i>
-                                                    </div>
-                                                </td>
-                                            </tr>
+                                            @if ($user->pivot->cancelled === false && is_null($user->pivot->presence))
+                                                <tr>
+                                                    <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">
+                                                        <a href="{{ url('users/' . $user->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
+                                                            {{ $user->firstLastName() }}
+                                                        </a>
+                                                    </td>
+                                                    <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700">
+                                                        <div class="flex items-center">
+                                                            <input type="radio" name="presence[{{ $user->id }}]" value="1"
+                                                                   @if($user->pivot->presence) checked @endif
+                                                                   class="form-radio mr-2 ml-4 text-blue-500 dark:text-lime-400">
+                                                            <i class="fa-solid fa-check text-green-500"></i>
+                                                            <input type="radio" name="presence[{{ $user->id }}]" value="0"
+                                                                   @if(!$user->pivot->presence) checked @endif
+                                                                   class="form-radio mr-2 ml-4 text-blue-500 dark:text-lime-400">
+                                                            <i class="fa-solid fa-x text-red-500"></i>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endif
                                         @endforeach
                                         </tbody>
                                     </table>
@@ -146,22 +148,37 @@
                                     </thead>
                                     <tbody>
                                     @foreach ($training->users as $user)
-                                        <tr>
-                                            <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">
-                                                <a href="{{ url('users/' . $user->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
-                                                    {{ $user->firstLastName() }}
-                                                </a>
-                                            </td>
-                                            <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700">
-                                                <div class="flex items-center">
-                                                    @if($user->pivot->presence)
-                                                        <i class="fa-solid fa-check text-green-500"></i>
-                                                    @else
-                                                        <i class="fa-solid fa-x text-red-500"></i>
-                                                    @endif
-                                                </div>
-                                            </td>
-                                        </tr>
+                                        @if ($user->pivot->cancelled === false)
+                                            <tr>
+                                                <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">
+                                                    <a href="{{ url('users/' . $user->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
+                                                        {{ $user->firstLastName() }}
+                                                    </a>
+                                                </td>
+                                                <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700">
+                                                    <div class="flex items-center">
+                                                        @if($user->pivot->presence)
+                                                            <i class="fa-solid fa-check text-green-500"></i>
+                                                        @else
+                                                            <i class="fa-solid fa-x text-red-500"></i>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @else
+                                            <tr>
+                                                <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">
+                                                    <a href="{{ url('users/' . $user->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
+                                                        {{ $user->firstLastName() }}
+                                                    </a>
+                                                </td>
+                                                <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700">
+                                                    <div class="flex items-center">
+                                                        <i class="fa-solid fa-ban text-red-500"></i> Cancelado
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endif
                                     @endforeach
                                     </tbody>
                                 </table>
@@ -185,18 +202,32 @@
                 <div class="flex justify-end gap-2 mt-10">
                     @if ($currentDateTime->lt($trainingStartDateTime))
                         @if ($userHasActiveMembership)
-                            @if (!$userPresence && !$userPresenceFalse && $remainingSpots > 0)
-                                <button type="button" onclick="confirmEnroll({{ $training->id }})"
-                                        class="dark:bg-lime-400 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-400 text-sm">
-                                    <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
-                                    Inscrever-me
-                                </button>
-                            @elseif ($userPresence && !$userPresenceFalse)
-                                <button type="button" onclick="confirmCancel({{ $training->id }})"
-                                        class="bg-red-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-red-400 text-sm">
-                                    <i class="fa-solid fa-x w-4 h-4 mr-2"></i>
-                                    Cancelar Inscrição
-                                </button>
+                            @if (!$userPresence && !$userCancelled && $remainingSpots > 0)
+                                @if($hasAvailablePack)
+                                    <form id="enroll-form-{{ $training->id }}" action="{{ route('trainings.enroll', $training->id) }}" method="POST" class="inline text-sm">
+                                        @csrf
+                                        <button type="submit"
+                                                class="dark:bg-lime-400 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-400 text-sm">
+                                            <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
+                                            Inscrever-me
+                                        </button>
+                                    </form>
+                                @else
+                                    <button type="button" disabled
+                                            class="dark:bg-gray-600 bg-gray-400 text-white py-2 px-4 rounded-md text-sm">
+                                        <i class="fa-solid fa-check w-4 h-4 mr-2"></i>
+                                        Inscrever-me
+                                    </button>
+                                @endif
+                            @elseif ($userPresence && !$userCancelled)
+                                <form id="cancel-form-{{ $training->id }}" action="{{ route('trainings.cancel', $training->id) }}" method="POST" class="inline text-sm">
+                                    @csrf
+                                    <button type="submit"
+                                            class="bg-red-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-red-400 text-sm">
+                                        <i class="fa-solid fa-x w-4 h-4 mr-2"></i>
+                                        Cancelar Inscrição
+                                    </button>
+                                </form>
                             @endif
                         @else
                             <p class="text-gray-700 dark:text-gray-200 mb-5">
@@ -221,13 +252,12 @@
                             <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
                             Editar
                         </a>
-                        <form id="delete-form-{{$training->id}}" action="{{ url('trainings/' . $training->id) }}"
-                              method="POST" class="inline mr-2">
+                        <form id="delete-form-{{$training->id}}" action="{{ url('trainings/' . $training->id) }}" method="POST" class="inline mr-2">
                             @csrf
                             @method('DELETE')
-                            <button type="button"
+                            <button type="button" onclick="confirmDelete({{ $training->id }})"
                                     class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500"
-                                    id="delete-button" onclick="confirmDelete({{ $training->id }})">
+                                    id="delete-button">
                                 <i class="fa-solid fa-trash-can w-4 h-4 mr-2"></i>
                                 Eliminar
                             </button>
@@ -250,7 +280,8 @@
             </button>
             <form id="confirmation-form" method="POST" class="inline">
                 @csrf
-                <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-500">Confirmar
+                @method('DELETE')
+                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Confirmar
                 </button>
             </form>
         </div>
@@ -258,10 +289,28 @@
 </div>
 
 <script>
-    function openModal(title, message, actionUrl) {
+    function openModal(title, message, actionUrl, method = 'POST') {
         document.getElementById('confirmation-title').innerText = title;
         document.getElementById('confirmation-message').innerText = message;
-        document.getElementById('confirmation-form').action = actionUrl;
+        const form = document.getElementById('confirmation-form');
+        form.action = actionUrl;
+        form.setAttribute('method', 'POST');
+
+        // Remove existing _method input if present
+        const existingMethodInput = form.querySelector('input[name="_method"]');
+        if (existingMethodInput) {
+            existingMethodInput.remove();
+        }
+
+        // Add _method input if method is DELETE or PUT
+        if (method === 'DELETE' || method === 'PUT') {
+            const methodInput = document.createElement('input');
+            methodInput.type = 'hidden';
+            methodInput.name = '_method';
+            methodInput.value = method;
+            form.appendChild(methodInput);
+        }
+
         document.getElementById('confirmation-modal').classList.remove('hidden');
     }
 
@@ -274,10 +323,10 @@
     }
 
     function confirmCancel(id) {
-        openModal('Pretende cancelar a inscrição?', '', `/trainings/${id}/cancel`);
+        openModal('Pretende cancelar a inscrição?', 'Se cancelar agora não poderá voltar a inscrever-se neste treino e não irá ser reembolsado.', `/trainings/${id}/cancel`);
     }
 
     function confirmDelete(id) {
-        openModal('Pretende eliminar?', 'Não poderá reverter isso!', `/trainings/${id}`);
+        openModal('Pretende eliminar?', 'Não poderá reverter isso!', `/trainings/${id}`, 'DELETE');
     }
 </script>

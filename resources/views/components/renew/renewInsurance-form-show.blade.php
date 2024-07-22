@@ -39,6 +39,7 @@
                                {{ $user->membership->insurance->status->name == 'awaiting_membership' ? 'disabled' : '' }} required>
                         <label for="insurance_type_gym" class="ml-2 dark:text-gray-200 text-gray-800">Ginásio</label>
                     </div>
+
                     <div class="flex items-center">
                         <input type="radio" id="insurance_type_personal" name="insurance_type" value="Pessoal"
                                class="form-radio text-blue-500 dark:text-lime-400 h-4 w-4 dark:bg-gray-600 dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50 dark:checked:bg-lime-400 focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 checked:bg-blue-500"
@@ -48,14 +49,19 @@
                     </div>
                 </div>
 
-                <div class="mb-4">
+                <!-- Insurance Message -->
+                <div id="insurance_message" class="mb-4 text-gray-800 dark:text-gray-200" style="display: none;">
+                    O seguro de ginásio tem um custo de: {{ setting('taxa_seguro') }}€
+                </div>
+
+                <div class="mb-4 date-fields" style="display: none;">
                     <label for="start_date" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Data de Início</label>
                     <input type="date" id="start_date" name="start_date" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white"
                            value="{{ old('start_date', optional($user->membership->insurance)->start_date ? \Carbon\Carbon::parse($user->membership->insurance->start_date)->format('Y-m-d') : '') }}"
                            {{ $user->membership->insurance->status->name == 'awaiting_membership' ? 'disabled' : '' }} required>
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-4 date-fields" style="display: none;">
                     <label for="end_date" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Data de Término</label>
                     <input type="date" id="end_date" name="end_date" class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white"
                            value="{{ old('end_date', optional($user->membership->insurance)->end_date ? \Carbon\Carbon::parse($user->membership->insurance->end_date)->format('Y-m-d') : '') }}"
@@ -94,21 +100,39 @@
         const insuranceTypePersonal = document.getElementById('insurance_type_personal');
         const startDateField = document.getElementById('start_date');
         const endDateField = document.getElementById('end_date');
+        const dateFields = document.querySelectorAll('.date-fields');
+        const insuranceMessage = document.getElementById('insurance_message');
 
         function toggleDateFields() {
             if (insuranceTypeGym.checked) {
+                dateFields.forEach(field => field.style.display = 'none');
                 startDateField.readOnly = true;
                 endDateField.readOnly = true;
+                insuranceMessage.style.display = 'block'; // Show the message
             } else {
+                dateFields.forEach(field => field.style.display = 'block');
                 startDateField.readOnly = false;
                 endDateField.readOnly = false;
+                insuranceMessage.style.display = 'none'; // Hide the message
+            }
+        }
+
+        function validateEndDate() {
+            const startDate = new Date(startDateField.value);
+            const endDate = new Date(endDateField.value);
+
+            if (endDate < startDate) {
+                endDateField.setCustomValidity('A data de término não pode ser menor que a data de início.');
+            } else {
+                endDateField.setCustomValidity('');
             }
         }
 
         insuranceTypeGym.addEventListener('change', toggleDateFields);
         insuranceTypePersonal.addEventListener('change', toggleDateFields);
+        startDateField.addEventListener('change', validateEndDate);
+        endDateField.addEventListener('change', validateEndDate);
 
-        // Initial check
         toggleDateFields();
     });
 </script>

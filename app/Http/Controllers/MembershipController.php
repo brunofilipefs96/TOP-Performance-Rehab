@@ -124,41 +124,52 @@ class MembershipController extends Controller
         $this->authorize('update', $membership);
 
         $status = Status::where('name', $request->input('status_name'))->firstOrFail();
+        $notificationType = null;
+        $notificationMessage = '';
+        $url = 'memberships/' . $membership->id;
 
-        if (($membership->status->name == 'pending' || $membership->status->name == 'renew_pending') &&
-            ($status->name == 'pending_payment' || $status->name == 'pending_renewPayment')) {
-
+        if ($status->name == 'pending_payment') {
             $membership->status_id = $status->id;
             $membership->save();
 
-            // Verifique o tipo de notificação
-            $notificationType = NotificationType::where('name', 'membershipAproved')->firstOrFail();
+            $notificationType = NotificationType::where('name', 'Matrícula Aprovada')->firstOrFail();
+            $notificationMessage = 'A sua matrícula foi aprovada e aguarda pagamento.';
+        } elseif ($status->name == 'pending_renewPayment') {
+            $membership->status_id = $status->id;
+            $membership->save();
 
-            // Crie a notificação
-            $notification = Notification::create([
-                'notification_type_id' => $notificationType->id,
-                'message' => 'Sua matrícula foi aprovada e aguarda pagamento.',
-            ]);
+            $notificationType = NotificationType::where('name', 'Renovação Aprovada')->firstOrFail();
+            $notificationMessage = 'A sua renovação foi aprovada e aguarda pagamento.';
+        } elseif ($status->name == 'rejected') {
+            $membership->status_id = $status->id;
+            $membership->save();
 
-            // Verifique o usuário
-            $user = $membership->user;
+            $notificationType = NotificationType::where('name', 'Matrícula Negada')->firstOrFail();
+            $notificationMessage = 'A sua matrícula foi rejeitada.';
+        } elseif ($status->name == 'frozen') {
+            $membership->status_id = $status->id;
+            $membership->save();
 
-            // Anexe a notificação ao usuário
-            $user->notifications()->attach($notification->id);
-
+            $notificationType = NotificationType::where('name', 'Matrícula Congelada')->firstOrFail();
+            $notificationMessage = 'A sua matrícula foi congelada.';
         } else {
             $membership->status_id = $status->id;
             $membership->save();
         }
 
+        if ($notificationType) {
+            $notification = Notification::create([
+                'notification_type_id' => $notificationType->id,
+                'message' => $notificationMessage,
+                'url' => $url,
+            ]);
+
+            $user = $membership->user;
+            $user->notifications()->attach($notification->id);
+        }
+
         return redirect()->route('memberships.show', ['membership' => $membership])->with('success', 'Membership Updated!');
     }
-
-
-
-
-
-
 
 
 

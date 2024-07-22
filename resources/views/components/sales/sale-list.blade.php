@@ -1,4 +1,4 @@
-<div class="container mx-auto mt-5">
+<div class="container mx-auto mt-5 max-w-[280px] xs:max-w-[500px] sm:max-w-full">
     @if(Auth::user()->hasRole('admin'))
         <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Lista de Vendas</h1>
 

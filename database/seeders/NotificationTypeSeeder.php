@@ -24,6 +24,8 @@ class NotificationTypeSeeder extends Seeder
             ['name' => 'Seguro Expirado'],
             ['name' => 'Renovação Aprovada'],
             ['name' => 'Renovação Negada'],
+            ['name' => 'Matrícula Submetida'],
+            ['name' => 'Seguro Submetido'],
         ];
 
 

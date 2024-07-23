@@ -16,34 +16,33 @@
         $age = floor($birthDate->diffInYears(\Carbon\Carbon::now()));
     @endphp
 
-        <!-- Client Alerts -->
-    @if($user->hasRole('client'))
-        @include('partials.client-alerts', ['membership' => $membership])
-    @endif
-
     <div class="flex justify-center">
         <div class="w-full max-w-lg bg-gray-300 dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm relative">
             <div class="flex justify-center">
                 <div class="w-full max-w-lg">
                     <div class="absolute top-4 left-4">
                         @if(Auth::user()->hasRole('admin'))
-                            <a href="{{ route('memberships.index')  }}" class="inline-block bg-gray-500 py-1 px-2 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                            <a href="{{ route('memberships.index')  }}"
+                               class="inline-block bg-gray-500 py-1 px-2 rounded-md shadow-sm hover:bg-gray-700 text-white">
                                 <i class="fa-solid fa-arrow-left"></i>
                             </a>
                         @else
-                            <a href="{{ url('/profile') }}" class="inline-block bg-gray-500 py-1 px-2 rounded-md shadow-sm hover:bg-gray-700 text-white">
+                            <a href="{{ url('/profile') }}"
+                               class="inline-block bg-gray-500 py-1 px-2 rounded-md shadow-sm hover:bg-gray-700 text-white">
                                 <i class="fa-solid fa-arrow-left"></i>
                             </a>
                         @endif
                     </div>
                     <div class="text-center">
-                        <h1 class="mb-6 mt-8 text-2xl text-gray-900 dark:text-lime-400">Matrícula {{ $membership->id }}</h1>
+                        <h1 class="mb-6 mt-8 text-2xl text-gray-900 dark:text-lime-400">
+                            Matrícula {{ $membership->id }}</h1>
                     </div>
 
                     <!-- User Details -->
                     @if($user->hasRole('personal_trainer'))
                         <div class="mb-4">
-                            <label for="user_name" class="block text-gray-900 dark:text-gray-200">Nome do Utilizador</label>
+                            <label for="user_name" class="block text-gray-900 dark:text-gray-200">Nome do
+                                Utilizador</label>
                             <input type="text" value="{{ $membership->user->full_name }}" disabled
                                    class="mt-1 block w-full p-2 border border-white dark:border-gray-500 text-gray-800 dark:text-gray-200 dark:bg-gray-500 rounded-md shadow-sm">
                         </div>
@@ -55,25 +54,29 @@
                         </div>
                     @else
                         <div class="mb-4">
-                            <label for="user_name" class="block text-gray-900 dark:text-gray-200">Nome do Utilizador</label>
+                            <label for="user_name" class="block text-gray-900 dark:text-gray-200">Nome do
+                                Utilizador</label>
                             <input type="text" value="{{ $membership->user->full_name }}" disabled
                                    class="mt-1 block w-full p-2 border border-white dark:border-gray-500 text-gray-800 dark:text-gray-200 dark:bg-gray-500 rounded-md shadow-sm">
                         </div>
 
                         <div class="mb-4">
-                            <label for="nif" class="block text-gray-900 dark:text-gray-200">Número Identificação Fiscal</label>
+                            <label for="nif" class="block text-gray-900 dark:text-gray-200">Número Identificação
+                                Fiscal</label>
                             <input type="text" value="{{ $membership->user->nif }}" disabled
                                    class="mt-1 block w-full p-2 border border-white dark:border-gray-500 text-gray-800 dark:text-gray-200 dark:bg-gray-500 rounded-md shadow-sm">
                         </div>
 
                         <div class="mb-4">
-                            <label for="cc_number" class="block text-gray-900 dark:text-gray-200">Número Contribuinte</label>
+                            <label for="cc_number" class="block text-gray-900 dark:text-gray-200">Número
+                                Contribuinte</label>
                             <input type="text" value="{{ $membership->user->cc_number }}" disabled
                                    class="mt-1 block w-full p-2 border border-white dark:border-gray-500 text-gray-800 dark:text-gray-200 dark:bg-gray-500 rounded-md shadow-sm">
                         </div>
 
                         <div class="mb-8">
-                            <label for="birth_date" class="block text-gray-900 dark:text-gray-200">Data Nascimento</label>
+                            <label for="birth_date" class="block text-gray-900 dark:text-gray-200">Data
+                                Nascimento</label>
                             <input type="text"
                                    value="{{ \Carbon\Carbon::parse($membership->user->birth_date)->format('d/m/Y') }}"
                                    disabled
@@ -91,7 +94,8 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="address_street" class="block text-gray-900 dark:text-gray-200">Nome da Rua</label>
+                            <label for="address_street" class="block text-gray-900 dark:text-gray-200">Nome da
+                                Rua</label>
                             <input type="text" value="{{ $membership->address->street }}" disabled
                                    class="mt-1 block w-full p-2 border border-white dark:border-gray-500 text-gray-800 dark:text-gray-200 dark:bg-gray-500 rounded-md shadow-sm">
                         </div>
@@ -143,8 +147,10 @@
                                         @if($answer->question_id >= 14 && $answer->value != 'Nenhum' && $answer->question_id <= 18)
                                             @foreach(explode(', ', $answer->value) as $individualAnswer)
                                                 <div class="flex items-center">
-                                                    <span class="h-2 w-2 rounded-full inline-block mr-2 bg-gray-900 dark:bg-gray-200"></span>
-                                                    <label class="block text-gray-900 dark:text-gray-200">{{ $individualAnswer }}</label>
+                                                    <span
+                                                        class="h-2 w-2 rounded-full inline-block mr-2 bg-gray-900 dark:bg-gray-200"></span>
+                                                    <label
+                                                        class="block text-gray-900 dark:text-gray-200">{{ $individualAnswer }}</label>
                                                 </div>
                                             @endforeach
                                         @endif
@@ -157,8 +163,10 @@
                                         @if($answer->question_id >= 19 && $answer->value != 'Nenhum' && $answer->question_id <= 22)
                                             @foreach(explode(', ', $answer->value) as $individualAnswer)
                                                 <div class="flex items-center">
-                                                    <span class="h-2 w-2 rounded-full inline-block mr-2 bg-gray-900 dark:bg-gray-200"></span>
-                                                    <label class="block text-gray-900 dark:text-gray-200">{{ $individualAnswer }}</label>
+                                                    <span
+                                                        class="h-2 w-2 rounded-full inline-block mr-2 bg-gray-900 dark:bg-gray-200"></span>
+                                                    <label
+                                                        class="block text-gray-900 dark:text-gray-200">{{ $individualAnswer }}</label>
                                                 </div>
                                             @endforeach
                                         @endif
@@ -183,21 +191,24 @@
                             <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle text-lg">Estado: Congelada</p>
                             <span class="h-3 w-3 bg-blue-500 rounded-full inline-block"></span>
                         @elseif($membership->status->name == 'pending_payment' || $membership->status->name == 'pending_renewPayment')
-                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle text-lg">Estado: Pagamento em espera</p>
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle text-lg">Estado: Pagamento em
+                                espera</p>
                             <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
                         @elseif($membership->status->name == 'inactive')
                             <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle text-lg">Estado: Inativa</p>
                             <span class="h-3 w-3 bg-red-500 rounded-full inline-block"></span>
                         @elseif($membership->status->name == 'awaiting_insurance')
-                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle text-lg">Estado: Aguarda renovação do seguro</p>
+                            <p class="dark:text-gray-100 text-gray-700 mr-2 align-middle text-lg">Estado: Aguarda
+                                renovação do seguro</p>
                             <span class="h-3 w-3 bg-yellow-500 rounded-full inline-block"></span>
                         @endif
                     </div>
 
                     <!-- Membership Dates -->
-                    @if($membership->status->name == 'active')
+                    @if($membership->status->name == 'active' && $user->hasRole('admin'))
                         <div class="mb-4">
-                            <label for="start_date" class="block text-gray-900 dark:text-gray-200">Data de Início</label>
+                            <label for="start_date" class="block text-gray-900 dark:text-gray-200">Data de
+                                Início</label>
                             <input type="text" id="start_date"
                                    value="{{ \Carbon\Carbon::parse($membership->start_date)->format('d/m/Y') }}"
                                    disabled
@@ -274,50 +285,63 @@
                     </div>
 
                     <!-- Documents Section -->
-                    <div>
-                        <h1 class="mb-2 text-xl text-gray-900 dark:text-gray-200">Documentos da Matrícula</h1>
-                    </div>
-                    <div class="bg-gray-200 dark:bg-gray-700 rounded-lg shadow-md p-4">
-                        @if($membership->documents->isEmpty())
-                            <p class="text-gray-800 dark:text-gray-200">Nenhum documento disponível.</p>
-                        @else
-                            <ul id="uploaded-files-list">
-                                @foreach($membership->documents as $document)
-                                    <li class="mb-2 flex justify-between items-center">
-                                        <a href="{{ Storage::url($document->file_path) }}" target="_blank" class="text-blue-600 dark:text-lime-400 hover:underline">
-                                            <i class="fa-solid fa-file mr-2"></i>{{ $document->name }}
-                                        </a>
-                                        @if(auth()->user()->hasRole('admin'))
-                                            <button type="button" class="text-red-600 dark:text-red-400 hover:underline ml-2" onclick="showConfirmationModal({{ $document->id }})">
-                                                <i class="fa-solid fa-trash"></i>
-                                            </button>
-                                            <form id="delete-form-{{ $document->id }}" action="{{ route('memberships.deleteDocument', [$membership->id, $document->id]) }}" method="POST" style="display:none;">
-                                                @csrf
-                                                @method('DELETE')
-                                            </form>
-                                        @endif
-                                    </li>
-                                @endforeach
-                            </ul>
-                        @endif
-
-                        <!-- Document Upload Area -->
-                        @if(auth()->user()->hasRole('admin'))
-                            <div class="mt-4">
-                                <form id="document-upload-form" action="{{ route('memberships.addDocument', $membership->id) }}" method="POST" enctype="multipart/form-data" class="flex flex-col items-start space-y-2">
-                                    @csrf
-                                    <ul id="selected-files-list" class="list-disc pl-5 text-gray-800 dark:text-gray-200"></ul>
-                                    <label for="documents" class="cursor-pointer inline-flex items-center text-blue-600 dark:text-lime-400 hover:underline">
-                                        <i class="fa-solid fa-plus mr-2"></i>Adicionar Documento(s)
-                                    </label>
-                                    <input type="file" name="documents[]" id="documents" accept=".pdf,.jpg,.png,.doc,.docx" multiple class="hidden" onchange="addSelectedFiles(event)">
-                                    <button type="submit" class="bg-blue-600 dark:bg-lime-500 text-white px-4 py-2 rounded-md hover:bg-blue-700 dark:hover:bg-lime-600">
-                                        Upload
-                                    </button>
-                                </form>
-                            </div>
-                        @endif
-                    </div>
+                    @if($user->hasRole('admin') || $user->id == $membership->user_id)
+                        <div>
+                            <h1 class="mb-2 text-xl text-gray-900 dark:text-gray-200">Documentos da Matrícula</h1>
+                        </div>
+                        <div class="bg-gray-200 dark:bg-gray-700 rounded-lg shadow-md p-4">
+                            @if($membership->documents->isEmpty())
+                                <p class="text-gray-800 dark:text-gray-200">Nenhum documento disponível.</p>
+                            @else
+                                <ul id="uploaded-files-list">
+                                    @foreach($membership->documents as $document)
+                                        <li class="mb-2 flex justify-between items-center">
+                                            <a href="{{ Storage::url($document->file_path) }}" target="_blank"
+                                               class="text-blue-600 dark:text-lime-400 hover:underline">
+                                                <i class="fa-solid fa-file mr-2"></i>{{ $document->name }}
+                                            </a>
+                                            @if(auth()->user()->hasRole('admin'))
+                                                <button type="button"
+                                                        class="text-red-600 dark:text-red-400 hover:underline ml-2"
+                                                        onclick="showConfirmationModal({{ $document->id }})">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                                <form id="delete-form-{{ $document->id }}"
+                                                      action="{{ route('memberships.deleteDocument', [$membership->id, $document->id]) }}"
+                                                      method="POST" style="display:none;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                </form>
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @endif
+                            @endif
+                            <!-- Document Upload Area -->
+                            @if(auth()->user()->hasRole('admin'))
+                                <div class="mt-4">
+                                    <form id="document-upload-form"
+                                          action="{{ route('memberships.addDocument', $membership->id) }}" method="POST"
+                                          enctype="multipart/form-data" class="flex flex-col items-start space-y-2">
+                                        @csrf
+                                        <ul id="selected-files-list"
+                                            class="list-disc pl-5 text-gray-800 dark:text-gray-200"></ul>
+                                        <label for="documents"
+                                               class="cursor-pointer inline-flex items-center text-blue-600 dark:text-lime-400 hover:underline">
+                                            <i class="fa-solid fa-plus mr-2"></i>Adicionar Documento(s)
+                                        </label>
+                                        <input type="file" name="documents[]" id="documents"
+                                               accept=".pdf,.jpg,.png,.doc,.docx" multiple class="hidden"
+                                               onchange="addSelectedFiles(event)">
+                                        <button type="submit"
+                                                class="bg-blue-600 dark:bg-lime-500 text-white px-4 py-2 rounded-md hover:bg-blue-700 dark:hover:bg-lime-600">
+                                            Upload
+                                        </button>
+                                    </form>
+                                </div>
+                            @endif
+                        </div>
                 </div>
             </div>
         </div>
@@ -325,13 +349,18 @@
 </div>
 
 <!-- Modal de Confirmação -->
-<div id="confirmation-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
+<div id="confirmation-modal"
+     class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
     <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
         <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800" id="confirmation-title">Pretende eliminar?</h2>
         <p class="mb-4 text-red-500 dark:text-red-300" id="confirmation-message">Não poderá reverter isso!</p>
         <div class="flex justify-end gap-4">
-            <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400" onclick="cancelAction()">Cancelar</button>
-            <button type="button" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500" onclick="confirmAction()">Confirmar</button>
+            <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400"
+                    onclick="cancelAction()">Cancelar
+            </button>
+            <button type="button" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500"
+                    onclick="confirmAction()">Confirmar
+            </button>
         </div>
     </div>
 </div>
@@ -421,7 +450,7 @@
         document.getElementById('confirmation-modal').classList.add('hidden');
     }
 
-    document.getElementById('document-upload-form').addEventListener('submit', function(event) {
+    document.getElementById('document-upload-form').addEventListener('submit', function (event) {
         const formData = new FormData();
         selectedFiles.forEach(file => formData.append('documents[]', file));
 

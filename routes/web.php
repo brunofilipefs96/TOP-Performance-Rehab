@@ -93,6 +93,8 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::c
 
     Route::post('memberships/{membership}/documents', [MembershipController::class, 'addDocument'])->name('memberships.addDocument');
     Route::delete('memberships/{membership}/documents/{document}', [MembershipController::class, 'deleteDocument'])->name('memberships.deleteDocument');
+    Route::post('/evaluations/{evaluation}/documents', [EvaluationController::class, 'addDocument'])->name('evaluations.addDocument');
+    Route::delete('/evaluations/{evaluation}/documents/{document}', [EvaluationController::class, 'deleteDocument'])->name('evaluations.deleteDocument');
     Route::get('/memberships/{membership}/evaluations/create', [EvaluationController::class, 'create'])->name('memberships.evaluations.create');
     Route::post('/memberships/{membership}/evaluations', [EvaluationController::class, 'store'])->name('memberships.evaluations.store');
     Route::get('/memberships/{membership}/evaluations/{evaluation}', [EvaluationController::class, 'show'])->name('memberships.evaluations.show');

@@ -29,38 +29,45 @@ class MembershipController extends Controller
         $this->authorize('viewAny', Membership::class);
 
         $search = request('search');
-        $filter = request('filter', 'all'); // Default to 'all' if filter is not provided
+        $filter = request('filter', 'all');
 
         $query = Membership::query();
 
-        if ($search) {
-            $search = strtolower($search);
-            $query->where(function($q) use ($search) {
-                $q->whereHas('user', function($q) use ($search) {
-                    $q->whereRaw('LOWER(full_name) LIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw('LOWER(nif) LIKE ?', ['%' . $search . '%']);
-                })->orWhereHas('status', function($q) use ($search) {
-                    $q->whereRaw('LOWER(name) LIKE ?', ['%' . $search . '%']);
+        if (auth()->user()->hasRole('personal_trainer')) {
+            $query->whereHas('status', function($q) {
+                $q->where('name', 'active');
+            });
+        } else {
+            if ($search) {
+                $search = strtolower($search);
+                $query->where(function($q) use ($search) {
+                    $q->whereHas('user', function($q) use ($search) {
+                        $q->whereRaw('LOWER(full_name) LIKE ?', ['%' . $search . '%'])
+                            ->orWhereRaw('LOWER(nif) LIKE ?', ['%' . $search . '%']);
+                    })->orWhereHas('status', function($q) use ($search) {
+                        $q->whereRaw('LOWER(name) LIKE ?', ['%' . $search . '%']);
+                    });
                 });
-            });
-        }
+            }
 
-        if ($filter && $filter !== 'all') {
-            $query->whereHas('status', function ($q) use ($filter) {
-                if ($filter === 'pending') {
-                    $q->whereIn('name', ['pending', 'renew_pending']);
-                } elseif ($filter === 'pending_payment') {
-                    $q->whereIn('name', ['pending_payment', 'pending_renewPayment']);
-                } else {
-                    $q->whereRaw('LOWER(name) = ?', [strtolower($filter)]);
-                }
-            });
+            if ($filter && $filter !== 'all') {
+                $query->whereHas('status', function ($q) use ($filter) {
+                    if ($filter === 'pending') {
+                        $q->whereIn('name', ['pending', 'renew_pending']);
+                    } elseif ($filter === 'pending_payment') {
+                        $q->whereIn('name', ['pending_payment', 'pending_renewPayment']);
+                    } else {
+                        $q->whereRaw('LOWER(name) = ?', [strtolower($filter)]);
+                    }
+                });
+            }
         }
 
         $memberships = $query->orderBy('id', 'desc')->paginate(12);
 
         return view('pages.memberships.index', ['memberships' => $memberships]);
     }
+
 
     /**
      * Show the form for creating a new resource.

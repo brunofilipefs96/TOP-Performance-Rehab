@@ -10,18 +10,20 @@
                        class="w-full p-2 pl-10 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-light-gray dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50">
             </form>
         </div>
-        <div class="ml-4">
-            <form action="{{ route('memberships.index') }}" method="GET" id="filter-form">
-                <select name="filter" id="filter" class="bg-white text-black px-4 py-2 rounded-md border border-gray-300 dark:bg-gray-600 dark:text-white" onchange="submitFilterForm()">
-                    <option value="all">Todos</option>
-                    <option value="active">Ativos</option>
-                    <option value="pending">Pendentes</option>
-                    <option value="inactive">Inativos</option>
-                    <option value="frozen">Congelados</option>
-                    <option value="pending_payment">Aguardar Pagamento</option>
-                </select>
-            </form>
-        </div>
+        @if(!auth()->user()->hasRole('personal_trainer'))
+            <div class="ml-4">
+                <form action="{{ route('memberships.index') }}" method="GET" id="filter-form">
+                    <select name="filter" id="filter" class="bg-white text-black px-4 py-2 rounded-md border border-gray-300 dark:bg-gray-600 dark:text-white" onchange="submitFilterForm()">
+                        <option value="all">Todos</option>
+                        <option value="active">Ativos</option>
+                        <option value="pending">Pendentes</option>
+                        <option value="inactive">Inativos</option>
+                        <option value="frozen">Congelados</option>
+                        <option value="pending_payment">Aguardar Pagamento</option>
+                    </select>
+                </form>
+            </div>
+        @endif
     </div>
     <hr class="mb-5 border-gray-400 dark:border-gray-300">
 

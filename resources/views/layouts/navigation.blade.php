@@ -59,12 +59,12 @@
                                 class="group px-5 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative"
                                 x-data="{ dropdownOpen: false }" @mouseover="dropdownOpen = true"
                                 @mouseout="dropdownOpen = false">
-                                <x-nav-link :activeRoutes="['rooms.index', 'training-types.index', 'trainings.index']"
+                                <x-nav-link :activeRoutes="['rooms.index', 'training-types.index', 'trainings.index', 'memberships.index']"
                                             class="flex items-center justify-center space-x-2">
                                     <i class="fa-solid fa-dumbbell text-xl transition-transform group-hover:-translate-y-1"></i>
                                 </x-nav-link>
                                 <div x-show="dropdownOpen"
-                                     class="absolute mt-40 ml-32 w-48 rounded-md shadow-lg bg-white dark:bg-gray-700 z-50">
+                                     class="absolute mt-48 ml-32 w-48 rounded-md shadow-lg bg-white dark:bg-gray-700 z-50">
                                     <x-dropdown-link :href="route('rooms.index')"
                                                      :active="request()->routeIs('rooms.index')"
                                                      class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
@@ -79,6 +79,11 @@
                                                      :active="request()->routeIs('trainings.index')"
                                                      class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
                                         {{ __('Treinos') }}
+                                    </x-dropdown-link>
+                                    <x-dropdown-link :href="route('memberships.index')"
+                                                     :active="request()->routeIs('memberships.index')"
+                                                     class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
+                                        {{ __('Matrículas') }}
                                     </x-dropdown-link>
                                 </div>
                             </div>
@@ -306,6 +311,10 @@
                         <x-responsive-nav-link :href="route('trainings.index')" :active="request()->routeIs('trainings.index')"
                                                class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
                             <i class="fa-solid fa-dumbbell text-lg mr-2"></i>{{ __('Treinos') }}
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('memberships.index')" :active="request()->routeIs('memberships.index')"
+                                               class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
+                            <i class="fa-solid fa-address-card text-lg mr-2"></i>{{ __('Matrículas') }}
                         </x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('sales.index')" :active="request()->routeIs('sales.index')"
                                                class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">

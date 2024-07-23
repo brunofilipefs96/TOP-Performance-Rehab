@@ -166,8 +166,8 @@
                                     <i class="fa-solid fa-arrow-right w-4 h-4 ml-2"></i>
                                 </button>
                             @else
-                                <p class="mt-1 text-sm text-red-500">
-                                    {{ __("Você precisa preencher o formulário antes de adicionar um membership.") }}
+                                <p class="mt-1 text-sm dark:text-gray-300 text-gray-600">
+                                    {{ __("Por favor, preencha primeiro o formulário para prosseguir.") }}
                                 </p>
                             @endif
                         @else

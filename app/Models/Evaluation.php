@@ -44,4 +44,9 @@ class Evaluation extends Model
         return $this->belongsTo(Membership::class);
     }
 
+    public function documents()
+    {
+        return $this->belongsToMany(Document::class);
+    }
+
 }

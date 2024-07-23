@@ -40,6 +40,7 @@ class StoreEvaluationRequest extends FormRequest
             'ideal_muscle_mass' => 'nullable|numeric|min:0|max:100',
             'observations' => 'nullable|string|max:500',
             'date' => 'required|date',
+            'documents.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:2048',
         ];
     }
 
@@ -120,6 +121,9 @@ class StoreEvaluationRequest extends FormRequest
             'observations.max' => 'As observações não podem ser maiores que 500 caracteres.',
             'date.required' => 'A data é obrigatória.',
             'date.date' => 'A data deve ser uma data válida.',
+            'documents.*.file' => 'Cada documento deve ser um arquivo válido.',
+            'documents.*.mimes' => 'Cada documento deve ser um arquivo do tipo: pdf, jpg, jpeg, png, doc, docx.',
+            'documents.*.max' => 'Cada documento não deve ter mais de 2MB.',
         ];
     }
 }

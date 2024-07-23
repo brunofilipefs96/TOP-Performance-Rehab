@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('training_user', function (Blueprint $table) {
             $table->id();
             $table->foreignId('training_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->boolean('presence')->nullable();
             $table->boolean('cancelled')->default(false);
             $table->timestamp('created_at')->useCurrent();

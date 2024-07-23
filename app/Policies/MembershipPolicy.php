@@ -13,7 +13,7 @@ class MembershipPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('admin');
+        return $user->hasRole('admin') || $user->hasRole('personal_trainer');
     }
 
     /**
@@ -24,7 +24,7 @@ class MembershipPolicy
      */
     public function view(User $user, $membership): bool
     {
-        return $user->id === $membership->user_id || $user->hasRole('admin') || $user->hasRole('personal_trainer');
+        return $user->id === $membership->user_id || $user->hasRole('admin') || ($user->hasRole('personal_trainer') && $membership->status->name === 'active');
     }
 
     /**

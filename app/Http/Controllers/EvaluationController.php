@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Document;
 use App\Models\Evaluation;
 use App\Http\Requests\StoreEvaluationRequest;
-use App\Http\Requests\UpdateEvaluationRequest;
 use App\Models\Membership;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class EvaluationController extends Controller
 {
     use AuthorizesRequests;
-    /**
-     * Display a listing of the resource.
-     */
+
     public function create(Membership $membership)
     {
         $this->authorize('create', Evaluation::class);
@@ -25,13 +25,56 @@ class EvaluationController extends Controller
         $this->authorize('create', Evaluation::class);
 
         $validatedData = $request->validated();
-
         $validatedData['observations'] = $validatedData['observations'] ?? '';
 
         $evaluation = $membership->evaluations()->create($validatedData);
 
-        return redirect()->route('memberships.evaluations.list', ['membership' => $membership->id])
-            ->with('success', 'Avaliação adicionada com sucesso!');
+        if ($request->hasFile('documents')) {
+            foreach ($request->file('documents') as $file) {
+                $filename = "{$evaluation->id}_{$file->getClientOriginalName()}";
+                $path = $file->storeAs("public/evaluations/{$evaluation->id}", $filename);
+
+                $document = new Document();
+                $document->name = $filename;
+                $document->file_path = $path;
+                $document->save();
+
+                $evaluation->documents()->attach($document->id);
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'redirect' => route('memberships.evaluations.list', ['membership' => $membership->id])
+        ]);
+    }
+
+
+
+    private function addDocumentsToEvaluation(Request $request, Evaluation $evaluation)
+    {
+        if ($request->hasFile('documents')) {
+            foreach ($request->file('documents') as $file) {
+                $filename = "{$evaluation->id}_{$file->getClientOriginalName()}";
+                $path = $file->storeAs("public/evaluations/{$evaluation->id}", $filename);
+
+                $document = new Document();
+                $document->name = $filename;
+                $document->file_path = $path;
+                $document->save();
+
+                $evaluation->documents()->attach($document->id);
+            }
+        }
+    }
+
+    public function addDocument(Request $request, $evaluationId)
+    {
+        $evaluation = Evaluation::findOrFail($evaluationId);
+
+        $this->addDocumentsToEvaluation($request, $evaluation);
+
+        return response()->json(['success' => true]);
     }
 
     public function show(Membership $membership, Evaluation $evaluation)
@@ -40,23 +83,34 @@ class EvaluationController extends Controller
         return view('pages.evaluations.show', ['evaluation' => $evaluation, 'membership' => $membership]);
     }
 
-
     public function destroy(Membership $membership, Evaluation $evaluation)
     {
         $this->authorize('delete', $evaluation);
         $evaluation->delete();
-        return redirect()->route('memberships.evaluations.list', ['membership' => $evaluation->membership_id])->with('success', 'Avaliação eliminada com sucesso!');
-
+        return redirect()->route('memberships.evaluations.list', ['membership' => $evaluation->membership_id])
+            ->with('success', 'Avaliação eliminada com sucesso!');
     }
 
     public function listForMembership(Membership $membership)
     {
         $this->authorize('viewAny', Evaluation::class);
 
-        if($membership->status->name == 'active') {
+        if ($membership->status->name == 'active') {
             $evaluations = $membership->evaluations()->orderBy('created_at', 'desc')->paginate(12);
             return view('pages.evaluations.list', ['evaluations' => $evaluations, 'membership' => $membership]);
         }
         return redirect('memberships/'.$membership->id);
+    }
+
+    public function deleteDocument($evaluationId, $documentId)
+    {
+        $evaluation = Evaluation::findOrFail($evaluationId);
+        $document = Document::findOrFail($documentId);
+
+        Storage::delete($document->file_path);
+        $evaluation->documents()->detach($document->id);
+        $document->delete();
+
+        return response()->json(['success' => true]);
     }
 }

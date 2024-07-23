@@ -26,4 +26,8 @@ class Document extends Model
         return $this->belongsToMany(Insurance::class);
     }
 
+    public function evaluations()
+    {
+        return $this->belongsToMany(Evaluation::class);
+    }
 }

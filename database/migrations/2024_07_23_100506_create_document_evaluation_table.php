@@ -11,16 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('membership_pack', function (Blueprint $table) {
+        Schema::create('document_evaluation', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pack_id')->constrained()->onDelete('cascade');
-            $table->foreignId('membership_id')->constrained()->onDelete('cascade');
-            $table->integer('quantity');
-            $table->integer('quantity_remaining');
-            $table->date('expiry_date');
+            $table->foreignId('document_id')->constrained()->onDelete('cascade');
+            $table->foreignId('evaluation_id')->constrained()->onDelete('cascade');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
-            $table->softDeletes();
         });
     }
 
@@ -29,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('membership_pack');
+        Schema::dropIfExists('document_evaluation');
     }
 };

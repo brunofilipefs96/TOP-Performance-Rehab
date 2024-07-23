@@ -11,34 +11,34 @@
             </div>
 
             @foreach ([
-                'weight' => 'Peso',
-                'height' => 'Altura',
-                'waist' => 'Cintura',
-                'hip' => 'Quadril',
-                'chest' => 'Peito',
-                'arm' => 'Braço',
-                'forearm' => 'Antebraço',
-                'thigh' => 'Coxa',
-                'calf' => 'Panturrilha',
-                'abdominal_fat' => 'Gordura Abdominal',
-                'visceral_fat' => 'Gordura Visceral',
-                'muscle_mass' => 'Massa Muscular',
-                'fat_mass' => 'Massa Gorda',
-                'hydration' => 'Hidratação',
-                'bone_mass' => 'Massa Óssea',
-                'bmr' => 'Taxa Metabólica Basal',
-                'metabolic_age' => 'Idade Metabólica',
-                'physical_evaluation' => 'Avaliação Física',
-                'fat_percentage' => 'Percentual de Gordura',
-                'imc' => 'IMC',
-                'ideal_weight' => 'Peso Ideal',
-                'ideal_fat_percentage' => 'Percentual de Gordura Ideal',
-                'ideal_muscle_mass' => 'Massa Muscular Ideal'
+                'weight' => ['Peso', 'kg'],
+                'height' => ['Altura', 'cm'],
+                'waist' => ['Cintura', 'cm'],
+                'hip' => ['Quadril', 'cm'],
+                'chest' => ['Peito', 'cm'],
+                'arm' => ['Braço', 'cm'],
+                'forearm' => ['Antebraço', 'cm'],
+                'thigh' => ['Coxa', 'cm'],
+                'calf' => ['Panturrilha', 'cm'],
+                'abdominal_fat' => ['Gordura Abdominal', '%'],
+                'visceral_fat' => ['Gordura Visceral', '%'],
+                'muscle_mass' => ['Massa Muscular', 'kg'],
+                'fat_mass' => ['Massa Gorda', 'kg'],
+                'hydration' => ['Hidratação', '%'],
+                'bone_mass' => ['Massa Óssea', 'kg'],
+                'bmr' => ['Taxa Metabólica Basal', 'kcal'],
+                'metabolic_age' => ['Idade Metabólica', 'anos'],
+                'physical_evaluation' => ['Avaliação Física', ''],
+                'fat_percentage' => ['Percentual de Gordura', '%'],
+                'imc' => ['IMC', ''],
+                'ideal_weight' => ['Peso Ideal', 'kg'],
+                'ideal_fat_percentage' => ['Percentual de Gordura Ideal', '%'],
+                'ideal_muscle_mass' => ['Massa Muscular Ideal', 'kg']
             ] as $field => $label)
                 @if (!is_null($evaluation->$field))
                     <div class="mb-4">
-                        <label for="{{ $field }}" class="block text-gray-800 dark:text-white">{{ $label }}</label>
-                        <input class="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white" type="number" value="{{ $evaluation->$field }}" disabled>
+                        <label for="{{ $field }}" class="block text-gray-800 dark:text-white">{{ $label[0] }} @if($label[1]) ({{ $label[1] }}) @endif</label>
+                        <input class="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white" type="text" value="{{ $evaluation->$field }}" disabled>
                     </div>
                 @endif
             @endforeach

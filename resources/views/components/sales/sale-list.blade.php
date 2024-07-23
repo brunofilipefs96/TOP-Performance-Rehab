@@ -8,8 +8,9 @@
                     <option value="all" {{ $status === 'all' ? 'selected' : '' }}>Todos</option>
                     <option value="pending_payment" {{ $status === 'pending_payment' ? 'selected' : '' }}>A aguardar pagamento</option>
                     <option value="paid" {{ $status === 'paid' ? 'selected' : '' }}>Pago</option>
-                    <option value="canceled" {{ $status === 'canceled' ? 'selected' : '' }}>Cancelado</option>
+                    <option value="awaiting_pickup" {{ $status === 'awaiting_pickup' ? 'selected' : '' }}>Pronta para Recolha</option>
                     <option value="delivered" {{ $status === 'delivered' ? 'selected' : '' }}>Entregue</option>
+                    <option value="canceled" {{ $status === 'canceled' ? 'selected' : '' }}>Cancelado</option>
                     <option value="returned" {{ $status === 'returned' ? 'selected' : '' }}>Devolvido</option>
                     <option value="refunded" {{ $status === 'refunded' ? 'selected' : '' }}>Reembolsado</option>
                 </select>
@@ -53,9 +54,11 @@
                         <td class="p-4">{{ $sale->created_at }}</td>
                         <td class="p-4">{{ number_format($sale->total, 2) }} €</td>
                         <td class="p-4">{{ $sale->translated_status }}</td>
-                        <td class="p-4">
+                        <td class="p-4 flex space-x-2">
                             <a href="{{ route('sales.show', $sale->id) }}"
-                               class="bg-blue-500 dark:bg-lime-500 text-white px-2 py-1 rounded-md hover:bg-blue-400 dark:hover:bg-lime-400">Ver</a>
+                               class="bg-blue-500 dark:bg-lime-500 text-white px-2 py-1 rounded-md hover:bg-blue-400 dark:hover:bg-lime-400 flex items-center">
+                                <i class="fa-solid fa-eye mr-1"></i>Ver
+                            </a>
                         </td>
                     </tr>
                 @endforeach

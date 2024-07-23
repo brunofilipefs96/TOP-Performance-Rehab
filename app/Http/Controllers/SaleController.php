@@ -55,6 +55,7 @@ class SaleController extends Controller
         return view('pages.sales.index', ['sales' => $sales, 'status' => $status, 'nif' => $nif]);
     }
 
+
     public function show(Sale $sale)
     {
         $this->authorize('view', $sale);
@@ -203,7 +204,7 @@ class SaleController extends Controller
 
         $sale = Sale::findOrFail($id);
 
-        if ($sale->status_id == 6 && $request->status_id == 8) {
+        if (($sale->status_id == 6 && $request->status_id == 16) || ($sale->status_id == 16 && $request->status_id == 8)) {
             $sale->status_id = $request->status_id;
             $sale->save();
 
@@ -212,6 +213,7 @@ class SaleController extends Controller
 
         return redirect()->route('sales.show', $id)->with('error', 'Não é possível atualizar o estado da encomenda.');
     }
+
 
     public function addDocument(Request $request, Sale $sale)
     {

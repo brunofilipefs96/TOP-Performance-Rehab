@@ -60,6 +60,7 @@ class Sale extends Model
             'delivered' => 'Entregue',
             'returned' => 'Devolvido',
             'refunded' => 'Reembolsado',
+            'awaiting_pickup' => 'A aguardar levantamento',
         ];
 
         return $translations[$this->status->name] ?? 'Desconhecido';

@@ -28,7 +28,8 @@ class StatusSeeder extends Seeder
             ['name' => 'awaiting_insurance'],       //-- 12 Awaiting_insurance
             ['name' => 'awaiting_membership'],      //-- 13 Awaiting_membership
             ['name' => 'renew_pending'],            //-- 14 Renew_pending
-            ['name' => 'pending_renewPayment']      //-- 15 Pending_renewPayment
+            ['name' => 'pending_renewPayment'],     //-- 15 Pending_renewPayment
+            ['name' => 'awaiting_pickup'],          //-- 16 Awaiting_pickup
         ];
 
         DB::table('statuses')->insert($statuses);

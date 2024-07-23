@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Insurance;
+use App\Models\Notification;
+use App\Models\NotificationType;
 use App\Models\Sale;
 use App\Models\Status;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -117,7 +120,6 @@ class RenewController extends Controller
         return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
     }
 
-
     public function updateMembership(Request $request, $id)
     {
         $user = auth()->user();
@@ -128,6 +130,12 @@ class RenewController extends Controller
             $membership->start_date = now();
             $membership->end_date = now()->addYear();
             $membership->save();
+
+            $notificationType = NotificationType::where('name', 'Renovação de Matrícula Submetida')->firstOrFail();
+            $notificationMessage = 'Uma solicitação de renovação de matrícula foi submetida para avaliação.';
+            $url = 'memberships/' . $membership->id;
+
+            $this->notifyAdmins($notificationType, $notificationMessage, $url);
         }
 
         return redirect()->route('renew')->with('success', 'Membership renovada com sucesso!');
@@ -148,9 +156,32 @@ class RenewController extends Controller
         if ($insurance->status->name == 'inactive') {
             $insurance->status_id = Status::where('name', 'renew_pending')->firstOrFail()->id;
             $insurance->save();
+
+            $notificationType = NotificationType::where('name', 'Renovação de Seguro Submetida')->firstOrFail();
+            $notificationMessage = 'Uma solicitação de renovação de seguro foi submetida para avaliação.';
+            $url = 'insurances/' . $insurance->id;
+
+            $this->notifyAdmins($notificationType, $notificationMessage, $url);
         }
 
         return redirect()->route('renew')->with('success', 'Seguro atualizado com sucesso!');
+    }
+
+    public function notifyAdmins($notificationType, $notificationMessage, $url)
+    {
+        $admins = User::whereHas('roles', function ($query) {
+            $query->where('name', 'admin');
+        })->get();
+
+        foreach ($admins as $admin) {
+            $notification = Notification::create([
+                'notification_type_id' => $notificationType->id,
+                'message' => $notificationMessage,
+                'url' => $url,
+            ]);
+
+            $admin->notifications()->attach($notification->id);
+        }
     }
 
     public function processRenew(Request $request)

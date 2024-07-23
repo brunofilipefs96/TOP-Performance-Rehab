@@ -84,10 +84,33 @@ class InsuranceController extends Controller
                 'end_date' => $request->end_date ?? now()->addYear(),
             ]);
 
+            $notificationType = NotificationType::where('name', 'Seguro Submetido')->firstOrFail();
+            $notificationMessage = 'Um novo seguro foi submetido para avaliação.';
+            $url = 'insurances/' . $insurance->id;
+
+            $this->notifyAdmins($notificationType, $notificationMessage, $url);
+
             return redirect()->route('setup.awaitingShow')->with('success', 'Insurance Created!');
         }
 
         return redirect()->route('setup.awaitingShow')->with('error', 'Já possui um seguro.');
+    }
+
+    public function notifyAdmins($notificationType, $notificationMessage, $url)
+    {
+        $admins = User::whereHas('roles', function ($query) {
+            $query->where('name', 'admin');
+        })->get();
+
+        foreach ($admins as $admin) {
+            $notification = Notification::create([
+                'notification_type_id' => $notificationType->id,
+                'message' => $notificationMessage,
+                'url' => $url,
+            ]);
+
+            $admin->notifications()->attach($notification->id);
+        }
     }
 
 

@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateMembershipRequest;
 use App\Models\Notification;
 use App\Models\NotificationType;
 use App\Models\Status;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Redirect;
@@ -99,10 +100,33 @@ class MembershipController extends Controller
                 'address_id' => $request->input('address_id'),
             ]);
 
+            $notificationType = NotificationType::where('name', 'Matrícula Submetida')->firstOrFail();
+            $notificationMessage = 'Uma nova matrícula foi submetida para avaliação.';
+            $url = 'memberships/' . $membership->id;
+
+            $this->notifyAdmins($notificationType, $notificationMessage, $url);
+
             return redirect()->route('setup.trainingTypesShow')->with('success', 'Matrícula criada com sucesso!');
         }
 
         return redirect()->route('setup.trainingTypesShow')->with('error', 'Já possui uma matrícula.');
+    }
+
+    public function notifyAdmins($notificationType, $notificationMessage, $url)
+    {
+        $admins = User::whereHas('roles', function ($query) {
+            $query->where('name', 'admin');
+        })->get();
+
+        foreach ($admins as $admin) {
+            $notification = Notification::create([
+                'notification_type_id' => $notificationType->id,
+                'message' => $notificationMessage,
+                'url' => $url,
+            ]);
+
+            $admin->notifications()->attach($notification->id);
+        }
     }
 
     /**
@@ -177,8 +201,6 @@ class MembershipController extends Controller
 
         return redirect()->route('memberships.show', ['membership' => $membership])->with('success', 'Membership Updated!');
     }
-
-
 
     /**
      * Remove the specified resource from storage.

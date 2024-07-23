@@ -199,7 +199,7 @@ class MembershipController extends Controller
             $user->notifications()->attach($notification->id);
         }
 
-        return redirect()->route('memberships.show', ['membership' => $membership])->with('success', 'Membership Updated!');
+        return redirect()->route('memberships.show', ['membership' => $membership])->with('success', 'Matricula Atualizada!');
     }
 
     /**
@@ -213,7 +213,7 @@ class MembershipController extends Controller
         $insurance = $membership->insurance;
         $insurance->delete();
         $membership->delete();
-        return redirect()->route('memberships.index')->with('success', 'Membership Deleted!');
+        return redirect()->route('memberships.index')->with('success', 'Matricula Apagada!');
     }
 
     public function form(Request $request)

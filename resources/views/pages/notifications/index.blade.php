@@ -12,7 +12,7 @@
                         <ul class="space-y-4">
                             @foreach ($notifications as $notification)
                                 <li class="bg-gray-300 dark:bg-gray-700 p-4 rounded-lg shadow-md">
-                                    <a href="{{ $notification->url ?? '#' }}" class="block hover:bg-gray-400 dark:hover:bg-gray-600 rounded-lg p-4">
+                                    <a href="{{ route('notifications.redirect', $notification->id) }}" class="block hover:bg-gray-400 dark:hover:bg-gray-600 rounded-lg p-4">
                                         <h5 class="text-gray-800 dark:text-gray-200">{{ $notification->notificationType->name }}</h5>
                                         <p class="text-gray-800 dark:text-gray-200">{{ $notification->message }}</p>
                                         <p><small class="text-gray-600 dark:text-gray-400">{{ \Carbon\Carbon::parse($notification->pivot->created_at)->format('d/m/Y H:i:s') }}</small></p>

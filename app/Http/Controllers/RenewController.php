@@ -17,30 +17,39 @@ class RenewController extends Controller
     public function renew()
     {
         $user = auth()->user();
+        $membershipUpdatedAt = $user->membership->updated_at;
 
         if ($user->membership) {
-            $sales = $user->sales->sortByDesc('created_at');
+            if ($user->membership->status->name == 'pending_renewPayment') {
 
-            foreach ($sales as $sale) {
-                if ($sale->products()->count() == 0 && $sale->packs()->count() == 0) {
-                    if ($user->membership->status->name == 'pending_renewPayment') {
-                        return redirect('sales/'.$sale->id);
-                    } else {
-                        return redirect('memberships/'.$user->membership->id);
+
+                $sales = $user->sales->where('created_at', '>', $membershipUpdatedAt)->sortByDesc('created_at');
+
+                foreach ($sales as $sale) {
+                    if ($sale->products()->count() <= 0 && $sale->packs()->count() <= 0) {
+                        return redirect('sales/' . $sale->id);
                     }
                 }
             }
         }
 
-        if($user->hasRole('client')){
+        if ($user->hasRole('client')) {
 
-            if($user->membership && ($user->membership->status->name == 'inactive')){
+            if ($user->membership && ($user->membership->status->name == 'inactive')) {
                 return redirect()->route('renew.renewMembership');
-            } else if($user->membership && ($user->membership->insurance->status->name == 'inactive')){
+            } else if ($user->membership && ($user->membership->insurance->status->name == 'inactive')) {
                 return redirect()->route('renew.renewInsurance');
-            } else if($user->membership && (($user->membership->status->name == 'awaiting_insurance') || ($user->membership->status->name == 'renew_pending')) && (($user->membership->insurance->status->name == 'awaiting_membership') || ($user->membership->insurance->status->name == 'renew_pending'))){
+            } else if ($user->membership && (($user->membership->status->name == 'awaiting_insurance') || ($user->membership->status->name == 'renew_pending')) && (($user->membership->insurance->status->name == 'awaiting_membership') || ($user->membership->insurance->status->name == 'renew_pending'))) {
                 return redirect()->route('renew.renewAwaiting');
-            } else if($user->membership && ($user->membership->insurance->status->name == 'pending_renewPayment') && ($user->membership->insurance->status->name == 'pending_renewPayment')){
+            } else if ($user->membership && (($user->membership->status->name == 'awaiting_insurance') || ($user->membership->status->name == 'pending_renewPayment')) && (($user->membership->insurance->status->name == 'awaiting_membership') || ($user->membership->insurance->status->name == 'pending_renewPayment'))) {
+                if ($user->sales->count() > 0) {
+                    $sales = $user->sales->where('created_at', '>', $membershipUpdatedAt)->sortByDesc('created_at');
+                    foreach ($sales as $sale) {
+                        if ($sale->products()->count() <= 0 && $sale->packs()->count() <= 0) {
+                            return redirect('sales/' . $sale->id);
+                        }
+                    }
+                }
                 return redirect()->route('renew.renewPayment');
             }
 
@@ -48,6 +57,8 @@ class RenewController extends Controller
 
         return redirect()->route('dashboard');
     }
+
+
 
     public function renewMembership()
     {
@@ -64,7 +75,7 @@ class RenewController extends Controller
     {
         $user = auth()->user();
 
-        if (!$user->hasRole('client') || ($user->membership && $user->membership->insurance->status->name != 'incative')) {
+        if (!$user->hasRole('client') || ($user->membership && $user->membership->insurance->status->name != 'inactive')) {
             return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
         }
 
@@ -75,35 +86,37 @@ class RenewController extends Controller
     {
         $user = auth()->user();
 
-        if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name != 'inactive') && ($user->membership->insurance->status->name != 'incative'))) {
-            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
+        if($user->membership && (($user->membership->status->name == 'awaiting_insurance') || ($user->membership->status->name == 'renew_pending')) && (($user->membership->insurance->status->name == 'awaiting_membership') || ($user->membership->insurance->status->name == 'renew_pending'))) {
+            return view('pages.renew.renewAwaiting', ['user' => $user]);
         }
 
-        if($user->membership && (($user->membership->status->name != 'awaiting_insurance') || ($user->membership->status->name != 'renew_pending')) && (($user->membership->insurance->status->name != 'awaiting_membership') || ($user->membership->insurance->status->name != 'renew_pending'))) {
-            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
-        }
-
-        return view('pages.renew.renewAwaiting', ['user' => $user]);
+        return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
     }
 
     public function renewPayment()
     {
         $user = auth()->user();
 
-        if (!$user->hasRole('client') || ($user->membership && $user->membership->status->name == 'active')) {
-            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
+        if ($user->membership &&
+            (($user->membership->status->name == 'awaiting_insurance') || ($user->membership->status->name == 'pending_renewPayment')) &&
+            (($user->membership->insurance->status->name == 'awaiting_membership') || ($user->membership->insurance->status->name == 'pending_renewPayment')))
+        {
+            $membershipUpdatedAt = $user->membership->updated_at;
+
+            $sales = $user->sales->where('created_at', '>', $membershipUpdatedAt)->sortByDesc('created_at');
+
+            foreach ($sales as $sale) {
+                if ($sale->products()->count() <= 0 && $sale->packs()->count() <= 0) {
+                    return redirect('sales/' . $sale->id);
+                }
+            }
+
+            return view('pages.renew.renewPayment', ['user' => $user]);
         }
 
-        if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name != 'inactive') && ($user->membership->insurance->status->name != 'incative'))) {
-            return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
-        }
-
-        if ($user->membership && $user->membership->status->name != 'pending_renewPayment' && $user->insurance && $user->insurance->status->name != 'pending_renewPayment') {
-            return redirect()->route('renew');
-        }
-
-        return view('pages.renew.renewPayment', ['user' => $user]);
+        return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
     }
+
 
     public function updateMembership(Request $request, $id)
     {
@@ -111,7 +124,7 @@ class RenewController extends Controller
         $membership = $user->membership;
 
         if ($membership->status->name == 'inactive') {
-            $membership->status_id = Status::where('name', 'renew_pending')->firstOrFail()->id;
+            $membership->status_id = Status::where('name', 'renew_pending')->first()->id;
             $membership->start_date = now();
             $membership->end_date = now()->addYear();
             $membership->save();

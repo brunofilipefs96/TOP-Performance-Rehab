@@ -51,6 +51,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::class])->group(function () {
 
+    Route::get('/notifications/redirect/{notification}', [NotificationController::class, 'redirectAndMarkAsRead'])->name('notifications.redirect');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::patch('/notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
 

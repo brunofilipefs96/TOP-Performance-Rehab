@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateFreeTrainingRequest;
 use App\Models\Notification;
 use App\Models\NotificationType;
 use App\Models\Status;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Redirect;

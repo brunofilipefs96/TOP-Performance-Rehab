@@ -94,7 +94,7 @@
                 @method('POST')
                 <input type="hidden" name="address_id" id="address_id">
                 <div class="flex justify-between items-center gap-2">
-                    <a href="{{ route('setup') }}"
+                    <a href="{{ route('dashboard') }}"
                        class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-700 font-semibold flex items-center text-sm mt-4 mb-5 shadow-sm w-full justify-center max-w-[100px]">
                         <i class="fa-solid fa-arrow-left w-4 h-4 mr-2"></i>
                         Voltar
@@ -121,22 +121,20 @@
 </div>
 
 <script>
-    // Função para permitir apenas números no campo cc_number e limitar a 9 caracteres
     document.getElementById('cc_number').addEventListener('input', function (e) {
         var value = e.target.value;
         e.target.value = value.replace(/\D/g, '').slice(0, 9);
     });
 
-    // Função para validar o campo cc_number e mostrar/esconder a mensagem de erro no submit
     function validateForm() {
         var ccNumber = document.getElementById('cc_number') ? document.getElementById('cc_number').value : null;
         var ccNumberError = document.getElementById('cc_number_error');
         if (ccNumber && ccNumber.length === 9) {
             ccNumberError.style.display = 'none';
-            return true; // Permite o envio do formulário
+            return true;
         } else if (ccNumber && ccNumber.length !== 9) {
             ccNumberError.style.display = 'block';
-            return false; // Impede o envio do formulário
+            return false;
         }
         return true;
     }

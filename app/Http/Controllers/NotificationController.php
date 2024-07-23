@@ -25,6 +25,17 @@ class NotificationController extends Controller
     }
 
     /**
+     * Redirect and mark a notification as read.
+     */
+    public function redirectAndMarkAsRead(Notification $notification)
+    {
+        $user = Auth::user();
+        $user->notifications()->updateExistingPivot($notification->id, ['read_at' => now()]);
+
+        return redirect($notification->url);
+    }
+
+    /**
      * Mark a notification as read.
      */
     public function markAsRead(Notification $notification)

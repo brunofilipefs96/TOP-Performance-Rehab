@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('services', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')->constrained('users');
-            $table->foreignId('client_id')->constrained('users');
-            $table->foreignId('room_id')->default(1)->constrained();
+            $table->foreignId('employee_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('client_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('room_id')->default(1)->constrained()->onDelete('cascade');
             $table->string('name');
             $table->string('approval')->default('pending');
             $table->dateTime('start_date');

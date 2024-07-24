@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('free_trainings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('training_type_id')->constrained();
+            $table->foreignId('training_type_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->integer('max_students');
             $table->dateTime('start_date');

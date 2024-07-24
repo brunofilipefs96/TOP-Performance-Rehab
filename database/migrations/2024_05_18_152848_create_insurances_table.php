@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('insurances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('membership_id')->constrained();
-            $table->foreignId('status_id')->default(1)->constrained();
+            $table->foreignId('membership_id')->constrained()->onDelete('cascade');
+            $table->foreignId('status_id')->default(1)->constrained()->onDelete('cascade');
             $table->string('insurance_type');
             $table->dateTime('start_date')->nullable();
             $table->dateTime('end_date')->nullable();

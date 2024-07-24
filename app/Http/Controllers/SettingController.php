@@ -76,10 +76,11 @@ class SettingController extends Controller
 
         foreach ($settingsKeys as $key) {
             if (isset($data[$key])) {
-                Setting::updateOrCreate(['key' => $key], ['value' => $value]);
+                Setting::updateOrCreate(['key' => $key], ['value' => $data[$key]]);
             }
         }
 
         return redirect()->back()->with('success', 'Configurações atualizadas com sucesso.');
     }
+
 }

@@ -3,15 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Notification;
-use App\Http\Requests\StoreNotificationRequest;
-use App\Http\Requests\UpdateNotificationRequest;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $user = Auth::user();
@@ -24,9 +19,6 @@ class NotificationController extends Controller
         return view('pages.notifications.index', compact('notifications'));
     }
 
-    /**
-     * Redirect and mark a notification as read.
-     */
     public function redirectAndMarkAsRead(Notification $notification)
     {
         $user = Auth::user();
@@ -35,9 +27,6 @@ class NotificationController extends Controller
         return redirect($notification->url);
     }
 
-    /**
-     * Mark a notification as read.
-     */
     public function markAsRead(Notification $notification)
     {
         $user = Auth::user();
@@ -46,9 +35,26 @@ class NotificationController extends Controller
         return redirect()->back()->with('success', 'Notificação marcada como lida.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    public function markAllAsRead()
+    {
+        $user = Auth::user();
+        $notifications = $user->notifications()->wherePivot('read_at', null)->get();
+
+        foreach ($notifications as $notification) {
+            $user->notifications()->updateExistingPivot($notification->id, ['read_at' => now()]);
+        }
+
+        return redirect()->back()->with('success', 'Todas as notificações foram marcadas como lidas.');
+    }
+
+    public function deleteAll()
+    {
+        $user = Auth::user();
+        $user->notifications()->detach();
+
+        return redirect()->back()->with('success', 'Todas as notificações foram eliminadas.');
+    }
+
     public function destroy(Notification $notification)
     {
         //

@@ -1,42 +1,6 @@
 @php
     use Carbon\Carbon;
 
-    $prohibitedConditions = [
-        'Gravidez', 'Tuberculose', 'AVC', 'Doença cardíaca', 'Enfarte', 'Angina de peito',
-        'Cirrose hepática', 'Insuficiência hepática', 'Pancreatite', 'Icterícia', 'Insuficiência renal',
-        'Cálculos renais', 'Quistos mamários', 'Epilepsia', 'Psoríase'
-    ];
-
-    function userHasProhibitedCondition($user, $prohibitedConditions) {
-        $isPregnant = false;
-        $hasCancer = false;
-        $userConditions = [];
-
-        foreach ($user->entries as $entry) {
-            foreach ($entry->answers as $answer) {
-                if (is_array($answer->value)) {
-                    $userConditions = array_merge($userConditions, $answer->value);
-                } else {
-                    $userConditions[] = $answer->value;
-                    if ($answer->question->content == 'Se é mulher, encontra-se grávida?' && $answer->value == 'Sim') {
-                        $isPregnant = true;
-                    }
-                    if (stripos($answer->value, 'Cancro') !== false) {
-                        $hasCancer = true;
-                    }
-                }
-            }
-        }
-
-        foreach ($prohibitedConditions as $condition) {
-            if (in_array($condition, $userConditions) || $isPregnant || $hasCancer) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     // Separar usuários inscritos e cancelados
     $registeredUsers = $training->users()->wherePivot('cancelled', false)->get();
     $cancelledUsers = $training->users()->wherePivot('cancelled', true)->get();
@@ -146,6 +110,7 @@
                                             <th class="py-2 px-4 bg-gray-200 dark:bg-gray-700 text-left text-xs leading-4 font-medium text-gray-700 dark:text-white uppercase tracking-wider">
                                                 Presença
                                             </th>
+                                            <th class="py-2 px-4 bg-gray-200 dark:bg-gray-700"></th> <!-- coluna para o ícone do caixote do lixo -->
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -154,9 +119,6 @@
                                                 <tr>
                                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">
                                                         <a href="{{ url('memberships/' . $user->membership->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
-                                                            @if(userHasProhibitedCondition($user, $prohibitedConditions))
-                                                                <i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>
-                                                            @endif
                                                             {{ $user->firstLastName() }}
                                                         </a>
                                                     </td>
@@ -171,6 +133,13 @@
                                                                    class="form-radio mr-2 ml-4 text-blue-500 dark:text-lime-400">
                                                             <i class="fa-solid fa-x text-red-500"></i>
                                                         </div>
+                                                    </td>
+                                                    <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-right">
+                                                        @if (auth()->user()->hasRole('admin') || auth()->user()->id === $training->personal_trainer_id)
+                                                            <button type="button" class="text-red-500 hover:text-red-700" onclick="confirmRemoveUser({{ $training->id }}, {{ $user->id }})">
+                                                                <i class="fa-solid fa-trash"></i>
+                                                            </button>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @endif
@@ -194,6 +163,7 @@
                                         <th class="py-2 px-4 bg-gray-200 dark:bg-gray-700 text-left text-xs leading-4 font-medium text-gray-700 dark:text-white uppercase tracking-wider">
                                             Presença
                                         </th>
+                                        <th class="py-2 px-4 bg-gray-200 dark:bg-gray-700"></th> <!-- coluna para o ícone do caixote do lixo -->
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -201,9 +171,6 @@
                                         <tr>
                                             <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">
                                                 <a href="{{ url('memberships/' . $user->membership->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
-                                                    @if(userHasProhibitedCondition($user, $prohibitedConditions))
-                                                        <i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>
-                                                    @endif
                                                     {{ $user->firstLastName() }}
                                                 </a>
                                             </td>
@@ -216,6 +183,13 @@
                                                     @endif
                                                 </div>
                                             </td>
+                                            <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-right">
+                                                @if (auth()->user()->hasRole('admin') || auth()->user()->id === $training->personal_trainer_id)
+                                                    <button type="button" class="text-red-500 hover:text-red-700" onclick="confirmRemoveUser({{ $training->id }}, {{ $user->id }})">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </button>
+                                                @endif
+                                            </td>
                                         </tr>
                                     @endforeach
                                     </tbody>
@@ -226,11 +200,13 @@
                                 @foreach ($registeredUsers as $user)
                                     <li>
                                         <a href="{{ url('memberships/' . $user->membership->id) }}" class="dark:hover:text-lime-400 hover:text-blue-500">
-                                            @if(userHasProhibitedCondition($user, $prohibitedConditions))
-                                                <i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>
-                                            @endif
                                             {{ $user->firstLastName() }}
                                         </a>
+                                        @if (auth()->user()->hasRole('admin') || auth()->user()->id === $training->personal_trainer_id)
+                                            <button type="button" class="text-red-500 hover:text-red-700" onclick="confirmRemoveUser({{ $training->id }}, {{ $user->id }})">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        @endif
                                     </li>
                                 @endforeach
                             </ul>
@@ -252,11 +228,6 @@
                         </ul>
                     </div>
                 @endif
-
-                <p class="text-yellow-500 mt-4">
-                    <i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>
-                    Os alunos marcados com um triângulo amarelo possuem condições médicas que podem não ser adequadas para este treino de eletroestimulação.
-                </p>
             @endif
 
             @if (auth()->user()->hasRole('client'))
@@ -349,6 +320,25 @@
     </div>
 </div>
 
+<div id="remove-user-modal"
+     class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
+    <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
+        <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800" id="remove-user-title">Pretende remover o utilizador?</h2>
+        <p class="mb-4 text-red-500 dark:text-red-300" id="remove-user-message">O utilizador será removido do treino e a aula será reembolsada.</p>
+        <div class="flex justify-end gap-4">
+            <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400"
+                    onclick="cancelRemoveUser()">Cancelar
+            </button>
+            <form id="remove-user-form" method="POST" class="inline">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Confirmar
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
     function openModal(title, message, actionUrl, method = 'POST') {
         document.getElementById('confirmation-title').innerText = title;
@@ -393,5 +383,32 @@
 
     function confirmDelete(id) {
         openModal('Pretende eliminar?', 'Não poderá reverter isso!', `/trainings/${id}`, 'DELETE');
+    }
+
+    function confirmRemoveUser(trainingId, userId) {
+        document.getElementById('remove-user-title').innerText = 'Pretende remover o utilizador?';
+        document.getElementById('remove-user-message').innerText = 'O utilizador será removido do treino e a aula será reembolsada.';
+        const form = document.getElementById('remove-user-form');
+        form.action = `/trainings/${trainingId}/removeUser/${userId}`;
+        form.setAttribute('method', 'POST');
+
+        // Remove existing _method input if present
+        const existingMethodInput = form.querySelector('input[name="_method"]');
+        if (existingMethodInput) {
+            existingMethodInput.remove();
+        }
+
+        // Add _method input for DELETE
+        const methodInput = document.createElement('input');
+        methodInput.type = 'hidden';
+        methodInput.name = '_method';
+        methodInput.value = 'DELETE';
+        form.appendChild(methodInput);
+
+        document.getElementById('remove-user-modal').classList.remove('hidden');
+    }
+
+    function cancelRemoveUser() {
+        document.getElementById('remove-user-modal').classList.add('hidden');
     }
 </script>

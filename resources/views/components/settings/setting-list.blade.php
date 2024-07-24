@@ -138,19 +138,14 @@
                     @enderror
                 </div>
 
-                <div class="mb-4">
-                    <label for="fechamentos" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Datas de Fecho</label>
-                    <a href="{{ route('settings.closures') }}" class="mt-2 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300 text-sm block text-center">Definir Datas de Fecho</a>
-                </div>
-
                 <hr class="my-6">
 
                 <div class="mb-4">
-                    <h2 class="text-lg font-bold text-gray-800 dark:text-lime-400">Descontos por Tipo de Cliente</h2>
+                    <h2 class="text-lg font-bold text-gray-800 dark:text-lime-400 text-center">Descontos por Tipo de Cliente</h2>
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-md font-medium dark:text-gray-200 text-gray-800 text-center">Clientes TOP Padel</label>
+                    <label class="block text-md font-medium dark:text-gray-200 text-gray-800">Clientes TOP Padel</label>
                 </div>
                 <div class="mb-4">
                     <label for="top_paddle_client_membership_discount" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Desconto na Taxa de Inscrição (%)</label>
@@ -195,7 +190,7 @@
                 </div>
 
                 <div class="mb-4 mt-10">
-                    <label class="block text-md font-medium dark:text-gray-200 text-gray-800 text-center">Funcionários TOP Padel</label>
+                    <label class="block text-md font-medium dark:text-gray-200 text-gray-800">Funcionários TOP Padel</label>
                 </div>
                 <div class="mb-4">
                     <label for="top_paddle_employee_membership_discount" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Desconto na Taxa de Inscrição (%)</label>
@@ -254,7 +249,7 @@
                 </div>
 
                 <div class="mb-4 mt-10">
-                    <label class="block text-md font-medium dark:text-gray-200 text-gray-800 text-center">Administradores TOP Padel</label>
+                    <label class="block text-md font-medium dark:text-gray-200 text-gray-800">Administradores TOP Padel</label>
                 </div>
 
                 <div class="mb-4">
@@ -317,6 +312,21 @@
                     <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300 text-sm">Guardar</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- New Container for Closure Dates -->
+    <div class="flex justify-center mt-10">
+        <div class="w-full max-w-lg dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm bg-gray-300">
+            <div class="mb-4">
+                <h2 class="text-lg font-bold text-gray-800 dark:text-lime-400">Datas de Fecho</h2>
+            </div>
+            <div class="mb-4">
+                <p class="text-sm text-gray-800 dark:text-gray-200">Utilize o botão abaixo para definir os dias em que o ginásio se encontra fechado.</p>
+            </div>
+            <div class="mb-4">
+                <a href="{{ route('settings.closures') }}" class="mt-2 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:text-gray-900 dark:hover:bg-lime-300 text-sm block text-center">Definir Datas de Fecho</a>
+            </div>
         </div>
     </div>
 </div>

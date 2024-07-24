@@ -200,7 +200,7 @@ class TrainingController extends Controller
                 }
 
                 $notificationType = NotificationType::where('name', 'Treino Cancelado')->firstOrFail();
-                $notificationMessage = 'O Treino que se tinha inscrito no dia '.Carbon::parse($training->start_date)->format('d/m/Y').' foi cancelado. A sua aula foi reembolsada.';
+                $notificationMessage = 'O Treino '.$training->trainingType->name .' que se tinha inscrito no dia '.Carbon::parse($training->start_date)->format('d/m/Y').' foi cancelado. A sua aula foi reembolsada.';
 
                 if ($notificationType) {
                     $notification = Notification::create([
@@ -406,7 +406,7 @@ class TrainingController extends Controller
                     }
 
                     $notificationType = NotificationType::where('name', 'Treino Cancelado')->firstOrFail();
-                    $notificationMessage = 'O Treino que se tinha inscrito no dia '.Carbon::parse($training->start_date)->format('d/m/Y').' foi cancelado. A sua aula foi reembolsada.';
+                    $notificationMessage = 'O Treino '.$training->trainingType->name .' que se tinha inscrito no dia '.Carbon::parse($training->start_date)->format('d/m/Y').' foi cancelado. A sua aula foi reembolsada.';
 
                     if ($notificationType) {
                         $notification = Notification::create([
@@ -425,6 +425,47 @@ class TrainingController extends Controller
         }
 
         return redirect()->route('trainings.multiDelete')->with('success', 'Treinos removidos com sucesso!');
+    }
+
+    public function removeUser(Request $request, Training $training, User $user)
+    {
+        $this->authorize('update', $training);
+
+        if (auth()->user()->hasRole('admin') || auth()->user()->id === $training->personal_trainer_id) {
+            $training->users()->detach($user->id);
+
+            $today = Carbon::today();
+            $trainingTypeId = $training->training_type_id;
+
+            $membershipPack = $user->membership->packs()
+                ->where('quantity_remaining', '>', 0)
+                ->where('expiry_date', '>=', $today)
+                ->where('training_type_id', $trainingTypeId)
+                ->orderBy('expiry_date', 'asc')
+                ->first();
+
+            if ($membershipPack) {
+                $membershipPack->pivot->quantity_remaining += 1;
+                $membershipPack->pivot->save();
+            }
+
+            $notificationType = NotificationType::where('name', 'Treino Cancelado')->firstOrFail();
+            $notificationMessage = 'Foi removido do treino ' . $training->trainingType->name . ' no dia ' . Carbon::parse($training->start_date)->format('d/m/Y') . '. A sua aula foi reembolsada.';
+
+            if ($notificationType) {
+                $notification = Notification::create([
+                    'notification_type_id' => $notificationType->id,
+                    'message' => $notificationMessage,
+                    'url' => '',
+                ]);
+
+                $user->notifications()->attach($notification->id);
+            }
+
+            return redirect()->route('trainings.show', $training->id)->with('success', 'Usuário removido com sucesso.');
+        }
+
+        return redirect()->route('trainings.show', $training->id)->with('error', 'Você não tem permissão para remover este usuário.');
     }
 
 }

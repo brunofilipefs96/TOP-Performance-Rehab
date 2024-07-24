@@ -1,3 +1,42 @@
+@php
+    $user = Auth::user();
+    $prohibitedConditions = [
+        'Gravidez', 'Tuberculose', 'AVC', 'Doença cardíaca', 'Enfarte', 'Angina de peito',
+        'Cirrose hepática', 'Insuficiência hepática', 'Pancreatite', 'Icterícia', 'Insuficiência renal',
+        'Cálculos renais', 'Quistos mamários', 'Epilepsia', 'Psoríase'
+    ];
+
+    $userConditions = [];
+    $isPregnant = false;
+    $hasCancer = false;
+
+    foreach ($user->entries as $entry) {
+        foreach ($entry->answers as $answer) {
+            if (is_array($answer->value)) {
+                $userConditions = array_merge($userConditions, $answer->value);
+            } else {
+                $userConditions[] = $answer->value;
+                if ($answer->question->content == 'Se é mulher, encontra-se grávida?' && $answer->value == 'Sim') {
+                    $isPregnant = true;
+                }
+                if (stripos($answer->value, 'Cancro') !== false) {
+                    $hasCancer = true;
+                }
+            }
+        }
+    }
+
+    $showWarning = false;
+    if ($pack->trainingType && $pack->trainingType->is_electrostimulation) {
+        foreach ($prohibitedConditions as $condition) {
+            if (in_array($condition, $userConditions) || $isPregnant || $hasCancer) {
+                $showWarning = true;
+                break;
+            }
+        }
+    }
+@endphp
+
 <div class="container mx-auto mt-10 mb-10 pt-5 glass">
     <div class="flex justify-center">
         <div class="w-full max-w-lg bg-gray-300 dark:bg-gray-800 p-4 px-5 rounded-2xl shadow-sm relative">
@@ -40,6 +79,13 @@
                 <input class="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white" type="number" value="{{ $pack->price }}" disabled>
             </div>
 
+            @if($showWarning)
+                <div class="mb-4 text-yellow-400 text-sm">
+                    <i class="fa-solid fa-exclamation-triangle w-4 h-4 mr-2"></i>
+                    Este pack contém treinos que podem não ser recomendados devido às suas condições de saúde.
+                </div>
+            @endif
+
             @if(Auth::user()->hasRole('admin'))
                 <div class="flex justify-end items-center mb-4 mt-10">
                     @can('update', $pack)
@@ -62,14 +108,21 @@
             @else
                 <div class="flex justify-end items-center mb-4 mt-10">
                     @if(auth()->user()->membership && auth()->user()->membership->status->name === 'active')
-                        <form action="{{ route('cart.addPack') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="pack_id" value="{{ $pack->id }}">
-                            <button type="submit" class="bg-blue-500 dark:bg-lime-500 text-white flex items-center px-4 py-2 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400 text-sm">
-                                <i class="fa-solid fa-cart-plus w-4 h-4 mr-2"></i>
+                        @if ($showWarning)
+                            <button type="button" class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 flex items-center px-2 py-1 rounded-md cursor-not-allowed text-sm" title="Este pack não é recomendável devido às suas condições de saúde">
+                                <i class="fa-solid fa-lock w-4 h-4 mr-2"></i>
                                 Adicionar
                             </button>
-                        </form>
+                        @else
+                            <form action="{{ route('cart.addPack') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="pack_id" value="{{ $pack->id }}">
+                                <button type="submit" class="bg-blue-500 dark:bg-lime-500 text-white flex items-center px-4 py-2 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400 text-sm">
+                                    <i class="fa-solid fa-cart-plus w-4 h-4 mr-2"></i>
+                                    Adicionar
+                                </button>
+                            </form>
+                        @endif
                     @else
                         <button type="button" class="bg-gray-500 dark:bg-gray-700 text-white flex items-center px-4 py-2 rounded-md text-sm cursor-not-allowed" disabled>
                             <i class="fa-solid fa-cart-plus w-4 h-4 mr-2"></i>

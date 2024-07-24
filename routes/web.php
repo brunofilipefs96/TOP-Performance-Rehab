@@ -54,6 +54,8 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::c
     Route::get('/notifications/redirect/{notification}', [NotificationController::class, 'redirectAndMarkAsRead'])->name('notifications.redirect');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::patch('/notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::patch('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+    Route::delete('/notifications/delete-all', [NotificationController::class, 'deleteAll'])->name('notifications.deleteAll');
 
 
     Route::patch('/users/{user}/client-type', [UserController::class, 'updateClientType'])->name('user.client-type.update');
@@ -137,6 +139,7 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::c
     Route::post('trainings/{training}/enroll', [TrainingController::class, 'enroll'])->name('trainings.enroll');
     Route::post('trainings/{training}/cancel', [TrainingController::class, 'cancel'])->name('trainings.cancel');
     Route::post('trainings/{training}/mark-presence', [TrainingController::class, 'markPresence'])->name('trainings.markPresence');
+    Route::delete('/trainings/{training}/removeUser/{user}', [TrainingController::class, 'removeUser'])->name('trainings.removeUser');
 
     Route::get('free-trainings/multi-delete', [FreeTrainingController::class, 'showMultiDelete'])->name('free-trainings.showMultiDelete');
     Route::delete('free-trainings/multi-delete', [FreeTrainingController::class, 'multiDelete'])->name('free-trainings.multiDelete');

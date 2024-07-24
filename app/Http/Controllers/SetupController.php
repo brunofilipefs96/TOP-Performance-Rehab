@@ -56,10 +56,6 @@ class SetupController extends Controller
             return redirect()->route('setup.membershipShow');
         }
 
-        if ($user->membership->trainingTypes->count() <= 0) {
-            return redirect()->route('setup.trainingTypesShow');
-        }
-
         if($user->addresses || $user->addresses->count() <= 0 && $user->membership && $user->membership->trainingTypes->count() <= 0 && $user->insurance) {
             if($user->membership->status->name == 'pending_payment' && $user->membership->insurance->status->name == 'pending_payment') {
                 return redirect()->route('setup.paymentShow');
@@ -81,6 +77,10 @@ class SetupController extends Controller
 
         if($user->membership->status->name == 'rejected' || $user->membership->insurance->status->name == 'rejected') {
             return redirect()->route('awaitingShow');
+        }
+
+        if ($user->membership->trainingTypes->count() <= 0) {
+            return redirect()->route('setup.trainingTypesShow');
         }
 
         return redirect()->route('dashboard')->with('success', 'Processo de inscrição completo.');

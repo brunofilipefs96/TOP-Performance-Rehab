@@ -170,34 +170,61 @@
                 </button>
 
                 <!-- Notification Modal -->
-                <div x-show="notificationOpen" @click.away="notificationOpen = false" x-transition:enter="transition ease-out duration-300" x-transition:leave="transition ease-in duration-300" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div x-show="notificationOpen" @click.away="notificationOpen = false"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 transform scale-95"
+                     x-transition:enter-end="opacity-100 transform scale-100"
+                     x-transition:leave="transition ease-in duration-300"
+                     x-transition:leave-start="opacity-100 transform scale-100"
+                     x-transition:leave-end="opacity-0 transform scale-95"
+                     class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                     <div class="bg-white dark:bg-gray-800 w-11/12 max-w-md mx-auto rounded-lg shadow-lg overflow-hidden">
                         <div class="flex justify-between items-center px-4 py-2 border-b border-gray-200 dark:border-gray-700">
                             <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Notificações</h2>
-                            <button @click="notificationOpen = false" class="text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400">
+                            <button @click="notificationOpen = false"
+                                    class="text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400">
                                 <i class="fa-solid fa-times"></i>
                             </button>
                         </div>
                         <div class="p-4">
                             @foreach($recentNotifications as $notification)
                                 <div class="flex items-center justify-between p-2 border-b border-gray-200 dark:border-gray-700">
-                                    <div>
+                                    <div class="mr-4">
                                         <p class="text-sm text-gray-700 dark:text-gray-300">{{ $notification->message }}</p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $notification->created_at->diffForHumans() }}</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $notification->created_at->locale('pt')->diffForHumans() }}</p>
+                                        @if ($notification->read_at)
+                                            <p class="text-xs text-gray-500 dark:text-gray-400"><i class="fa-solid fa-check-double"></i> Lida</p>
+                                        @endif
                                     </div>
-                                    @if($notification->read_at)
-                                        <i class="fa-solid fa-check text-green-500"></i>
-                                    @else
-                                        <a href="{{ route('notifications.redirect', $notification->id) }}" class="text-blue-600 dark:text-lime-400 hover:underline text-sm">Ver</a>
+                                    @if ($notification->url)
+                                        <a href="{{ route('notifications.redirect', $notification->id) }}"
+                                           class="text-blue-600 dark:text-lime-400 hover:underline text-sm">
+                                            <i class="fa-solid {{ $notification->read_at ? 'fa-envelope-open' : 'fa-envelope' }}"></i>
+                                            Ver
+                                        </a>
+                                    @elseif (!$notification->read_at)
+                                        <form action="{{ route('notifications.markAsRead', $notification->id) }}" method="POST">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit"
+                                                    class="text-blue-600 dark:text-lime-400 hover:underline text-sm">
+                                                <i class="fa-solid fa-envelope"></i>
+                                                Marcar como lido
+                                            </button>
+                                        </form>
                                     @endif
                                 </div>
                             @endforeach
                         </div>
                         <div class="px-4 py-2 border-t border-gray-200 dark:border-gray-700">
-                            <a href="{{ route('notifications.index') }}" class="text-blue-600 dark:text-lime-400 hover:underline text-sm">Ver todas as notificações</a>
+                            <a href="{{ route('notifications.index') }}"
+                               class="text-blue-600 dark:text-lime-400 hover:underline text-sm">Ver todas as
+                                notificações</a>
                         </div>
                     </div>
                 </div>
+
+
 
                 <!-- Theme Toggle Button -->
                 <div class="flex items-center md:ms-6">

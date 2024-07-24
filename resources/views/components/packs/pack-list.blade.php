@@ -175,14 +175,21 @@
                         @endcan
                     @else
                         @if(Auth::user()->membership && Auth::user()->membership->status->name === 'active')
-                            <form action="{{ route('cart.addPack') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="pack_id" value="{{ $pack->id }}">
-                                <button type="submit" class="bg-blue-500 dark:bg-lime-500 text-white flex items-center px-2 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400 text-sm">
-                                    <i class="fa-solid fa-cart-plus w-4 h-4 mr-2"></i>
+                            @if ($showWarning($pack))
+                                <button type="button" class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 flex items-center px-2 py-1 rounded-md cursor-not-allowed text-sm" title="Este pack não é recomendável devido às suas condições de saúde">
+                                    <i class="fa-solid fa-lock w-4 h-4 mr-2"></i>
                                     Adicionar
                                 </button>
-                            </form>
+                            @else
+                                <form action="{{ route('cart.addPack') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="pack_id" value="{{ $pack->id }}">
+                                    <button type="submit" class="bg-blue-500 dark:bg-lime-500 text-white flex items-center px-2 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400 text-sm">
+                                        <i class="fa-solid fa-cart-plus w-4 h-4 mr-2"></i>
+                                        Adicionar
+                                    </button>
+                                </form>
+                            @endif
                         @else
                             <button type="button" class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 flex items-center px-2 py-1 rounded-md cursor-not-allowed text-sm" title="Necessita de uma matrícula ativa">
                                 <i class="fa-solid fa-lock w-4 h-4 mr-2"></i>

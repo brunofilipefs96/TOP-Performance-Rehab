@@ -138,43 +138,25 @@
                     </div>
 
                     <!-- New section for questions and answers -->
-                    <div class="mb-4">
-                        <h2 class="mb-2 text-xl text-gray-900 dark:text-gray-200">Observações</h2>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                @foreach ($membership->user->entries as $entry)
-                                    @foreach ($entry->answers as $answer)
-                                        @if($answer->question_id >= 14 && $answer->value != 'Nenhum' && $answer->question_id <= 18)
-                                            @foreach(explode(', ', $answer->value) as $individualAnswer)
-                                                <div class="flex items-center">
-                                                    <span
-                                                        class="h-2 w-2 rounded-full inline-block mr-2 bg-gray-900 dark:bg-gray-200"></span>
-                                                    <label
-                                                        class="block text-gray-900 dark:text-gray-200">{{ $individualAnswer }}</label>
-                                                </div>
-                                            @endforeach
-                                        @endif
-                                    @endforeach
+                    <!-- New section for questions and answers -->
+                    <div class="mb-8">
+                        <h2 class="mb-2 text-xl text-gray-900 dark:text-gray-200 text-left">Observações</h2>
+                        <div class="space-y-4">
+                            @foreach ($membership->user->entries as $entry)
+                                @foreach ($entry->answers as $answer)
+                                    @if(($answer->question_id >= 14 && $answer->question_id <= 22) && $answer->value != 'Nenhum')
+                                        @foreach(explode(', ', $answer->value) as $individualAnswer)
+                                            <div class="py-2 px-4 bg-gray-100 dark:bg-gray-700 rounded-lg text-left">
+                                                <p class="text-gray-900 dark:text-gray-200">{{ $individualAnswer }}</p>
+                                            </div>
+                                        @endforeach
+                                    @endif
                                 @endforeach
-                            </div>
-                            <div>
-                                @foreach ($membership->user->entries as $entry)
-                                    @foreach ($entry->answers as $answer)
-                                        @if($answer->question_id >= 19 && $answer->value != 'Nenhum' && $answer->question_id <= 22)
-                                            @foreach(explode(', ', $answer->value) as $individualAnswer)
-                                                <div class="flex items-center">
-                                                    <span
-                                                        class="h-2 w-2 rounded-full inline-block mr-2 bg-gray-900 dark:bg-gray-200"></span>
-                                                    <label
-                                                        class="block text-gray-900 dark:text-gray-200">{{ $individualAnswer }}</label>
-                                                </div>
-                                            @endforeach
-                                        @endif
-                                    @endforeach
-                                @endforeach
-                            </div>
+                            @endforeach
                         </div>
                     </div>
+
+
 
                     <!-- Membership Status -->
                     <div class="flex items-center mb-2">

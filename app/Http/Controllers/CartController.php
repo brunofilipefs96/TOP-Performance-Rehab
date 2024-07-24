@@ -86,20 +86,6 @@ class CartController extends Controller
             return redirect()->route('packs.index')->with('error', 'Necessita de ter uma matrícula ativa para adicionar packs ao carrinho.');
         }
 
-        $packCart = session()->get('packCart', []);
-
-        if (isset($packCart[$packId])) {
-            return redirect()->route('packs.index')->with('error', 'Pack já está no carrinho!');
-        } else {
-            $packCart[$packId] = [
-                'name' => $pack->name,
-                'price' => $pack->price,
-                'quantity' => 1
-            ];
-        }
-
-        session()->put('packCart', $packCart);
-
         $user = auth()->user();
         $prohibitedConditions = [
             'Gravidez', 'Tuberculose', 'AVC', 'Doença cardíaca', 'Enfarte', 'Angina de peito',
@@ -138,13 +124,25 @@ class CartController extends Controller
         }
 
         if ($showWarning) {
-            return redirect()->route('packs.index')->with('warning', 'Este pack contém treinos que podem não ser recomendados devido às suas condições de saúde.');
+            return redirect()->route('packs.index')->with('error', 'Este pack contém treinos que não são recomendados devido às suas condições de saúde.');
         }
+
+        $packCart = session()->get('packCart', []);
+
+        if (isset($packCart[$packId])) {
+            return redirect()->route('packs.index')->with('error', 'Pack já está no carrinho!');
+        } else {
+            $packCart[$packId] = [
+                'name' => $pack->name,
+                'price' => $pack->price,
+                'quantity' => 1
+            ];
+        }
+
+        session()->put('packCart', $packCart);
 
         return redirect()->route('packs.index')->with('success', 'Pack adicionado ao carrinho com sucesso!');
     }
-
-
 
     public function removeProductFromCart($id)
     {
@@ -266,7 +264,6 @@ class CartController extends Controller
 
         $user = auth()->user();
 
-        // Verifica se o usuário já tem uma venda processada recentemente
         if ($this->hasRecentSale($user->id)) {
             return redirect()->back()->with('error', 'Você já processou um pagamento recentemente. Por favor, aguarde um momento.');
         }

@@ -54,7 +54,7 @@
                             <span class="text-base ml-2">Agenda</span>
                         </x-nav-link>
                     </li>
-                    @if (!$user->membership || $user->membership->status->name == 'pending')
+                    @if (!$user->membership || ($user->membership && $user->membership->status->name != 'active'))
                         <li>
                             <x-nav-link :href="route('setup')"
                                         :activeRoutes="['setup.address', 'setup.membership', 'setup.training-types', 'setup.insurance', 'setup.awaiting', 'setup.payment']"
@@ -181,35 +181,65 @@
                 </div>
 
                 <!-- Notification Modal -->
-                <div x-show="notificationOpen" @click.away="notificationOpen = false" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 transform scale-100" x-transition:leave-end="opacity-0 transform scale-95" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div x-show="notificationOpen" @click.away="notificationOpen = false"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 transform scale-95"
+                     x-transition:enter-end="opacity-100 transform scale-100"
+                     x-transition:leave="transition ease-in duration-300"
+                     x-transition:leave-start="opacity-100 transform scale-100"
+                     x-transition:leave-end="opacity-0 transform scale-95"
+                     class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                     <div class="bg-white dark:bg-gray-800 w-11/12 max-w-md mx-auto rounded-lg shadow-lg overflow-hidden">
                         <div class="flex justify-between items-center px-4 py-2 border-b border-gray-200 dark:border-gray-700">
                             <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Notificações</h2>
-                            <button @click="notificationOpen = false" class="text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400">
+                            <button @click="notificationOpen = false"
+                                    class="text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400">
                                 <i class="fa-solid fa-times"></i>
                             </button>
                         </div>
                         <div class="p-4">
-                            @foreach($recentNotifications as $notification)
-                                <div class="flex items-center justify-between p-2 border-b border-gray-200 dark:border-gray-700">
-                                    <div>
-                                        <p class="text-sm text-gray-700 dark:text-gray-300">{{ $notification->message }}</p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $notification->created_at->locale('pt')->diffForHumans() }}</p>
-                                        @if ($notification->read_at)
-                                            <p class="text-xs text-gray-500 dark:text-gray-400"><i class="fa-solid fa-check-double"></i> Lida</p>
+                            @if($recentNotifications->isEmpty())
+                                <p class="text-center text-gray-600 dark:text-gray-300">Não existem notificações.</p>
+                            @else
+                                @foreach($recentNotifications as $notification)
+                                    <div class="flex items-center justify-between p-2 border-b border-gray-200 dark:border-gray-700">
+                                        <div class="mr-4">
+                                            <p class="text-sm text-gray-700 dark:text-gray-300">{{ $notification->message }}</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ $notification->created_at->locale('pt')->diffForHumans() }}</p>
+                                            @if ($notification->read_at)
+                                                <p class="text-xs text-gray-500 dark:text-gray-400"><i class="fa-solid fa-check-double"></i> Lida</p>
+                                            @endif
+                                        </div>
+                                        @if ($notification->url)
+                                            <a href="{{ route('notifications.redirect', $notification->id) }}"
+                                               class="text-blue-600 dark:text-lime-400 hover:underline text-sm">
+                                                <i class="fa-solid {{ $notification->read_at ? 'fa-envelope-open' : 'fa-envelope' }}"></i>
+                                                Ver
+                                            </a>
+                                        @elseif (is_null($notification->read_at) || $notification->read_at == '')
+                                            <form action="{{ route('notifications.markAsRead', $notification->id) }}" method="POST">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit"
+                                                        class="text-blue-600 dark:text-lime-400 hover:underline text-sm">
+                                                    <i class="fa-solid fa-envelope"></i>
+                                                    Marcar como lido
+                                                </button>
+                                            </form>
                                         @endif
                                     </div>
-                                    <a href="{{ route('notifications.redirect', $notification->id) }}" class="text-blue-600 dark:text-lime-400 hover:underline text-sm">
-                                        <i class="fa-solid {{ $notification->read_at ? 'fa-envelope-open' : 'fa-envelope' }}"></i> Ver
-                                    </a>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            @endif
                         </div>
                         <div class="px-4 py-2 border-t border-gray-200 dark:border-gray-700">
-                            <a href="{{ route('notifications.index') }}" class="text-blue-600 dark:text-lime-400 hover:underline text-sm">Ver todas as notificações</a>
+                            <a href="{{ route('notifications.index') }}"
+                               class="text-blue-600 dark:text-lime-400 hover:underline text-sm">Ver todas as
+                                notificações</a>
                         </div>
                     </div>
                 </div>
+
+
             </div>
         </div>
 
@@ -234,37 +264,54 @@
                                 class="relative text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 ml-2">
                             <i class="fa-solid fa-bell w-6 h-6 text-lg"></i>
                             @if($unreadNotificationsCount > 0)
-                                <span class="absolute top-0 right-0 inline-flex items-center justify-center px-1 py-0.5 text-xs font-bold leading-none text-red-100 transform -translate-x-2 translate-y-2 bg-red-600 rounded-full">{{ $unreadNotificationsCount }}</span>
+                                <span
+                                    class="absolute top-0 right-0 inline-flex items-center justify-center px-1 py-0.5 text-xs font-bold leading-none text-red-100 transform -translate-x-2 translate-y-2 bg-red-600 rounded-full">{{ $unreadNotificationsCount }}</span>
                             @endif
                         </button>
 
                         <!-- Notification Modal for Mobile -->
-                        <div x-show="notificationOpen" @click.away="notificationOpen = false" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 transform scale-100" x-transition:leave-end="opacity-0 transform scale-95" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                            <div class="bg-white dark:bg-gray-800 w-11/12 max-w-md mx-auto rounded-lg shadow-lg overflow-hidden">
-                                <div class="flex justify-between items-center px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+                        <div x-show="notificationOpen" @click.away="notificationOpen = false"
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="opacity-0 transform scale-95"
+                             x-transition:enter-end="opacity-100 transform scale-100"
+                             x-transition:leave="transition ease-in duration-300"
+                             x-transition:leave-start="opacity-100 transform scale-100"
+                             x-transition:leave-end="opacity-0 transform scale-95"
+                             class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                            <div
+                                class="bg-white dark:bg-gray-800 w-11/12 max-w-md mx-auto rounded-lg shadow-lg overflow-hidden">
+                                <div
+                                    class="flex justify-between items-center px-4 py-2 border-b border-gray-200 dark:border-gray-700">
                                     <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Notificações</h2>
-                                    <button @click="notificationOpen = false" class="text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400">
+                                    <button @click="notificationOpen = false"
+                                            class="text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400">
                                         <i class="fa-solid fa-times"></i>
                                     </button>
                                 </div>
                                 <div class="p-4">
                                     @foreach($recentNotifications as $notification)
-                                        <div class="flex items-center justify-between p-2 border-b border-gray-200 dark:border-gray-700">
+                                        <div
+                                            class="flex items-center justify-between p-2 border-b border-gray-200 dark:border-gray-700">
                                             <div>
                                                 <p class="text-sm text-gray-700 dark:text-gray-300">{{ $notification->message }}</p>
                                                 <p class="text-xs text-gray-500 dark:text-gray-400">{{ $notification->created_at->locale('pt')->diffForHumans() }}</p>
                                                 @if ($notification->read_at)
-                                                    <p class="text-xs text-gray-500 dark:text-gray-400"><i class="fa-solid fa-check-double"></i> Lida</p>
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400"><i
+                                                            class="fa-solid fa-check-double"></i> Lida</p>
                                                 @endif
                                             </div>
-                                            <a href="{{ route('notifications.redirect', $notification->id) }}" class="text-blue-600 dark:text-lime-400 hover:underline text-sm">
-                                                <i class="fa-solid {{ $notification->read_at ? 'fa-envelope-open' : 'fa-envelope' }}"></i> Ver
+                                            <a href="{{ route('notifications.redirect', $notification->id) }}"
+                                               class="text-blue-600 dark:text-lime-400 hover:underline text-sm">
+                                                <i class="fa-solid {{ $notification->read_at ? 'fa-envelope-open' : 'fa-envelope' }}"></i>
+                                                Ver
                                             </a>
                                         </div>
                                     @endforeach
                                 </div>
                                 <div class="px-4 py-2 border-t border-gray-200 dark:border-gray-700">
-                                    <a href="{{ route('notifications.index') }}" class="text-blue-600 dark:text-lime-400 hover:underline text-sm">Ver todas as notificações</a>
+                                    <a href="{{ route('notifications.index') }}"
+                                       class="text-blue-600 dark:text-lime-400 hover:underline text-sm">Ver todas as
+                                        notificações</a>
                                 </div>
                             </div>
                         </div>
@@ -272,12 +319,14 @@
                         <!-- Theme Toggle Button -->
                         <button id="theme-toggle-client" type="button"
                                 class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 ml-2 theme-toggle-btn">
-                            <svg id="theme-toggle-dark-icon-client" class="theme-toggle-dark-icon hidden w-5 h-5 mx-auto"
+                            <svg id="theme-toggle-dark-icon-client"
+                                 class="theme-toggle-dark-icon hidden w-5 h-5 mx-auto"
                                  fill="currentColor" viewBox="0 0 20 20"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
                             </svg>
-                            <svg id="theme-toggle-light-icon-client" class="theme-toggle-light-icon hidden w-5 h-5 mx-auto"
+                            <svg id="theme-toggle-light-icon-client"
+                                 class="theme-toggle-light-icon hidden w-5 h-5 mx-auto"
                                  fill="currentColor" viewBox="0 0 20 20"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -303,9 +352,11 @@
                         <li><a href="{{ route('calendar') }}"
                                class="block text-gray-800 dark:text-gray-200 dark:hover:text-lime-400 hover:text-blue-600"><i
                                     class="fa-solid fa-calendar-days text-lg mr-2"></i>Agenda</a></li>
-                        <li><a href="{{ route('setup') }}"
-                               class="block text-gray-800 dark:text-gray-200 dark:hover:text-lime-400 hover:text-blue-600"><i
-                                    class="fa-regular fa-address-card text-lg mr-2"></i>Matrícula</a></li>
+                        @if (!$user->membership || ($user->membership && $user->membership->status->name != 'active'))
+                            <li><a href="{{ route('setup') }}"
+                                   class="block text-gray-800 dark:text-gray-200 dark:hover:text-lime-400 hover:text-blue-600"><i
+                                        class="fa-regular fa-address-card text-lg mr-2"></i>Matrícula</a></li>
+                        @endif
                         <li><a href="{{ route('trainings.index') }}"
                                class="block text-gray-800 dark:text-gray-200 dark:hover:text-lime-400 hover:text-blue-600"><i
                                     class="fa-solid fa-dumbbell text-lg mr-2"></i>Treinos</a></li>

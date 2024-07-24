@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\FreeTraining;
 use App\Models\GymClosure;
+use App\Models\Notification;
+use App\Models\NotificationType;
 use App\Models\Room;
 use App\Models\Training;
 use App\Http\Requests\StoreTrainingRequest;
@@ -176,6 +178,10 @@ class TrainingController extends Controller
     {
         $this->authorize('delete', $training);
 
+        $notificationType = null;
+        $notificationMessage = '';
+        $url = '';
+
         if ($training->users()->count() > 0) {
             foreach ($training->users as $user) {
                 $today = Carbon::today();
@@ -192,6 +198,20 @@ class TrainingController extends Controller
                     $membershipPack->pivot->quantity_remaining += 1;
                     $membershipPack->pivot->save();
                 }
+
+                $notificationType = NotificationType::where('name', 'Treino Cancelado')->firstOrFail();
+                $notificationMessage = 'O Treino que se tinha inscrito no dia '.Carbon::parse($training->start_date)->format('d/m/Y').' foi cancelado. A sua aula foi reembolsada.';
+
+                if ($notificationType) {
+                    $notification = Notification::create([
+                        'notification_type_id' => $notificationType->id,
+                        'message' => $notificationMessage,
+                        'url' => $url,
+                    ]);
+
+                    $user->notifications()->attach($notification->id);
+                }
+
 
                 $training->users()->detach($user->id);
             }
@@ -361,6 +381,10 @@ class TrainingController extends Controller
 
         $this->authorize('multiDelete', [Training::class, $trainingIds]);
 
+        $notificationType = null;
+        $notificationMessage = '';
+        $url = '';
+
         if (!empty($trainingIds)) {
             $trainings = Training::whereIn('id', $trainingIds)->get();
 
@@ -379,6 +403,19 @@ class TrainingController extends Controller
                     if ($membershipPack) {
                         $membershipPack->pivot->quantity_remaining += 1;
                         $membershipPack->pivot->save();
+                    }
+
+                    $notificationType = NotificationType::where('name', 'Treino Cancelado')->firstOrFail();
+                    $notificationMessage = 'O Treino que se tinha inscrito no dia '.Carbon::parse($training->start_date)->format('d/m/Y').' foi cancelado. A sua aula foi reembolsada.';
+
+                    if ($notificationType) {
+                        $notification = Notification::create([
+                            'notification_type_id' => $notificationType->id,
+                            'message' => $notificationMessage,
+                            'url' => $url,
+                        ]);
+
+                        $user->notifications()->attach($notification->id);
                     }
 
                     $training->users()->detach($user->id);

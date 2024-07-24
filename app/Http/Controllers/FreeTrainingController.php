@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreFreeTrainingRequest;
 use App\Models\FreeTraining;
 use App\Models\GymClosure;
+use App\Models\Notification;
+use App\Models\NotificationType;
 use App\Models\Training;
 use App\Models\TrainingType;
 use Carbon\Carbon;
@@ -288,6 +290,10 @@ class FreeTrainingController extends Controller
     {
         $this->authorize('delete', $freeTraining);
 
+        $notificationType = null;
+        $notificationMessage = '';
+        $url = '';
+
         if (Carbon::now()->gte($freeTraining->start_date)) {
             return redirect()->route('free-trainings.index')->with('error', 'Não é possível remover treinos que já começaram.');
         }
@@ -306,6 +312,19 @@ class FreeTrainingController extends Controller
                 if ($membershipPack) {
                     $membershipPack->pivot->quantity_remaining += 1;
                     $membershipPack->pivot->save();
+                }
+
+                $notificationType = NotificationType::where('name', 'Treino Cancelado')->firstOrFail();
+                $notificationMessage = 'O Treino que se tinha inscrito no dia '.Carbon::parse($freeTraining->start_date)->format('d/m/Y').' foi cancelado. A sua aula foi reembolsada.';
+
+                if ($notificationType) {
+                    $notification = Notification::create([
+                        'notification_type_id' => $notificationType->id,
+                        'message' => $notificationMessage,
+                        'url' => $url,
+                    ]);
+
+                    $user->notifications()->attach($notification->id);
                 }
             }
             $freeTraining->users()->detach();
@@ -341,6 +360,10 @@ class FreeTrainingController extends Controller
     {
         $freeTrainingIds = $request->input('free_trainings', []);
 
+        $notificationType = null;
+        $notificationMessage = '';
+        $url = '';
+
         $this->authorize('multiDelete', [FreeTraining::class, $freeTrainingIds]);
 
         if (!empty($freeTrainingIds)) {
@@ -360,6 +383,19 @@ class FreeTrainingController extends Controller
                     if ($membershipPack) {
                         $membershipPack->pivot->quantity_remaining += 1;
                         $membershipPack->pivot->save();
+                    }
+
+                    $notificationType = NotificationType::where('name', 'Treino Cancelado')->firstOrFail();
+                    $notificationMessage = 'O Treino que se tinha inscrito no dia '.Carbon::parse($freeTraining->start_date)->format('d/m/Y').' foi cancelado. A sua aula foi reembolsada.';
+
+                    if ($notificationType) {
+                        $notification = Notification::create([
+                            'notification_type_id' => $notificationType->id,
+                            'message' => $notificationMessage,
+                            'url' => $url,
+                        ]);
+
+                        $user->notifications()->attach($notification->id);
                     }
 
                     $freeTraining->users()->detach($user->id);

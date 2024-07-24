@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Document;
 use App\Models\Membership;
+use App\Models\Notification;
+use App\Models\NotificationType;
 use App\Models\Sale;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -106,6 +108,9 @@ class SaleController extends Controller
 
         \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
 
+        $notificationType = null;
+        $notificationMessage = '';
+        $url = '';
         $payload = $request->all();
         $event = null;
 
@@ -145,6 +150,10 @@ class SaleController extends Controller
                             $insurance->save();
                             Log::info('Insurance status updated to active');
                         }
+
+                        $notificationType = NotificationType::where('name', 'Matrícula Ativa')->firstOrFail();
+                        $notificationMessage = 'O pagamento foi processado com sucesso e a sua matrícula foi ativada.';
+                        $url = 'memberships/' . $membership->id;
                     }
                 }
 
@@ -193,6 +202,17 @@ class SaleController extends Controller
             }
         }
 
+        if ($notificationType) {
+            $notification = Notification::create([
+                'notification_type_id' => $notificationType->id,
+                'message' => $notificationMessage,
+                'url' => $url,
+            ]);
+
+            $user = $membership->user;
+            $user->notifications()->attach($notification->id);
+        }
+
         return response()->json(['status' => 'success']);
     }
 
@@ -202,11 +222,33 @@ class SaleController extends Controller
             'status_id' => 'required|exists:statuses,id',
         ]);
 
+        $notificationType = null;
+        $notificationMessage = '';
+        $url = '';
+
         $sale = Sale::findOrFail($id);
 
         if (($sale->status_id == 6 && $request->status_id == 16) || ($sale->status_id == 16 && $request->status_id == 8)) {
             $sale->status_id = $request->status_id;
             $sale->save();
+
+            if ($sale->status_id == 16) {
+                $notificationType = NotificationType::where('name', 'Encomenda Dísponivel')->firstOrFail();
+                $notificationMessage = 'A sua encomenda com o nº'.$sale->id.' está disponível para levantamento.';
+                $url = 'sales/' . $sale->id;
+            }
+
+            if ($notificationType) {
+                $notification = Notification::create([
+                    'notification_type_id' => $notificationType->id,
+                    'message' => $notificationMessage,
+                    'url' => $url,
+                ]);
+
+                $user = $sale->user;
+                $user->notifications()->attach($notification->id);
+            }
+
 
             return redirect()->route('sales.show', $id)->with('success', 'Estado da encomenda atualizado com sucesso.');
         }
@@ -223,6 +265,10 @@ class SaleController extends Controller
             'documents.*' => 'required|file|mimes:pdf,jpg,png,doc,docx|max:2048'
         ]);
 
+        $notificationType = null;
+        $notificationMessage = '';
+        $url = '';
+
         try {
             foreach ($request->file('documents') as $file) {
                 $filename = "{$sale->id}_{$file->getClientOriginalName()}";
@@ -235,6 +281,22 @@ class SaleController extends Controller
 
                 $sale->documents()->attach($document->id);
             }
+
+            $notificationType = NotificationType::where('name', 'Encomenda')->firstOrFail();
+            $notificationMessage = 'Foram adicionados documentos à sua encomenda com o nº '.$sale->id.'.';
+            $url = 'sales/' . $sale->id;
+
+            if ($notificationType) {
+                $notification = Notification::create([
+                    'notification_type_id' => $notificationType->id,
+                    'message' => $notificationMessage,
+                    'url' => $url,
+                ]);
+
+                $user = $sale->user;
+                $user->notifications()->attach($notification->id);
+            }
+
 
             return response()->json(['success' => true]);
         } catch (\Exception $e) {

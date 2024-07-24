@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Schema;
 use MattDaneshvar\Survey\Models\Entry;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -41,6 +42,99 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'remember_token',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($user) {
+            if ($user->isForceDeleting()) {
+                if (Schema::hasColumn('trainings', 'personal_trainer_id')) {
+                    $user->trainingsAsPersonalTrainer()->forceDelete();
+                }
+                if (Schema::hasColumn('addresses', 'user_id')) {
+                    $user->addresses()->forceDelete();
+                }
+                if (Schema::hasColumn('services', 'user_id')) {
+                    $user->services()->forceDelete();
+                }
+                if (Schema::hasColumn('sales', 'user_id')) {
+                    $user->sales()->forceDelete();
+                }
+                if (Schema::hasColumn('notification_user', 'user_id')) {
+                    $user->notifications()->forceDelete();
+                }
+                if (Schema::hasColumn('free_training_user', 'user_id')) {
+                    $user->freeTrainings()->forceDelete();
+                }
+                $user->roles()->detach();
+                if (Schema::hasColumn('memberships', 'user_id')) {
+                    $user->membership()->forceDelete();
+                }
+                if (Schema::hasColumn('entries', 'participant_id')) {
+                    $user->entries()->forceDelete();
+                }
+                if (Schema::hasTable('training_user')) {
+                    $user->trainings()->detach();
+                }
+            } else {
+                if (Schema::hasColumn('trainings', 'personal_trainer_id')) {
+                    $user->trainingsAsPersonalTrainer()->delete();
+                }
+                if (Schema::hasColumn('addresses', 'user_id')) {
+                    $user->addresses()->delete();
+                }
+                if (Schema::hasColumn('services', 'user_id')) {
+                    $user->services()->delete();
+                }
+                if (Schema::hasColumn('sales', 'user_id')) {
+                    $user->sales()->delete();
+                }
+                if (Schema::hasColumn('notification_user', 'user_id')) {
+                    $user->notifications()->delete();
+                }
+                if (Schema::hasColumn('free_training_user', 'user_id')) {
+                    $user->freeTrainings()->delete();
+                }
+                if (Schema::hasColumn('memberships', 'user_id')) {
+                    $user->membership()->delete();
+                }
+                if (Schema::hasColumn('entries', 'participant_id')) {
+                    $user->entries()->delete();
+                }
+                if (Schema::hasTable('training_user')) {
+                    $user->trainings()->detach();
+                }
+            }
+        });
+
+        static::restoring(function ($user) {
+            if (Schema::hasColumn('trainings', 'personal_trainer_id')) {
+                $user->trainingsAsPersonalTrainer()->withTrashed()->restore();
+            }
+            if (Schema::hasColumn('addresses', 'user_id')) {
+                $user->addresses()->withTrashed()->restore();
+            }
+            if (Schema::hasColumn('services', 'user_id')) {
+                $user->services()->withTrashed()->restore();
+            }
+            if (Schema::hasColumn('sales', 'user_id')) {
+                $user->sales()->withTrashed()->restore();
+            }
+            if (Schema::hasColumn('notification_user', 'user_id')) {
+                $user->notifications()->withTrashed()->restore();
+            }
+            if (Schema::hasColumn('free_training_user', 'user_id')) {
+                $user->freeTrainings()->withTrashed()->restore();
+            }
+            if (Schema::hasColumn('memberships', 'user_id')) {
+                $user->membership()->withTrashed()->restore();
+            }
+            if (Schema::hasColumn('entries', 'participant_id')) {
+                $user->entries()->withTrashed()->restore();
+            }
+        });
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -103,6 +197,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function trainings()
     {
         return $this->belongsToMany(Training::class)->withPivot(['presence', 'cancelled'])->withTimestamps();
+    }
+
+    public function trainingsAsPersonalTrainer()
+    {
+        return $this->hasMany(Training::class, 'personal_trainer_id');
     }
 
     public function notifications()

@@ -90,6 +90,14 @@ class SaleController extends Controller
             }
         }
 
+        $sale->load(['packs' => function ($query) {
+            $query->withTrashed();
+        }, 'products' => function ($query) {
+            $query->withTrashed();
+        }, 'address' => function ($query) {
+            $query->withTrashed();
+        }]);
+
         return view('pages.sales.show', [
             'sale' => $sale,
             'paymentStatus' => $paymentStatus,
@@ -101,6 +109,8 @@ class SaleController extends Controller
             'validity' => $validity,
         ]);
     }
+
+
 
     public function handleWebhook(Request $request)
     {

@@ -10,7 +10,7 @@
             <x-input-label for="address" :value="__('Minhas Moradas')" class="mt-5 mb-1"/>
             <select id="address" name="address" class="w-1/2 dark:border-gray-700 dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm" onchange="updateAddressFields()">
                 @foreach($user->addresses as $address)
-                    <option value="{{ $address->id }}" @if($loop->first) selected @endif>{{ $address->name }}</option>
+                    <option value="{{ $address->id }}" @if($loop->first) selected @endif>{{ $address->name }} @if($address->trashed()) (Deletado) @endif</option>
                 @endforeach
             </select>
             @error('address')
@@ -73,7 +73,7 @@
 
             <div class="flex items-center gap-4 mt-6">
                 <button id="submit-button" type="submit" class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150">Atualizar</button>
-                <button type="button" class="inline-flex items-center px-4 py-2 bg-red-500 hover:bg-red-400 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150" id="delete-button" onclick="confirmDelete()">Eliminar</button>
+                <button type="button" class="inline-flex items-center px-4 py-2 bg-red-500 hover:bg-red-400 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150" id="delete-button" onclick="deleteAddress()">Eliminar</button>
             </div>
         </form>
         <form id="delete-form" action="" method="POST" class="hidden">
@@ -89,17 +89,6 @@
             <button id="create-address-button" type="button" class="inline-flex items-center px-4 py-2 mt-6 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150 " onclick="createAddress()">Inserir Morada</button>
         </div>
     @endif
-
-    <div id="confirmation-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden">
-        <div class="bg-gray-300 p-6 rounded-md shadow-md w-96 dark:bg-gray-900">
-            <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Pretende eliminar?</h2>
-            <p class="mb-4 dark:text-red-300 text-red-500">Não poderá reverter isso!</p>
-            <div class="flex justify-end gap-4">
-                <button id="cancel-button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400">Cancelar</button>
-                <button id="confirm-button" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Eliminar</button>
-            </div>
-        </div>
-    </div>
 
     <!-- Criar Morada Modal -->
     <div id="create-address-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 @if ($errors->any()) block @else hidden @endif">
@@ -189,19 +178,11 @@
         document.getElementById('create-address-modal').classList.remove('hidden');
     }
 
-    function confirmDelete() {
-        document.getElementById('confirmation-modal').classList.remove('hidden');
+    function deleteAddress() {
         addressDeleted = document.getElementById('address').value;
-    }
-
-    document.getElementById('cancel-button').addEventListener('click', function() {
-        document.getElementById('confirmation-modal').classList.add('hidden');
-    });
-
-    document.getElementById('confirm-button').addEventListener('click', function() {
         document.getElementById('delete-form').action = "{{ url('profile/addresses') }}/" + addressDeleted;
         document.getElementById('delete-form').submit();
-    });
+    }
 
     document.getElementById('cancel-create-address-button').addEventListener('click', function() {
         document.getElementById('create-address-modal').classList.add('hidden');
@@ -231,7 +212,6 @@
             var membershipAddressId = "{{ $user->membership ? $user->membership->address_id : '' }}";
             var isAddressAssociated = selectedAddressId == membershipAddressId;
 
-            // Ocultar botões e desabilitar campos se a morada estiver associada a uma matrícula
             document.getElementById('submit-button').style.display = isAddressAssociated ? 'none' : 'inline-flex';
             document.getElementById('delete-button').style.display = isAddressAssociated ? 'none' : 'inline-flex';
             document.getElementById('name').disabled = isAddressAssociated;

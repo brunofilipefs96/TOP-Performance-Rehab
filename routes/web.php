@@ -65,6 +65,9 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::c
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    Route::delete('/profile/addresses/{address}', [AddressController::class, 'destroy'])->name('addresses.destroy');
+    Route::post('/profile/addresses', [AddressController::class, 'store'])->name('addresses.store');
+    Route::put('/profile/addresses/{address}', [AddressController::class, 'update'])->name('addresses.update');
     Route::delete('/profile/remove-image', [ProfileController::class, 'removeImage'])->name('profile.removeImage');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -83,10 +86,6 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::c
     Route::get('/entries/{survey}/fill', [EntryController::class, 'fill'])->name('entries.fill');
     Route::post('/entries/{survey}', [EntryController::class, 'store'])->name('entries.store');
     Route::get('/entries/{entry}', [EntryController::class, 'show'])->name('entries.show');
-
-    Route::post('/profile/addresses', [AddressController::class, 'store'])->name('addresses.store');
-    Route::put('/profile/addresses/{address}', [AddressController::class, 'update'])->name('addresses.update');
-    Route::delete('/profile/addresses/{address}', [AddressController::class, 'destroy'])->name('addresses.destroy');
 
     Route::post('insurances/{insurance}/documents', [InsuranceController::class, 'addDocument'])->name('insurances.addDocument');
     Route::delete('insurances/{insurance}/documents/{document}', [InsuranceController::class, 'deleteDocument'])->name('insurances.deleteDocument');

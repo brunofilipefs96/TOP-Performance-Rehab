@@ -27,7 +27,7 @@
                             <a href="{{ route('trainings.edit', $service->id) }}" class="bg-blue-500 dark:bg-gray-500 text-white dark:text-gray-800 px-2 py-1 rounded-md hover:bg-blue-400 dark:hover:bg-gray-400">Editar</a>
                         @endcan
                         @can('delete', $service)
-                            <form id="delete-form-{{ $service->id }}" action="{{ route('trainings.destroy', $service->id) }}" method="POST" class="inline">
+                            <form id="delete-form-{{ $service->id }}" action="{{ route('trainings.destroy', $service->id) }}" method="POST" class="inline" onsubmit="disableConfirmButton(this)">
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" class="bg-red-600 text-white px-2 py-1 rounded-md hover:bg-red-500" onclick="confirmDelete({{ $service->id }})">Eliminar</button>
@@ -54,7 +54,7 @@
                                     <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Pretende inscrever-se?</h2>
                                     <div class="flex justify-end gap-4">
                                         <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400" onclick="cancelEnroll({{ $service->id }})">Cancelar</button>
-                                        <form id="enroll-form-{{ $service->id }}" action="{{ route('trainings.enroll', $service->id) }}" method="POST" class="inline">
+                                        <form id="enroll-form-{{ $service->id }}" action="{{ route('trainings.enroll', $service->id) }}" method="POST" class="inline" onsubmit="disableConfirmButton(this)">
                                             @csrf
                                             <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-500">Inscrever</button>
                                         </form>

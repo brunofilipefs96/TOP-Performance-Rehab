@@ -202,7 +202,7 @@
                                             @if(!$isTrainingStarted)
                                                 <form id="delete-form-{{ $training->id }}"
                                                       action="{{ route('trainings.destroy', $training->id) }}" method="POST"
-                                                      class="inline text-sm">
+                                                      class="inline text-sm" onsubmit="disableConfirmButton(this)">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="button"
@@ -216,7 +216,7 @@
                                         @endcan
                                         @if (auth()->check() && auth()->user()->hasRole('client') && auth()->user()->cannot('update', $training) && auth()->user()->cannot('delete', $training) && $training->personal_trainer_id !== auth()->user()->id)
                                             @if ($userPresence && !$userCancelled && !$isTrainingStarted)
-                                                <form id="cancel-form-{{ $training->id }}" action="{{ route('trainings.cancel', $training->id) }}" method="POST" class="inline text-sm">
+                                                <form id="cancel-form-{{ $training->id }}" action="{{ route('trainings.cancel', $training->id) }}" method="POST" class="inline text-sm" onsubmit="disableConfirmButton(this)">
                                                     @csrf
                                                     <button type="button" onclick="confirmCancel({{ $training->id }}, {{ $hoursDifference }})"
                                                             class="bg-red-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-red-400 text-sm">
@@ -226,7 +226,7 @@
                                                 </form>
                                             @elseif(!$userCancelled && !$isTrainingStarted)
                                                 @if ($remainingSpots > 0 && $currentDateTime->lt($trainingStartDateTime))
-                                                    <form id="enroll-form-{{ $training->id }}" action="{{ route('trainings.enroll', $training->id) }}" method="POST" class="inline text-sm">
+                                                    <form id="enroll-form-{{ $training->id }}" action="{{ route('trainings.enroll', $training->id) }}" method="POST" class="inline text-sm" onsubmit="disableConfirmButton(this)">
                                                         @csrf
                                                         @if($hasAvailablePack)
                                                             <button type="button"
@@ -287,7 +287,7 @@
             <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400"
                     onclick="cancelAction()">Cancelar
             </button>
-            <form id="confirmation-form" method="POST" class="inline">
+            <form id="confirmation-form" method="POST" class="inline" onsubmit="disableConfirmButton(this)">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="bg-blue-600 hover:bg-blue-500 dark:bg-lime-600 dark:hover:bg-lime-500 text-white px-4 py-2 rounded-md ">Confirmar

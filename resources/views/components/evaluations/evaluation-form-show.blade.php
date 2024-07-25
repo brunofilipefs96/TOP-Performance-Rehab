@@ -67,7 +67,7 @@
                                         <button type="button" class="text-red-600 dark:text-red-400 hover:underline ml-2" onclick="showConfirmationModal({{ $document->id }})">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
-                                        <form id="delete-form-{{ $document->id }}" action="{{ route('evaluations.deleteDocument', [$evaluation->id, $document->id]) }}" method="POST" style="display:none;">
+                                        <form id="delete-form-{{ $document->id }}" action="{{ route('evaluations.deleteDocument', [$evaluation->id, $document->id]) }}" method="POST" style="display:none;" onsubmit="disableConfirmButton(this)">
                                             @csrf
                                             @method('DELETE')
                                         </form>
@@ -77,10 +77,9 @@
                         </ul>
                     @endif
 
-                    <!-- Área para adicionar documentos -->
                     @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('personal_trainer'))
                         <div class="mt-4">
-                            <form id="document-upload-form" action="{{ route('evaluations.addDocument', $evaluation->id) }}" method="POST" enctype="multipart/form-data" class="flex flex-col items-start space-y-2">
+                            <form id="document-upload-form" action="{{ route('evaluations.addDocument', $evaluation->id) }}" method="POST" enctype="multipart/form-data" class="flex flex-col items-start space-y-2" onsubmit="disableConfirmButton(this)">
                                 @csrf
                                 <ul id="selected-files-list" class="list-disc pl-5 text-gray-800 dark:text-gray-200"></ul>
                                 <label for="documents" class="cursor-pointer inline-flex items-center text-blue-600 dark:text-lime-400 hover:underline">
@@ -98,7 +97,7 @@
 
             <div class="flex justify-end items-center mb-4 mt-10">
                 @can('delete', $evaluation)
-                    <form id="delete-form-{{$evaluation->id}}" action="{{ route('memberships.evaluations.destroy', ['membership' => $evaluation->membership_id, 'evaluation' => $evaluation->id]) }}" method="POST" class="inline">
+                    <form id="delete-form-{{$evaluation->id}}" action="{{ route('memberships.evaluations.destroy', ['membership' => $evaluation->membership_id, 'evaluation' => $evaluation->id]) }}" method="POST" class="inline" onsubmit="disableConfirmButton(this)">
                         @csrf
                         @method('DELETE')
                         <button type="button" class="bg-red-600 text-white flex items-center px-4 py-2 rounded-md hover:bg-red-500" onclick="showEvaluationConfirmationModal({{ $evaluation->id }})">

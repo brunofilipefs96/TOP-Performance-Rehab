@@ -38,7 +38,7 @@
                     </div>
 
                     @if($user->membership->trainingTypes->count() == 0)
-                        <form method="POST" action="{{ route('setup.storeTrainingTypes') }}" id="trainingTypesForm">
+                        <form method="POST" action="{{ route('setup.storeTrainingTypes') }}" id="trainingTypesForm" onsubmit="disableConfirmButton(this)">
                             @csrf
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 @foreach ($trainingTypes as $trainingType)

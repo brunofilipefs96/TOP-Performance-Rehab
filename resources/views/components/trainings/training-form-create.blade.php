@@ -31,7 +31,7 @@
                     @endif
                 </div>
             @else
-                <form method="POST" action="{{ route('trainings.store') }}" id="trainingForm">
+                <form method="POST" action="{{ route('trainings.store') }}" id="trainingForm" onsubmit="disableConfirmButton(this)">
                     @csrf
                     <div class="mb-4">
                         <label for="training_type_id" class="block dark:text-white text-gray-800">Tipo de Treino</label>

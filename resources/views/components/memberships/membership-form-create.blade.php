@@ -54,7 +54,7 @@
                 </p>
             @endif
 
-            <form method="POST" action="{{ route('memberships.store') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('memberships.store') }}" enctype="multipart/form-data" onsubmit="disableConfirmButton(this)">
                 @csrf
                 <input type="hidden" name="address_id" id="address_id">
                 <div class="flex items-center mt-6">

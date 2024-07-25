@@ -25,7 +25,7 @@
             <h2 class="text-4xl font-bold text-gray-800 text-center mb-1 p-2 dark:text-white">Crie a sua conta</h2>
             <h2 class="text-xl text-gray-600 dark:text-lime-300 text-center mb-6">Preencha os seus dados</h2>
             <hr>
-            <form method="POST" action="{{ route('register') }}" class="space-y-6" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('register') }}" class="space-y-6" enctype="multipart/form-data" onsubmit="disableConfirmButton(this)">
                 @csrf
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

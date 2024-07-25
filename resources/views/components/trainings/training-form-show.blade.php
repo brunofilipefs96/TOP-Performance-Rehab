@@ -99,7 +99,7 @@
                     @else
                         @if ($currentDateTime->gte($trainingStartDateTime))
                             @if (!$presenceMarked)
-                                <form action="{{ route('trainings.markPresence', $training->id) }}" method="POST">
+                                <form action="{{ route('trainings.markPresence', $training->id) }}" method="POST" onsubmit="disableConfirmButton(this)">
                                     @csrf
                                     <table class="min-w-full bg-white dark:bg-gray-800">
                                         <thead>
@@ -236,7 +236,7 @@
                         @if ($userHasActiveMembership)
                             @if (!$userPresence && !$userCancelled && $remainingSpots > 0)
                                 @if($hasAvailablePack)
-                                    <form id="enroll-form-{{ $training->id }}" action="{{ route('trainings.enroll', $training->id) }}" method="POST" class="inline text-sm">
+                                    <form id="enroll-form-{{ $training->id }}" action="{{ route('trainings.enroll', $training->id) }}" method="POST" class="inline text-sm" onsubmit="disableConfirmButton(this)">
                                         @csrf
                                         <button type="button" onclick="confirmEnroll({{ $training->id }})"
                                                 class="dark:bg-lime-400 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-400 text-sm">
@@ -252,7 +252,7 @@
                                     </button>
                                 @endif
                             @elseif ($userPresence && !$userCancelled)
-                                <form id="cancel-form-{{ $training->id }}" action="{{ route('trainings.cancel', $training->id) }}" method="POST" class="inline text-sm">
+                                <form id="cancel-form-{{ $training->id }}" action="{{ route('trainings.cancel', $training->id) }}" method="POST" class="inline text-sm" onsubmit="disableConfirmButton(this)">
                                     @csrf
                                     <button type="button" onclick="confirmCancel({{ $training->id }}, {{ $hoursDifference }})"
                                             class="bg-red-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-red-400 text-sm">
@@ -284,7 +284,7 @@
                             <i class="fa-solid fa-pen-to-square w-4 h-4 mr-2"></i>
                             Editar
                         </a>
-                        <form id="delete-form-{{$training->id}}" action="{{ url('trainings/' . $training->id) }}" method="POST" class="inline mr-2">
+                        <form id="delete-form-{{$training->id}}" action="{{ url('trainings/' . $training->id) }}" method="POST" class="inline mr-2" onsubmit="disableConfirmButton(this)">
                             @csrf
                             @method('DELETE')
                             <button type="button" onclick="confirmDelete({{ $training->id }})"
@@ -310,7 +310,7 @@
             <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400"
                     onclick="cancelAction()">Cancelar
             </button>
-            <form id="confirmation-form" method="POST" class="inline">
+            <form id="confirmation-form" method="POST" class="inline" onsubmit="disableConfirmButton(this)">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Confirmar
@@ -329,7 +329,7 @@
             <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400"
                     onclick="cancelRemoveUser()">Cancelar
             </button>
-            <form id="remove-user-form" method="POST" class="inline">
+            <form id="remove-user-form" method="POST" class="inline" onsubmit="disableConfirmButton(this)">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Confirmar

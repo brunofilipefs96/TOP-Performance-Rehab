@@ -3,7 +3,7 @@
     @can('viewAny', App\Models\User::class)
         <div class="mb-10 flex flex-col md:flex-row justify-between items-center">
             <div class="relative w-full md:w-1/3 mb-4 md:mb-0">
-                <form action="{{ route('users.index') }}" method="GET" id="search-filter-form" class="flex w-full">
+                <form action="{{ route('users.index') }}" method="GET" id="search-filter-form" class="flex w-full" onsubmit="disableConfirmButton(this)">
                     <button type="submit" class="absolute w-6 h-6 left-3 top-1/2 transform -translate-y-1/2 text-black dark:text-white">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </button>
@@ -69,7 +69,7 @@
                            class="bg-blue-500 dark:bg-lime-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:hover:bg-lime-400">Mostrar</a>
                         @can('delete', $user)
                             <form id="delete-form-{{ $user->id }}"
-                                  action="{{ url('users/' . $user->id) }}" method="POST" class="inline-block">
+                                  action="{{ url('users/' . $user->id) }}" method="POST" class="inline-block" onsubmit="disableConfirmButton(this)">
                                 @csrf
                                 @method('DELETE')
                                 <button type="button"

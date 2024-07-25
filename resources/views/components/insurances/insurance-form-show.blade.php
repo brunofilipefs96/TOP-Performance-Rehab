@@ -92,7 +92,7 @@
                                     @if($insurance->insurance_type == 'Pessoal')
                                         <form
                                             action="{{ route('insurances.update', ['insurance' => $insurance->id]) }}"
-                                            method="POST">
+                                            method="POST" onsubmit="disableConfirmButton(this)">
                                             @csrf
                                             @method('PATCH')
                                             @if($insurance->status->name == 'pending')
@@ -111,7 +111,7 @@
                                         </form>
                                         <form
                                             action="{{ route('insurances.update', ['insurance' => $insurance->id]) }}"
-                                            method="POST">
+                                            method="POST" onsubmit="disableConfirmButton(this)">
                                             @csrf
                                             @method('PATCH')
                                             <input type="hidden" name="status_name" value="rejected">
@@ -123,7 +123,7 @@
                                     @elseif($insurance->insurance_type == 'Ginásio')
                                         <form
                                             action="{{ route('insurances.update', ['insurance' => $insurance->id]) }}"
-                                            method="POST">
+                                            method="POST" onsubmit="disableConfirmButton(this)">
                                             @csrf
                                             @method('PATCH')
                                             @if($insurance->status->name == 'pending')
@@ -146,7 +146,7 @@
                             @if($insurance->status && ($insurance->status->name == 'active' || $insurance->status->name == 'pending'))
                                 <form
                                     action="{{ route('insurances.update', ['insurance' => $insurance->id]) }}"
-                                    method="POST">
+                                    method="POST" onsubmit="disableConfirmButton(this)">
                                     @csrf
                                     @method('PATCH')
                                     <input type="hidden" name="status_name" value="frozen">
@@ -176,7 +176,7 @@
                                                 <button type="button" class="text-red-600 dark:text-red-400 hover:underline ml-2" onclick="showConfirmationModal({{ $document->id }})">
                                                     <i class="fa-solid fa-trash"></i>
                                                 </button>
-                                                <form id="delete-form-{{ $document->id }}" action="{{ route('insurances.deleteDocument', [$insurance->id, $document->id]) }}" method="POST" style="display:none;">
+                                                <form id="delete-form-{{ $document->id }}" action="{{ route('insurances.deleteDocument', [$insurance->id, $document->id]) }}" method="POST" style="display:none;" onsubmit="disableConfirmButton(this)">
                                                     @csrf
                                                     @method('DELETE')
                                                 </form>
@@ -189,7 +189,7 @@
                             <!-- Área para adicionar documentos -->
                             @if(auth()->user()->hasRole('admin'))
                                 <div class="mt-4">
-                                    <form id="document-upload-form" action="{{ route('insurances.addDocument', $insurance->id) }}" method="POST" enctype="multipart/form-data" class="flex flex-col items-start space-y-2">
+                                    <form id="document-upload-form" action="{{ route('insurances.addDocument', $insurance->id) }}" method="POST" enctype="multipart/form-data" class="flex flex-col items-start space-y-2" onsubmit="disableConfirmButton(this)">
                                         @csrf
                                         <ul id="selected-files-list" class="list-disc pl-5 text-gray-800 dark:text-gray-200"></ul>
                                         <label for="documents" class="cursor-pointer inline-flex items-center text-blue-600 dark:text-lime-400 hover:underline">

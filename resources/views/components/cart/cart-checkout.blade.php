@@ -11,7 +11,7 @@
             <div class="text-center mb-10">
                 <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Checkout</h1>
             </div>
-            <form id="checkout-form" action="{{ route('cart.processCheckout') }}" method="POST">
+            <form id="checkout-form" action="{{ route('cart.processCheckout') }}" method="POST" onsubmit="disableConfirmButton(this)">
                 @csrf
 
                 @if ($addresses->isEmpty())
@@ -227,10 +227,4 @@
             e.target.value = value.slice(0, 8);
         });
     }
-
-    document.getElementById('checkout-form').addEventListener('submit', function() {
-        const paymentButton = document.getElementById('payment-button');
-        paymentButton.disabled = true;
-        paymentButton.textContent = 'Processando...';
-    });
 </script>

@@ -67,7 +67,7 @@
             <div class="mb-4">
                 <p class="dark:text-gray-400 text-gray-600 text-sm">Pode ajustar os benifícios na página de definições do ginásio.</p>
             </div>
-            <form action="{{ route('user.client-type.update', $user) }}" method="POST">
+            <form action="{{ route('user.client-type.update', $user) }}" method="POST" onsubmit="disableConfirmButton(this)">
                 @csrf
                 @method('PATCH')
                 <div class="flex items-center gap-4 mb-4">
@@ -97,7 +97,7 @@
                     <div class="flex items-center justify-between">
                         <span>{{ $role->name === 'client' ? 'Cliente' : ($role->name === 'personal_trainer' ? 'Personal Trainer' : ($role->name === 'employee' ? 'Funcionário' : 'Administrador')) }}</span>
                         @if($role->name !== 'client')
-                            <form action="{{ route('user.roles.destroy', ['user' => $user->id, 'role' => $role->id]) }}" method="POST" class="remove-role-form">
+                            <form action="{{ route('user.roles.destroy', ['user' => $user->id, 'role' => $role->id]) }}" method="POST" class="remove-role-form" onsubmit="disableConfirmButton(this)">
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" class="remove-role-button text-red-500 hover:text-red-700 ml-2">
@@ -147,7 +147,7 @@
 <div id="addRoleModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
     <div class="bg-gray-300 dark:bg-gray-900 p-6 rounded-md shadow-md w-96">
         <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Adicionar Cargo</h2>
-        <form id="addRoleForm" action="{{ route('user.roles.store', $user->id) }}" method="POST">
+        <form id="addRoleForm" action="{{ route('user.roles.store', $user->id) }}" method="POST" onsubmit="disableConfirmButton(this)">
             @csrf
             <div class="mb-4">
                 <label for="role" class="block dark:text-white text-gray-800">Selecione um cargo</label>

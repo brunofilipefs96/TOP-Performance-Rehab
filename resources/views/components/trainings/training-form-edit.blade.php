@@ -39,7 +39,7 @@
                         @endforeach
                     </div>
                 @endif
-                <form method="POST" action="{{ route('trainings.update', $training) }}" id="update-form">
+                <form method="POST" action="{{ route('trainings.update', $training) }}" id="update-form" onsubmit="disableConfirmButton(this)">
                     @csrf
                     @method('PUT')
                     <div class="mb-4">

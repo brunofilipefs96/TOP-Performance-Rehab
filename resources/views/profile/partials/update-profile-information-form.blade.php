@@ -9,11 +9,11 @@
         </p>
     </header>
 
-    <form id="send-verification" method="post" action="{{ route('verification.send') }}">
+    <form id="send-verification" method="post" action="{{ route('verification.send') }}" onsubmit="disableConfirmButton(this)">
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
+    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data" onsubmit="disableConfirmButton(this)">
         @csrf
         @method('patch')
 
@@ -103,7 +103,7 @@
         </div>
     </div>
 
-    <form id="remove-image-form" method="post" action="{{ route('profile.removeImage') }}" class="hidden">
+    <form id="remove-image-form" method="post" action="{{ route('profile.removeImage') }}" class="hidden" onsubmit="disableConfirmButton(this)">
         @csrf
         @method('delete')
     </form>
@@ -154,9 +154,10 @@
             };
 
             const handleMaleFemaleChange = () => {
-                if (!otherRadio.checked) {
+                if (maleRadio.checked || femaleRadio.checked) {
                     otherGenderContainer.style.display = 'none';
                     otherGenderInput.value = '';
+                    otherGenderInput.required = false;
                 }
             };
 

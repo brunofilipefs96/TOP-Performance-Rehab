@@ -25,7 +25,7 @@
             <div class="text-center mb-10">
                 <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Pagamento</h1>
             </div>
-            <form id="payment-form" action="{{ route('renew.processRenew') }}" method="POST">
+            <form id="payment-form" action="{{ route('renew.processRenew') }}" method="POST" onsubmit="disableConfirmButton(this)">
                 @csrf
 
                 <div class="mb-4">

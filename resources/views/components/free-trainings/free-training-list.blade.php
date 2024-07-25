@@ -197,7 +197,7 @@
                                                     @if ($userPresence)
                                                         <form id="cancel-form-{{ $freeTraining->id }}"
                                                               action="{{ route('free-trainings.cancel', $freeTraining->id) }}"
-                                                              method="POST" class="inline text-sm">
+                                                              method="POST" class="inline text-sm" onsubmit="disableConfirmButton(this)">
                                                             @csrf
                                                             <button type="button"
                                                                     class="bg-red-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-400 text-sm"
@@ -209,7 +209,7 @@
                                                     @elseif($freeTraining->users()->count() < $freeTraining->max_students && $currentDateTime->lt($startDateTime) && $hasActiveMembership)
                                                         <form method="POST"
                                                               action="{{ route('free-trainings.enroll', $freeTraining->id) }}"
-                                                              class="inline text-sm">
+                                                              class="inline text-sm" onsubmit="disableConfirmButton(this)">
                                                             @csrf
                                                             <button type="button"
                                                                     class="bg-lime-400 bg-blue-500 text-white flex items-center px-2 py-1 rounded-md hover:bg-green-400 text-sm"
@@ -287,12 +287,6 @@
 
     function confirmCancel(id, button) {
         openModal('Pretende cancelar a inscrição?', '', `/free-trainings/${id}/cancel`, 'POST');
-    }
-
-    function disableConfirmButton(form) {
-        const button = form.querySelector('button[type="submit"]');
-        button.disabled = true;
-        button.innerHTML = '<i class="fa-solid fa-spinner fa-spin w-4 h-4 mr-2"></i> Processando...';
     }
 
     function openModal(title, message, actionUrl, method) {

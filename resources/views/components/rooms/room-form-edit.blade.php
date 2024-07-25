@@ -9,7 +9,7 @@
             <div class="text-center mb-10">
                 <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Editar Sala {{$room->id}}</h1>
             </div>
-            <form method="POST" id="update-form" action="{{ url('rooms/' . $room->id) }}" enctype="multipart/form-data">
+            <form method="POST" id="update-form" action="{{ url('rooms/' . $room->id) }}" enctype="multipart/form-data" onsubmit="disableConfirmButton(this)">
                 @csrf
                 @method('PUT')
                 <div class="mb-4">

@@ -9,7 +9,7 @@
                 <input type="text" value="{{ Auth::user()->full_name }}" disabled class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
             </div>
 
-            <form method="POST" action="{{ route('insurances.store') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('insurances.store') }}" enctype="multipart/form-data" onsubmit="disableConfirmButton(this)">
                 @csrf
                 <div class="mb-4">
                     <label class="block text-sm font-medium dark:text-gray-200 text-gray-800">Tipo de Seguro</label>

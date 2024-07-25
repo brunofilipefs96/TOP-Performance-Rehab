@@ -9,7 +9,7 @@
             <div class="text-center mb-10">
                 <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Criar Tipo de Treino</h1>
             </div>
-            <form method="POST" id="create-form" action="{{ route('training-types.store') }}" enctype="multipart/form-data">
+            <form method="POST" id="create-form" action="{{ route('training-types.store') }}" enctype="multipart/form-data" onsubmit="disableConfirmButton(this)">
                 @csrf
 
                 <div class="mb-4">

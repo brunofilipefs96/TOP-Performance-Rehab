@@ -196,21 +196,27 @@ class FreeTrainingController extends Controller
         $user = auth()->user();
 
         if ($user->hasRole('client') && (!$user->membership || $user->membership->status->name !== 'active')) {
-            return redirect()->route('free-trainings.index')->with('error', 'Você precisa de uma matrícula ativa para se inscrever neste treino.');
+            return redirect()->back()->with('error', 'Você precisa de uma matrícula ativa para se inscrever neste treino.');
         }
 
         if ($freeTraining->users()->where('user_id', $user->id)->exists()) {
-            return redirect()->route('free-trainings.index')->with('error', 'Já está inscrito neste treino livre.');
+            return redirect()->back()->with('error', 'Já está inscrito neste treino livre.');
         }
 
-        $overlappingTrainings = FreeTraining::where('start_date', '<', $freeTraining->end_date)
+        $overlappingFreeTrainings = FreeTraining::where('start_date', '<', $freeTraining->end_date)
             ->where('end_date', '>', $freeTraining->start_date)
             ->whereHas('users', function ($query) use ($user) {
                 $query->where('user_id', $user->id);
             })->exists();
 
-        if ($overlappingTrainings) {
-            return redirect()->route('free-trainings.index')->with('error', 'Já está inscrito noutro treino nesse horário.');
+        $overlappingTrainings = Training::where('start_date', '<', $freeTraining->end_date)
+            ->where('end_date', '>', $freeTraining->start_date)
+            ->whereHas('users', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })->exists();
+
+        if ($overlappingFreeTrainings || $overlappingTrainings) {
+            return redirect()->back()->with('error', 'Já está inscrito noutro treino ou treino livre nesse horário.');
         }
 
         $today = Carbon::today();
@@ -226,7 +232,7 @@ class FreeTrainingController extends Controller
             ->first();
 
         if (!$membershipPack) {
-            return redirect()->route('free-trainings.index')->with('error', 'Não possui nenhum pack disponível para se inscrever neste tipo de treino.');
+            return redirect()->back()->with('error', 'Não possui nenhum pack disponível para se inscrever neste tipo de treino.');
         }
 
         if ($freeTraining->users()->count() < $freeTraining->max_students) {
@@ -240,6 +246,7 @@ class FreeTrainingController extends Controller
             return redirect()->back()->with('error', 'O treino está cheio.');
         }
     }
+
 
 
     public function cancel(Request $request, FreeTraining $freeTraining)

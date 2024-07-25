@@ -4,7 +4,7 @@
             <div>
                 <h1 class="mb-2 dark:text-lime-400 font-semibold text-gray-800">Criar Serviço</h1>
             </div>
-                <form method="POST" action="{{ route('services.store') }}" id="serviceForm">
+                <form method="POST" action="{{ route('services.store') }}" id="serviceForm" onsubmit="disableConfirmButton(this)">
                     @csrf
                     <div class="mb-4">
                         <label for="name" class="block dark:text-white text-gray-800">Nome</label>

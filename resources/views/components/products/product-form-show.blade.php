@@ -41,7 +41,7 @@
 
             @if(!Auth::user()->hasRole('admin'))
                 <div class="flex justify-end items-center mb-4 mt-10">
-                    <form id="add-cart-form-{{$product->id}}" action="{{ route('cart.addProduct') }}" method="POST" class="inline">
+                    <form id="add-cart-form-{{$product->id}}" action="{{ route('cart.addProduct') }}" method="POST" class="inline" onsubmit="disableConfirmButton(this)">
                         @csrf
                         <input type="hidden" name="product_id" value="{{ $product->id }}">
                         <button type="submit" class="dark:bg-lime-500 bg-blue-500 text-white flex items-center px-4 py-2 rounded-md hover:bg-blue-400 dark:hover:bg-lime-400 mr-2">
@@ -59,7 +59,7 @@
                         Editar
                     </a>
                     @can('delete', $product)
-                        <form id="delete-form-{{$product->id}}" action="{{ url('products/' . $product->id) }}" method="POST" class="inline mr-2">
+                        <form id="delete-form-{{$product->id}}" action="{{ url('products/' . $product->id) }}" method="POST" class="inline mr-2" onsubmit="disableConfirmButton(this)">
                             @csrf
                             @method('DELETE')
                             <button type="button" class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500" onclick="confirmDelete({{ $product->id }})">

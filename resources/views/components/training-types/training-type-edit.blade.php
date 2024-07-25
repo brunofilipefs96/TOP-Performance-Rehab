@@ -9,7 +9,7 @@
             <div class="text-center mb-10">
                 <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Editar Tipo de Treino</h1>
             </div>
-            <form method="POST" id="update-form" action="{{ url('training-types/' . $training_type->id) }}" enctype="multipart/form-data">
+            <form method="POST" id="update-form" action="{{ url('training-types/' . $training_type->id) }}" enctype="multipart/form-data" onsubmit="disableConfirmButton(this)">
                 @csrf
                 @method('PUT')
                 @if($training_type->image && file_exists(public_path('storage/' . $training_type->image)))

@@ -18,7 +18,7 @@
                     @endif
                 </div>
             @else
-                <form method="POST" action="{{ route('trainings.update', $training) }}" id="trainingForm">
+                <form method="POST" action="{{ route('trainings.update', $training) }}" id="trainingForm" onsubmit="disableConfirmButton(this)">
                     @csrf
                     @method('PUT')
                     <div class="mb-4">

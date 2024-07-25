@@ -12,7 +12,7 @@
             <div class="text-center mb-4">
                 <p class="text-gray-600 dark:text-gray-300">Nesta página, pode definir os dias em que o ginásio estará fechado, incluindo domingos e feriados.</p>
             </div>
-            <form method="POST" action="{{ route('settings.closures.update') }}">
+            <form method="POST" action="{{ route('settings.closures.update') }}" onsubmit="disableConfirmButton(this)">
                 @csrf
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     @foreach (range(1, 12) as $month)

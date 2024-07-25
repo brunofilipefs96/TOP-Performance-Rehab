@@ -25,7 +25,7 @@
             <div class="text-center mb-10">
                 <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Renovar Seguro</h1>
             </div>
-            <form method="POST" action="{{ route('renew.updateInsurance', $user->membership->insurance) }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('renew.updateInsurance', $user->membership->insurance) }}" enctype="multipart/form-data" onsubmit="disableConfirmButton(this)">
                 @csrf
                 @if ($user->membership->insurance->status->name != 'awaiting_membership')
                     @method('POST')

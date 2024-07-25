@@ -89,7 +89,7 @@
                 </div>
             </div>
 
-            <form method="POST" action="{{ route('renew.updateMembership', $user->membership) }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('renew.updateMembership', $user->membership) }}" enctype="multipart/form-data" onsubmit="disableConfirmButton(this)">
                 @csrf
                 @method('POST')
                 <input type="hidden" name="address_id" id="address_id">

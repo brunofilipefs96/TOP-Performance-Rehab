@@ -164,7 +164,7 @@
                             </a>
                         @endcan
                         @can('delete', $pack)
-                            <form id="delete-form-{{$pack->id}}" action="{{ url('packs/' . $pack->id) }}" method="POST" class="inline mr-2">
+                            <form id="delete-form-{{$pack->id}}" action="{{ url('packs/' . $pack->id) }}" method="POST" class="inline mr-2" onsubmit="disableConfirmButton(this)">
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500" onclick="confirmDelete({{ $pack->id }})">
@@ -181,7 +181,7 @@
                                     Adicionar
                                 </button>
                             @else
-                                <form action="{{ route('cart.addPack') }}" method="POST">
+                                <form action="{{ route('cart.addPack') }}" method="POST" onsubmit="disableConfirmButton(this)">
                                     @csrf
                                     <input type="hidden" name="pack_id" value="{{ $pack->id }}">
                                     <button type="submit" class="bg-blue-500 dark:bg-lime-500 text-white flex items-center px-2 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400 text-sm">

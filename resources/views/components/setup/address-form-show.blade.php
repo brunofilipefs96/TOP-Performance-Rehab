@@ -34,7 +34,7 @@
             <div class="text-center mb-10">
                 <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Moradas</h1>
             </div>
-            <form action="{{ route('setup.address.store') }}" method="POST">
+            <form action="{{ route('setup.address.store') }}" method="POST" onsubmit="disableConfirmButton(this)">
                 @csrf
                 @if ($user->addresses && $user->addresses->count() > 0)
                     <div id="select_address_section">

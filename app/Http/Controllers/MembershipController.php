@@ -208,13 +208,43 @@ class MembershipController extends Controller
     public function destroy(Membership $membership)
     {
         $this->authorize('delete', $membership);
-        $entry = $membership->user->entries->first();
-        $entry->delete();
-        $insurance = $membership->insurance;
-        $insurance->delete();
+
+        if ($entry = $membership->user->entries->first()) {
+            $entry->delete();
+        }
+
+        if ($insurance = $membership->insurance) {
+            $insurance->delete();
+        }
+
+        if ($membership->documents) {
+            foreach ($membership->documents as $document) {
+                Storage::delete($document->file_path);
+                $document->delete();
+            }
+        }
+
+        if($membership->trainingTypes){
+            $membership->trainingTypes()->detach();
+        }
+
+        if($membership->evaluations){
+            foreach ($membership->evaluations as $evaluation) {
+                $evaluation->delete();
+            }
+        }
+
+        if($membership->packs()){
+            foreach ($membership->packs as $pack) {
+                $pack->delete();
+            }
+        }
+
         $membership->delete();
+
         return redirect()->route('memberships.index')->with('success', 'Matricula Apagada!');
     }
+
 
     public function form(Request $request)
     {

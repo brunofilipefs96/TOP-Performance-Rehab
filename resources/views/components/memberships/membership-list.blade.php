@@ -69,7 +69,7 @@
                            class="bg-blue-500 dark:bg-lime-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:hover:bg-lime-400">Mostrar</a>
                         @can('delete', $membership)
                             <form id="delete-form-{{ $membership->id }}"
-                                  action="{{ url('memberships/' . $membership->id) }}" method="POST" class="inline-block">
+                                  action="{{ url('memberships/' . $membership->id) }}" method="POST" class="inline-block" onsubmit="disableConfirmButton(this)">
                                 @csrf
                                 @method('DELETE')
                                 <button type="button"

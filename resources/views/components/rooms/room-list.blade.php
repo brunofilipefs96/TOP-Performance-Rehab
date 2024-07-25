@@ -31,7 +31,7 @@
                         </a>
                     @endcan
                     @can('delete', $room)
-                            <form id="delete-form-{{$room->id}}" action="{{ url('rooms/' . $room->id) }}" method="POST" class="inline">
+                            <form id="delete-form-{{$room->id}}" action="{{ url('rooms/' . $room->id) }}" method="POST" class="inline" onsubmit="disableConfirmButton(this)">
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" class="bg-red-600 rounded-md text-white px-2 py-1 hover:bg-red-500 flex items-center mt-2 h-7" id="delete-button" onclick="confirmarEliminacao({{ $room->id }})">

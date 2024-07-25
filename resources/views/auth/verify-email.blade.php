@@ -8,15 +8,17 @@
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet"/>
 
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased dark:text-white/50 select-none">
 <div class="text-black/50 dark:text-white/50 dark:bg-gray-800">
-    <div class="relative min-h-screen flex flex-col items-center justify-center selection:bg-[#FF2D20] selection:text-white">
-        <div class="relative w-11/12 max-w-xl lg:max-w-6xl px-4 lg:px-12 shadow-2xl rounded-2xl mx-4 lg:mx-auto dark:bg-gray-900 bg-gray-100">
+    <div
+        class="relative min-h-screen flex flex-col items-center justify-center selection:bg-[#FF2D20] selection:text-white">
+        <div
+            class="relative w-11/12 max-w-xl lg:max-w-6xl px-4 lg:px-12 shadow-2xl rounded-2xl mx-4 lg:mx-auto dark:bg-gray-900 bg-gray-100">
             <header class="grid grid-cols-1 lg:grid-cols-3 items-center gap-2 py-10">
                 <div class="text-center lg:text-left">
                     <h1 class="font-bold text-2xl">
@@ -61,7 +63,7 @@
                     @endif
                 </div>
                 <script>
-                    (function() {
+                    (function () {
                         function applyTheme(theme) {
                             if (theme === "dark") {
                                 document.documentElement.classList.add("dark");
@@ -98,7 +100,7 @@
                 @endif
 
                 <div class="mt-4 flex items-center justify-between w-full max-w-md">
-                    <form method="POST" action="{{ route('verification.send') }}">
+                    <form method="POST" action="{{ route('verification.send') }}" onsubmit="disableConfirmButton(this)">
                         @csrf
 
                         <div>
@@ -108,12 +110,14 @@
                         </div>
                     </form>
 
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
+                    <form method=" POST
+                    " action="{{ route('logout') }}" onsubmit="disableConfirmButton(this)>
+                    @csrf
 
-                        <button type="submit" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
-                            {{ __('Log Out') }}
-                        </button>
+                    <button type="submit"
+                            class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
+                        {{ __('Log Out') }}
+                    </button>
                     </form>
                 </div>
             </main>

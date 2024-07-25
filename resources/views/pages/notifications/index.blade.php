@@ -8,14 +8,14 @@
                     <h3 class="text-2xl font-medium mb-3 text-center">Notificações</h3>
 
                     <div class="flex justify-between mb-4">
-                        <form action="{{ route('notifications.markAllAsRead') }}" method="POST">
+                        <form action="{{ route('notifications.markAllAsRead') }}" method="POST" onsubmit="disableConfirmButton(this)">
                             @csrf
                             @method('PATCH')
                             <button type="submit" class="bg-blue-500 dark:bg-lime-500 hover:bg-blue-400 dark:hover:bg-lime-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                 Marcar todas como lidas
                             </button>
                         </form>
-                        <form action="{{ route('notifications.deleteAll') }}" method="POST">
+                        <form action="{{ route('notifications.deleteAll') }}" method="POST" onsubmit="disableConfirmButton(this)">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">

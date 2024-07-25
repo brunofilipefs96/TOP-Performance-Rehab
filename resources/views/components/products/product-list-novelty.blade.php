@@ -27,7 +27,7 @@
                 </a>
                 <div class="flex justify-end items-center p-4 mt-auto space-x-2">
                     @if(!Auth::user()->hasRole('admin'))
-                        <form id="add-cart-form-{{$product->id}}" action="{{ url('cart/add') }}" method="POST" class="inline text-sm">
+                        <form id="add-cart-form-{{$product->id}}" action="{{ url('cart/add') }}" method="POST" class="inline text-sm" onsubmit="disableConfirmButton(this)">
                             @csrf
                             @method('POST')
                             <input type="hidden" name="product_id" value="{{ $product->id }}">

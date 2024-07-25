@@ -78,7 +78,7 @@
                     @endcan
                     @can('delete', $product)
                         <form id="delete-form-{{$product->id}}" action="{{ url('products/' . $product->id) }}"
-                              method="POST" class="inline text-sm">
+                              method="POST" class="inline text-sm" onsubmit="disableConfirmButton(this)">
                             @csrf
                             @method('DELETE')
                             <button type="button"
@@ -91,7 +91,7 @@
                     @endcan
                     @if(!Auth::user()->hasRole('admin'))
                         <form id="add-cart-form-{{$product->id}}" action="{{ route('cart.addProduct') }}" method="POST"
-                              class="inline text-sm">
+                              class="inline text-sm" onsubmit="disableConfirmButton(this)">
                             @csrf
                             @method('POST')
                             <input type="hidden" name="product_id" value="{{ $product->id }}">

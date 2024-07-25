@@ -77,6 +77,9 @@ class User extends Authenticatable implements MustVerifyEmail
                 if (Schema::hasTable('training_user')) {
                     $user->trainings()->detach();
                 }
+                if (Schema::hasTable('notification_user')) {
+                    $user->notifications()->detach();
+                }
             } else {
                 if (Schema::hasColumn('trainings', 'personal_trainer_id')) {
                     $user->trainingsAsPersonalTrainer()->delete();
@@ -104,6 +107,9 @@ class User extends Authenticatable implements MustVerifyEmail
                 }
                 if (Schema::hasTable('training_user')) {
                     $user->trainings()->detach();
+                }
+                if (Schema::hasTable('notification_user')) {
+                    $user->notifications()->detach();
                 }
             }
         });

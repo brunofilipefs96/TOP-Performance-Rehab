@@ -22,7 +22,7 @@
                 </div>
             </div>
 
-            <form method="POST" action="{{ route('password.store') }}">
+            <form method="POST" action="{{ route('password.store') }}" onsubmit="disableConfirmButton(this)">
                 @csrf
 
                 <!-- Password Reset Token -->

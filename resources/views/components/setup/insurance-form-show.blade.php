@@ -35,7 +35,7 @@
                 <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Seguro</h1>
             </div>
 
-            <form method="POST" action="{{ route('insurances.store') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('insurances.store') }}" enctype="multipart/form-data" onsubmit="disableConfirmButton(this)">
                 @csrf
                 <div class="mb-4">
                     <label class="block text-sm font-medium dark:text-gray-200 text-gray-800 mt-6">Tipo de Seguro</label>

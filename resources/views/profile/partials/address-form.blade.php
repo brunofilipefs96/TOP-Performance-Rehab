@@ -23,7 +23,7 @@
             <button id="create-address-button" type="button" class="inline-flex items-center px-4 py-2 mt-6 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150" onclick="createAddress()">Inserir Morada</button>
         </div>
         <h1 id="form-title" class="text-lg mt-10 text-gray-800 dark:text-gray-200">Detalhes</h1>
-        <form id="updateAddressForm" method="POST" action="{{ route('addresses.update', $user->addresses->first()->id) }}" class="mt-2 space-y-6">
+        <form id="updateAddressForm" method="POST" action="{{ route('addresses.update', $user->addresses->first()->id) }}" class="mt-2 space-y-6" onsubmit="disableConfirmButton(this)">
             @csrf
             @method('put')
 
@@ -76,7 +76,7 @@
                 <button type="button" class="inline-flex items-center px-4 py-2 bg-red-500 hover:bg-red-400 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150" id="delete-button" onclick="deleteAddress()">Eliminar</button>
             </div>
         </form>
-        <form id="delete-form" action="" method="POST" class="hidden">
+        <form id="delete-form" action="" method="POST" class="hidden" onsubmit="disableConfirmButton(this)">
             @csrf
             @method('DELETE')
         </form>
@@ -94,7 +94,7 @@
     <div id="create-address-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 @if ($errors->any()) block @else hidden @endif">
         <div class="bg-gray-300 p-6 rounded-md shadow-md w-96 dark:bg-gray-900">
             <h2 class="text-xl font-bold mb-4 dark:text-white text-gray-800">Inserir Morada</h2>
-            <form id="createAddressForm" method="POST" action="{{ route('addresses.store') }}" class="mt-2 space-y-6">
+            <form id="createAddressForm" method="POST" action="{{ route('addresses.store') }}" class="mt-2 space-y-6" onsubmit="disableConfirmButton(this)">
                 @csrf
 
                 <!-- Nome da Morada -->

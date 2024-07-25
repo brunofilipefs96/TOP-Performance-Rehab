@@ -48,4 +48,11 @@
             </div>
         </div>
     </body>
+    <script>
+        function disableConfirmButton(form) {
+            const button = form.querySelector('button[type="submit"]');
+            button.disabled = true;
+            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin w-4 h-4 mr-2"></i>Aguarde...';
+        }
+    </script>
 </html>

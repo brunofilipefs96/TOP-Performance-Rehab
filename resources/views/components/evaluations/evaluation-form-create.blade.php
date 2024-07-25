@@ -4,7 +4,7 @@
             <div class="text-center mb-10">
                 <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Adicionar Avaliação</h1>
             </div>
-            <form method="POST" action="{{ route('memberships.evaluations.store', ['membership' => $membership->id]) }}" enctype="multipart/form-data" id="evaluationForm">
+            <form method="POST" action="{{ route('memberships.evaluations.store', ['membership' => $membership->id]) }}" enctype="multipart/form-data" id="evaluationForm" onsubmit="disableConfirmButton(this)">
                 @csrf
                 <input type="hidden" name="membership_id" value="{{ $membership->id }}">
 
@@ -183,7 +183,6 @@
     document.getElementById('evaluationForm').addEventListener('submit', function(event) {
         const formData = new FormData(this);
         selectedFiles.forEach(file => formData.append('documents[]', file));
-        // Substituindo a submissão padrão pelo fetch para garantir que os arquivos sejam enviados
         event.preventDefault();
 
         fetch(this.action, {
@@ -195,12 +194,9 @@
         }).then(response => response.json()).then(data => {
             if (data.success) {
                 window.location.href = data.redirect;
-            } else {
-                alert('Erro ao criar avaliação.');
             }
         }).catch(error => {
             console.error('Erro:', error);
-            alert('Erro ao criar avaliação.');
         });
     });
 </script>

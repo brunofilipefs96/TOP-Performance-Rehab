@@ -121,7 +121,13 @@ class PackController extends Controller
     public function destroy(Pack $pack)
     {
         $this->authorize('delete', $pack);
+
+        if($pack->memberships()){
+            $pack->memberships()->detach();
+        }
+
         $pack->delete();
+
         return redirect()->route('packs.index')->with('success', 'Pack deleted successfully.');
     }
 }

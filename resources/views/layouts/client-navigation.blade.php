@@ -35,7 +35,7 @@
                             </a>
                         @endif
                         <span class="flex flex-col mt-2 content-center">
-                            <span class="text-lg text-gray-300">{{$user->firstLastName()}}</span>
+                            <span class="text-xl dark:text-gray-300 text-gray-900 font-bold antialiased">{{$user->firstLastName()}}</span>
                         </span>
                     </div>
                 </div>
@@ -154,7 +154,7 @@
                 <div class="flex justify-center mb-8 space-x-4">
                     <!-- Notification Bell Icon -->
                     <button @click="notificationOpen = !notificationOpen"
-                            class="relative flex items-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
+                            class="relative flex items-center text-gray-800 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
                         <i class="fa-solid fa-bell w-6 h-6 text-lg"></i>
                         @if($unreadNotificationsCount > 0)
                             <span
@@ -164,7 +164,7 @@
 
                     <!-- Theme Toggle Button -->
                     <button id="theme-toggle-client" type="button"
-                            class="flex items-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 theme-toggle-btn">
+                            class="flex items-center text-gray-800 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 theme-toggle-btn">
                         <svg id="theme-toggle-dark-icon-client" class="theme-toggle-dark-icon hidden w-5 h-5 mx-auto"
                              fill="currentColor" viewBox="0 0 20 20"
                              xmlns="http://www.w3.org/2000/svg">
@@ -261,7 +261,7 @@
 
                         <!-- Notification Bell Icon -->
                         <button @click="notificationOpen = !notificationOpen" type="button"
-                                class="relative text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 ml-2">
+                                class="relative text-gray-800 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 ml-2">
                             <i class="fa-solid fa-bell w-6 h-6 text-lg"></i>
                             @if($unreadNotificationsCount > 0)
                                 <span
@@ -318,7 +318,7 @@
 
                         <!-- Theme Toggle Button -->
                         <button id="theme-toggle-client" type="button"
-                                class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 ml-2 theme-toggle-btn">
+                                class="text-gray-800 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 ml-2 theme-toggle-btn">
                             <svg id="theme-toggle-dark-icon-client"
                                  class="theme-toggle-dark-icon hidden w-5 h-5 mx-auto"
                                  fill="currentColor" viewBox="0 0 20 20"

@@ -29,7 +29,7 @@
             <div class="mb-4">
                 <p class="text-sm text-gray-800 dark:text-gray-200">Preencha todas as informações das definições de ginásio para o site ficar ativo.</p>
             </div>
-            <form method="POST" action="{{ route('settings.update') }}">
+            <form method="POST" action="{{ route('settings.update') }}" onsubmit="disableConfirmButton(this)">
                 @csrf
                 @method('PUT')
 

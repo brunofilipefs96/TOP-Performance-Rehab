@@ -35,7 +35,7 @@
                     </ul>
                 </div>
             @endif
-            <form method="POST" action="{{ route('free-trainings.store') }}" id="freeTrainingForm">
+            <form method="POST" action="{{ route('free-trainings.store') }}" id="freeTrainingForm" onsubmit="disableConfirmButton(this)">
                 @csrf
                 <div class="mb-4">
                     <label for="training_type_id" class="block dark:text-white text-gray-800">Tipo de Treino</label>

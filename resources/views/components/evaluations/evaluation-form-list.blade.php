@@ -60,7 +60,7 @@
                                 </button>
                                 <form id="delete-form-{{ $evaluation->id }}"
                                       action="{{ route('memberships.evaluations.destroy', ['membership' => $membership->id, 'evaluation' => $evaluation->id]) }}"
-                                      method="POST" style="display:none;">
+                                      method="POST" style="display:none;" onsubmit="disableConfirmButton(this)">
                                     @csrf
                                     @method('DELETE')
                                 </form>
@@ -89,7 +89,7 @@
                         onclick="cancelDelete()">Cancelar
                 </button>
                 <button type="button" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500"
-                        onclick="confirmDelete()">Confirmar
+                        onclick="confirmDelete();">Confirmar
                 </button>
             </div>
         </div>

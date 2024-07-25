@@ -45,7 +45,7 @@
                         </a>
                     @endcan
                     @can('delete', $training_type)
-                        <form id="delete-form-{{$training_type->id}}" action="{{ url('training-types/' . $training_type->id) }}" method="POST" class="inline text-sm">
+                        <form id="delete-form-{{$training_type->id}}" action="{{ url('training-types/' . $training_type->id) }}" method="POST" class="inline text-sm" onsubmit="disableConfirmButton(this)">
                             @csrf
                             @method('DELETE')
                             <button type="button" class="bg-red-600 text-white flex items-center px-2 py-1 rounded-md hover:bg-red-500" id="delete-button" onclick="confirmarEliminacao({{ $training_type->id }})">

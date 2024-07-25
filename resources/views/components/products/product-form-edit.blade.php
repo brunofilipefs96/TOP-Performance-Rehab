@@ -9,7 +9,7 @@
             <div class="text-center">
                 <h1 class="mb-8 mt-4 dark:text-lime-400 text-gray-800 font-semibold">Editar Produto</h1>
             </div>
-            <form method="POST" id="update-form" action="{{ route('products.update', $product->id) }}" enctype="multipart/form-data">
+            <form method="POST" id="update-form" action="{{ route('products.update', $product->id) }}" enctype="multipart/form-data" onsubmit="disableConfirmButton(this)">
                 @csrf
                 @method('PUT')
                 @if($product->image && file_exists(public_path('storage/' . $product->image)))

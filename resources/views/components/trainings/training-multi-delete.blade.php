@@ -18,7 +18,7 @@
                 </div>
             @endif
 
-            <form id="filterForm" method="GET" action="{{ route('trainings.showMultiDelete') }}" class="mb-5">
+            <form id="filterForm" method="GET" action="{{ route('trainings.showMultiDelete') }}" class="mb-5" onsubmit="disableConfirmButton(this)">
                 <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-4 justify-start">
                     @if(auth()->user()->hasRole('admin'))
                         <div class="flex items-center space-x-2">
@@ -48,7 +48,7 @@
             </form>
 
             @if($trainings->count() > 0)
-                <form id="deleteForm" method="POST" action="{{ route('trainings.multiDelete') }}">
+                <form id="deleteForm" method="POST" action="{{ route('trainings.multiDelete') }}" onsubmit="disableConfirmButton(this)">
                     @csrf
                     @method('DELETE')
                     <div class="overflow-x-auto">

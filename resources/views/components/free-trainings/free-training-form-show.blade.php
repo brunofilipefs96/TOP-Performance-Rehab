@@ -44,7 +44,7 @@
                     @else
                         @if ($currentDateTime->gte($trainingStartDateTime))
                             @if (!$presenceMarked)
-                                <form action="{{ route('free-trainings.markPresence', $freeTraining->id) }}" method="POST">
+                                <form action="{{ route('free-trainings.markPresence', $freeTraining->id) }}" method="POST" onsubmit="disableConfirmButton(this)">
                                     @csrf
                                     <table class="min-w-full bg-white dark:bg-gray-800">
                                         <thead>
@@ -140,7 +140,7 @@
                     @if($currentDateTime->lt($trainingStartDateTime))
                         <div class="flex justify-end items-center mb-4 mt-10">
                             <form id="delete-form-{{$freeTraining->id}}" action="{{ route('free-trainings.destroy', $freeTraining->id) }}"
-                                  method="POST" class="inline mr-2">
+                                  method="POST" class="inline mr-2" onsubmit="disableConfirmButton(this)">
                                 @csrf
                                 @method('DELETE')
                                 <button type="button"

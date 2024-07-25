@@ -49,7 +49,7 @@
                     <div class="mb-4">
                         <label for="cc_number" class="block text-gray-800 dark:text-white">Número de Cartão de Cidadão</label>
                         <input type="text" id="cc_number" name="cc_number"
-                               class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white"
+                               class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 rounded-md shadow-sm text-gray-800 placeholder-gray-500 dark:bg-gray-600 dark:text-white dark:focus:border-lime-400 dark:focus:ring-lime-400 dark:focus:ring-opacity-50"
                                value="{{ old('cc_number') }}" required>
                         @error('cc_number')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>

@@ -19,7 +19,7 @@
             @endif
 
             @if($freeTrainings->count() > 0)
-                <form id="deleteForm" method="POST" action="{{ route('free-trainings.multiDelete') }}">
+                <form id="deleteForm" method="POST" action="{{ route('free-trainings.multiDelete') }}" onsubmit="disableConfirmButton(this)">
                     @csrf
                     @method('DELETE')
                     <div class="overflow-x-auto">

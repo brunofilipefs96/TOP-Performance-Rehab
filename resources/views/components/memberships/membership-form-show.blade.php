@@ -218,7 +218,7 @@
                                 <div class="flex justify-center">
                                     <form
                                         action="{{ route('memberships.update', ['membership' => $membership->id]) }}"
-                                        method="POST">
+                                        method="POST" onsubmit="disableConfirmButton(this)">
                                         @csrf
                                         @method('PATCH')
                                         @if($membership->status->name == 'pending')
@@ -237,7 +237,7 @@
                                     </form>
                                     <form
                                         action="{{ route('memberships.update', ['membership' => $membership->id]) }}"
-                                        method="POST">
+                                        method="POST" onsubmit="disableConfirmButton(this)">
                                         @csrf
                                         @method('PATCH')
                                         <input type="hidden" name="status_name" value="rejected">
@@ -252,7 +252,7 @@
                                 <div class="flex items-center">
                                     <form
                                         action="{{ route('memberships.update', ['membership' => $membership->id]) }}"
-                                        method="POST">
+                                        method="POST" onsubmit="disableConfirmButton(this)">
                                         @csrf
                                         @method('PATCH')
                                         <input type="hidden" name="status_name" value="frozen">
@@ -290,7 +290,7 @@
                                                 </button>
                                                 <form id="delete-form-{{ $document->id }}"
                                                       action="{{ route('memberships.deleteDocument', [$membership->id, $document->id]) }}"
-                                                      method="POST" style="display:none;">
+                                                      method="POST" style="display:none;" onsubmit="disableConfirmButton(this)">
                                                     @csrf
                                                     @method('DELETE')
                                                 </form>
@@ -305,7 +305,7 @@
                                 <div class="mt-4">
                                     <form id="document-upload-form"
                                           action="{{ route('memberships.addDocument', $membership->id) }}" method="POST"
-                                          enctype="multipart/form-data" class="flex flex-col items-start space-y-2">
+                                          enctype="multipart/form-data" class="flex flex-col items-start space-y-2" onsubmit="disableConfirmButton(this)">
                                         @csrf
                                         <ul id="selected-files-list"
                                             class="list-disc pl-5 text-gray-800 dark:text-gray-200"></ul>

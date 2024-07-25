@@ -86,6 +86,13 @@ class EvaluationController extends Controller
     public function destroy(Membership $membership, Evaluation $evaluation)
     {
         $this->authorize('delete', $evaluation);
+
+        if($evaluation->documents())
+        foreach ($evaluation->documents as $document) {
+            Storage::delete($document->file_path);
+            $document->delete();
+        }
+
         $evaluation->delete();
         return redirect()->route('memberships.evaluations.list', ['membership' => $evaluation->membership_id])
             ->with('success', 'Avaliação eliminada com sucesso!');

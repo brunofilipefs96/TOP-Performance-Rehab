@@ -214,6 +214,13 @@ class InsuranceController extends Controller
     {
         $this->authorize('delete', $insurance);
 
+        if ($insurance->documents) {
+            foreach ($insurance->documents as $document) {
+                Storage::delete($document->file_path);
+                $document->delete();
+            }
+        }
+
         $insurance->delete();
 
         return Redirect::back()->with('success', 'Insurance Deleted!');

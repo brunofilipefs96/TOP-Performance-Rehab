@@ -36,9 +36,34 @@
             </div>
 
             <div class="mb-4">
-                <label for="name" class="block text-gray-800 dark:text-white">Nome</label>
+                <label for="name" class="block text-gray-800 dark:text-white">Nome Completo</label>
                 <input type="text" value="{{ Auth::user()->full_name }}" disabled
                        class="mt-1 block w-full p-2 border-gray-300 border dark:border-gray-600 text-gray-800 rounded-md shadow-sm dark:bg-gray-600 dark:text-white">
+            </div>
+
+            <div class="items-center mt-6 mb-4">
+                <label for="name" class="block text-gray-800 dark:text-white mb-1">Ficha de Anamnese</label>
+                @if ($user->entries && $user->entries->count() > 0)
+                    @foreach ($user->entries as $entry)
+                        @if ($entry->survey_id == 1)
+                            <a href="{{ url('entries/'.$entry->id) }}" class="mt-2">
+                                <button type="button"
+                                        class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm w-full justify-center max-w-[150px]">
+                                    Ver Respostas
+                                </button>
+                            </a>
+                        @endif
+                    @endforeach
+                @else
+                    <div class="items-center mt-2">
+                        <a href="{{ url('entries/1/fill') }}">
+                            <button type="button"
+                                    class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm w-full justify-center max-w-[150px]">
+                                Preencher
+                            </button>
+                        </a>
+                    </div>
+                @endif
             </div>
 
             <form id="membership-form" method="POST" action="{{ route('memberships.store') }}" enctype="multipart/form-data" onsubmit="return validateForm()">
@@ -84,6 +109,10 @@
                                         @if($loop->first) selected @endif>{{ $address->name }}</option>
                             @endforeach
                         </select>
+                        <a href="{{ route('setup.addressShow') }}"
+                           class="bg-blue-500 dark:bg-lime-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm mt-4 mb-5 shadow-sm w-full justify-center max-w-[320px]">
+                            Inserir Nova Morada
+                        </a>
                     </div>
 
                     <!-- Label de Verificação de Morada -->
@@ -127,36 +156,7 @@
                     </p>
                 @endif
 
-                <div class="flex items-center mt-6 mb-4">
-                    @if ($user->entries && $user->entries->count() > 0)
-                        @foreach ($user->entries as $entry)
-                            @if ($entry->survey_id == 1)
-                                <a href="{{ url('entries/'.$entry->id) }}">
-                                    <button type="button"
-                                            class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm w-full justify-center max-w-[150px]">
-                                        Ver Formulário
-                                    </button>
-                                </a>
-                            @endif
-                        @endforeach
-                    @else
-                        <div class="flex items-center mt-6">
-                            <a href="{{ url('entries/1/fill') }}">
-                                <button type="button"
-                                        class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-400 dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-800 font-semibold flex items-center text-sm w-full justify-center max-w-[150px]">
-                                    Preencher Formulário
-                                </button>
-                            </a>
-                        </div>
-                    @endif
-                </div>
-
                 <div class="flex justify-between items-center gap-2">
-                    <a href="{{ route('setup.addressShow') }}"
-                       class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-700 font-semibold flex items-center text-sm mt-4 mb-5 shadow-sm w-full justify-center max-w-[100px]">
-                        <i class="fa-solid fa-arrow-left w-4 h-4 mr-2"></i>
-                        Voltar
-                    </a>
                     <div class="flex gap-2 items-center">
                         @if(!$user->membership)
                             @if($user->entries->count() > 0 )
@@ -167,7 +167,7 @@
                                 </button>
                             @else
                                 <p class="mt-1 text-sm dark:text-gray-300 text-gray-600">
-                                    {{ __("Por favor, preencha primeiro o formulário para prosseguir.") }}
+                                    {{ __("Por favor, preencha primeiro a Ficha de Anamnese para prosseguir..") }}
                                 </p>
                             @endif
                         @else

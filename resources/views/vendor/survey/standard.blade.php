@@ -21,12 +21,15 @@
         <div id="sections-container">
             @foreach($survey->sections as $section)
                 <div class="section" data-section-id="{{ $section->id }}" style="display: none;">
-                    @include('survey::sections.single', ['section' => $section])
                     @if ($section->id == 2) <!-- Assumindo que a seção 2 tem id 2 -->
-                    <p class="section-message">
+                    <p class="text-red-500 dark:text-yellow-500 section-message">
+                        Devido às suas respostas na página anterior, não recomendamos que prossiga com o questionário sem antes contactar o seu médico.
+                    </p>
+                    <p class="text-red-500 dark:text-yellow-500 section-message mb-4">
                         Se tiver alguma dúvida ou questão, não hesite em contactar-nos.
                     </p>
                     @endif
+                    @include('survey::sections.single', ['section' => $section])
                 </div>
             @endforeach
 
@@ -37,7 +40,7 @@
 
         @if($eligible)
             <div class="navigation-buttons mt-4 mb-5">
-                <button type="button" id="prev-button" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:hover:bg-lime-300 dark:text-gray-900">Anterior</button>
+                <button type="button" id="prev-button" class="bg-gray-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-gray-400 dark:bg-gray-400 dark:hover:bg-gray-300 dark:text-gray-900">Anterior</button>
                 <button type="button" id="next-button" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:hover:bg-lime-300 dark:text-gray-900">Próximo</button>
                 <button type="submit" id="submit-button" style="display: none;" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-400 dark:bg-lime-400 dark:hover:bg-lime-300 dark:text-gray-900">Enviar Formulário</button>
                 <button type="button" id="exit-button" style="display: none;" class="bg-red-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-red-400 dark:bg-red-400 dark:hover:bg-red-300 dark:text-gray-900">Sair</button>
@@ -423,10 +426,6 @@
 
 <style>
     .section-message {
-        color: #4A5568; /* text-gray-600 */
         margin-top: 1rem;
-    }
-    .dark .section-message {
-        color: #A0AEC0; /* dark:text-gray-400 */
     }
 </style>

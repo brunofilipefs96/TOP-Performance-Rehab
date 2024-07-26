@@ -4,6 +4,8 @@
     // Separar usuários inscritos e cancelados
     $registeredUsers = $training->users()->wherePivot('cancelled', false)->get();
     $cancelledUsers = $training->users()->wherePivot('cancelled', true)->get();
+    $currentDateTime = Carbon::now();
+    $trainingStartDateTime = Carbon::parse($training->start_date);
 @endphp
 
 <div class="container mx-auto mt-10 mb-10 pt-5 glass">
@@ -57,11 +59,8 @@
             @php
                 $userPresence = $training->users()->where('user_id', auth()->id())->exists();
                 $userCancelled = $training->users()->where('user_id', auth()->id())->wherePivot('cancelled', true)->exists();
-                $currentDateTime = Carbon::now();
                 $maxCapacity = $training->capacity ?? $training->trainingType->max_capacity;
                 $remainingSpots = $maxCapacity - $registeredUsers->count();
-                $trainingStartDateTime = Carbon::parse($training->start_date);
-                $trainingEndDateTime = Carbon::parse($training->end_date);
                 $userHasActiveMembership = auth()->user()->membership && auth()->user()->membership->status->name === 'active';
                 $presenceMarked = $registeredUsers->every(fn($user) => !is_null($user->pivot->presence));
 
@@ -136,9 +135,11 @@
                                                     </td>
                                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-right">
                                                         @if (auth()->user()->hasRole('admin') || auth()->user()->id === $training->personal_trainer_id)
+                                                            @if ($currentDateTime->lt($trainingStartDateTime)) <!-- Adicionando a verificação aqui -->
                                                             <button type="button" class="text-red-500 hover:text-red-700" onclick="confirmRemoveUser({{ $training->id }}, {{ $user->id }})">
                                                                 <i class="fa-solid fa-trash"></i>
                                                             </button>
+                                                            @endif
                                                         @endif
                                                     </td>
                                                 </tr>
@@ -185,9 +186,11 @@
                                             </td>
                                             <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-right">
                                                 @if (auth()->user()->hasRole('admin') || auth()->user()->id === $training->personal_trainer_id)
+                                                    @if ($currentDateTime->lt($trainingStartDateTime)) <!-- Adicionando a verificação aqui -->
                                                     <button type="button" class="text-red-500 hover:text-red-700" onclick="confirmRemoveUser({{ $training->id }}, {{ $user->id }})">
                                                         <i class="fa-solid fa-trash"></i>
                                                     </button>
+                                                    @endif
                                                 @endif
                                             </td>
                                         </tr>
@@ -203,9 +206,11 @@
                                             {{ $user->firstLastName() }}
                                         </a>
                                         @if (auth()->user()->hasRole('admin') || auth()->user()->id === $training->personal_trainer_id)
+                                            @if ($currentDateTime->lt($trainingStartDateTime)) <!-- Adicionando a verificação aqui -->
                                             <button type="button" class="text-red-500 hover:text-red-700" onclick="confirmRemoveUser({{ $training->id }}, {{ $user->id }})">
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>
+                                            @endif
                                         @endif
                                     </li>
                                 @endforeach

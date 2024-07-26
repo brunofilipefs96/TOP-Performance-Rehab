@@ -340,7 +340,7 @@ class FreeTrainingController extends Controller
         $freeTraining->delete();
 
         if (str_contains(url()->previous(), route('free-trainings.show', $freeTraining->id))) {
-            return redirect()->route('free-trainings.index')->with('success', 'Treino livre eliminado com sucesso.');
+            return redirect()->back()->with('success', 'Treino livre eliminado com sucesso.');
         } else {
             return redirect()->back()->with('success', 'Treino livre eliminado com sucesso.');
         }

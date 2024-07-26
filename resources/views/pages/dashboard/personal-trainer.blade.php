@@ -29,7 +29,7 @@
                         </div>
                     @endif
 
-                    <p class="mt-2 text-gray-600 dark:text-gray-300">Tem privilégios de Personal Trainer</p>
+                    <p class="text-lg">Os alunos estão à sua espera! Aqui pode ver os treinos que tem agendados ou agendar novos treinos.</p>
 
                     <hr class="my-6 border-gray-400 dark:border-gray-600">
 

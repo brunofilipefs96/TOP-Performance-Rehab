@@ -38,6 +38,9 @@ Route::get('/', function () {
     }
 });
 
+Route::get('/faq', function () {
+    return view('pages.faq.index');
+})->name('faq.index');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
@@ -79,8 +82,9 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::c
     Route::resource('/training-types', TrainingTypeController::class);
     Route::resource('/packs', PackController::class);
     Route::resource('/insurances', InsuranceController::class);
-    Route::resource('/services', ServiceController::class);
     Route::resource('/memberships', MembershipController::class);
+
+    //Route::resource('/services', ServiceController::class);
 
 
     Route::get('/entries/{survey}/fill', [EntryController::class, 'fill'])->name('entries.fill');
@@ -166,10 +170,6 @@ Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::c
     Route::delete('/sales/{sale}/documents/{document}', [SaleController::class, 'deleteDocument'])->name('sales.deleteDocument');
     Route::resource('/sales', SaleController::class)->only(['index', 'show']);
     Route::get('/sales/{sale}/payment-reference', [SaleController::class, 'showPaymentReference'])->name('sales.showPaymentReference');
-
-    Route::get('/faq', function () {
-        return view('pages.faq.index');
-    })->name('faq.index');
 
     Route::get('/calendar', [DashboardController::class, 'showCalendar'])->name('calendar');
 });

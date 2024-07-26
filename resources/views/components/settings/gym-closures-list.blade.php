@@ -10,7 +10,8 @@
                 <h1 class="text-xl font-bold text-gray-800 dark:text-lime-400">Datas de Fecho</h1>
             </div>
             <div class="text-center mb-4">
-                <p class="text-gray-600 dark:text-gray-300">Nesta página, pode definir os dias em que o ginásio estará fechado, incluindo domingos e feriados.</p>
+                <p class="text-gray-600 dark:text-gray-300">Nesta página, pode definir os dias em que o ginásio estará encerrado.</p>
+                <p class="text-gray-600 dark:text-gray-300">O ginásio encontra-se sempre encerrado aos domingos, não sendo possível alterar.</p>
             </div>
             <form method="POST" action="{{ route('settings.closures.update') }}" onsubmit="disableConfirmButton(this)">
                 @csrf
@@ -39,8 +40,9 @@
                                     @php
                                         $date = date('Y') . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-' . str_pad($day, 2, '0', STR_PAD_LEFT);
                                         $isClosed = in_array($date, $closures);
+                                        $isSunday = (new DateTime($date))->format('N') == 7;
                                     @endphp
-                                    <div class="cursor-pointer rounded-full day-circle {{ $isClosed ? 'bg-blue-500 dark:bg-lime-500 text-white dark:text-black' : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200' }}" data-date="{{ $date }}">
+                                    <div class="cursor-pointer rounded-full day-circle {{ $isClosed ? 'bg-red-500 dark:bg-red-500 text-white dark:text-black' : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200' }} {{ $isSunday ? 'bg-red-500 dark:bg-red-500 text-white dark:text-black' : '' }}" data-date="{{ $date }}" {{ $isSunday ? 'data-sunday="true"' : '' }}>
                                         {{ $day }}
                                     </div>
                                 @endforeach
@@ -77,13 +79,17 @@
         closureElements.forEach(el => {
             el.addEventListener('click', function() {
                 const date = this.dataset.date;
+                const isSunday = this.hasAttribute('data-sunday');
+                if (isSunday) {
+                    return;
+                }
                 if (closureDates.includes(date)) {
                     closureDates.splice(closureDates.indexOf(date), 1);
-                    this.classList.remove('bg-blue-500', 'dark:bg-lime-500', 'text-white', 'dark:text-black');
+                    this.classList.remove('bg-red-500', 'dark:bg-red-500', 'text-white', 'dark:text-black');
                     this.classList.add('bg-white', 'dark:bg-gray-800', 'text-gray-800', 'dark:text-gray-200');
                 } else {
                     closureDates.push(date);
-                    this.classList.add('bg-blue-500', 'dark:bg-lime-500', 'text-white', 'dark:text-black');
+                    this.classList.add('bg-red-500', 'dark:bg-red-500', 'text-white', 'dark:text-black');
                     this.classList.remove('bg-white', 'dark:bg-gray-800', 'text-gray-800', 'dark:text-gray-200');
                 }
                 updateClosureDates();

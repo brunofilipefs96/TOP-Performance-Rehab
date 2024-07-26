@@ -37,8 +37,13 @@
             <form action="{{ route('setup.address.store') }}" method="POST" onsubmit="disableConfirmButton(this)">
                 @csrf
                 @if ($user->addresses && $user->addresses->count() > 0)
+                    <div class="flex items-center mt-4">
+                        <input type="checkbox" id="new_address" name="new_address" class="mr-2" value="on">
+                        <label for="new_address" class="text-gray-800 dark:text-gray-200">Inserir uma nova morada</label>
+                    </div>
+
                     <div id="select_address_section">
-                        <label for="address" class="block text-sm font-medium text-gray-800 dark:text-gray-200 mt-5 mb-1">Selecionar Morada</label>
+                        <label for="address" class="block text-sm font-medium text-gray-800 dark:text-gray-200 mt-5 mb-1">As suas Moradas</label>
                         <select id="address" name="address_id" class="w-full dark:border-gray-600 border-gray-300 dark:bg-gray-400 text-gray-800 dark:text-white rounded-md shadow-sm focus:border-blue-600 dark:focus:border-lime-600 dark:focus:ring-lime-600 dark:focus:ring-opacity-50" onchange="updateAddressFields()">
                             @foreach($user->addresses as $address)
                                 <option value="{{ $address->id }}">{{ $address->name }} - {{ $address->street }}, {{ $address->city }} ({{ $address->postal_code }})</option>
@@ -73,10 +78,6 @@
                             <label class="block text-sm font-medium text-gray-800 dark:text-gray-200">Código Postal</label>
                             <input type="text" id="existing_postal_code" class="mt-1 block w-full p-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-gray-800 dark:text-white dark:bg-gray-600" readonly>
                         </div>
-                    </div>
-                    <div class="flex items-center mt-4">
-                        <input type="checkbox" id="new_address" name="new_address" class="mr-2" value="on">
-                        <label for="new_address" class="text-gray-800 dark:text-gray-200">Usar nova morada</label>
                     </div>
 
                     <div id="new_address_fields" class="hidden mt-4">

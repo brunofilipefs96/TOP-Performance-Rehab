@@ -16,13 +16,16 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200"/>
-                    </a>
+                    <h1 class="font-bold content-center text-xl sm:text-2xl">
+                        <a href="{{ route('dashboard') }}">
+                            <span class="text-black dark:text-white">Ginásio</span>
+                            <span class="text-blue-500 dark:text-lime-500">TOP</span>
+                        </a>
+                    </h1>
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden gap-4 md:-my-px md:ms-10 md:flex">
+                <div class="hidden gap-4 md:-my-px md:ms-10 lg:flex">
                     <x-nav-link :href="route('dashboard')" :activeRoutes="['dashboard']"
                                 class="group px-5 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
                         <i class="fa-solid fa-chart-line text-xl transition-transform group-hover:-translate-y-2 group-hover:scale-75"></i>
@@ -58,7 +61,7 @@
                                     <i class="fa-solid fa-basket-shopping text-xl transition-transform group-hover:-translate-y-1"></i>
                                 </x-nav-link>
                                 <div x-show="dropdownOpen"
-                                     class="absolute mt-32 ml-32 w-48 rounded-md shadow-lg bg-white dark:bg-gray-700 z-50">
+                                     class="absolute mt-40 ml-32 w-48 rounded-md shadow-lg bg-white dark:bg-gray-700 z-50">
                                     <x-dropdown-link :href="route('products.index')"
                                                      :active="request()->routeIs('products.index')"
                                                      class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
@@ -68,6 +71,11 @@
                                                      :active="request()->routeIs('packs.index')"
                                                      class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
                                         {{ __('Packs') }}
+                                    </x-dropdown-link>
+                                    <x-dropdown-link :href="route('sales.index')"
+                                                     :active="request()->routeIs('sales.index')"
+                                                     class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
+                                        {{ __('Vendas') }}
                                     </x-dropdown-link>
                                 </div>
                             </div>
@@ -110,17 +118,12 @@
                                 x-data="{ dropdownOpen: false }" @mouseover="dropdownOpen = true"
                                 @mouseout="dropdownOpen = false">
                                 <x-nav-link
-                                    :activeRoutes="['services.index', 'memberships.index', 'insurances.index', 'sales.index']"
+                                    :activeRoutes="['memberships.index', 'insurances.index', 'sales.index']"
                                     class="flex items-center justify-center focus:outline-none">
                                     <i class="fa-solid fa-address-card text-xl transition-transform group-hover:-translate-y-1"></i>
                                 </x-nav-link>
                                 <div x-show="dropdownOpen"
-                                     class="absolute mt-48 ml-32 w-48 rounded-md shadow-lg bg-white dark:bg-gray-700 z-50">
-                                    <x-dropdown-link :href="route('services.index')"
-                                                     :active="request()->routeIs('services.index')"
-                                                     class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                                        {{ __('Serviços') }}
-                                    </x-dropdown-link>
+                                     class="absolute mt-32 ml-32 w-48 rounded-md shadow-lg bg-white dark:bg-gray-700 z-50">
                                     <x-dropdown-link :href="route('memberships.index')"
                                                      :active="request()->routeIs('memberships.index')"
                                                      class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
@@ -130,11 +133,6 @@
                                                      :active="request()->routeIs('insurances.index')"
                                                      class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
                                         {{ __('Seguros') }}
-                                    </x-dropdown-link>
-                                    <x-dropdown-link :href="route('sales.index')"
-                                                     :active="request()->routeIs('sales.index')"
-                                                     class="dropdown-link text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                                        {{ __('Vendas') }}
                                     </x-dropdown-link>
                                 </div>
                             </div>
@@ -270,7 +268,7 @@
                     </button>
 
                     <!-- Settings Dropdown -->
-                    <div class="hidden md:flex md:items-center md:ms-6">
+                    <div class="hidden lg:flex md:items-center md:ms-6">
                         <div x-data="{ dropdownOpen: false }" @mouseover="dropdownOpen = true"
                              @mouseout="dropdownOpen = false" class="relative">
                             <button
@@ -303,7 +301,7 @@
                     </div>
 
                     <!-- Hamburger Mobile -->
-                    <div class="flex items-center md:hidden">
+                    <div class="flex items-center lg:hidden">
                         <button @click="open = ! open"
                                 class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 focus:outline-none focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
                             <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -321,7 +319,7 @@
         </div>
 
         <!-- Responsive Navigation Menu -->
-        <div :class="{'block': open, 'hidden': ! open}" class="hidden md:hidden">
+        <div :class="{'block': open, 'hidden': ! open}" class="hidden lg:hidden">
             <div class="pt-2 pb-3 space-y-1">
                 <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')"
                                        class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
@@ -339,6 +337,14 @@
                                                class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
                             <i class="fa-solid fa-basket-shopping text-lg mr-2"></i>{{ __('Produtos') }}
                         </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('packs.index')" :active="request()->routeIs('packs.index')"
+                                               class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
+                            <i class="fa-solid fa-box text-lg mr-2"></i>{{ __('Packs') }}
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('sales.index')" :active="request()->routeIs('sales.index')"
+                                               class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
+                            <i class="fa-solid fa-receipt text-lg mr-2"></i>{{ __('Vendas') }}
+                        </x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('rooms.index')" :active="request()->routeIs('rooms.index')"
                                                class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
                             <i class="fa-solid fa-door-open text-lg mr-2"></i>{{ __('Salas') }}
@@ -348,19 +354,11 @@
                                                class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
                             <i class="fa-solid fa-person-walking text-lg mr-2"></i>{{ __('Tipos de Treino') }}
                         </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('packs.index')" :active="request()->routeIs('packs.index')"
-                                               class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                            <i class="fa-solid fa-box text-lg mr-2"></i>{{ __('Packs') }}
-                        </x-responsive-nav-link>
+
                         <x-responsive-nav-link :href="route('trainings.index')"
                                                :active="request()->routeIs('trainings.index')"
                                                class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
                             <i class="fa-solid fa-dumbbell text-lg mr-2"></i>{{ __('Treinos') }}
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('services.index')"
-                                               :active="request()->routeIs('services.index')"
-                                               class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                            <i class="fa-solid fa-address-card text-lg mr-2"></i>{{ __('Serviços') }}
                         </x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('memberships.index')"
                                                :active="request()->routeIs('memberships.index')"
@@ -372,15 +370,19 @@
                                                class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
                             <i class="fa-solid fa-address-card text-lg mr-2"></i>{{ __('Seguros') }}
                         </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('sales.index')" :active="request()->routeIs('sales.index')"
-                                               class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                            <i class="fa-solid fa-receipt text-lg mr-2"></i>{{ __('Vendas') }}
-                        </x-responsive-nav-link>
                     @elseif(Auth::user()->hasRole('personal_trainer'))
                         <x-responsive-nav-link :href="route('products.index')"
                                                :active="request()->routeIs('products.index')"
                                                class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
                             <i class="fa-solid fa-basket-shopping text-lg mr-2"></i>{{ __('Produtos') }}
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('packs.index')" :active="request()->routeIs('packs.index')"
+                                               class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
+                            <i class="fa-solid fa-box text-lg mr-2"></i>{{ __('Packs') }}
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('sales.index')" :active="request()->routeIs('sales.index')"
+                                               class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
+                            <i class="fa-solid fa-receipt text-lg mr-2"></i>{{ __('Encomendas') }}
                         </x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('rooms.index')" :active="request()->routeIs('rooms.index')"
                                                class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
@@ -391,10 +393,6 @@
                                                class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
                             <i class="fa-solid fa-person-walking text-lg mr-2"></i>{{ __('Tipos de Treino') }}
                         </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('packs.index')" :active="request()->routeIs('packs.index')"
-                                               class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                            <i class="fa-solid fa-box text-lg mr-2"></i>{{ __('Packs') }}
-                        </x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('trainings.index')"
                                                :active="request()->routeIs('trainings.index')"
                                                class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
@@ -404,10 +402,6 @@
                                                :active="request()->routeIs('memberships.index')"
                                                class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
                             <i class="fa-solid fa-address-card text-lg mr-2"></i>{{ __('Matrículas') }}
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('sales.index')" :active="request()->routeIs('sales.index')"
-                                               class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                            <i class="fa-solid fa-receipt text-lg mr-2"></i>{{ __('Encomendas') }}
                         </x-responsive-nav-link>
                     @elseif(Auth::user()->hasRole('client'))
                         <x-responsive-nav-link :href="route('products.index')"
@@ -429,11 +423,6 @@
                                                :active="request()->routeIs('products.index')"
                                                class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
                             <i class="fa-solid fa-basket-shopping text-lg mr-2"></i>{{ __('Produtos') }}
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('services.index')"
-                                               :active="request()->routeIs('services.index')"
-                                               class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">
-                            <i class="fa-solid fa-address-card text-lg mr-2"></i>{{ __('Serviços') }}
                         </x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('sales.index')" :active="request()->routeIs('sales.index')"
                                                class="text-gray-500 dark:text-gray-200 hover:text-blue-400 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400">

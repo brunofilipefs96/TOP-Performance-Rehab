@@ -80,7 +80,25 @@ class SettingController extends Controller
             }
         }
 
+        $closures = $request->input('closure_dates', []);
+        $currentYear = date('Y');
+        $sundays = [];
+        for ($month = 1; $month <= 12; $month++) {
+            $firstDayOfMonth = new \DateTime("$currentYear-$month-01");
+            $dayOfWeek = $firstDayOfMonth->format('N');
+            $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $currentYear);
+            for ($day = 1; $day <= $daysInMonth; $day++) {
+                $date = new \DateTime("$currentYear-$month-$day");
+                if ($date->format('N') == 7) { // Se for domingo
+                    $sundays[] = $date->format('Y-m-d');
+                }
+            }
+        }
+
+        $closures = array_unique(array_merge($closures, $sundays));
+
+        Setting::updateOrCreate(['key' => 'closure_dates'], ['value' => json_encode($closures)]);
+
         return redirect()->back()->with('success', 'Configurações atualizadas com sucesso.');
     }
-
 }

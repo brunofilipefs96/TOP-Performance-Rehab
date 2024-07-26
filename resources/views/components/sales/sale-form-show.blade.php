@@ -28,7 +28,7 @@
         <div class="overflow-x-auto p-4 bg-gray-200 dark:bg-gray-700 rounded-lg shadow-md">
             @if($sale->products->count() == 0 && $sale->packs->count() == 0)
                 <div class="text-center p-4">
-                    <p class="text-lg font-semibold text-gray-800 dark:text-gray-200">Pagamento de Taxa de Inscrição</p>
+                    <p class="text-lg font-semibold text-gray-800 dark:text-gray-200">Pagamento de Taxa de Inscrição/Seguro</p>
                     <p class="text-gray-800 dark:text-gray-200">Total: {{ number_format($sale->total, 2) }} €</p>
                 </div>
             @else
@@ -108,19 +108,19 @@
                     class="text-gray-900 dark:text-gray-300">{{ $sale->translated_status }}</span></p>
         </div>
         @if(Auth::user()->hasRole('client'))
-            @if($sale->status_id == 6)
+            @if($sale->status_id == 6 && $sale->products->count() > 0)
                 <div class="mt-4 p-4 bg-yellow-500 dark:bg-yellow-700 text-white rounded-lg shadow-md">
                     <p><strong>Aguarde:</strong> A sua encomenda foi paga. Você será notificado quando estiver pronta
                         para recolha.</p>
                 </div>
-            @elseif($sale->status_id == 16)
+            @elseif($sale->status_id == 16 && $sale->products->count() > 0)
                 <div class="mt-4 p-4 bg-green-500 dark:bg-green-700 text-white rounded-lg shadow-md">
                     <p><strong>Pronto para Recolha:</strong> A sua encomenda está pronta para ser recolhida. Por favor,
                         dirija-se ao ginásio para levantá-la.</p>
                 </div>
             @endif
         @endif
-        @if(auth()->user()->hasRole('admin') && $sale->status_id == 6)
+        @if(auth()->user()->hasRole('admin') && $sale->status_id == 6 && $sale->products->count() > 0)
             <div class="mt-4">
                 <form action="{{ route('sales.updateStatus', $sale->id) }}" method="POST" onsubmit="disableConfirmButton(this)">
                     @csrf
@@ -131,7 +131,7 @@
                     </button>
                 </form>
             </div>
-        @elseif(auth()->user()->hasRole('admin') && $sale->status_id == 16)
+        @elseif(auth()->user()->hasRole('admin') && $sale->status_id == 16 && $sale->products->count() > 0)
             <div class="mt-4">
                 <form action="{{ route('sales.updateStatus', $sale->id) }}" method="POST" onsubmit="disableConfirmButton(this)">
                     @csrf

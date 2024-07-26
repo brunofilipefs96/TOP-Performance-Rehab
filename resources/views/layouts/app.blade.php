@@ -176,8 +176,14 @@
 
     function disableConfirmButton(form) {
         const button = form.querySelector('button[type="submit"]');
+        const originalText = button.innerHTML;
         button.disabled = true;
-        button.innerHTML = '<i class="fa-solid fa-spinner fa-spin w-4 h-4 mr-2"></i> Aguarde...';
+        button.innerHTML = '<i class="fa-solid fa-spinner fa-spin w-4 h-4 mr-2"></i>Aguarde...';
+
+        setTimeout(() => {
+            button.disabled = false;
+            button.innerHTML = originalText;
+        }, 2000);
     }
 </script>
 </body>

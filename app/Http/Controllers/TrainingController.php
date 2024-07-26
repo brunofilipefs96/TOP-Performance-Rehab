@@ -220,7 +220,7 @@ class TrainingController extends Controller
         $training->delete();
 
         if (str_contains(url()->previous(), route('trainings.show', $training->id))) {
-            return redirect()->route('trainings.index')->with('success', 'Treino eliminado com sucesso.');
+            return redirect()->back()->with('success', 'Treino eliminado com sucesso.');
         } else {
             return redirect()->back()->with('success', 'Treino eliminado com sucesso.');
         }
@@ -438,6 +438,13 @@ class TrainingController extends Controller
     {
         $this->authorize('update', $training);
 
+        $currentDateTime = Carbon::now();
+        $trainingStartDateTime = Carbon::parse($training->start_date);
+
+        if ($currentDateTime->gte($trainingStartDateTime)) {
+            return redirect()->route('trainings.show', $training->id)->with('error', 'Não é possível remover o usuário porque o treino já começou.');
+        }
+
         if (auth()->user()->hasRole('admin') || auth()->user()->id === $training->personal_trainer_id) {
             $training->users()->detach($user->id);
 
@@ -474,5 +481,6 @@ class TrainingController extends Controller
 
         return redirect()->route('trainings.show', $training->id)->with('error', 'Você não tem permissão para remover este usuário.');
     }
+
 
 }

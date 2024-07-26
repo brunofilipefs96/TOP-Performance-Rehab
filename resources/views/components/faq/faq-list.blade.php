@@ -64,7 +64,7 @@
 
     <!-- Filtro de Categoria para Mobile -->
     <div class="block lg:hidden mb-4">
-        <select id="mobile-category-filter" class="w-full p-2 bg-gray-600 rounded" onchange="filterCategory(this.value)">
+        <select id="mobile-category-filter" class="w-full dark:border-gray-600 border-gray-300 dark:bg-gray-400 text-gray-800 dark:text-white rounded-md shadow-sm focus:border-blue-600 dark:focus:border-lime-600 dark:focus:ring-lime-600 dark:focus:ring-opacity-50" onchange="filterCategory(this.value)">
             <option value="all" class="dark:bg-gray-400 bg-gray-500">Todos</option>
             <option value="workouts" class="dark:bg-gray-400 bg-gray-500">Treinos</option>
             <option value="products" class="dark:bg-gray-400 bg-gray-500">Produtos</option>

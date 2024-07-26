@@ -122,7 +122,7 @@
         @endif
         @if(auth()->user()->hasRole('admin') && $sale->status_id == 6)
             <div class="mt-4">
-                <form action="{{ route('sales.updateStatus', $sale->id) }}" method="POST">
+                <form action="{{ route('sales.updateStatus', $sale->id) }}" method="POST" onsubmit="disableConfirmButton(this)">
                     @csrf
                     @method('PATCH')
                     <input type="hidden" name="status_id" value="16">
@@ -133,7 +133,7 @@
             </div>
         @elseif(auth()->user()->hasRole('admin') && $sale->status_id == 16)
             <div class="mt-4">
-                <form action="{{ route('sales.updateStatus', $sale->id) }}" method="POST">
+                <form action="{{ route('sales.updateStatus', $sale->id) }}" method="POST" onsubmit="disableConfirmButton(this)">
                     @csrf
                     @method('PATCH')
                     <input type="hidden" name="status_id" value="8">
@@ -166,7 +166,7 @@
                                 </button>
                                 <form id="delete-form-{{ $document->id }}"
                                       action="{{ route('sales.deleteDocument', [$sale->id, $document->id]) }}"
-                                      method="POST" style="display:none;">
+                                      method="POST" style="display:none;" onsubmit="disableConfirmButton(this)">
                                     @csrf
                                     @method('DELETE')
                                 </form>
@@ -180,7 +180,7 @@
             @if(auth()->user()->hasRole('admin'))
                 <div class="mt-4">
                     <form id="document-upload-form" action="{{ route('sales.addDocument', $sale->id) }}" method="POST"
-                          enctype="multipart/form-data" class="flex flex-col items-start space-y-2">
+                          enctype="multipart/form-data" class="flex flex-col items-start space-y-2" onsubmit="disableConfirmButton(this)">
                         @csrf
                         <ul id="selected-files-list" class="list-disc pl-5 text-gray-800 dark:text-gray-200"></ul>
                         <label for="documents"
@@ -309,19 +309,15 @@
                     _method: 'DELETE'
                 })
             }).then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
+                location.reload();
                 return response.json();
             }).then(data => {
                 if (data.success) {
                     location.reload();
-                } else {
-                    alert('Erro ao remover documento');
                 }
             }).catch(error => {
+                location.reload();
                 console.error('Erro:', error);
-                alert('Erro ao remover documento');
             });
         }
         document.getElementById('confirmation-modal').classList.add('hidden');
@@ -340,19 +336,15 @@
                 'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
             }
         }).then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
+            location.reload();
             return response.json();
         }).then(data => {
             if (data.success) {
                 location.reload();
-            } else {
-                alert('Erro ao carregar documentos');
             }
         }).catch(error => {
+            location.reload();
             console.error('Erro:', error);
-            alert('Erro ao carregar documentos');
         });
     });
 </script>

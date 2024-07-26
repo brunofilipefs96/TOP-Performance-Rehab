@@ -104,12 +104,15 @@
     document.addEventListener('DOMContentLoaded', function () {
         const repeatCheckbox = document.getElementById('repeat');
         const repeatOptions = document.getElementById('repeat-options');
+        const repeatUntilInput = document.getElementById('repeat_until');
 
         repeatCheckbox.addEventListener('change', function () {
             if (this.checked) {
                 repeatOptions.style.display = 'block';
+                repeatUntilInput.required = true;
             } else {
                 repeatOptions.style.display = 'none';
+                repeatUntilInput.required = false;
             }
         });
 

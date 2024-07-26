@@ -197,19 +197,15 @@
                     _method: 'DELETE'
                 })
             }).then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
+                location.reload();
                 return response.json();
             }).then(data => {
                 if (data.success) {
                     location.reload();
-                } else {
-                    alert('Erro ao remover documento');
                 }
             }).catch(error => {
+                location.reload();
                 console.error('Erro:', error);
-                alert('Erro ao remover documento');
             });
         } else if (evaluationDeleted !== 0) {
             document.getElementById(`delete-form-${evaluationDeleted}`).submit();
@@ -230,19 +226,15 @@
                 'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
             }
         }).then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
+            location.reload();
             return response.json();
         }).then(data => {
             if (data.success) {
                 location.reload();
-            } else {
-                alert('Erro ao carregar documentos');
             }
         }).catch(error => {
+            location.reload();
             console.error('Erro:', error);
-            alert('Erro ao carregar documentos');
         });
     });
 </script>

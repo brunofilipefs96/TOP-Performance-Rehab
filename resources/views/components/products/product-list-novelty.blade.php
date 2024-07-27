@@ -1,5 +1,4 @@
-
-<div class="container ">
+<div class="container">
     <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Novidades para si!</h1>
 
     <hr class="mb-10 border-gray-400 dark:border-gray-300">
@@ -10,9 +9,9 @@
                 <a href="{{ url('products/' . $product->id) }}" class="flex-grow">
                     <div class="flex justify-center">
                         @if($product->image && file_exists(public_path('storage/' . $product->image)))
-                            <img src="{{ asset('storage/'. $product->image) }}" alt="{{ $product->name }}" class="w-full h-32 object-cover">
+                            <img src="{{ asset('storage/'. $product->image) }}" alt="{{ $product->name }}" class="w-full h-64 object-cover">
                         @else
-                            <div class="w-full h-32 dark:bg-gray-600 bg-gray-300 flex items-center justify-center">
+                            <div class="w-full h-64 dark:bg-gray-600 bg-gray-300 flex items-center justify-center">
                                 <span class="text-2xl">Sem imagem</span>
                             </div>
                         @endif

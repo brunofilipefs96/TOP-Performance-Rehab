@@ -73,6 +73,13 @@
                         </x-nav-link>
                     </li>
                     <li>
+                        <x-nav-link :href="route('training-types.index')" :activeRoutes="['training-types.index']"
+                                    class="mb-4 px-0 pt-0 text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
+                            <i class="fa-solid fa-dumbbell text-xl"></i>
+                            <span class="text-base ml-2">Tipos de Treino</span>
+                        </x-nav-link>
+                    </li>
+                    <li>
                         <x-nav-link :href="route('packs.index')" :activeRoutes="['packs.index']"
                                     class="mb-4 px-0 pt-0 text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
                             <i class="fa-solid fa-box text-xl"></i>
@@ -357,6 +364,9 @@
                         <li><a href="{{ route('trainings.index') }}"
                                class="block text-gray-800 dark:text-gray-200 dark:hover:text-lime-400 hover:text-blue-600"><i
                                     class="fa-solid fa-dumbbell text-lg mr-2"></i>Treinos</a></li>
+                        <li><a href="{{ route('training-types.index') }}"
+                               class="block text-gray-800 dark:text-gray-200 dark:hover:text-lime-400 hover:text-blue-600"><i
+                                    class="fa-solid fa-dumbbell text-lg mr-2"></i>Tipos de Treino</a></li>
                         <li><a href="{{ route('packs.index') }}"
                                class="block text-gray-800 dark:text-gray-200 dark:hover:text-lime-400 hover:text-blue-600"><i
                                     class="fa-solid fa-box text-lg mr-2"></i>Packs</a></li>

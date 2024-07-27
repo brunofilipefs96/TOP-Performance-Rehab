@@ -1,7 +1,7 @@
 <div class="container mx-auto mt-5">
     <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Tipos de Treino</h1>
     <div class="mb-10 flex items-center">
-        <select id="filter" name="filter" class="w-auto dark:border-gray-700 dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm" style="padding-right: 1.5rem;"  onchange="applyFilter()">
+        <select id="filter" name="filter" class="w-auto dark:border-gray-700 dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm" style="padding-right: 1.5rem;" onchange="applyFilter()">
             <option value="acompanhados" {{ $filter == 'acompanhados' ? 'selected' : '' }}>Acompanhados</option>
             <option value="livres" {{ $filter == 'livres' ? 'selected' : '' }}>Livres</option>
         </select>
@@ -24,9 +24,9 @@
                 <a href="{{ url('training-types/' . $training_type->id) }}" class="flex-grow">
                     <div class="flex justify-center">
                         @if($training_type->image && file_exists(public_path('storage/' . $training_type->image)))
-                            <img src="{{ asset('storage/'. $training_type->image) }}" alt="{{ $training_type->name }}" class="w-full h-32 object-cover">
+                            <img src="{{ asset('storage/'. $training_type->image) }}" alt="{{ $training_type->name }}" class="w-full h-64 object-cover">
                         @else
-                            <div class="w-full h-32 dark:bg-gray-600 bg-gray-300 flex items-center justify-center">
+                            <div class="w-full h-64 dark:bg-gray-600 bg-gray-300 flex items-center justify-center">
                                 <span class="text-2xl">Sem imagem</span>
                             </div>
                         @endif

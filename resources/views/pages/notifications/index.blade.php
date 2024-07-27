@@ -7,25 +7,30 @@
                 <div class="mb-10">
                     <h3 class="text-2xl font-medium mb-3 text-center">Notificações</h3>
 
-                    <div class="flex justify-between mb-4">
-                        <form action="{{ route('notifications.markAllAsRead') }}" method="POST" onsubmit="disableConfirmButton(this)">
+                    <div class="flex flex-col sm:flex-row sm:justify-between mb-4 space-y-4 sm:space-y-0 sm:space-x-4">
+                        <form action="{{ route('notifications.markAllAsRead') }}" method="POST" onsubmit="disableConfirmButton(this)" class="w-full sm:w-auto">
                             @csrf
                             @method('PATCH')
-                            <button type="submit" class="bg-blue-500 dark:bg-lime-500 hover:bg-blue-400 dark:hover:bg-lime-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            <button type="submit" class="w-full sm:w-auto bg-blue-500 dark:bg-lime-500 hover:bg-blue-400 dark:hover:bg-lime-400 hover:bg-blue-700 text-white font-bold py-2 px-3 lg:py-2 lg:px-3 rounded inline-flex items-center">
+                                <i class="fas fa-check-double mr-2"></i>
                                 Marcar todas como lidas
                             </button>
                         </form>
-                        <form action="{{ route('notifications.deleteAll') }}" method="POST" onsubmit="disableConfirmButton(this)">
+                        <form action="{{ route('notifications.deleteAll') }}" method="POST" onsubmit="disableConfirmButton(this)" class="w-full sm:w-auto">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                            <button type="submit" class="w-full sm:w-auto bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-3 lg:py-2 lg:px-3 rounded inline-flex items-center">
+                                <i class="fas fa-trash mr-2"></i>
                                 Eliminar todas
                             </button>
                         </form>
                     </div>
 
                     @if ($notifications->isEmpty())
-                        <p class="text-gray-800 dark:text-gray-200 text-center">Você não tem notificações.</p>
+                        <div class="text-center py-10">
+                            <i class="fas fa-bell-slash text-5xl text-gray-300 dark:text-gray-500 mb-4"></i>
+                            <p class="text-gray-800 dark:text-gray-200 text-lg">Não tem notificações.</p>
+                        </div>
                     @else
                         <ul class="space-y-4">
                             @foreach ($notifications as $notification)
@@ -41,7 +46,7 @@
                                             <form action="{{ route('notifications.markAsRead', $notification->id) }}" method="POST" class="inline-block mt-2">
                                                 @csrf
                                                 @method('PATCH')
-                                                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-900 font-bold py-2 px-4 rounded inline-flex items-center">
+                                                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white dark:bg-lime-500 dark:hover:bg-lime-400 dark:hover:text-gray-900 font-bold py-2 px-3 lg:py-1.5 lg:px-3 rounded inline-flex items-center">
                                                     <i class="fas fa-check mr-2"></i>
                                                     Marcar como lida
                                                 </button>

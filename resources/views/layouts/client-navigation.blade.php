@@ -35,7 +35,8 @@
                             </a>
                         @endif
                         <span class="flex flex-col mt-2 content-center">
-                            <span class="text-xl dark:text-gray-300 text-gray-900 font-bold antialiased">{{$user->firstLastName()}}</span>
+                            <span
+                                class="text-xl dark:text-gray-300 text-gray-900 font-bold antialiased">{{$user->firstLastName()}}</span>
                         </span>
                     </div>
                 </div>
@@ -174,7 +175,7 @@
                              fill="currentColor" viewBox="0 0 20 20"
                              xmlns="http://www.w3.org/2000/svg">
                             <path
-                                d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                                d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706-.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
                                 fill-rule="evenodd" clip-rule="evenodd"></path>
                         </svg>
                     </button>
@@ -182,15 +183,11 @@
 
                 <!-- Notification Modal -->
                 <div x-show="notificationOpen" @click.away="notificationOpen = false"
-                     x-transition:enter="transition ease-out duration-300"
-                     x-transition:enter-start="opacity-0 transform scale-95"
-                     x-transition:enter-end="opacity-100 transform scale-100"
-                     x-transition:leave="transition ease-in duration-300"
-                     x-transition:leave-start="opacity-100 transform scale-100"
-                     x-transition:leave-end="opacity-0 transform scale-95"
                      class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                    <div class="bg-white dark:bg-gray-800 w-11/12 max-w-md mx-auto rounded-lg shadow-lg overflow-hidden">
-                        <div class="flex justify-between items-center px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+                    <div
+                        class="bg-white dark:bg-gray-800 w-11/12 max-w-md mx-auto rounded-lg shadow-lg overflow-hidden">
+                        <div
+                            class="flex justify-between items-center px-4 py-2 border-b border-gray-200 dark:border-gray-700">
                             <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Notificações</h2>
                             <button @click="notificationOpen = false"
                                     class="text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400">
@@ -202,12 +199,14 @@
                                 <p class="text-center text-gray-600 dark:text-gray-300">Não existem notificações.</p>
                             @else
                                 @foreach($recentNotifications as $notification)
-                                    <div class="flex items-center justify-between p-2 border-b border-gray-200 dark:border-gray-700">
+                                    <div
+                                        class="flex items-center justify-between p-2 border-b border-gray-200 dark:border-gray-700">
                                         <div class="mr-4">
                                             <p class="text-sm text-gray-700 dark:text-gray-300">{{ $notification->message }}</p>
                                             <p class="text-xs text-gray-500 dark:text-gray-400">{{ $notification->created_at->locale('pt')->diffForHumans() }}</p>
                                             @if ($notification->read_at)
-                                                <p class="text-xs text-gray-500 dark:text-gray-400"><i class="fa-solid fa-check-double"></i> Lida</p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400"><i
+                                                        class="fa-solid fa-check-double"></i> Lida</p>
                                             @endif
                                         </div>
                                         @if ($notification->url)
@@ -217,7 +216,8 @@
                                                 Ver
                                             </a>
                                         @elseif (is_null($notification->read_at) || $notification->read_at == '')
-                                            <form action="{{ route('notifications.markAsRead', $notification->id) }}" method="POST">
+                                            <form action="{{ route('notifications.markAsRead', $notification->id) }}"
+                                                  method="POST">
                                                 @csrf
                                                 @method('PATCH')
                                                 <button type="submit"
@@ -238,8 +238,6 @@
                         </div>
                     </div>
                 </div>
-
-
             </div>
         </div>
 
@@ -271,12 +269,6 @@
 
                         <!-- Notification Modal for Mobile -->
                         <div x-show="notificationOpen" @click.away="notificationOpen = false"
-                             x-transition:enter="transition ease-out duration-300"
-                             x-transition:enter-start="opacity-0 transform scale-95"
-                             x-transition:enter-end="opacity-100 transform scale-100"
-                             x-transition:leave="transition ease-in duration-300"
-                             x-transition:leave-start="opacity-100 transform scale-100"
-                             x-transition:leave-end="opacity-0 transform scale-95"
                              class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                             <div
                                 class="bg-white dark:bg-gray-800 w-11/12 max-w-md mx-auto rounded-lg shadow-lg overflow-hidden">
@@ -289,24 +281,29 @@
                                     </button>
                                 </div>
                                 <div class="p-4">
-                                    @foreach($recentNotifications as $notification)
-                                        <div
-                                            class="flex items-center justify-between p-2 border-b border-gray-200 dark:border-gray-700">
-                                            <div>
-                                                <p class="text-sm text-gray-700 dark:text-gray-300">{{ $notification->message }}</p>
-                                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $notification->created_at->locale('pt')->diffForHumans() }}</p>
-                                                @if ($notification->read_at)
-                                                    <p class="text-xs text-gray-500 dark:text-gray-400"><i
-                                                            class="fa-solid fa-check-double"></i> Lida</p>
-                                                @endif
+                                    @if($recentNotifications->isEmpty())
+                                        <p class="text-center text-sm text-gray-600 dark:text-gray-300">Não existem
+                                            notificações.</p>
+                                    @else
+                                        @foreach($recentNotifications as $notification)
+                                            <div
+                                                class="flex items-center justify-between p-2 border-b border-gray-200 dark:border-gray-700">
+                                                <div>
+                                                    <p class="text-sm text-gray-700 dark:text-gray-300">{{ $notification->message }}</p>
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ $notification->created_at->locale('pt')->diffForHumans() }}</p>
+                                                    @if ($notification->read_at)
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400"><i
+                                                                class="fa-solid fa-check-double"></i> Lida</p>
+                                                    @endif
+                                                </div>
+                                                <a href="{{ route('notifications.redirect', $notification->id) }}"
+                                                   class="text-blue-600 dark:text-lime-400 hover:underline text-sm">
+                                                    <i class="fa-solid {{ $notification->read_at ? 'fa-envelope-open' : 'fa-envelope' }}"></i>
+                                                    Ver
+                                                </a>
                                             </div>
-                                            <a href="{{ route('notifications.redirect', $notification->id) }}"
-                                               class="text-blue-600 dark:text-lime-400 hover:underline text-sm">
-                                                <i class="fa-solid {{ $notification->read_at ? 'fa-envelope-open' : 'fa-envelope' }}"></i>
-                                                Ver
-                                            </a>
-                                        </div>
-                                    @endforeach
+                                        @endforeach
+                                    @endif
                                 </div>
                                 <div class="px-4 py-2 border-t border-gray-200 dark:border-gray-700">
                                     <a href="{{ route('notifications.index') }}"
@@ -330,7 +327,7 @@
                                  fill="currentColor" viewBox="0 0 20 20"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <path
-                                    d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                                    d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706-.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
                                     fill-rule="evenodd" clip-rule="evenodd"></path>
                             </svg>
                         </button>

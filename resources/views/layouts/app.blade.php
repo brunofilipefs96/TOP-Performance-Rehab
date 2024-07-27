@@ -183,7 +183,7 @@
         setTimeout(() => {
             button.disabled = false;
             button.innerHTML = originalText;
-        }, 2000);
+        }, 5000);
     }
 </script>
 </body>

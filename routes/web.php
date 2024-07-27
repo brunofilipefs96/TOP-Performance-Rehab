@@ -38,10 +38,6 @@ Route::get('/', function () {
     }
 });
 
-Route::get('/faq', function () {
-    return view('pages.faq.index');
-})->name('faq.index');
-
 Route::middleware(['auth'])->group(function () {
     Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
     Route::put('settings', [SettingController::class, 'update'])->name('settings.update');
@@ -53,6 +49,9 @@ Route::middleware(['auth'])->group(function () {
 
 
 Route::middleware(['auth', CheckGymSettings::class, 'verified', CheckUserRole::class])->group(function () {
+    Route::get('/faq', function () {
+        return view('pages.faq.index');
+    })->name('faq.index');
 
     Route::get('/notifications/redirect/{notification}', [NotificationController::class, 'redirectAndMarkAsRead'])->name('notifications.redirect');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');

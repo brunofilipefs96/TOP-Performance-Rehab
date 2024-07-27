@@ -34,6 +34,37 @@
                 @method('PUT')
 
                 <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Email</label>
+                    <input type="email"
+                           id="email"
+                           name="email"
+                           class="mt-1 block w-full dark:border-gray-300 dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm"
+                           value="{{ old('email', $settings['email'] ?? '') }}"
+                           aria-describedby="emailHelp">
+                    @error('email')
+                    <span class="text-red-500 text-sm mt-2" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label for="telemovel" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Telemóvel</label>
+                    <input type="text"
+                           id="telemovel"
+                           name="telemovel"
+                           maxlength="9"
+                           class="mt-1 block w-full dark:border-gray-300 dark:bg-gray-400 text-gray-800 dark:focus:border-lime-600 focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-lime-600 rounded-md shadow-sm"
+                           value="{{ old('telemovel', $settings['telemovel'] ?? '') }}"
+                           aria-describedby="telemovelHelp">
+                    @error('telemovel')
+                    <span class="text-red-500 text-sm mt-2" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
                     <label for="taxa_inscricao" class="block text-sm font-medium dark:text-gray-200 text-gray-800">Taxa de Inscrição</label>
                     <input type="text"
                            id="taxa_inscricao"

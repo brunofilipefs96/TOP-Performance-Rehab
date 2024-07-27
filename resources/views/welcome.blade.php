@@ -3,20 +3,27 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <title>Ginásio</title>
-
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
-
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            margin: 0 auto;
+            padding: 0 20px;
+            max-width: 1200px;
+        }
+
         #map {
             height: 400px; /* Adjust height as needed */
             width: 100%;
@@ -34,7 +41,7 @@
             text-align: center;
             border-radius: 15px; /* Rounded corners for the welcome section */
             overflow: hidden;
-            margin: 20px;
+            margin: 20px 0;
         }
 
         .welcome-section::before {
@@ -44,12 +51,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.1); /* Dark overlay for better text readability */
+            background: rgba(0, 0, 0, 0.3); /* Dark overlay for better text readability */
             z-index: 1;
-        }
-
-        .dark .welcome-section::before {
-            background: rgba(255, 255, 255, 0.1); /* Light overlay for a softer image in light mode */
         }
 
         .welcome-section .content {
@@ -83,18 +86,18 @@
 
     </style>
 </head>
-<body class="font-sans antialiased dark:text-white/50 select-none">
-<div class="text-black/50 dark:text-white/50 dark:bg-gray-800">
+<body class="font-sans antialiased dark:text-white/50 select-none dark:bg-gray-800">
+<div class="text-black/50 dark:text-white/50">
     <div class="relative min-h-screen flex flex-col items-center justify-center selection:bg-[#FF2D20] selection:text-white dark:bg-gray-900">
 
-        <header class="flex justify-between items-center w-full px-6 py-4">
+        <header class="flex justify-between items-center w-full px-6 py-2 container">
             <div class="text-center lg:text-left pl-2 pt-2">
                 <h1 class="font-bold">
                     <span class="text-black dark:text-white font-semibold text-2xl">Ginásio</span>
                     <span class="text-blue-500 dark:text-lime-500 font-semibold text-2xl">TOP</span>
                 </h1>
             </div>
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-4 py-4">
                 <button id="theme-toggle" type="button"
                         class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 mr-3 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
                     <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
@@ -138,7 +141,7 @@
             </div>
         </header>
 
-        <main class="mt-10 mb-20">
+        <main class="mt-10 mb-20 container">
             <!-- Welcome Section -->
             <section class="welcome-section">
                 <div class="content">
@@ -152,16 +155,16 @@
                 <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Razões para se juntar</h2>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                     <div class="p-6 bg-gray-100 dark:bg-gray-800 rounded-2xl shadow-2xl">
-                        <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">5000 sq.ft.</h3>
-                        <p class="text-gray-700 dark:text-gray-300">Área para exercícios</p>
+                        <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Um Espaço à Medida</h3>
+                        <p class="text-gray-700 dark:text-gray-300">para os seus exercícios</p>
                     </div>
                     <div class="p-6 bg-gray-100 dark:bg-gray-800 rounded-2xl shadow-2xl">
-                        <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Mais de 40+</h3>
+                        <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Mais de 10+</h3>
                         <p class="text-gray-700 dark:text-gray-300">programas de treino em grupo</p>
                     </div>
                     <div class="p-6 bg-gray-100 dark:bg-gray-800 rounded-2xl shadow-2xl">
                         <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Zona Fitness</h3>
-                        <p class="text-gray-700 dark:text-gray-300">Ciclismo indoor e zona de fitness</p>
+                        <p class="text-gray-700 dark:text-gray-300">Áreas de Pilates e Treino Funcional</p>
                     </div>
                     <div class="p-6 bg-gray-100 dark:bg-gray-800 rounded-2xl shadow-2xl">
                         <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Treino Personalizado</h3>
@@ -175,18 +178,18 @@
                 <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Associação ao ginásio</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-2xl shadow-2xl">
-                        <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Plano 1</h3>
-                        <p class="mb-4 text-gray-700 dark:text-gray-300">Descrição do plano básico</p>
+                        <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Pack PT Individual</h3>
+                        <p class="mb-4 text-gray-700 dark:text-gray-300">Para um acompanhamento mais personalizado.</p>
                         <button class="bg-blue-500 text-white dark:bg-lime-400 dark:text-white py-2 px-4 rounded hover:bg-blue-400 dark:hover:bg-lime-300">Junte-se a nós</button>
                     </div>
                     <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-2xl shadow-2xl">
-                        <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Plano 2</h3>
-                        <p class="mb-4 text-gray-700 dark:text-gray-300">Descrição do plano padrão</p>
+                        <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Pack Treino Livre</h3>
+                        <p class="mb-4 text-gray-700 dark:text-gray-300">Para os membros mais experientes.</p>
                         <button class="bg-blue-500 text-white dark:bg-lime-400 dark:text-white py-2 px-4 rounded hover:bg-blue-400 dark:hover:bg-lime-300">Junte-se a nós</button>
                     </div>
                     <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-2xl shadow-2xl">
-                        <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Plano 3</h3>
-                        <p class="mb-4 text-gray-700 dark:text-gray-300">Descrição do plano premium</p>
+                        <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Packs Duo/Trio</h3>
+                        <p class="mb-4 text-gray-700 dark:text-gray-300">Para quem gosta de grupos maiores.</p>
                         <button class="bg-blue-500 text-white dark:bg-lime-400 dark:text-white py-2 px-4 rounded hover:bg-blue-400 dark:hover:bg-lime-300">Junte-se a nós</button>
                     </div>
                 </div>
@@ -195,8 +198,9 @@
             <!-- About Us Section -->
             <section class="py-20 text-center bg-gray-100 dark:bg-gray-800 rounded-2xl shadow-2xl">
                 <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Sobre nós</h2>
-                <p class="mb-8 text-gray-700 dark:text-gray-300">Descrição sobre o ginásio, suas instalações e missão.</p>
-                <img src="https://www.sorocaba.premiergym.com.br/img/servicos/capa/full-e4864124e4435ce0db29b8f573d13217.jpg" alt="Imagem do ginásio" class="mx-auto">
+                <p class="mb-8 text-gray-700 dark:text-gray-300">No Ginásio TOP, oferecemos instalações sofisticadas e uma equipa dedicada para ajudar a alcançar seus objetivos. A nossa missão é proporcionar um ambiente acolhedor e motivador para todos os nossos membros.</p>
+                <p class="mb-8 text-gray-700 dark:text-gray-300 italic font-semibold">"O treino de hoje é o resultado de amanhã."</p>
+                <img src="https://www.sorocaba.premiergym.com.br/img/servicos/capa/full-e4864124e4435ce0db29b8f573d13217.jpg" alt="Imagem do ginásio" class="mx-auto rounded-lg shadow-lg">
             </section>
 
             <!-- Map Section -->
@@ -204,15 +208,16 @@
                 <h2 class="text-3xl font-bold mb-10 text-gray-900 dark:text-white">Contactos</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-gray-100 p-5 rounded-2xl shadow-2xl dark:bg-gray-800">
                     <div class="space-y-4 text-left mt-20">
-                        <p class="text-gray-900 dark:text-white">Telefone: 123-456-789</p>
-                        <p class="text-gray-900 dark:text-white">E-mail: contacto@ginasiotop.com</p>
-                        <p class="text-gray-900 dark:text-white">Endereço: Rua do Ginásio, 123, Famalicão, Portugal</p>
+                        <p class="text-gray-900 dark:text-white">Telemóvel: {{ setting('telemovel') }}</p>
+                        <p class="text-gray-900 dark:text-white">E-mail: {{ setting('email') }}</p>
+                        <p class="text-gray-900 dark:text-white">Endereço: R. do Outeiro 121, 4770-452 Requião</p>
                     </div>
                     <div id="map" style="height: 300px;"></div>
                 </div>
             </section>
         </main>
-        <footer class=" w-full">
+
+        <footer class="w-full">
             @include('layouts.footer')
         </footer>
     </div>
@@ -244,7 +249,6 @@
         }
     })();
 
-    // Initialize Leaflet map
     var map = L.map('map').setView([41.409073, -8.511614], 13);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

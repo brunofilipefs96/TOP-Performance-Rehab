@@ -25,6 +25,8 @@ class SettingController extends Controller
         }
 
         $request->validate([
+            'email' => 'required|email',
+            'telemovel' => 'required|digits:9',
             'taxa_inscricao' => 'required|numeric',
             'taxa_seguro' => 'required|numeric',
             'capacidade_maxima' => 'required|integer',
@@ -50,10 +52,14 @@ class SettingController extends Controller
             'min' => 'O campo :attribute deve ser no mínimo :min.',
             'max' => 'O campo :attribute deve ser no máximo :max.',
             'date_format' => 'O campo :attribute não está no formato correto (HH:mm).',
+            'email' => 'O campo :attribute deve ser um endereço de email válido.',
+            'digits' => 'O campo :attribute deve ter exatamente :digits dígitos.'
         ]);
 
         $data = $request->all();
         $settingsKeys = [
+            'email',
+            'telemovel',
             'taxa_inscricao',
             'taxa_seguro',
             'capacidade_maxima',

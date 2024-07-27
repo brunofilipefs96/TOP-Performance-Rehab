@@ -26,6 +26,8 @@ class CheckGymSettings
             'horario_fim_semanal',
             'horario_inicio_sabado',
             'horario_fim_sabado',
+            'telemovel',
+            'email',
             'top_paddle_client_membership_discount',
             'top_paddle_client_insurance_discount',
             'top_paddle_client_trainings_discount',

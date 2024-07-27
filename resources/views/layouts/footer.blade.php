@@ -19,7 +19,7 @@
             <div>
                 <h3 class="text-xl font-semibold mb-4">Fale conosco</h3>
                 <p class="text-gray-400 mb-2">
-                    <strong>Morada:</strong> 8953 South Gainsway Avenue Park Ridge, IL 60068
+                    <strong>Morada:</strong> R. do Outeiro 121, 4770-452 Requião
                 </p>
                 <p class="text-gray-400 mb-2">
                     <strong>Telefone:</strong> {{ setting('telemovel') }}

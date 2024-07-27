@@ -51,14 +51,14 @@
             </div>
         @endif
 
-            @if($user->membership && (($user->membership->status->name == 'awaiting_insurance') || ($user->membership->status->name == 'pending_renewPayment')) && (($user->membership->insurance->status->name == 'awaiting_membership') || ($user->membership->insurance->status->name == 'pending_renewPayment')))            <div
-                class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 dark:bg-gray-700 dark:text-gray-200 p-4 mb-6"
-                role="alert">
-                <p class="font-bold">A sua Renovação de Matrícula/Seguro foi Aprovada!</p>
-                <p>Clique no botão abaixo para proceder ao Pagamento!</p>
-                <a href="{{ route('renew') }}"
-                   class="mt-4 inline-block text-white dark:bg-lime-500 bg-blue-500 px-3 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400">Pagamento da Renovação</a>
-            </div>
+        @if($user->membership && (($user->membership->status->name == 'awaiting_insurance') || ($user->membership->status->name == 'pending_renewPayment')) && (($user->membership->insurance->status->name == 'awaiting_membership') || ($user->membership->insurance->status->name == 'pending_renewPayment')))            <div
+            class="bg-gray-300 border-l-4 dark:border-lime-500 border-blue-500 text-gray-700 dark:bg-gray-700 dark:text-gray-200 p-4 mb-6"
+            role="alert">
+            <p class="font-bold">A sua Renovação de Matrícula/Seguro foi Aprovada!</p>
+            <p>Clique no botão abaixo para proceder ao Pagamento!</p>
+            <a href="{{ route('renew') }}"
+               class="mt-4 inline-block text-white dark:bg-lime-500 bg-blue-500 px-3 py-1 rounded-md dark:hover:bg-lime-400 hover:bg-blue-400">Pagamento da Renovação</a>
+        </div>
         @endif
 
         @if(Auth::user()->membership && Auth::user()->membership->status_id == 2 && Auth::user()->membership->packs->isEmpty())
@@ -85,10 +85,10 @@
                             <div class="flex justify-center">
                                 @if($product->image && file_exists(public_path('storage/' . $product->image)))
                                     <img src="{{ asset('storage/'. $product->image) }}" alt="{{ $product->name }}"
-                                         class="w-full h-32 object-cover">
+                                         class="w-full h-64 object-cover">
                                 @else
                                     <div
-                                        class="w-full h-32 dark:bg-gray-600 bg-gray-300 flex items-center justify-center">
+                                        class="w-full h-64 dark:bg-gray-600 bg-gray-300 flex items-center justify-center">
                                         <span class="text-2xl">Sem imagem</span>
                                     </div>
                                 @endif

@@ -361,7 +361,6 @@ class CartController extends Controller
             $paymentEntity = $paymentIntent->next_action->multibanco_display_details->entity;
             $amount = $total;
 
-            // Enviar o e-mail com a referência Multibanco
             Mail::to($user->email)->send(new PaymentReferenceMail($sale, $paymentReference, $paymentEntity, $amount));
         }
 

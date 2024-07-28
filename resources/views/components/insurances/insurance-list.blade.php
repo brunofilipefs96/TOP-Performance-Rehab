@@ -38,13 +38,16 @@
             </thead>
             <tbody>
             @foreach($insurances as $insurance)
+                @php
+                    $user = optional($insurance->membership)->user;
+                @endphp
                 <tr class="insurance-card"
-                    data-name="{{ $insurance->membership->user->full_name }}"
-                    data-nif="{{ $insurance->membership->user->nif }}"
+                    data-name="{{ $user ? $user->full_name : 'N/A' }}"
+                    data-nif="{{ $user ? $user->nif : 'N/A' }}"
                     data-status="{{ $insurance->status->name }}">
                     <td class="p-4">{{ $insurance->id }}</td>
-                    <td class="p-4">{{ $insurance->membership->user->full_name }}</td>
-                    <td class="p-4">{{ $insurance->membership->user->nif }}</td>
+                    <td class="p-4">{{ $user ? $user->full_name : 'N/A' }}</td>
+                    <td class="p-4">{{ $user ? $user->nif : 'N/A' }}</td>
                     <td class="p-4">
                         @if($insurance->status->name == 'active')
                             <span class="text-green-500">Ativo</span>

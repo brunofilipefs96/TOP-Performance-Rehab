@@ -23,6 +23,9 @@ class SetupController extends Controller
         $user = auth()->user();
 
         if($user->membership){
+            if ($user->membership->status->name == 'inactive' || $user->membership->status->name == 'awaiting_insurance' || $user->membership->status->name == 'renew_pending' || $user->membership->status->name == 'pending_renewPayment') {
+                return redirect()->route('renew');
+            }
             foreach ($user->sales as $sale) {
                 if ($sale->products()->count() == 0 && $sale->packs()->count() == 0) {
                     if ($user->membership->status->name == 'pending_payment') {
@@ -90,6 +93,12 @@ class SetupController extends Controller
     {
         $user = auth()->user();
 
+        if ($user->membership){
+            if ($user->membership->status->name == 'inactive' || $user->membership->status->name == 'awaiting_insurance' || $user->membership->status->name == 'renew_pending' || $user->membership->status->name == 'pending_renewPayment') {
+                return redirect()->route('renew');
+            }
+        }
+
         if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name == 'active') && ($user->membership->insurance->status->name == 'active'))) {
             return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
         }
@@ -101,6 +110,12 @@ class SetupController extends Controller
     {
         $user = auth()->user();
 
+        if ($user->membership){
+            if ($user->membership->status->name == 'inactive' || $user->membership->status->name == 'awaiting_insurance' || $user->membership->status->name == 'renew_pending' || $user->membership->status->name == 'pending_renewPayment') {
+                return redirect()->route('renew');
+            }
+        }
+
         if(!$user->addresses || $user->addresses->count() <= 0){
             return redirect()->route('setup.addressShow');
         }
@@ -111,6 +126,12 @@ class SetupController extends Controller
     public function trainingTypesShow()
     {
         $user = auth()->user();
+
+        if ($user->membership){
+            if ($user->membership->status->name == 'inactive' || $user->membership->status->name == 'awaiting_insurance' || $user->membership->status->name == 'renew_pending' || $user->membership->status->name == 'pending_renewPayment') {
+                return redirect()->route('renew');
+            }
+        }
 
         if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name == 'active') && ($user->membership->insurance->status->name == 'active'))) {
             return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
@@ -132,6 +153,12 @@ class SetupController extends Controller
     {
         $user = auth()->user();
 
+        if ($user->membership){
+            if ($user->membership->status->name == 'inactive' || $user->membership->status->name == 'awaiting_insurance' || $user->membership->status->name == 'renew_pending' || $user->membership->status->name == 'pending_renewPayment') {
+                return redirect()->route('renew');
+            }
+        }
+
         if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name == 'active') && ($user->membership->insurance->status->name == 'active'))) {
             return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
         }
@@ -150,6 +177,12 @@ class SetupController extends Controller
     public function awaitingShow()
     {
         $user = auth()->user();
+
+        if ($user->membership){
+            if ($user->membership->status->name == 'inactive' || $user->membership->status->name == 'awaiting_insurance' || $user->membership->status->name == 'renew_pending' || $user->membership->status->name == 'pending_renewPayment') {
+                return redirect()->route('renew');
+            }
+        }
 
         if (!$user->hasRole('client') || (($user->membership && $user->membership->status->name == 'active') && ($user->membership->insurance->status->name == 'active'))) {
             return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');
@@ -173,6 +206,12 @@ class SetupController extends Controller
     public function paymentShow()
     {
         $user = auth()->user();
+
+        if ($user->membership){
+            if ($user->membership->status->name == 'inactive' || $user->membership->status->name == 'awaiting_insurance' || $user->membership->status->name == 'renew_pending' || $user->membership->status->name == 'pending_renewPayment') {
+                return redirect()->route('renew');
+            }
+        }
 
         if (!$user->hasRole('client') || ($user->membership && $user->membership->status->name == 'active')) {
             return redirect()->route('dashboard')->with('error', 'Não tem permissão para aceder a esta página.');

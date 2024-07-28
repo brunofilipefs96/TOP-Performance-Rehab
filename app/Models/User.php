@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 use MattDaneshvar\Survey\Models\Entry;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -69,6 +70,34 @@ class User extends Authenticatable implements MustVerifyEmail
                 }
                 $user->roles()->detach();
                 if (Schema::hasColumn('memberships', 'user_id')) {
+                    if ($user->membership->insurance) {
+                        $user->membership->insurance()->forceDelete();
+                    }
+                    if ($entry = $user->entries->first()) {
+                        $entry->forceDelete();
+                    }
+                    if ($user->membership->documents) {
+                        foreach ($user->membership->documents as $document) {
+                            Storage::delete($document->file_path);
+                            $document->forceDelete();
+                        }
+                    }
+                    if($user->membership->trainingTypes){
+                        $user->membership->trainingTypes()->detach();
+                    }
+
+                    if($user->membership->evaluations){
+                        foreach ($user->membership->evaluations as $evaluation) {
+                            $evaluation->forceDelete();
+                        }
+                    }
+
+                    if($user->membership->packs()){
+                        foreach ($user->membership->packs as $pack) {
+                            $pack->forceDelete();
+                        }
+                    }
+
                     $user->membership()->forceDelete();
                 }
                 if (Schema::hasColumn('entries', 'participant_id')) {
@@ -100,6 +129,33 @@ class User extends Authenticatable implements MustVerifyEmail
                     $user->freeTrainings()->delete();
                 }
                 if (Schema::hasColumn('memberships', 'user_id')) {
+                    if ($user->membership->insurance) {
+                        $user->membership->insurance()->delete();
+                    }
+                    if ($entry = $user->entries->first()) {
+                        $entry->delete();
+                    }
+                    if ($user->membership->documents) {
+                        foreach ($user->membership->documents as $document) {
+                            Storage::delete($document->file_path);
+                            $document->delete();
+                        }
+                    }
+                    if($user->membership->trainingTypes){
+                        $user->membership->trainingTypes()->detach();
+                    }
+
+                    if($user->membership->evaluations){
+                        foreach ($user->membership->evaluations as $evaluation) {
+                            $evaluation->delete();
+                        }
+                    }
+
+                    if($user->membership->packs()){
+                        foreach ($user->membership->packs as $pack) {
+                            $pack->delete();
+                        }
+                    }
                     $user->membership()->delete();
                 }
                 if (Schema::hasColumn('entries', 'participant_id')) {

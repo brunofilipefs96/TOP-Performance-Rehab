@@ -63,7 +63,8 @@ class DashboardController extends Controller
             case 'personal_trainer':
                 $trainings = Training::where('personal_trainer_id', $user->id)
                     ->where('end_date', '>', Carbon::now())
-                    ->get();
+                    ->orderBy('start_date', 'asc')
+                    ->paginate(12);
                 $hasTrainings = $trainings->isNotEmpty();
 
                 return view('pages.dashboard.personal-trainer', [
@@ -77,6 +78,7 @@ class DashboardController extends Controller
                 abort(403, 'Unauthorized access.');
         }
     }
+
 
     public function showCalendar(Request $request)
     {
@@ -96,6 +98,7 @@ class DashboardController extends Controller
 
         $trainings = $user->trainings()
             ->whereBetween('start_date', [$startOfWeek, $endOfWeek])
+            ->wherePivot('cancelled', false)
             ->get();
 
         $freeTrainings = $user->freeTrainings()
@@ -112,6 +115,7 @@ class DashboardController extends Controller
             'currentWeek' => Carbon::now()->startOfWeek()
         ]);
     }
+
 
     public function changeWeek(Request $request)
     {

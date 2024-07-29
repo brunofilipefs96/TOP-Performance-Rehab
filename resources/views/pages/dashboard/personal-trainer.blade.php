@@ -59,6 +59,9 @@
                                     </a>
                                 @endforeach
                             </div>
+                            <div class="mt-4">
+                                {{ $trainings->links() }} <!-- Links de paginação -->
+                            </div>
                         </div>
                     @endif
                 </div>

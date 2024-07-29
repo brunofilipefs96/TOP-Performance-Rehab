@@ -80,7 +80,7 @@
                 @endforeach
             </div>
         @else
-            <p class="mb-10">Não possui treinos disponíveis vá a loja para adiquirir novos packs</p>
+            <p class="mb-10">Não possui packs de Treinos, desloque-se à nossa loja para adiquirir um Pack!</p>
         @endif
     @endif
     <h1 class="text-2xl font-bold mb-5 dark:text-white text-gray-800">Lista de Packs</h1>

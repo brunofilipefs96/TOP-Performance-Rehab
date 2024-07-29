@@ -129,12 +129,14 @@
                                 </a>
                             @endif
                         @endforeach
-                        <a href="{{ url('insurances/'.$membership->insurance->id) }}" class="pl-2">
-                            <button type="button"
-                                    class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150">
-                                Seguro
-                            </button>
-                        </a>
+                        @if($membership && $membership->insurance)
+                            <a href="{{ url('insurances/'.$membership->insurance->id) }}" class="pl-2">
+                                <button type="button"
+                                        class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-300 dark:bg-lime-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-lime-800 uppercase tracking-widest dark:hover:bg-lime-300 dark:focus:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-lime-800 transition ease-in-out duration-150">
+                                    Seguro
+                                </button>
+                            </a>
+                        @endif
                     </div>
 
                     <!-- New section for questions and answers -->
@@ -155,7 +157,6 @@
                             @endforeach
                         </div>
                     </div>
-
 
 
                     <!-- Membership Status -->
@@ -290,7 +291,8 @@
                                                 </button>
                                                 <form id="delete-form-{{ $document->id }}"
                                                       action="{{ route('memberships.deleteDocument', [$membership->id, $document->id]) }}"
-                                                      method="POST" style="display:none;" onsubmit="disableConfirmButton(this)">
+                                                      method="POST" style="display:none;"
+                                                      onsubmit="disableConfirmButton(this)">
                                                     @csrf
                                                     @method('DELETE')
                                                 </form>
@@ -305,7 +307,8 @@
                                 <div class="mt-4">
                                     <form id="document-upload-form"
                                           action="{{ route('memberships.addDocument', $membership->id) }}" method="POST"
-                                          enctype="multipart/form-data" class="flex flex-col items-start space-y-2" onsubmit="disableConfirmButton(this)">
+                                          enctype="multipart/form-data" class="flex flex-col items-start space-y-2"
+                                          onsubmit="disableConfirmButton(this)">
                                         @csrf
                                         <ul id="selected-files-list"
                                             class="list-disc pl-5 text-gray-800 dark:text-gray-200"></ul>

@@ -58,7 +58,7 @@
                     @if (!$user->membership || ($user->membership && $user->membership->status->name != 'active'))
                         <li>
                             <x-nav-link :href="route('setup')"
-                                        :activeRoutes="['setup.address', 'setup.membership', 'setup.training-types', 'setup.insurance', 'setup.awaiting', 'setup.payment']"
+                                        :activeRoutes="['setup.addressShow', 'setup.membershipShow', 'setup.trainingTypesShow', 'setup.insuranceShow', 'setup.awaitingShow', 'setup.paymentShow']"
                                         class="mb-4 px-0 pt-0 text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-lime-400 focus:text-blue-400 dark:focus:text-lime-400 relative">
                                 <i class="fa-regular fa-address-card text-xl"></i>
                                 <span class="text-base ml-2">Matrícula</span>
